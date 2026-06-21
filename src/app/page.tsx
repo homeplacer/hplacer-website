@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { site } from "@/lib/site";
-import { featuredHomes, formatPrice, BRANDS } from "@/lib/homes";
+import { featuredHomes, BRANDS } from "@/lib/homes";
 import { HomeCard } from "@/components/home-card";
 import {
   ArrowIcon,
@@ -80,7 +80,7 @@ export default function HomePage() {
               <div className="mt-5 flex items-end justify-between border-t border-white/10 pt-4">
                 <span className="text-sm text-stone-100/70">Packages from</span>
                 <span className="font-display text-3xl font-semibold text-white">
-                  {formatPrice(site.priceFrom)}
+                  the low $200s
                 </span>
               </div>
             </div>
