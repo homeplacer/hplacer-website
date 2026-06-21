@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Home Placer — hplacer.com
 
-## Getting Started
+The website for **Home Placer LLC**, a licensed manufactured-home dealer in
+Horry County, SC. We pair brand-new Clayton, Cavco, and Champion homes with land
+across the Grand Strand — one package, one price, no HOA.
 
-First, run the development server:
+**Stack:** Next.js 16 (App Router) · TypeScript · Tailwind 4 · `marked` for blog
+markdown · deploy target Vercel.
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build (prerenders ~125 pages)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where things live
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+  app/
+    page.tsx                  homepage
+    homes/                    inventory grid + filters + [slug] detail
+    brands/  land-packages/   marketing pages
+    financing/  process/      financing capture + buyer timeline
+    locations/[slug]/         per-city local-SEO pages
+    faq/ glossary/            content pages (with schema)
+    manufactured-vs-site-built/
+    blog/ + blog/[slug]/      blog index + posts
+    api/lead/                 unified lead intake (FUB + Resend, env-gated)
+    sitemap.ts robots.ts      SEO
+    llms.txt/route.ts         AI-crawler manifest
+    opengraph-image.tsx icon.tsx
+  components/                 UI (cards, header, footer, forms, browser)
+  lib/                        site config, data loaders, jsonld, types
+data/
+  models.json                <- THE inventory (94 models), built by scripts
+  blog-posts.json            blog content
+  setup-pricing.json         full-setup prices (slug -> number) — fill at go-live
+  home-pricing.json          home-only prices (slug -> number) — optional
+scripts/
+  build-models.mjs           merges extraction sources -> data/models.json
+  build-cavco.mjs            the 4 browser-captured Cavco models
+  build-blog.mjs             workflow output -> data/blog-posts.json
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Inventory
 
-## Learn More
+`data/models.json` holds 94 real manufacturer models (Clayton 44, Cavco 6,
+Champion 44) scraped from the builders' sites — with photos, decor options, and
+**square footage computed as width x length** (the MLS convention; the sites'
+stated sqft is ignored). To rebuild after a new extraction:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+node scripts/build-cavco.mjs && node scripts/build-models.mjs
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Pricing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Every home shows **"Call for pricing"** until prices are set. The model supports
+two numbers per home:
 
-## Deploy on Vercel
+- `data/home-pricing.json` — home-only price, keyed by model slug
+- `data/setup-pricing.json` — full-setup price (home + 1/4-acre lot + setup +
+  utilities), keyed by model slug
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Drop in `{ "<slug>": 264900, ... }` and the site flips from "Call for pricing"
+to real figures automatically (full-setup leads, home-only shown beside it).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Leads
+
+All forms post to `/api/lead`. Delivery is **env-gated** — it logs by default and
+"self-arms" when keys are present:
+
+| Env var | Effect |
+|---|---|
+| `FUB_API_KEY` | Creates a person/event in Follow Up Boss (source `hplacer.com`) |
+| `RESEND_API_KEY` | Emails the team (`LEADS_TO`, default `leads@hplacer.com`) |
+
+## Go-live checklist
+
+- [ ] Add pricing files (above)
+- [ ] Set `FUB_API_KEY` and/or `RESEND_API_KEY` (+ verify the hplacer.com domain in Resend)
+- [ ] Replace hotlinked manufacturer photos with owned images
+- [ ] Connect the GitHub repo + Vercel project, point the `hplacer.com` domain
+- [ ] Submit `https://hplacer.com/sitemap.xml` to Google + Bing

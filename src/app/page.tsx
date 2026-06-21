@@ -164,11 +164,19 @@ export default function HomePage() {
 
       {/* ──────────────────── How it works ──────────────────── */}
       <section className="container-x py-20">
-        <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">How it works</p>
-          <h2 className="mt-2 font-display text-3xl font-semibold text-stone-ink sm:text-4xl">
-            From first call to front-door key
-          </h2>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="max-w-2xl">
+            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">How it works</p>
+            <h2 className="mt-2 font-display text-3xl font-semibold text-stone-ink sm:text-4xl">
+              From first call to front-door key
+            </h2>
+          </div>
+          <Link
+            href="/process"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-900"
+          >
+            See the full process <ArrowIcon className="size-4" />
+          </Link>
         </div>
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
@@ -193,11 +201,13 @@ export default function HomePage() {
           <h2 className="mt-2 font-display text-3xl font-semibold text-stone-ink">All across the Grand Strand</h2>
           <ul className="mt-7 flex flex-wrap justify-center gap-3">
             {site.locations.map((l) => (
-              <li
-                key={l.slug}
-                className="inline-flex items-center gap-2 rounded-full border border-stone-line bg-stone-bg px-4 py-2 text-sm font-medium text-stone-ink"
-              >
-                <PinIcon className="size-4 text-brand-600" /> {l.name}
+              <li key={l.slug}>
+                <Link
+                  href={`/locations/${l.slug}`}
+                  className="inline-flex items-center gap-2 rounded-full border border-stone-line bg-stone-bg px-4 py-2 text-sm font-medium text-stone-ink transition hover:border-brand-300 hover:text-brand-800"
+                >
+                  <PinIcon className="size-4 text-brand-600" /> {l.name}
+                </Link>
               </li>
             ))}
           </ul>
