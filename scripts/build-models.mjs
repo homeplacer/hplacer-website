@@ -49,6 +49,35 @@ function imgRank(u) {
 const sortImages = (urls) =>
   urls.map((u, i) => [u, i]).sort((a, b) => imgRank(a[0]) - imgRank(b[0]) || a[1] - b[1]).map((x) => x[0]);
 
+// A "plan render" is a floor-plan image (Clayton /flp/, Champion fpcategories) —
+// NOT a real photo of the house. Junk = logos. Cross-junk = a handful of
+// recurring related-model thumbnails Champion pages embed on every plan.
+const isPlan = (u) => /fpcategories|\/flp\//i.test(u);
+const isJunk = (u) => /websiteslogos|logo-chb|logo\.(png|jpe?g)/i.test(u);
+const CROSS_JUNK = ["ironclad-3276-21-exterior", "ironclad-3268-12-exterior", "ironclad-3276-kitchen-3-main"];
+function cleanImages(urls, modelCode) {
+  const code = (modelCode || "").toLowerCase();
+  return urls.filter((u) => {
+    const s = u.toLowerCase();
+    if (!/^https?:\/\//.test(u) || /\.(pdf|mp4|mov|webm)(\?|$)/i.test(s)) return false;
+    if (isJunk(s)) return false;
+    for (const j of CROSS_JUNK) {
+      const key = j.replace(/-exterior|-kitchen-3-main/, "");
+      if (s.includes(j) && !code.includes(key)) return false; // drop other models' thumbnails
+    }
+    return true;
+  });
+}
+// Real photos lead (exterior first); floor plans trail. If a model has NO real
+// photo (only plan renders), return [] so the card/hero falls back to the clean
+// gradient instead of showing a blueprint as the "main picture".
+function buildImages(urls, modelCode) {
+  const cleaned = cleanImages(urls || [], modelCode);
+  const real = sortImages(cleaned.filter((u) => !isPlan(u)));
+  const plans = cleaned.filter(isPlan);
+  return real.length ? [...real, ...plans] : [];
+}
+
 const seen = new Set();
 const out = models.map((m) => {
   const name = cleanName(m);
@@ -71,11 +100,7 @@ const out = models.map((m) => {
     baths: m.baths,
     description: String(m.description || "").trim(),
     decorOptions: Array.isArray(m.decorOptions) ? m.decorOptions : [],
-    imageUrls: sortImages(
-      (m.imageUrls || []).filter(
-        (u) => /^https?:\/\//.test(u) && !/\.(pdf|mp4|mov|webm)(\?|$)/i.test(u),
-      ),
-    ),
+    imageUrls: buildImages(m.imageUrls, m.modelCode),
     sourceUrl: m.sourceUrl,
   };
 });

@@ -21,7 +21,16 @@ export const site = {
     state: "SC",
     zip: "29577",
   },
+  geo: { lat: 33.702366, lng: -78.877032 },
   hours: "By appointment",
+
+  // Real Google Business Profile (CID 3461988553332431879).
+  gbp: {
+    url: "https://maps.google.com/?cid=3461988553332431879",
+    rating: 5.0,
+    reviewCount: 6,
+  },
+  sameAs: ["https://maps.google.com/?cid=3461988553332431879"],
 
   // Cities where Home Placer places homes on land.
   locations: [

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { locations, getLocation } from "@/lib/locations";
+import { locations, getLocation, cityGeo } from "@/lib/locations";
 import { featuredHomes } from "@/lib/homes";
 import { HomeCard } from "@/components/home-card";
 import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
@@ -20,7 +20,20 @@ export async function generateMetadata({
   const { slug } = await params;
   const loc = getLocation(slug);
   if (!loc) return { title: "Location not found" };
-  return { title: loc.headline, description: loc.intro };
+  const g = cityGeo[loc.slug];
+  return {
+    title: loc.headline,
+    description: loc.intro,
+    alternates: { canonical: `/locations/${loc.slug}` },
+    other: g
+      ? {
+          "geo.region": "US-SC",
+          "geo.placename": `${loc.name}, South Carolina`,
+          "geo.position": `${g.lat};${g.lng}`,
+          ICBM: `${g.lat}, ${g.lng}`,
+        }
+      : {},
+  };
 }
 
 export default async function LocationPage({

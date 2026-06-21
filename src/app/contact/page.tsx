@@ -53,6 +53,25 @@ export default async function ContactPage({
               </span>
             </span>
           </div>
+
+          <a
+            href={site.gbp.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-4 rounded-card border border-stone-line bg-stone-surface p-5 transition hover:border-brand-300"
+          >
+            <span className="grid size-11 place-items-center rounded-lg bg-brand-700 text-lg font-bold text-white">
+              ★
+            </span>
+            <span>
+              <span className="block text-xs font-semibold uppercase tracking-wider text-stone-muted">
+                Rated {site.gbp.rating.toFixed(1)} on Google
+              </span>
+              <span className="block font-medium text-stone-ink">
+                Read our reviews & find us on the map →
+              </span>
+            </span>
+          </a>
         </div>
 
         <ul className="mt-8 space-y-2 text-sm text-stone-ink/80">

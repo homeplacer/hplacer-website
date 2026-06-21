@@ -25,14 +25,30 @@ export const metadata: Metadata = {
     template: `%s · ${site.name}`,
   },
   description: site.blurb,
+  keywords: [
+    "manufactured homes Myrtle Beach",
+    "mobile homes Horry County SC",
+    "land home packages South Carolina",
+    "Clayton homes Conway SC",
+    "new manufactured home on land",
+    "modular homes Grand Strand",
+  ],
   openGraph: {
     title: `${site.name} — New Homes on Land`,
     description: site.blurb,
     url: site.url,
     siteName: site.name,
+    locale: "en_US",
     type: "website",
   },
-  alternates: { canonical: "/" },
+  twitter: { card: "summary_large_image" },
+  // Geo-targeting meta tags for local search.
+  other: {
+    "geo.region": "US-SC",
+    "geo.placename": "Myrtle Beach, South Carolina",
+    "geo.position": `${site.geo.lat};${site.geo.lng}`,
+    ICBM: `${site.geo.lat}, ${site.geo.lng}`,
+  },
 };
 
 export default function RootLayout({

@@ -20,6 +20,7 @@ export function GET() {
 - Phone: ${site.phoneDisplay}
 - Email: ${site.email}
 - Location: ${site.address.street}, ${site.address.city}, ${site.address.state} ${site.address.zip}
+- Google Business Profile: ${site.gbp.rating.toFixed(1)}★ (${site.gbp.reviewCount} reviews) — ${site.gbp.url}
 - Areas served: ${locations.map((l) => `${l.name}, SC`).join("; ")}
 - Pricing: land-home packages from the low $200s. No HOA. One-year warranty.
 

@@ -28,6 +28,8 @@ const models = [
     description:
       "Fleetwood Rocky Mount's Pegasus is a value-priced double-wide with strong standard features — LED recessed lighting throughout, 42-inch kitchen overhead cabinets, and porcelain bath sinks. Shown with a front porch.",
     imageUrls: [
+      // front elevation first — this is the actual house exterior
+      PEG + "27pe28483h_bf0_1733870349679_630_10.jpeg",
       PEG + "pegasus_54269957500_o_1737389977246_724_10.jpg",
       PEG + "pegasus_54268653512_o_1737389914814_724_10.jpg",
       PEG + "pegasus_54269957320_o_1737389836179_724_10.jpg",

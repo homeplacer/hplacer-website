@@ -27,6 +27,15 @@ export function SiteFooter() {
             <span className="inline-flex items-center gap-2 text-stone-100/70">
               <PinIcon className="size-4" /> {site.address.street}, {site.address.city}, {site.address.state} {site.address.zip}
             </span>
+            <a
+              href={site.gbp.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-stone-100/80 hover:text-accent-300"
+            >
+              <span className="text-accent-300">★ {site.gbp.rating.toFixed(1)}</span>
+              <span>on Google ({site.gbp.reviewCount} reviews)</span>
+            </a>
           </div>
         </div>
 

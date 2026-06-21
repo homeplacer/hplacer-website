@@ -17,8 +17,11 @@ export function localBusinessLd() {
   return {
     "@context": "https://schema.org",
     "@type": "HomeAndConstructionBusiness",
+    "@id": `${site.url}/#business`,
     name: site.legalName,
+    alternateName: site.name,
     image: `${site.url}/opengraph-image`,
+    logo: `${site.url}/icon`,
     url: site.url,
     telephone: site.phoneDial,
     email: site.email,
@@ -30,9 +33,39 @@ export function localBusinessLd() {
       postalCode: site.address.zip,
       addressCountry: "US",
     },
-    areaServed: site.locations.map((l) => `${l.name}, SC`),
-    priceRange: "$$",
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: site.geo.lat,
+      longitude: site.geo.lng,
+    },
+    hasMap: site.gbp.url,
+    sameAs: site.sameAs,
+    areaServed: site.locations.map((l) => ({
+      "@type": "City",
+      name: `${l.name}, SC`,
+    })),
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      opens: "09:00",
+      closes: "18:00",
+    },
+    priceRange: "$$ — homes from the low $200s",
     description: site.blurb,
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: site.gbp.rating,
+      reviewCount: site.gbp.reviewCount,
+      bestRating: 5,
+    },
+    makesOffer: {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Product",
+        name: "Manufactured home + land package",
+      },
+      priceCurrency: "USD",
+    },
   };
 }
 

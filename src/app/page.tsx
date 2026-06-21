@@ -10,6 +10,10 @@ import {
   HomeMark,
 } from "@/components/icons";
 
+export const metadata = {
+  alternates: { canonical: "/" },
+};
+
 export default function HomePage() {
   const homes = featuredHomes(6);
 

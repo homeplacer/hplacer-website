@@ -86,6 +86,14 @@ export const locations: LocationInfo[] = [
   },
 ];
 
+export const cityGeo: Record<string, { lat: number; lng: number }> = {
+  "myrtle-beach": { lat: 33.6891, lng: -78.8867 },
+  conway: { lat: 33.836, lng: -79.0478 },
+  loris: { lat: 34.0563, lng: -78.8903 },
+  longs: { lat: 33.9174, lng: -78.7336 },
+  aynor: { lat: 33.9985, lng: -79.1989 },
+};
+
 export function getLocation(slug: string): LocationInfo | undefined {
   return locations.find((l) => l.slug === slug);
 }
