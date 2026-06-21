@@ -1,0 +1,37 @@
+{
+  "id": 548433,
+  "name": "Home Placer Horry County",
+  "status": "active",
+  "price_range": {"min": 219000, "max": 299999},
+  "address": {
+    "street": "1329 Rabbit Ln",
+    "city": "Conway",
+    "state": "SC",
+    "zip": "29526",
+    "lat": 33.93608651,
+    "lng": -78.91258438
+  },
+  "sales_office_location": {
+    "city": "Conway",
+    "state": "SC",
+    "zip": "29526",
+    "lat": 33.702366350071,
+    "lng": -78.877032750000
+  },
+  "marketing_status": "Active",
+  "hoa_monthly_fee": 0,
+  "description": "Come visit one of our homes and see that an brand new affordable home with land are alive and well in Horry County, SC.\n\nNote: The community dot reflects the city or town in which there are scattered lots. The homes are not confined to a specific community location.",
+  "website_url": "http://www.hplacer.com",
+  "sales_office_hours": "By Appointment",
+  "image_ids": [
+    "community_68410075",
+    "community_59402307",
+    "community_59402308",
+    "community_59402309",
+    "community_59402310",
+    "community_59402311",
+    "community_59402326",
+    "community_58997978"
+  ],
+  "image_url_pattern": "https://images.newhomefeed.com/account_10214/builder_9920/{id}.jpg"
+}

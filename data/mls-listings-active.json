@@ -1,0 +1,18 @@
+{
+  "source": "ListingConnect (NHF) → CCAR MLS",
+  "extracted_at": "2026-05-18",
+  "note": "These are active MLS listings fed in via Joseph's realtor MLS access. Pricing and full specs live in CCAR / Zillow public pages, not NHF. For website display, the canonical data source per listing is Zillow's homedetails page for each property — or pull from CCAR directly.",
+  "listings": [
+    {"address": "2519 N Wild Rose Dr.", "city": "Myrtle Beach", "state": "SC", "ccar_mls_id": "2529020", "updated": "05/17/26"},
+    {"address": "215 Eva Dr.", "city": "Loris", "state": "SC", "ccar_mls_id": "2423736", "updated": "05/17/26"},
+    {"address": "4221 Blake Rd.", "city": "Myrtle Beach", "state": "SC", "ccar_mls_id": "2528079", "updated": "05/17/26"},
+    {"address": "1329 Rabbit Ln.", "city": "Conway", "state": "SC", "ccar_mls_id": "2604537", "updated": "05/17/26"},
+    {"address": "113 Alice Allene Ct", "city": "Myrtle Beach", "state": "SC", "ccar_mls_id": "2612383", "updated": "05/13/26"},
+    {"address": "5544 Daffodil Dr.", "city": "Conway", "state": "SC", "ccar_mls_id": "2612319", "updated": "05/12/26"},
+    {"address": "5540 Daffodil Dr.", "city": "Conway", "state": "SC", "ccar_mls_id": "2612318", "updated": "05/12/26"},
+    {"address": "105 Pepe Court", "city": "Conway", "state": "SC", "ccar_mls_id": "2612323", "updated": "05/12/26"},
+    {"address": "5548 Daffodil Dr.", "city": "Conway", "state": "SC", "ccar_mls_id": "2612321", "updated": "05/12/26"},
+    {"address": "120 Lunar Ln", "city": "Loris", "state": "SC", "ccar_mls_id": "2611971", "updated": "05/08/26"},
+    {"address": "2016 Pint Circle", "city": "Longs", "state": "SC", "ccar_mls_id": "2608944", "updated": "04/06/26"}
+  ]
+}

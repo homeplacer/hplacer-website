@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+/*
+  Home Placer design system.
+  Palette: pine-green brand (land + trust) · warm amber accent (home + optimism)
+  · warm stone neutrals. Display = Fraunces serif, body = Geist sans.
+*/
+
+@theme {
+  /* brand — pine green */
+  --color-brand-50: #f0f7f4;
+  --color-brand-100: #d9ebe3;
+  --color-brand-200: #b4d7c9;
+  --color-brand-300: #84bca8;
+  --color-brand-400: #549a83;
+  --color-brand-500: #357d67;
+  --color-brand-600: #266552;
+  --color-brand-700: #1f5143;
+  --color-brand-800: #1a4137;
+  --color-brand-900: #16362e;
+  --color-brand-950: #0a1f1a;
+
+  /* accent — warm amber */
+  --color-accent-50: #fdf6e9;
+  --color-accent-100: #f9e7c2;
+  --color-accent-200: #f3cf85;
+  --color-accent-300: #f0bd5c;
+  --color-accent-400: #efa520;
+  --color-accent-500: #d98a0e;
+  --color-accent-600: #b56b0a;
+  --color-accent-700: #8f520d;
+
+  /* warm stone neutrals */
+  --color-stone-bg: #ffffff;
+  --color-stone-surface: #faf8f5;
+  --color-stone-sunken: #f3efe9;
+  --color-stone-line: #e8e2da;
+  --color-stone-muted: #6f6a62;
+  --color-stone-ink: #1c1a17;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+
+  --radius-card: 1rem;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #1c1a17;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  ::selection {
+    background: var(--color-accent-200);
+    color: var(--color-brand-950);
+  }
+}
+
+.container-x {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 76rem;
+  padding-inline: 1.25rem;
+}
+@media (min-width: 768px) {
+  .container-x {
+    padding-inline: 2rem;
+  }
+}
+
+/* Rendered blog markdown */
+.prose-content {
+  color: color-mix(in srgb, var(--color-stone-ink) 88%, transparent);
+  line-height: 1.75;
+}
+.prose-content h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.6rem;
+  letter-spacing: -0.01em;
+  color: var(--color-stone-ink);
+  margin-top: 2.25rem;
+  margin-bottom: 0.75rem;
+}
+.prose-content h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: var(--color-stone-ink);
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.prose-content p { margin-block: 1rem; }
+.prose-content ul, .prose-content ol { margin-block: 1rem; padding-left: 1.5rem; }
+.prose-content ul { list-style: disc; }
+.prose-content ol { list-style: decimal; }
+.prose-content li { margin-block: 0.4rem; }
+.prose-content strong { color: var(--color-stone-ink); font-weight: 600; }
+.prose-content a { color: var(--color-brand-700); text-decoration: underline; }
+.prose-content blockquote {
+  border-left: 3px solid var(--color-brand-300);
+  padding-left: 1rem;
+  color: var(--color-stone-muted);
+  font-style: italic;
+  margin-block: 1.25rem;
+}
+
+/* subtle layered glow for dark hero / CTA panels */
+.topo {
+  background-image:
+    radial-gradient(circle at 18% 28%, color-mix(in srgb, var(--color-brand-400) 26%, transparent) 0, transparent 42%),
+    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--color-accent-400) 18%, transparent) 0, transparent 44%);
+}

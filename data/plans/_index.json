@@ -1,0 +1,27 @@
+{
+  "source": "https://my.newhomefeed.com (Zillow builder backend)",
+  "extracted_at": "2026-05-17",
+  "account": "Joseph @ Home Placer (account 10214)",
+  "community": "Home Placer Horry County (id 548433)",
+  "plans": [
+    {"id": 6804112, "name": "IMPACT- Giles", "status": "active", "base_price": 249000, "updated": "08/25/25"},
+    {"id": 6804366, "name": "TRADITION - Appalachia", "status": "active", "base_price": 239999, "updated": "03/24/26"},
+    {"id": 6804862, "name": "STAYIN' ALIVE- Rockwell", "status": "active", "base_price": 229999, "updated": "08/19/25"},
+    {"id": 6804866, "name": "ULTRA BREEZE 52- Oxford", "status": "active", "base_price": 229999, "updated": "03/24/26"},
+    {"id": 6804879, "name": "BIRDIE- Rockwell", "status": "active", "base_price": 299999, "updated": "05/23/25"},
+    {"id": 6804881, "name": "TRADITION 60B- Appalachia", "status": "inactive", "base_price": 259999, "updated": "08/25/25"},
+    {"id": 6804886, "name": "PEARL- Giles", "status": "active", "base_price": 259999, "updated": "05/23/25"},
+    {"id": 6804887, "name": "GLIMPSE- Giles", "status": "active", "base_price": 239999, "updated": "08/25/25"},
+    {"id": 6804888, "name": "SHOUT- Rockwell", "status": "active", "base_price": 219000, "updated": "06/09/25"},
+    {"id": 6804889, "name": "VIVID-Cavco (alt)", "status": "active", "base_price": 270999, "updated": "05/23/25"},
+    {"id": 7535615, "name": "ATMOS- Cavco", "status": "active", "base_price": 259000, "updated": "08/25/25"},
+    {"id": 7535733, "name": "VIVID- Cavco", "status": "active", "base_price": 235000, "updated": "08/25/25"},
+    {"id": 7535734, "name": "PEGASUS- Cavco", "status": "active", "base_price": 229999, "updated": "03/24/26"},
+    {"id": 7536135, "name": "REVEAL- Clayton", "status": "active", "base_price": 259000, "updated": "09/13/25"},
+    {"id": 7536140, "name": "CADDIE- Clayton", "status": "active", "base_price": 254999, "updated": "08/25/25"},
+    {"id": 7695311, "name": "THE LEO- Clayton Homes", "status": "active", "base_price": 242000, "updated": "09/15/25"},
+    {"id": 7695545, "name": "ROCKETMAN- Clayton Homes", "status": "active", "base_price": 285000, "updated": "09/15/25"},
+    {"id": 7695546, "name": "HARTFORD-Clayton Homes", "status": "active", "base_price": 220000, "updated": "09/15/25"},
+    {"id": 7695547, "name": "RICHMOND- Clayton Homes", "status": "active", "base_price": 285000, "updated": "09/15/25"}
+  ]
+}
