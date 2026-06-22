@@ -497,7 +497,15 @@
       "Black hardware and fixtures",
       "Craftsman-style elements"
     ],
-    "imageUrls": [],
+    "imageUrls": [
+      "/models/vivid/01.jpg",
+      "/models/vivid/02.jpg",
+      "/models/vivid/03.jpg",
+      "/models/vivid/04.jpg",
+      "/models/vivid/05.jpg",
+      "/models/vivid/06.jpg",
+      "/models/vivid/07.jpg"
+    ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
