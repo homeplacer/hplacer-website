@@ -2861,20 +2861,14 @@
       "Front porch"
     ],
     "imageUrls": [
-      "/models/pegasus/00.jpg",
       "/models/pegasus/01.jpg",
+      "/models/pegasus/02.jpg",
       "/models/pegasus/03.jpg",
+      "/models/pegasus/04.jpg",
       "/models/pegasus/05.jpg",
+      "/models/pegasus/06.jpg",
       "/models/pegasus/07.jpg",
-      "/models/pegasus/08.jpg",
-      "/models/pegasus/09.jpg",
-      "/models/pegasus/10.jpg",
-      "/models/pegasus/11.jpg",
-      "/models/pegasus/12.jpg",
-      "/models/pegasus/13.jpg",
-      "/models/pegasus/14.jpg",
-      "/models/pegasus/15.jpg",
-      "/models/pegasus/16.jpg"
+      "/models/pegasus/08.jpg"
     ],
     "aka": [
       "Cavco Pegasus"
