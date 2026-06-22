@@ -246,7 +246,7 @@ export default function HomePage() {
 
       {/* ──────────────────── Final CTA ──────────────────── */}
       <section className="container-x py-20">
-        <div className="topo relative overflow-hidden rounded-3xl bg-brand-900 px-8 py-14 text-center text-white sm:px-12">
+        <div className="topo relative overflow-hidden rounded-3xl bg-brand-950 px-8 py-14 text-center text-white sm:px-12">
           <div className="relative mx-auto max-w-2xl">
             <h2 className="font-display text-3xl font-semibold sm:text-4xl">
               Ready to find your home?
