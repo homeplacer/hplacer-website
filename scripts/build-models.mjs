@@ -81,6 +81,16 @@ function buildImages(urls, modelCode) {
   return real.length ? [...real, ...plans] : [];
 }
 
+// Common nicknames Joe uses, so the search box finds homes by them.
+const ALIASES = {
+  "ultra-flex-28-52": ["52 Breeze", "Ultra Flex 52", "The Breeze"],
+  "ultra-flex-28-68": ["Ultra 68", "Ultra Flex 68", "68 Breeze"],
+  "ultra-flex-32-76": ["Ultra 76", "Ultra Flex 76"],
+  pegasus: ["Cavco Pegasus"],
+  atmos: ["Cavco Atmos"],
+  "stayin-alive": ["Staying Alive"],
+};
+
 const seen = new Set();
 const out = models.map((m) => {
   const name = cleanName(m);
@@ -104,6 +114,7 @@ const out = models.map((m) => {
     description: String(m.description || "").trim(),
     decorOptions: Array.isArray(m.decorOptions) ? m.decorOptions : [],
     imageUrls: buildImages(m.imageUrls, m.modelCode),
+    aka: ALIASES[slug] || [],
     sourceUrl: m.sourceUrl,
   };
 });

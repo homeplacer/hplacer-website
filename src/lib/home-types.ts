@@ -20,6 +20,7 @@ export interface Home {
   excerpt: string;
   decorOptions: string[];
   imageUrls: string[];
+  aka?: string[]; // common nicknames, searchable (e.g. "52 Breeze")
   price?: number; // home-only price (pricing TBD)
   setupPrice?: number; // full-setup all-in: home + ¼-acre lot + setup + utilities (pricing TBD)
 }

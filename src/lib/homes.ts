@@ -30,6 +30,7 @@ interface RawModel {
   description: string;
   decorOptions: string[];
   imageUrls: string[];
+  aka?: string[];
   sourceUrl: string;
 }
 
@@ -71,6 +72,7 @@ export function getAllHomes(): Home[] {
     excerpt: firstSentence(m.description),
     decorOptions: m.decorOptions ?? [],
     imageUrls: m.imageUrls ?? [],
+    aka: m.aka ?? [],
     price: homePricing[m.slug],
     setupPrice: setupPricing[m.slug],
   }));
