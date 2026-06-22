@@ -49,8 +49,9 @@ export const teamGroups: TeamGroup[] = [
     label: "Field Leads",
     members: [
       { name: "Greg Distefano", title: "Head of Site Work", photo: "/team/greg-distefano.jpg" },
+      { name: "Wade Pratt", title: "Head of Service", photo: "/team/wade-pratt.jpg" },
+      { name: "Andrew Lemieux", title: "Head of Transport", photo: "/team/andrew-lemieux.jpg" },
       { name: "Brandon Angelo", title: "Lead Mechanic & Maintenance", photo: "/team/brandon-angelo.jpg" },
-      { name: "Wade Pratt", title: "Lead Site Work", photo: "/team/wade-pratt.jpg" },
     ],
   },
   {
@@ -67,8 +68,6 @@ export const teamGroups: TeamGroup[] = [
       { name: "Hunter Martin", title: "Site Work", photo: "/team/hunter-martin.jpg" },
       { name: "Devin Prestly", title: "Site Work", photo: "/team/devin-prestly.jpg" },
       { name: "Jonah Stiffler", title: "Site Work", photo: "/team/jonah-stiffler.jpg" },
-      // Andrew is not on the org chart — last name + exact role TBD by Joe.
-      { name: "Andrew", title: "Site Work", photo: "/team/andrew.jpg" },
     ],
   },
 ];
