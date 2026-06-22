@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Home Placer GBP photo bank (marketing asset, not the website)
+/gbp-bank/

@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -45,6 +47,17 @@ export default async function LocationPage({
   const loc = getLocation(slug);
   if (!loc) notFound();
   const homes = featuredHomes(3);
+
+  // Real Home Placer homes photographed in this town (geo-tagged from Joe's
+  // photos). Empty if none for this town.
+  let townPhotos: string[] = [];
+  try {
+    townPhotos = fs
+      .readdirSync(path.join(process.cwd(), "public", "locations", slug))
+      .filter((f) => /\.jpe?g$/i.test(f))
+      .sort()
+      .map((f) => `/locations/${slug}/${f}`);
+  } catch {}
 
   return (
     <>
@@ -116,7 +129,30 @@ export default async function LocationPage({
         </aside>
       </section>
 
-      <section className="container-x pb-16">
+      {townPhotos.length > 0 && (
+        <section className="bg-stone-surface py-14">
+          <div className="container-x">
+            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">Real Home Placer homes</p>
+            <h2 className="mt-2 font-display text-2xl font-semibold text-stone-ink">
+              Recently placed around {loc.name}
+            </h2>
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {townPhotos.map((src, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={src}
+                  src={src}
+                  alt={`Home Placer manufactured home placed near ${loc.name}, SC`}
+                  loading="lazy"
+                  className="aspect-[4/3] w-full rounded-card border border-stone-line object-cover shadow-sm"
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="container-x pb-16 pt-14">
         <div className="flex items-end justify-between gap-4">
           <h2 className="font-display text-2xl font-semibold text-stone-ink">
             Homes you can place near {loc.name}
