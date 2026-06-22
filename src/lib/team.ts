@@ -25,6 +25,7 @@ export const teamGroups: TeamGroup[] = [
       {
         name: "Joe Scaturro",
         title: "Owner & Founder",
+        photo: "/team/joe-scaturro.jpg",
         blurb:
           "Founded Home Placer to make a brand-new home on your own land genuinely affordable in Horry County — handled start to finish, the honest way.",
       },
@@ -41,6 +42,7 @@ export const teamGroups: TeamGroup[] = [
       {
         name: "Brett Chester",
         title: "Project Manager",
+        photo: "/team/brett-chester.jpg",
         blurb: "Runs each build on the ground — land prep, the set, and the finish work.",
       },
     ],
@@ -58,7 +60,7 @@ export const teamGroups: TeamGroup[] = [
     label: "Carpentry",
     members: [
       { name: "Scott Choma", title: "Carpenter", photo: "/team/scott-choma.jpg" },
-      { name: "Sam Cliffton", title: "Carpenter" },
+      { name: "Sam Cliffton", title: "Carpenter", photo: "/team/sam-cliffton.jpg" },
       { name: "Kadin Prestly", title: "Carpenter", photo: "/team/kadin-prestly.jpg" },
     ],
   },
