@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { site } from "@/lib/site";
 import { featuredHomes, BRANDS } from "@/lib/homes";
+import { galleryByCategory } from "@/lib/gallery";
 import { HomeCard } from "@/components/home-card";
 import {
   ArrowIcon,
@@ -16,6 +17,7 @@ export const metadata = {
 
 export default function HomePage() {
   const homes = featuredHomes(6);
+  const work = [...galleryByCategory("homes").slice(0, 4), ...galleryByCategory("development").slice(0, 2)];
 
   return (
     <>
@@ -217,6 +219,45 @@ export default function HomePage() {
           </ul>
         </div>
       </section>
+
+      {/* ──────────────────── Our work ──────────────────── */}
+      {work.length > 0 && (
+        <section className="bg-stone-surface py-20">
+          <div className="container-x">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div className="max-w-2xl">
+                <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">Real projects</p>
+                <h2 className="mt-2 font-display text-3xl font-semibold text-stone-ink sm:text-4xl">
+                  Homes we&apos;ve placed, land we&apos;ve developed
+                </h2>
+                <p className="mt-3 text-stone-muted">
+                  We don&apos;t just sell homes — we develop the land and set the home, start to
+                  finish. Here&apos;s a look at real Home Placer work across Horry County.
+                </p>
+              </div>
+              <Link
+                href="/gallery"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-900"
+              >
+                See our work <ArrowIcon className="size-4" />
+              </Link>
+            </div>
+            <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
+              {work.map((img) => (
+                <Link key={img.src} href="/gallery" className="group block overflow-hidden rounded-card border border-stone-line">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={img.src}
+                    alt={img.alt}
+                    loading="lazy"
+                    className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+                  />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ──────────────────── Final CTA ──────────────────── */}
       <section className="container-x py-20">

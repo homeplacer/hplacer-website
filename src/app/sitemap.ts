@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/homes",
     "/brands",
     "/land-packages",
+    "/gallery",
     "/financing",
     "/process",
     "/faq",

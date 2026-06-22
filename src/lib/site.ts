@@ -67,6 +67,7 @@ export const navLinks = [
   { href: "/homes", label: "Homes" },
   { href: "/brands", label: "Brands" },
   { href: "/land-packages", label: "Land Packages" },
+  { href: "/gallery", label: "Our Work" },
   { href: "/financing", label: "Financing" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
