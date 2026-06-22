@@ -116,7 +116,9 @@
     ],
     "aka": [
       "Ultra 76",
-      "Ultra Flex 76"
+      "Ultra Flex 76",
+      "Big Boy",
+      "Ultra Flex Big Boy"
     ],
     "bestSeller": false,
     "bestSellerRank": 999,
@@ -3159,5 +3161,191 @@
     "bestSeller": false,
     "bestSellerRank": 999,
     "sourceUrl": "https://www.cavcohomecenters.com/plan/235517-5559/cavco-home-center-of-lafayette/lafayette/lifestyle/reece-32663a/"
+  },
+  {
+    "slug": "ultra-flex-jewel-32-60",
+    "brand": "Clayton",
+    "series": "Ultra Pro Flex (Oxford)",
+    "name": "Ultra Flex Jewel 32×60",
+    "modelCode": "29UPF32603AH",
+    "widthFt": 32,
+    "lengthFt": 60,
+    "sqft": 1920,
+    "beds": 3,
+    "baths": 2,
+    "description": "The Ultra Flex Jewel is a 3-bedroom, 2-bath Clayton Oxford Ultra Pro Flex home with a spacious 32x60 double-wide layout — one of Clayton Oxford's top-selling floor plans.",
+    "decorOptions": [
+      "Midnight Sky"
+    ],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/ext/0f7f49c8-f26f-4784-9296-8db592b16705.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/ext/35c5aaed-85c0-4896-8170-4af8ba1c3b32.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/ext/6824cfa7-8388-450b-af21-ea019e054f12.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/ext/5fc7cec8-c8d4-45cc-ba34-e188fed7693a.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/3321f83b-1d51-42a8-9867-fd40322dd3aa.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/eff2f06d-1706-4128-a307-5a9232770b43.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/b323e80f-4765-4b62-94dc-1f9947025c16.jpg?width=992"
+    ],
+    "aka": [
+      "Jewel",
+      "Ultra Flex 32×60",
+      "32x60"
+    ],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://claytonoxfordhbf.com/models/29upf32603ah/"
+  },
+  {
+    "slug": "ultra-a-plus-16-76",
+    "brand": "Clayton",
+    "series": "Ultra XL (Oxford)",
+    "name": "Ultra A-Plus 16×76",
+    "modelCode": "29UXL16763PH",
+    "widthFt": 16,
+    "lengthFt": 76,
+    "sqft": 1216,
+    "beds": 3,
+    "baths": 2,
+    "description": "The Ultra A-Plus is a 3-bedroom, 2-bath Clayton Oxford single-wide home with a generous 16x76 layout — a top mover for value-minded buyers.",
+    "decorOptions": [],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/ext/91e5fe2a-8b05-4024-898a-540900da9263.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/bbc92eef-4cc1-46d2-942c-2b50c239ff23.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/634c6017-9e6e-4974-8786-10dc8ff0b9fd.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/27da5518-1dd9-467b-9483-05598cc92e48.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/8eeff339-8925-40bd-8fe3-3481b7fc69c1.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/f9214492-6b89-4e92-bc74-5f98e7897317.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/5f4fb031-acd8-4361-9166-21b9605784d2.jpg?width=992"
+    ],
+    "aka": [
+      "Ultra A Plus",
+      "Ultra A Plus 16x76",
+      "A Plus",
+      "16x76"
+    ],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://claytonoxfordhbf.com/models/29uxl16763ph/"
+  },
+  {
+    "slug": "vista",
+    "brand": "Clayton",
+    "series": "Horizon",
+    "name": "Vista",
+    "modelCode": "29HZN28483AH",
+    "widthFt": 28,
+    "lengthFt": 48,
+    "sqft": 1344,
+    "beds": 3,
+    "baths": 2,
+    "description": "The Vista is a 3-bedroom, 2-bath Clayton Horizon series manufactured home with an efficient 28x48 double-wide layout.",
+    "decorOptions": [],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/ext/0d49625c-608b-4bc7-81c9-7166e2f8676e.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/a06ba434-f07b-4211-bde3-dc8b69fc2b1c.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/d6f26eca-2d59-4dd2-95d9-29ecd2f3e9eb.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/523817ae-0084-4a1a-9928-f350ece7939c.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/8199fc52-022a-456e-ba2a-9d4d40c72d6b.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/65fcab8b-4a2f-4018-9a90-ca2c6df5f3e3.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/d2ecf345-5c77-4a26-b9c3-f1782b1a4292.jpg?width=992"
+    ],
+    "aka": [
+      "Horizon Vista",
+      "28x48"
+    ],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn28483ah/"
+  },
+  {
+    "slug": "pure-28563x",
+    "brand": "Cavco",
+    "series": "Pure (Rocky Mount)",
+    "name": "Pure",
+    "modelCode": "28563X",
+    "widthFt": 28,
+    "lengthFt": 56,
+    "sqft": 1568,
+    "beds": 3,
+    "baths": 2,
+    "description": "The Pure is a 3-bedroom, 2-bath Cavco (Fleetwood) double-wide built at the Rocky Mount plant, with a bright open-concept 28x56 layout.",
+    "decorOptions": [],
+    "imageUrls": [
+      "/models/pure-28563x/01.jpg",
+      "/models/pure-28563x/02.jpg",
+      "/models/pure-28563x/03.jpg",
+      "/models/pure-28563x/04.jpg",
+      "/models/pure-28563x/05.jpg",
+      "/models/pure-28563x/06.jpg",
+      "/models/pure-28563x/07.jpg"
+    ],
+    "aka": [
+      "Pure 28563X",
+      "28x56"
+    ],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://www.cavcohomes.com/our-homes/fleetwoodhomes/standard/us/"
+  },
+  {
+    "slug": "palm-harbor-28563t",
+    "brand": "Cavco",
+    "series": "Palm Harbor (Rocky Mount)",
+    "name": "Palm Harbor",
+    "modelCode": "28563T",
+    "widthFt": 28,
+    "lengthFt": 56,
+    "sqft": 1568,
+    "beds": 3,
+    "baths": 2,
+    "description": "The Palm Harbor is a 3-bedroom, 2-bath Cavco double-wide built at the Rocky Mount plant, with an open 28x56 layout and a cozy living-room fireplace.",
+    "decorOptions": [],
+    "imageUrls": [
+      "/models/palm-harbor-28563t/01.jpg",
+      "/models/palm-harbor-28563t/02.jpg",
+      "/models/palm-harbor-28563t/03.jpg",
+      "/models/palm-harbor-28563t/04.jpg",
+      "/models/palm-harbor-28563t/05.jpg",
+      "/models/palm-harbor-28563t/06.jpg",
+      "/models/palm-harbor-28563t/07.jpg"
+    ],
+    "aka": [
+      "Palm Harbor 28563T",
+      "28x56"
+    ],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://www.cavcohomes.com/our-homes/fleetwoodhomes/standard/us/556-palm-harbor-28563t"
+  },
+  {
+    "slug": "heritage-pointe-32764d",
+    "brand": "Cavco",
+    "series": "Heritage Pointe (Fleetwood)",
+    "name": "Heritage Pointe",
+    "modelCode": "32764D",
+    "widthFt": 32,
+    "lengthFt": 76,
+    "sqft": 2432,
+    "beds": 4,
+    "baths": 3,
+    "description": "The Heritage Pointe is a spacious 4-bedroom, 3-bath Cavco (Fleetwood) double-wide built at the Rocky Mount plant — a 32x76 home with an optional 5th bedroom, island kitchen, and a tiled walk-in shower.",
+    "decorOptions": [],
+    "imageUrls": [
+      "/models/heritage-pointe-32764d/01.jpg",
+      "/models/heritage-pointe-32764d/02.jpg",
+      "/models/heritage-pointe-32764d/03.jpg",
+      "/models/heritage-pointe-32764d/04.jpg",
+      "/models/heritage-pointe-32764d/05.jpg",
+      "/models/heritage-pointe-32764d/06.jpg",
+      "/models/heritage-pointe-32764d/07.jpg"
+    ],
+    "aka": [
+      "Heritage Pointe 32764D",
+      "Fleetwood Heritage Pointe",
+      "32x76"
+    ],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://www.cavcohomes.com/our-homes/fleetwoodhomes/"
   }
 ]
