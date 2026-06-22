@@ -81,6 +81,25 @@ function buildImages(urls, modelCode) {
   return real.length ? [...real, ...plans] : [];
 }
 
+// Joe's real listing photos (public/models/<slug>/NN.jpg), imported from Google
+// Drive. When present, they REPLACE the manufacturer renders for that model.
+function localPhotos(slug) {
+  try {
+    return fs
+      .readdirSync(`public/models/${slug}`)
+      .filter((f) => /\.jpe?g$/i.test(f))
+      .sort()
+      .map((f) => `/models/${slug}/${f}`);
+  } catch {
+    return [];
+  }
+}
+
+function modelImages(slug, urls, modelCode) {
+  const local = localPhotos(slug);
+  return local.length ? local : buildImages(urls, modelCode);
+}
+
 // Common nicknames Joe uses, so the search box finds homes by them.
 const ALIASES = {
   "ultra-flex-28-52": ["52 Breeze", "Ultra Flex 52", "The Breeze"],
@@ -113,7 +132,7 @@ const out = models.map((m) => {
     baths: m.baths,
     description: String(m.description || "").trim(),
     decorOptions: Array.isArray(m.decorOptions) ? m.decorOptions : [],
-    imageUrls: buildImages(m.imageUrls, m.modelCode),
+    imageUrls: modelImages(slug, m.imageUrls, m.modelCode),
     aka: ALIASES[slug] || [],
     sourceUrl: m.sourceUrl,
   };
