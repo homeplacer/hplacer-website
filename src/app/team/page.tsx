@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
-import { teamGroups, initials } from "@/lib/team";
+import { teamGroups, initials, groupPhoto } from "@/lib/team";
 import { site } from "@/lib/site";
 import { PhoneIcon, ArrowIcon } from "@/components/icons";
 
@@ -20,6 +20,20 @@ export default function TeamPage() {
         30-day walk-through, you&apos;ll work with the same team — right here in Horry County.
       </PageHero>
 
+      <section className="container-x pt-12">
+        <figure className="mx-auto max-w-3xl overflow-hidden rounded-card border border-stone-line shadow-sm">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={groupPhoto}
+            alt="The Home Placer crew outside the Myrtle Beach office"
+            className="w-full object-cover"
+          />
+          <figcaption className="bg-stone-surface px-5 py-3 text-center text-sm text-stone-muted">
+            The Home Placer crew — Myrtle Beach, SC
+          </figcaption>
+        </figure>
+      </section>
+
       <section className="container-x space-y-12 py-14">
         {teamGroups.map((group) => (
           <div key={group.label}>
@@ -28,27 +42,31 @@ export default function TeamPage() {
             </h2>
             <div className="mt-5 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {group.members.map((m) => (
-                <div key={m.name} className="rounded-card border border-stone-line bg-stone-bg p-6 text-center">
+                <div key={m.name} className="overflow-hidden rounded-card border border-stone-line bg-stone-bg">
                   {m.photo ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={m.photo}
                       alt={m.name}
-                      className="mx-auto size-24 rounded-full object-cover"
+                      className="aspect-[4/5] w-full object-cover"
                     />
                   ) : (
-                    <span className="mx-auto grid size-24 place-items-center rounded-full bg-brand-100 font-display text-2xl font-semibold text-brand-700">
-                      {initials(m.name)}
-                    </span>
+                    <div className="flex aspect-[4/5] w-full items-center justify-center bg-brand-100">
+                      <span className="font-display text-5xl font-semibold text-brand-600/70">
+                        {initials(m.name)}
+                      </span>
+                    </div>
                   )}
-                  <h3 className="mt-4 font-display text-lg font-semibold text-stone-ink">{m.name}</h3>
-                  <p className="text-sm font-semibold text-brand-600">{m.title}</p>
-                  {m.blurb && <p className="mt-2 text-sm leading-relaxed text-stone-muted">{m.blurb}</p>}
-                  {m.email && (
-                    <a href={`mailto:${m.email}`} className="mt-3 inline-block text-sm font-medium text-brand-700 hover:text-brand-900">
-                      {m.email}
-                    </a>
-                  )}
+                  <div className="p-5 text-center">
+                    <h3 className="font-display text-lg font-semibold text-stone-ink">{m.name}</h3>
+                    <p className="text-sm font-semibold text-brand-600">{m.title}</p>
+                    {m.blurb && <p className="mt-2 text-sm leading-relaxed text-stone-muted">{m.blurb}</p>}
+                    {m.email && (
+                      <a href={`mailto:${m.email}`} className="mt-3 inline-block text-sm font-medium text-brand-700 hover:text-brand-900">
+                        {m.email}
+                      </a>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

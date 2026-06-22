@@ -1,7 +1,7 @@
 // Home Placer team — from the company org chart.
 // "Laborer/Labor" roles are presented as "Site Work" (Joe's call).
 // Ashley Love (CFO) is intentionally not listed on the public site.
-// Add a `photo` path (in public/team/) to replace the initials avatar.
+// Photos in public/team/ (uniform 4:5 crop). People without a photo show initials.
 export interface TeamMember {
   name: string;
   title: string;
@@ -14,6 +14,9 @@ export interface TeamGroup {
   label: string;
   members: TeamMember[];
 }
+
+// Whole-crew shot outside the office (1801 N Oak St).
+export const groupPhoto = "/team/team-group.jpg";
 
 export const teamGroups: TeamGroup[] = [
   {
@@ -45,25 +48,27 @@ export const teamGroups: TeamGroup[] = [
   {
     label: "Field Leads",
     members: [
-      { name: "Greg Distefano", title: "Head of Site Work" },
-      { name: "Brandon Angelo", title: "Lead Mechanic & Maintenance" },
-      { name: "Wade Pratt", title: "Lead Site Work" },
+      { name: "Greg Distefano", title: "Head of Site Work", photo: "/team/greg-distefano.jpg" },
+      { name: "Brandon Angelo", title: "Lead Mechanic & Maintenance", photo: "/team/brandon-angelo.jpg" },
+      { name: "Wade Pratt", title: "Lead Site Work", photo: "/team/wade-pratt.jpg" },
     ],
   },
   {
     label: "Carpentry",
     members: [
-      { name: "Scott Choma", title: "Carpenter" },
+      { name: "Scott Choma", title: "Carpenter", photo: "/team/scott-choma.jpg" },
       { name: "Sam Cliffton", title: "Carpenter" },
-      { name: "Kadin Prestly", title: "Carpenter" },
+      { name: "Kadin Prestly", title: "Carpenter", photo: "/team/kadin-prestly.jpg" },
     ],
   },
   {
     label: "Site Work",
     members: [
-      { name: "Hunter Martin", title: "Site Work" },
-      { name: "Devin Prestly", title: "Site Work" },
-      { name: "Jonah Stiffler", title: "Site Work" },
+      { name: "Hunter Martin", title: "Site Work", photo: "/team/hunter-martin.jpg" },
+      { name: "Devin Prestly", title: "Site Work", photo: "/team/devin-prestly.jpg" },
+      { name: "Jonah Stiffler", title: "Site Work", photo: "/team/jonah-stiffler.jpg" },
+      // Andrew is not on the org chart — last name + exact role TBD by Joe.
+      { name: "Andrew", title: "Site Work", photo: "/team/andrew.jpg" },
     ],
   },
 ];
