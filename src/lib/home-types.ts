@@ -21,6 +21,8 @@ export interface Home {
   decorOptions: string[];
   imageUrls: string[];
   aka?: string[]; // common nicknames, searchable (e.g. "52 Breeze")
+  bestSeller?: boolean;
+  bestSellerRank?: number; // 0-based order among best-sellers; 999 if not
   price?: number; // home-only price (pricing TBD)
   setupPrice?: number; // full-setup all-in: home + ¼-acre lot + setup + utilities (pricing TBD)
 }

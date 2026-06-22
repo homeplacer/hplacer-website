@@ -29,6 +29,11 @@ export function HomeCard({ home }: { home: Home }) {
         <span className="absolute left-3 top-3 rounded-full bg-stone-bg/90 px-2.5 py-1 text-xs font-semibold text-brand-800 shadow-sm">
           {home.brand}
         </span>
+        {home.bestSeller && (
+          <span className="absolute right-3 top-3 rounded-full bg-accent-400 px-2.5 py-1 text-xs font-bold text-brand-950 shadow-sm">
+            ★ Best Seller
+          </span>
+        )}
       </div>
 
       <div className="flex flex-1 flex-col p-4">

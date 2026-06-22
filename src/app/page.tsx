@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { site } from "@/lib/site";
-import { featuredHomes, BRANDS } from "@/lib/homes";
+import { bestSellerHomes, BRANDS } from "@/lib/homes";
 import { galleryByCategory } from "@/lib/gallery";
 import { HomeCard } from "@/components/home-card";
 import {
@@ -16,7 +16,7 @@ export const metadata = {
 };
 
 export default function HomePage() {
-  const homes = featuredHomes(6);
+  const homes = bestSellerHomes().slice(0, 6);
   const work = [...galleryByCategory("homes").slice(0, 4), ...galleryByCategory("development").slice(0, 2)];
 
   return (
@@ -60,35 +60,20 @@ export default function HomePage() {
             </ul>
           </div>
 
-          {/* Package card */}
+          {/* Hero photo — real #1 best-seller home */}
           <div className="relative">
-            <div className="rounded-2xl border border-white/15 bg-white/5 p-6 shadow-2xl backdrop-blur-sm">
-              <p className="text-xs font-semibold uppercase tracking-wider text-accent-300">
-                The Home Placer package
-              </p>
-              <div className="mt-4 space-y-3">
-                {[
-                  { label: "A brand-new manufactured home", note: "Clayton · Cavco · Champion" },
-                  { label: "The land it sits on", note: "Across the Grand Strand" },
-                  { label: "Set, tied down & move-in ready", note: "Permits & utilities handled" },
-                ].map((row) => (
-                  <div key={row.label} className="flex items-start gap-3 rounded-xl bg-white/5 p-3">
-                    <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-accent-400 text-brand-950">
-                      <CheckIcon className="size-3.5" strokeWidth={2.5} />
-                    </span>
-                    <span>
-                      <span className="block text-sm font-semibold text-white">{row.label}</span>
-                      <span className="block text-xs text-stone-100/60">{row.note}</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-5 flex items-end justify-between border-t border-white/10 pt-4">
-                <span className="text-sm text-stone-100/70">Packages from</span>
-                <span className="font-display text-3xl font-semibold text-white">
-                  the low $200s
-                </span>
-              </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/models/ultra-flex-28-52/01.jpg"
+              alt="A new Home Placer manufactured home on its land in Horry County, SC"
+              className="aspect-[4/3] w-full rounded-2xl object-cover shadow-2xl ring-1 ring-white/15"
+            />
+            <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-accent-400 px-3 py-1 text-xs font-bold text-brand-950 shadow">
+              ★ Best Seller · The 52 Breeze
+            </span>
+            <div className="absolute bottom-4 left-4 rounded-xl bg-brand-950/80 px-4 py-2.5 backdrop-blur">
+              <span className="block text-xs font-medium text-stone-100/70">Packages from</span>
+              <span className="font-display text-2xl font-semibold text-white">the low $200s</span>
             </div>
           </div>
         </div>
@@ -109,13 +94,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ──────────────────── Featured homes ──────────────────── */}
+      {/* ──────────────────── Best sellers ──────────────────── */}
       <section className="container-x py-20">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">Available now</p>
+            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">Our most-placed homes</p>
             <h2 className="mt-2 font-display text-3xl font-semibold text-stone-ink sm:text-4xl">
-              Homes ready to place
+              Best sellers
             </h2>
           </div>
           <Link

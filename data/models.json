@@ -37,6 +37,8 @@
       "Ultra Flex 52",
       "The Breeze"
     ],
+    "bestSeller": true,
+    "bestSellerRank": 0,
     "sourceUrl": "https://claytonoxfordhbf.com/models/29upf28523ah/"
   },
   {
@@ -77,6 +79,8 @@
       "Ultra Flex 68",
       "68 Breeze"
     ],
+    "bestSeller": true,
+    "bestSellerRank": 5,
     "sourceUrl": "https://claytonoxfordhbf.com/models/29upf28684ah/"
   },
   {
@@ -114,6 +118,8 @@
       "Ultra 76",
       "Ultra Flex 76"
     ],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonoxfordhbf.com/models/29upf32764ah/"
   },
   {
@@ -141,6 +147,8 @@
       "/models/beacon/10.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn16663ah/"
   },
   {
@@ -170,6 +178,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/b571c7d7-3e82-4caa-8d07-b119a88b531b.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn16763ah/"
   },
   {
@@ -199,6 +209,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/405b7971-a9e7-4e27-b0fd-4af083cf6033.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn28563ah/"
   },
   {
@@ -230,6 +242,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/ef7c5867-8f72-4675-b2c0-44aef5ee0292.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn28603ah/"
   },
   {
@@ -263,6 +277,8 @@
       "/models/eclipse/15.jpg"
     ],
     "aka": [],
+    "bestSeller": true,
+    "bestSellerRank": 4,
     "sourceUrl": "https://claytonbuilthorizon.com/models/29hzr28684ah/"
   },
   {
@@ -315,6 +331,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/57a1a532-145c-423c-aa31-e9660940305c.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytongiles.com/models/46ess32684ah/"
   },
   {
@@ -349,6 +367,8 @@
       "/models/leo/16.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytongiles.com/models/46xcl28563ah/"
   },
   {
@@ -379,6 +399,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/ce33a58e-456f-4e8e-8bd9-62cf75ffe336.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytongiles.com/models/46xcl32603ah/"
   },
   {
@@ -413,6 +435,8 @@
       "/models/hartford/16.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytongiles.com/models/46all28403ah/"
   },
   {
@@ -447,6 +471,8 @@
       "/models/richmond/16.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytongiles.com/models/46all28483ah/"
   },
   {
@@ -471,6 +497,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://newhomes.cavcohomes.com/vivid/"
   },
   {
@@ -513,6 +541,8 @@
     "aka": [
       "Cavco Atmos"
     ],
+    "bestSeller": true,
+    "bestSellerRank": 6,
     "sourceUrl": "https://newhomes.cavcohomes.com/atmos/"
   },
   {
@@ -553,6 +583,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--AESSSwfP--/c_fill,f_auto,fl_any_format.progressive,h_432,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/ironclad-1676-standard.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-1676"
   },
   {
@@ -573,6 +605,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--jEaoHgLk--/c_fill,f_auto,fl_any_format.progressive,h_533,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-ironclad-2848-09-standard.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-2848-09"
   },
   {
@@ -599,6 +633,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--dQUHynbl--/c_fill,f_auto,fl_any_format.progressive,h_451,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-ironclad-2852-04-primary-bath-72-shower.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-2852-04"
   },
   {
@@ -631,6 +667,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--nPerktbC--/c_fill,f_auto,fl_any_format.progressive,h_433,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-ironclad-2856-07-dining-area-sliding-glass-door.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-2856-07"
   },
   {
@@ -674,6 +712,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--F9hBlX-j--/c_fill,f_auto,fl_any_format.progressive,h_432,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/ironclad-2856-opt-prim-bath-2.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-2856-08"
   },
   {
@@ -694,6 +734,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-2856-09"
   },
   {
@@ -729,6 +771,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--c5yUfv7g--/c_fill,f_auto,fl_any_format.progressive,h_409,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-ironclad-2860-12-dining-area-sliding-glass-door.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-2860-12"
   },
   {
@@ -756,6 +800,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-2864-05"
   },
   {
@@ -783,6 +829,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-2868-07"
   },
   {
@@ -812,6 +860,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--QwDx8xb9--/c_fill,f_auto,fl_any_format.progressive,h_333,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-ironclad-2876-09-dining-area-sliding-glass-door.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-2876-09"
   },
   {
@@ -841,6 +891,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-3256-03"
   },
   {
@@ -879,6 +931,8 @@
       "https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/_0000_ironclad-3260-opt-sgd.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-3260"
   },
   {
@@ -906,6 +960,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-3264-07"
   },
   {
@@ -941,6 +997,8 @@
       "https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-ironclad-3268-12-dining-area-sliding-glass-door.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-3268-12"
   },
   {
@@ -992,6 +1050,8 @@
       "https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/ironclad-3276-opt-lrg-shwr_free-standing-tub.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-3276"
   },
   {
@@ -1047,6 +1107,8 @@
       "https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/ironclad-3276-21-opt-prim-bath-2.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-3276-21"
   },
   {
@@ -1087,6 +1149,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--IWojUGGG--/c_fill,f_auto,fl_any_format.progressive,h_395,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-lillington-dutch-elite-2963-dining-area-sliding-glass-door.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-2963-ashley"
   },
   {
@@ -1127,6 +1191,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--QaGLzmG5--/c_fill,f_auto,fl_any_format.progressive,h_381,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-lillington-dutch-elite-3975-utility-room-door.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-3975-garner"
   },
   {
@@ -1149,6 +1215,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-9666-belmont"
   },
   {
@@ -1166,6 +1234,8 @@
     "decorOptions": [],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1440"
   },
   {
@@ -1183,6 +1253,8 @@
     "decorOptions": [],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1440-02"
   },
   {
@@ -1200,6 +1272,8 @@
     "decorOptions": [],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1448-01"
   },
   {
@@ -1220,6 +1294,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1656-01"
   },
   {
@@ -1240,6 +1316,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1660-03"
   },
   {
@@ -1257,6 +1335,8 @@
     "decorOptions": [],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1660-04"
   },
   {
@@ -1277,6 +1357,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1660-pamlico"
   },
   {
@@ -1311,6 +1393,8 @@
       "https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-lillington-dutch-elite-1676-01-primary-glamour-bath.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1676-01"
   },
   {
@@ -1342,6 +1426,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--cG8KVpPn--/c_fill,f_auto,fl_any_format.progressive,h_240,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-lillington-dutch-elite-1676-07-standard.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1676-07"
   },
   {
@@ -1363,6 +1449,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1676-12"
   },
   {
@@ -1380,6 +1468,8 @@
     "decorOptions": [],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1676-14"
   },
   {
@@ -1442,6 +1532,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--P6DIs2C0--/c_fill,f_auto,fl_any_format.progressive,h_481,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-lillington-dutch-elite-2852-02-4-bedroom-layout.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-2852-02-spruce-pine"
   },
   {
@@ -1465,6 +1557,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-2858-02"
   },
   {
@@ -1485,6 +1579,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-2860-10"
   },
   {
@@ -1510,6 +1606,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--iVjkOBUn--/c_fill,f_auto,fl_any_format.progressive,h_525,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-lillington-dutch-elite-2945-study.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-2945-piedmont"
   },
   {
@@ -1531,6 +1629,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-2951"
   },
   {
@@ -1570,6 +1670,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--9rmfuBUx--/c_fill,f_auto,fl_any_format.progressive,h_440,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-lillington-dutch-elite-2955-standard.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-2955-greenwood"
   },
   {
@@ -1590,6 +1692,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-2956"
   },
   {
@@ -1650,6 +1754,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--A-rD6qrm--/c_fill,f_auto,fl_any_format.progressive,h_455,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/dutch-elite-3258-opt-lrg-shwr.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-3258-03"
   },
   {
@@ -1696,6 +1802,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--JqvhlHBn--/c_fill,f_auto,fl_any_format.progressive,h_461,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-lillington-dutch-elite-3262-02-primary-bath-fresstanding-tub-walk-in-shower.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-3262-02-silver-birch"
   },
   {
@@ -1716,6 +1824,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-3268-04"
   },
   {
@@ -1747,6 +1857,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--750vPAKK--/c_fill,f_auto,fl_any_format.progressive,h_400,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-lillington-dutch-elite-3268-dining-area-sliding-glass-door.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-3268-shenandoah"
   },
   {
@@ -1768,6 +1880,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-3276-04-woodland"
   },
   {
@@ -1788,6 +1902,8 @@
     ],
     "imageUrls": [],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-3276-09"
   },
   {
@@ -1813,6 +1929,8 @@
       "https://res.cloudinary.com/douaer6ci/image/fetch/s--Y3UHNIm8--/c_fill,f_auto,fl_any_format.progressive,h_388,q_70,w_800/https://prd-champion-homes.s3.amazonaws.com/fpcategories/images/023-lillington-dutch-elite-3277-dining-area-sliding-glass-door.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-3277-holston"
   },
   {
@@ -1847,6 +1965,8 @@
       "https://api.claytonhomes.com/images/mfg/int/decaa308-7b47-4180-9d49-5b749da6ea69.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16562ah/"
   },
   {
@@ -1884,6 +2004,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/9497c308-31bc-46fe-8120-6ad23788f7d2.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16663ah/"
   },
   {
@@ -1916,6 +2038,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/eded766f-268b-4c16-b908-def7746b2ad8.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuiltmiyo.com/models/46myi16763ah/"
   },
   {
@@ -1952,6 +2076,8 @@
       "https://api.claytonhomes.com/images/mfg/int/035fc427-ceb3-454e-9f96-0831e32e87b3.jpg?width=992"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16723ah/"
   },
   {
@@ -1989,6 +2115,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/5cddb274-861d-40e9-9b31-71ee4c510c8a.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16763bh/"
   },
   {
@@ -2026,6 +2154,8 @@
       "https://api.claytonhomes.com/images/mfg/int/54de1d45-a7b8-4f18-b9bb-b851ba631f42.jpg?width=992"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16763dh/"
   },
   {
@@ -2062,6 +2192,8 @@
       "https://api.claytonhomes.com/images/mfg/int/1f5bc71a-6ec8-4d0c-a62d-1681ad6d1081.jpg?width=992"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo28523ah/"
   },
   {
@@ -2100,6 +2232,8 @@
       "/models/reveal/16.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo28563ah/"
   },
   {
@@ -2134,6 +2268,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/8a405482-4e04-4148-ba80-e9a8defe0c00.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuiltmiyo.com/models/46myi32564ah/"
   },
   {
@@ -2172,6 +2308,8 @@
       "/models/impact/16.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo28644ah/"
   },
   {
@@ -2210,6 +2348,8 @@
       "https://api.claytonhomes.com/images/mfg/int/93ee5a7c-3d43-4e8e-884e-f8d8c4fb58f0.jpg?width=992"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo28764ah/"
   },
   {
@@ -2247,6 +2387,8 @@
       "https://api.claytonhomes.com/images/mfg/int/dbc50683-f669-495c-8bf6-65e6f80593f7.jpg?width=992"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo32684ah/"
   },
   {
@@ -2282,6 +2424,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/185ae034-a9b5-4ce3-abd2-6611e6454362.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuiltmiyo.com/models/46myi32764ah/"
   },
   {
@@ -2310,6 +2454,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/3faa69b7-7eba-499b-9aff-72ae0aae6f9e.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuilttempo.com/models/57tpo16441ah/"
   },
   {
@@ -2340,6 +2486,8 @@
       "https://api.claytonhomes.com/images/mfg/int/487c7a30-d382-461a-b39a-6c7b4ae0e98a.jpg?width=992"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuilttempo.com/models/57tpo16562ah/"
   },
   {
@@ -2370,6 +2518,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/459d1564-c965-40a0-92a6-46ae75716e13.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuilttempo.com/models/57tpo16602ah/"
   },
   {
@@ -2402,6 +2552,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/1773ef36-c719-4a83-ac5a-c11491b7a71b.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuilttempo.com/models/57tpo16663ah/"
   },
   {
@@ -2435,6 +2587,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/f8101a17-f4e9-420c-8fef-dc8cd1f32c5a.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuilttempo.com/models/57tmi16723ah/"
   },
   {
@@ -2471,6 +2625,8 @@
     "aka": [
       "Staying Alive"
     ],
+    "bestSeller": true,
+    "bestSellerRank": 1,
     "sourceUrl": "https://claytonbuilttempo.com/models/57tpo28563ph/"
   },
   {
@@ -2510,6 +2666,8 @@
       "/models/shout/16.jpg"
     ],
     "aka": [],
+    "bestSeller": true,
+    "bestSellerRank": 3,
     "sourceUrl": "https://claytonbuilttempo.com/models/57tmi28563ah/"
   },
   {
@@ -2545,6 +2703,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/8b94adb2-0f99-45b4-8210-64d5b7b8802e.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuilttempo.com/models/57tpo32563ah/"
   },
   {
@@ -2579,6 +2739,8 @@
       "/models/rocket-man/16.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuilttempo.com/models/57tpo28663ah/"
   },
   {
@@ -2619,6 +2781,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/232c157c-df17-4be9-9d3e-3d806d5086d9.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://claytonbuilttempo.com/models/57tpo28724ah/"
   },
   {
@@ -2639,6 +2803,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/620144b7-c810-4fe8-8f78-1b8b95aaa8e3.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://rockwell-fairway.com/models/57fwy16763bh/"
   },
   {
@@ -2673,6 +2839,8 @@
       "/models/pinehurst/15.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://rockwell-fairway.com/models/57fwy16763ah/"
   },
   {
@@ -2693,6 +2861,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/687feab6-084f-4d8d-a3db-b284166ed8b4.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://rockwell-fairway.com/models/57fwy28523ah/"
   },
   {
@@ -2731,6 +2901,8 @@
       "/models/tanglewood/16.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://rockwell-fairway.com/models/57fwy28603ah/"
   },
   {
@@ -2767,6 +2939,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/98672926-4272-4995-922e-0977f5bdcc57.png"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://rockwell-fairway.com/models/57fwy28644ah/"
   },
   {
@@ -2801,6 +2975,8 @@
       "/models/caddie/16.jpg"
     ],
     "aka": [],
+    "bestSeller": true,
+    "bestSellerRank": 2,
     "sourceUrl": "https://rockwell-fairway.com/models/57fwy28683bh/"
   },
   {
@@ -2822,6 +2998,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/c59f192d-876d-4a51-801b-49e14b2dcbcf.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://rockwell-fairway.com/models/57fwy28683ah/"
   },
   {
@@ -2843,6 +3021,8 @@
       "https://api.claytonhomes.com/images/mfg/flp/fb1de5b1-4d55-41f1-89c8-ad5afcd548b1.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://rockwell-fairway.com/models/57fwy28764ah/"
   },
   {
@@ -2873,6 +3053,8 @@
     "aka": [
       "Cavco Pegasus"
     ],
+    "bestSeller": true,
+    "bestSellerRank": 7,
     "sourceUrl": "https://www.cavcohomes.com/our-homes/fleetwoodhomes/standard/us/556-pegasus-28483h"
   },
   {
@@ -2901,6 +3083,8 @@
       "https://cdn2.cavco.com/public/phhweb/gallery/file/8B40CC653B4C4340BBA18BB5F6F5DECA/26_c_270_ovation_axis_ap3263n_bath_001_web_1769725818398_724_10.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.cavcohomes.com/our-homes/fleetwoodhomes/standard/us/556-axis-32563n"
   },
   {
@@ -2934,6 +3118,8 @@
       "https://d132mt2yijm03y.cloudfront.net/manufacturer/2035/floorplan/235843/15_thumb_xxl.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.cavcohomecenters.com/plan/235843-3974/cavco-home-center-of-tifton/tifton/the-summit/sebastian-32644d/"
   },
   {
@@ -2970,6 +3156,8 @@
       "https://d132mt2yijm03y.cloudfront.net/manufacturer/2693/floorplan/235517/18_thumb_xxl.jpg"
     ],
     "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
     "sourceUrl": "https://www.cavcohomecenters.com/plan/235517-5559/cavco-home-center-of-lafayette/lafayette/lifestyle/reece-32663a/"
   }
 ]

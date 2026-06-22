@@ -110,6 +110,19 @@ const ALIASES = {
   "stayin-alive": ["Staying Alive"],
 };
 
+// Joe's best-sellers, in his stated order (drives the default "Best selling"
+// sort, the homepage feature, and the card badge).
+const BEST_SELLERS = [
+  "ultra-flex-28-52", // 52 Breeze
+  "stayin-alive",
+  "caddie",
+  "shout",
+  "eclipse",
+  "ultra-flex-28-68", // Ultra 68
+  "atmos",
+  "pegasus",
+];
+
 const seen = new Set();
 const out = models.map((m) => {
   const name = cleanName(m);
@@ -134,6 +147,8 @@ const out = models.map((m) => {
     decorOptions: Array.isArray(m.decorOptions) ? m.decorOptions : [],
     imageUrls: modelImages(slug, m.imageUrls, m.modelCode),
     aka: ALIASES[slug] || [],
+    bestSeller: BEST_SELLERS.includes(slug),
+    bestSellerRank: BEST_SELLERS.includes(slug) ? BEST_SELLERS.indexOf(slug) : 999,
     sourceUrl: m.sourceUrl,
   };
 });

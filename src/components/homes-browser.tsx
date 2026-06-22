@@ -18,6 +18,7 @@ const SQFT_STEPS = [0, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400];
 const PRICE_STEPS = [0, 200000, 220000, 240000, 260000, 280000, 300000];
 
 const SORTS = [
+  { label: "Best selling", value: "best" },
   { label: "Largest first", value: "sqft-desc" },
   { label: "Smallest first", value: "sqft-asc" },
   { label: "Price: low to high", value: "price-asc" },
@@ -46,7 +47,7 @@ export function HomesBrowser({
   const [maxSqft, setMaxSqft] = useState(Infinity);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(Infinity);
-  const [sort, setSort] = useState<Sort>("sqft-desc");
+  const [sort, setSort] = useState<Sort>("best");
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -63,6 +64,8 @@ export function HomesBrowser({
       return true;
     });
     return [...filtered].sort((a, b) => {
+      if (sort === "best")
+        return ((a.bestSellerRank ?? 999) - (b.bestSellerRank ?? 999)) || b.sqft - a.sqft;
       if (sort === "price-asc") return (displayPrice(a) ?? Infinity) - (displayPrice(b) ?? Infinity);
       if (sort === "price-desc") return (displayPrice(b) ?? -Infinity) - (displayPrice(a) ?? -Infinity);
       if (sort === "sqft-asc") return a.sqft - b.sqft;

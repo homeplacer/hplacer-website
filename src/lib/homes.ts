@@ -31,6 +31,8 @@ interface RawModel {
   decorOptions: string[];
   imageUrls: string[];
   aka?: string[];
+  bestSeller?: boolean;
+  bestSellerRank?: number;
   sourceUrl: string;
 }
 
@@ -73,6 +75,8 @@ export function getAllHomes(): Home[] {
     decorOptions: m.decorOptions ?? [],
     imageUrls: m.imageUrls ?? [],
     aka: m.aka ?? [],
+    bestSeller: m.bestSeller ?? false,
+    bestSellerRank: m.bestSellerRank ?? 999,
     price: homePricing[m.slug],
     setupPrice: setupPricing[m.slug],
   }));
@@ -91,6 +95,12 @@ export function getHome(slug: string): Home | undefined {
 
 export function getHomesByBrand(brand: Brand): Home[] {
   return getAllHomes().filter((h) => h.brand === brand);
+}
+
+export function bestSellerHomes(): Home[] {
+  return getAllHomes()
+    .filter((h) => h.bestSeller)
+    .sort((a, b) => (a.bestSellerRank ?? 999) - (b.bestSellerRank ?? 999));
 }
 
 export function featuredHomes(n = 6): Home[] {
