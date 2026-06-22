@@ -1,35 +1,70 @@
-// Home Placer team. DRAFT — names/roles/photos to be confirmed by Joe.
+// Home Placer team — from the company org chart.
+// "Laborer/Labor" roles are presented as "Site Work" (Joe's call).
+// Ashley Love (CFO) is intentionally not listed on the public site.
 // Add a `photo` path (in public/team/) to replace the initials avatar.
 export interface TeamMember {
   name: string;
-  role: string;
+  title: string;
   blurb?: string;
   email?: string;
   photo?: string;
 }
 
-export const team: TeamMember[] = [
+export interface TeamGroup {
+  label: string;
+  members: TeamMember[];
+}
+
+export const teamGroups: TeamGroup[] = [
   {
-    name: "Joe Scaturro",
-    role: "Owner & Broker",
-    blurb:
-      "Founded Home Placer to make a brand-new home on your own land genuinely affordable in Horry County — handled start to finish, the honest way.",
+    label: "Leadership",
+    members: [
+      {
+        name: "Joe Scaturro",
+        title: "Owner & Founder",
+        blurb:
+          "Founded Home Placer to make a brand-new home on your own land genuinely affordable in Horry County — handled start to finish, the honest way.",
+      },
+      {
+        name: "Tara Dufour",
+        title: "Operations Manager",
+        blurb: "Keeps every project — and every customer — moving from first call to move-in day.",
+      },
+    ],
   },
   {
-    name: "Carolina",
-    role: "Sales Specialist",
-    blurb: "Helps buyers match a home, a lot, and a payment that actually works — no pressure.",
-    email: "Carolina@hplacer.com",
+    label: "Project Management",
+    members: [
+      {
+        name: "Brett Chester",
+        title: "Project Manager",
+        blurb: "Runs each build on the ground — land prep, the set, and the finish work.",
+      },
+    ],
   },
   {
-    name: "Tara",
-    role: "Client Care Coordinator",
-    blurb: "Keeps your purchase moving — paperwork, scheduling, and answers when you need them.",
+    label: "Field Leads",
+    members: [
+      { name: "Greg Distefano", title: "Head of Site Work" },
+      { name: "Brandon Angelo", title: "Lead Mechanic & Maintenance" },
+      { name: "Wade Pratt", title: "Lead Site Work" },
+    ],
   },
   {
-    name: "Brett",
-    role: "Service & Warranty",
-    blurb: "Handles setup, the 30-day walk-through, and anything you need after you move in.",
+    label: "Carpentry",
+    members: [
+      { name: "Scott Choma", title: "Carpenter" },
+      { name: "Sam Cliffton", title: "Carpenter" },
+      { name: "Kadin Prestly", title: "Carpenter" },
+    ],
+  },
+  {
+    label: "Site Work",
+    members: [
+      { name: "Hunter Martin", title: "Site Work" },
+      { name: "Devin Prestly", title: "Site Work" },
+      { name: "Jonah Stiffler", title: "Site Work" },
+    ],
   },
 ];
 

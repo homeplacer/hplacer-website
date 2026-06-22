@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
-import { team, initials } from "@/lib/team";
+import { teamGroups, initials } from "@/lib/team";
 import { site } from "@/lib/site";
 import { PhoneIcon, ArrowIcon } from "@/components/icons";
 
@@ -20,33 +20,40 @@ export default function TeamPage() {
         30-day walk-through, you&apos;ll work with the same team — right here in Horry County.
       </PageHero>
 
-      <section className="container-x py-14">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {team.map((m) => (
-            <div key={m.name} className="rounded-card border border-stone-line bg-stone-bg p-6 text-center">
-              {m.photo ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={m.photo}
-                  alt={m.name}
-                  className="mx-auto size-24 rounded-full object-cover"
-                />
-              ) : (
-                <span className="mx-auto grid size-24 place-items-center rounded-full bg-brand-100 font-display text-2xl font-semibold text-brand-700">
-                  {initials(m.name)}
-                </span>
-              )}
-              <h2 className="mt-4 font-display text-lg font-semibold text-stone-ink">{m.name}</h2>
-              <p className="text-sm font-semibold text-brand-600">{m.role}</p>
-              {m.blurb && <p className="mt-2 text-sm leading-relaxed text-stone-muted">{m.blurb}</p>}
-              {m.email && (
-                <a href={`mailto:${m.email}`} className="mt-3 inline-block text-sm font-medium text-brand-700 hover:text-brand-900">
-                  {m.email}
-                </a>
-              )}
+      <section className="container-x space-y-12 py-14">
+        {teamGroups.map((group) => (
+          <div key={group.label}>
+            <h2 className="font-display text-sm font-semibold uppercase tracking-wider text-brand-600">
+              {group.label}
+            </h2>
+            <div className="mt-5 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {group.members.map((m) => (
+                <div key={m.name} className="rounded-card border border-stone-line bg-stone-bg p-6 text-center">
+                  {m.photo ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={m.photo}
+                      alt={m.name}
+                      className="mx-auto size-24 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="mx-auto grid size-24 place-items-center rounded-full bg-brand-100 font-display text-2xl font-semibold text-brand-700">
+                      {initials(m.name)}
+                    </span>
+                  )}
+                  <h3 className="mt-4 font-display text-lg font-semibold text-stone-ink">{m.name}</h3>
+                  <p className="text-sm font-semibold text-brand-600">{m.title}</p>
+                  {m.blurb && <p className="mt-2 text-sm leading-relaxed text-stone-muted">{m.blurb}</p>}
+                  {m.email && (
+                    <a href={`mailto:${m.email}`} className="mt-3 inline-block text-sm font-medium text-brand-700 hover:text-brand-900">
+                      {m.email}
+                    </a>
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
 
         {/* Existing homeowners */}
         <div className="mt-14 grid gap-6 rounded-card border border-stone-line bg-stone-surface p-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
