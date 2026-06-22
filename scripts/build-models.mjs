@@ -41,9 +41,12 @@ function cleanName(m) {
 // elevations/exterior vs fpcategories/floorplan.)
 function imgRank(u) {
   const s = u.toLowerCase();
-  if (/\/flp\/|floorplan|fpcategories|\/fp\//.test(s)) return 3;
-  if (/\/ext\/|elevation|exterior/.test(s)) return 0;
-  if (/\/int\/|interior/.test(s)) return 1;
+  if (/\/flp\/|floorplan|fpcategories|\/fp\//.test(s)) return 5;
+  // Exteriors lead — but prefer the curated display versions (they carry a
+  // query string like ?width=); a few bare /ext/ assets are actually composite
+  // line-drawings, so they trail the real photos.
+  if (/\/ext\/|elevation|exterior|_bf0_/.test(s)) return /\?/.test(u) ? 0 : 1;
+  if (/\/int\/|interior|kitchen|living|dining|bed|bath|porch|foyer/.test(s)) return 3;
   return 2;
 }
 const sortImages = (urls) =>
