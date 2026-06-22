@@ -17,6 +17,15 @@ const BED_OPTIONS = [
 const SQFT_STEPS = [0, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400];
 const PRICE_STEPS = [0, 200000, 220000, 240000, 260000, 280000, 300000];
 
+// Single-wides are 14 or 16 ft wide; anything wider is a double-wide.
+const WIDTH_TYPES = [
+  { label: "All widths", value: "all" },
+  { label: "Single-wide", value: "single" },
+  { label: "Double-wide", value: "double" },
+] as const;
+type WidthType = (typeof WIDTH_TYPES)[number]["value"];
+const isSingleWide = (h: Home) => h.widthFt <= 16;
+
 const SORTS = [
   { label: "Best selling", value: "best" },
   { label: "Largest first", value: "sqft-desc" },
@@ -41,6 +50,7 @@ export function HomesBrowser({
   }, [homes]);
 
   const [brand, setBrand] = useState<BrandTab>(brandTabs.includes(initialBrand) ? initialBrand : "All");
+  const [widthType, setWidthType] = useState<WidthType>("all");
   const [query, setQuery] = useState("");
   const [minBeds, setMinBeds] = useState(0);
   const [minSqft, setMinSqft] = useState(0);
@@ -53,6 +63,8 @@ export function HomesBrowser({
     const q = query.trim().toLowerCase();
     const filtered = homes.filter((h) => {
       if (brand !== "All" && h.brand !== brand) return false;
+      if (widthType === "single" && !isSingleWide(h)) return false;
+      if (widthType === "double" && isSingleWide(h)) return false;
       if (h.beds < minBeds) return false;
       if (h.sqft < minSqft || h.sqft > maxSqft) return false;
       if (q && !`${h.name} ${h.series} ${h.brand} ${h.modelCode} ${(h.aka ?? []).join(" ")}`.toLowerCase().includes(q)) return false;
@@ -71,13 +83,14 @@ export function HomesBrowser({
       if (sort === "sqft-asc") return a.sqft - b.sqft;
       return b.sqft - a.sqft;
     });
-  }, [homes, brand, query, minBeds, minSqft, maxSqft, minPrice, maxPrice, sort]);
+  }, [homes, brand, widthType, query, minBeds, minSqft, maxSqft, minPrice, maxPrice, sort]);
 
   const selectClass =
     "rounded-lg border border-stone-line bg-stone-bg px-3 py-2 text-sm font-medium text-stone-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
 
   function reset() {
     setBrand("All");
+    setWidthType("all");
     setQuery("");
     setMinBeds(0);
     setMinSqft(0);
@@ -87,7 +100,7 @@ export function HomesBrowser({
   }
 
   const hasFilters =
-    brand !== "All" || query || minBeds || minSqft || maxSqft < Infinity || minPrice || maxPrice < Infinity;
+    brand !== "All" || widthType !== "all" || query || minBeds || minSqft || maxSqft < Infinity || minPrice || maxPrice < Infinity;
 
   return (
     <div>
@@ -125,6 +138,26 @@ export function HomesBrowser({
                 }
               >
                 {b}
+              </button>
+            ))}
+          </div>
+
+          <span className="hidden h-6 w-px bg-stone-line sm:block" />
+
+          {/* Single- vs double-wide */}
+          <div className="flex flex-wrap gap-1.5">
+            {WIDTH_TYPES.map((w) => (
+              <button
+                key={w.value}
+                type="button"
+                onClick={() => setWidthType(w.value)}
+                className={
+                  w.value === widthType
+                    ? "rounded-full bg-brand-700 px-3.5 py-2 text-sm font-semibold text-white"
+                    : "rounded-full border border-stone-line bg-stone-bg px-3.5 py-2 text-sm font-medium text-stone-ink hover:border-brand-300"
+                }
+              >
+                {w.label}
               </button>
             ))}
           </div>
