@@ -22,7 +22,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/locations",
     "/blog",
     "/about",
+    "/team",
     "/contact",
+    "/service-request",
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPaths.map((p) => ({

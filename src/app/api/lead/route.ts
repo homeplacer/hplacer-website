@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 //   RESEND_API_KEY         → emails the team (LEADS_TO, default leads@hplacer.com)
 // Always logs server-side as a fallback record.
 
-type LeadType = "contact" | "financing" | "subscribe";
+type LeadType = "contact" | "financing" | "subscribe" | "service";
 
 interface LeadBody {
   type?: LeadType;
@@ -17,6 +17,7 @@ interface LeadBody {
   email?: string;
   home?: string;
   hasLand?: string;
+  address?: string;
   message?: string;
 }
 
@@ -35,6 +36,7 @@ async function deliverToFub(lead: {
   email: string | null;
   home: string | null;
   hasLand: string | null;
+  address: string | null;
   message: string | null;
 }) {
   const key = process.env.FUB_API_KEY;
@@ -46,11 +48,14 @@ async function deliverToFub(lead: {
       ? "Financing Inquiry"
       : lead.type === "subscribe"
         ? "Registration"
-        : "General Inquiry";
+        : lead.type === "service"
+          ? "Service Request"
+          : "General Inquiry";
   const messageParts = [
     lead.message,
     lead.home ? `Interested in: ${lead.home}` : null,
     lead.hasLand ? `Has land: ${lead.hasLand}` : null,
+    lead.address ? `Home address: ${lead.address}` : null,
   ].filter(Boolean);
 
   const body = {
@@ -118,6 +123,7 @@ export async function POST(req: Request) {
     email: clean(body.email),
     home: clean(body.home),
     hasLand: clean(body.hasLand),
+    address: clean(body.address),
     message: clean(body.message),
   };
 

@@ -32,10 +32,12 @@ export default function OpengraphImage() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 38,
+              fontSize: 28,
+              fontWeight: 800,
+              letterSpacing: 1,
             }}
           >
-            🏠
+            HP
           </div>
           <div style={{ fontSize: 38, fontWeight: 700 }}>Home Placer</div>
         </div>

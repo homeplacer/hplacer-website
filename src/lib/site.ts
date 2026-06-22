@@ -15,6 +15,10 @@ export const site = {
   phoneSpoken: "843-849-4663",
   email: "Carolina@hplacer.com",
 
+  // Existing homeowners — warranty / service line (separate from sales).
+  warrantyPhoneDisplay: "(843) 484-9844",
+  warrantyPhoneDial: "+18434849844",
+
   address: {
     street: "1801 N Oak St",
     city: "Myrtle Beach",
@@ -70,6 +74,7 @@ export const navLinks = [
   { href: "/gallery", label: "Our Work" },
   { href: "/financing", label: "Financing" },
   { href: "/about", label: "About" },
+  { href: "/team", label: "Team" },
   { href: "/contact", label: "Contact" },
 ] as const;
 
@@ -77,7 +82,13 @@ export const resourceLinks = [
   { href: "/process", label: "How It Works" },
   { href: "/faq", label: "FAQ" },
   { href: "/blog", label: "Blog" },
+  { href: "/team", label: "Meet the Team" },
   { href: "/glossary", label: "Glossary" },
   { href: "/manufactured-vs-site-built", label: "Manufactured vs. Site-Built" },
   { href: "/locations", label: "Where We Build" },
+] as const;
+
+// For existing homeowners.
+export const homeownerLinks = [
+  { href: "/service-request", label: "Request Service" },
 ] as const;

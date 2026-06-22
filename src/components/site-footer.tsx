@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { navLinks, resourceLinks, site } from "@/lib/site";
-import { HomeMark, PhoneIcon, PinIcon } from "@/components/icons";
+import { PhoneIcon, PinIcon } from "@/components/icons";
 
 export function SiteFooter() {
   const year = 2026;
@@ -8,18 +8,17 @@ export function SiteFooter() {
     <footer className="border-t border-white/10 bg-brand-950 text-stone-100">
       <div className="container-x grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
         <div>
-          <div className="flex items-center gap-2.5">
-            <span className="grid size-9 place-items-center rounded-lg bg-white/10 text-white">
-              <HomeMark className="size-5" />
-            </span>
-            <span className="font-display text-xl font-semibold text-white">Home Placer</span>
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Home Placer LLC" className="h-14 w-auto brightness-0 invert" />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-stone-100/70">
             {site.blurb}
           </p>
           <div className="mt-5 flex flex-col gap-2 text-sm">
             <a href={`tel:${site.phoneDial}`} className="inline-flex items-center gap-2 text-white hover:text-accent-300">
-              <PhoneIcon className="size-4" /> {site.phoneDisplay}
+              <PhoneIcon className="size-4" /> {site.phoneDisplay} <span className="text-stone-100/50">· Sales</span>
+            </a>
+            <a href={`tel:${site.warrantyPhoneDial}`} className="inline-flex items-center gap-2 text-stone-100/80 hover:text-accent-300">
+              <PhoneIcon className="size-4" /> {site.warrantyPhoneDisplay} <span className="text-stone-100/50">· Service</span>
             </a>
             <a href={`mailto:${site.email}`} className="text-stone-100/80 hover:text-accent-300">
               {site.email}

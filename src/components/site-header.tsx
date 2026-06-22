@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { navLinks, site } from "@/lib/site";
-import { HomeMark, MenuIcon, CloseIcon, PhoneIcon } from "@/components/icons";
+import { MenuIcon, CloseIcon, PhoneIcon } from "@/components/icons";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -12,10 +12,9 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-stone-line/80 bg-stone-bg/85 backdrop-blur-md">
       <div className="container-x flex h-16 items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setOpen(false)}>
-          <span className="grid size-9 place-items-center rounded-lg bg-brand-700 text-white">
-            <HomeMark className="size-5" />
-          </span>
-          <span className="flex flex-col leading-none">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Home Placer LLC" className="h-11 w-auto" />
+          <span className="hidden flex-col leading-none sm:flex">
             <span className="font-display text-lg font-semibold text-brand-800">Home Placer</span>
             <span className="text-[11px] font-medium uppercase tracking-wider text-stone-muted">
               Horry County, SC
