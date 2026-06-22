@@ -30,7 +30,7 @@ export function HomeCard({ home }: { home: Home }) {
           {home.brand}
         </span>
         {home.bestSeller && (
-          <span className="absolute right-3 top-3 rounded-full bg-accent-400 px-2.5 py-1 text-xs font-bold text-brand-950 shadow-sm">
+          <span className="absolute right-3 top-3 rounded-full bg-accent-500 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
             ★ Best Seller
           </span>
         )}

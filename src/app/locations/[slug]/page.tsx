@@ -82,7 +82,7 @@ export default async function LocationPage({
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
               href="/homes"
-              className="inline-flex items-center gap-2 rounded-full bg-accent-400 px-6 py-3 text-base font-semibold text-brand-950 transition hover:bg-accent-300"
+              className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-6 py-3 text-base font-semibold text-white transition hover:bg-accent-600"
             >
               Browse homes <ArrowIcon className="size-4" />
             </Link>

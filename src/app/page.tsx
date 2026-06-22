@@ -40,7 +40,7 @@ export default function HomePage() {
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
                 href="/homes"
-                className="inline-flex items-center gap-2 rounded-full bg-accent-400 px-6 py-3 text-base font-semibold text-brand-950 shadow-sm transition hover:bg-accent-300"
+                className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-accent-600"
               >
                 Browse homes <ArrowIcon className="size-4" />
               </Link>
@@ -68,7 +68,7 @@ export default function HomePage() {
               alt="A new Home Placer manufactured home on its land in Horry County, SC"
               className="aspect-[4/3] w-full rounded-2xl object-cover shadow-2xl ring-1 ring-white/15"
             />
-            <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-accent-400 px-3 py-1 text-xs font-bold text-brand-950 shadow">
+            <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-accent-500 px-3 py-1 text-xs font-bold text-white shadow">
               ★ Best Seller · The 52 Breeze
             </span>
             <div className="absolute bottom-4 left-4 rounded-xl bg-brand-950/80 px-4 py-2.5 backdrop-blur">
@@ -258,7 +258,7 @@ export default function HomePage() {
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 rounded-full bg-accent-400 px-6 py-3 text-base font-semibold text-brand-950 transition hover:bg-accent-300"
+                className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-6 py-3 text-base font-semibold text-white transition hover:bg-accent-600"
               >
                 Get started <ArrowIcon className="size-4" />
               </Link>

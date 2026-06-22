@@ -82,7 +82,7 @@ export default async function BlogPostPage({
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 rounded-full bg-accent-400 px-5 py-2.5 text-sm font-semibold text-brand-950 transition hover:bg-accent-300"
+              className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-600"
             >
               Get started <ArrowIcon className="size-4" />
             </Link>

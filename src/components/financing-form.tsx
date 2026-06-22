@@ -102,7 +102,7 @@ export function FinancingForm() {
       <button
         type="submit"
         disabled={status === "sending"}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent-400 px-6 py-3 text-base font-semibold text-brand-950 transition hover:bg-accent-300 disabled:opacity-60"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent-500 px-6 py-3 text-base font-semibold text-white transition hover:bg-accent-600 disabled:opacity-60"
       >
         {status === "sending" ? "Sending…" : "Apply for financing"} <ArrowIcon className="size-4" />
       </button>
