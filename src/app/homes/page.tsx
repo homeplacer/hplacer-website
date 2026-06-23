@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getAllHomes, type Brand } from "@/lib/homes";
+import { getAllHomes } from "@/lib/homes";
 import { HomesBrowser } from "@/components/homes-browser";
 
 export const metadata: Metadata = {
@@ -8,16 +8,7 @@ export const metadata: Metadata = {
     "Browse new Clayton, Cavco, and Champion manufactured homes available with land across Horry County, SC — from the low $200s.",
 };
 
-const BRANDS: ("All" | Brand)[] = ["All", "Clayton", "Cavco", "Champion"];
-
-export default async function HomesPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ brand?: string }>;
-}) {
-  const { brand } = await searchParams;
-  const initialBrand =
-    BRANDS.find((b) => b.toLowerCase() === brand?.toLowerCase()) ?? "All";
+export default function HomesPage() {
   const all = getAllHomes();
 
   return (
@@ -39,7 +30,7 @@ export default async function HomesPage({
       </section>
 
       <section className="container-x py-10">
-        <HomesBrowser homes={all} initialBrand={initialBrand} />
+        <HomesBrowser homes={all} />
       </section>
     </>
   );

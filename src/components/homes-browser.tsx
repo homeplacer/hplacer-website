@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Home, Brand } from "@/lib/home-types";
 import { displayPrice } from "@/lib/home-types";
 import { HomeCard } from "@/components/home-card";
@@ -58,6 +58,14 @@ export function HomesBrowser({
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(Infinity);
   const [sort, setSort] = useState<Sort>("best");
+
+  // Deep-link support: ?brand=Clayton etc. (read client-side so the page stays static)
+  useEffect(() => {
+    const b = new URLSearchParams(window.location.search).get("brand");
+    if (!b) return;
+    const match = brandTabs.find((t) => t.toLowerCase() === b.toLowerCase());
+    if (match) setBrand(match);
+  }, [brandTabs]);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();

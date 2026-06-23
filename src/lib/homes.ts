@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Brand, Home } from "./home-types";
+import { asset } from "./asset";
 
 // Reads the manufacturer-model inventory (data/models.json, built by
 // scripts/build-models.mjs from the extraction workflow) at request time on the
@@ -73,7 +74,7 @@ export function getAllHomes(): Home[] {
     description: m.description,
     excerpt: firstSentence(m.description),
     decorOptions: m.decorOptions ?? [],
-    imageUrls: m.imageUrls ?? [],
+    imageUrls: (m.imageUrls ?? []).map(asset),
     aka: m.aka ?? [],
     bestSeller: m.bestSeller ?? false,
     bestSellerRank: m.bestSellerRank ?? 999,

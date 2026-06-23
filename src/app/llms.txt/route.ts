@@ -3,6 +3,8 @@ import { getAllHomes } from "@/lib/homes";
 import { getAllPosts } from "@/lib/blog";
 import { locations } from "@/lib/locations";
 
+export const dynamic = "force-static";
+
 // A markdown manifest for LLM tools and AI crawlers — a concise, structured
 // summary of who Home Placer is and what's on the site.
 export function GET() {

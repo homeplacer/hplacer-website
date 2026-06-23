@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { teamGroups, initials, groupPhoto } from "@/lib/team";
 import { site } from "@/lib/site";
+import { asset } from "@/lib/asset";
 import { PhoneIcon, ArrowIcon } from "@/components/icons";
 
 export const metadata: Metadata = {
@@ -24,7 +25,7 @@ export default function TeamPage() {
         <figure className="mx-auto max-w-3xl overflow-hidden rounded-card border border-stone-line shadow-sm">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={groupPhoto}
+            src={asset(groupPhoto)}
             alt="The Home Placer crew outside the Myrtle Beach office"
             className="w-full object-cover"
           />
@@ -46,7 +47,7 @@ export default function TeamPage() {
                   {m.photo ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={m.photo}
+                      src={asset(m.photo)}
                       alt={m.name}
                       className="aspect-[4/5] w-full object-cover"
                     />

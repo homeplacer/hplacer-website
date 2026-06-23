@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { asset } from "./asset";
 
 const DIR = path.join(process.cwd(), "public", "gallery");
 
@@ -21,7 +22,7 @@ export function getGallery(): GalleryItem[] {
   return files.sort().map((f) => {
     const isHome = f.startsWith("home-");
     return {
-      src: `/gallery/${f}`,
+      src: asset(`/gallery/${f}`),
       category: isHome ? "homes" : "development",
       alt: isHome
         ? "New manufactured home placed on land by Home Placer in Horry County, SC"

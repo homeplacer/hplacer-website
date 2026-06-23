@@ -2,6 +2,7 @@ import Link from "next/link";
 import { site } from "@/lib/site";
 import { bestSellerHomes, BRANDS } from "@/lib/homes";
 import { galleryByCategory } from "@/lib/gallery";
+import { asset } from "@/lib/asset";
 import { HomeCard } from "@/components/home-card";
 import {
   ArrowIcon,
@@ -64,7 +65,7 @@ export default function HomePage() {
           <div className="relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/models/ultra-flex-28-52/01.jpg"
+              src={asset("/models/ultra-flex-28-52/01.jpg")}
               alt="A new Home Placer manufactured home on its land in Horry County, SC"
               className="aspect-[4/3] w-full rounded-2xl object-cover shadow-2xl ring-1 ring-white/15"
             />

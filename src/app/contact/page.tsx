@@ -9,13 +9,7 @@ export const metadata: Metadata = {
     "Talk to Home Placer about new manufactured homes on land in Horry County, SC. Call (843) 849-HOME or send a message.",
 };
 
-export default async function ContactPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ home?: string }>;
-}) {
-  const { home } = await searchParams;
-
+export default function ContactPage() {
   return (
     <section className="container-x grid gap-12 py-16 lg:grid-cols-[1fr_1.1fr]">
       <div>
@@ -84,7 +78,7 @@ export default async function ContactPage({
       </div>
 
       <div className="rounded-card border border-stone-line bg-stone-bg p-6 shadow-sm sm:p-8">
-        <ContactForm defaultHome={home ?? ""} />
+        <ContactForm />
       </div>
     </section>
   );

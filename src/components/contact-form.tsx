@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckIcon, ArrowIcon } from "@/components/icons";
 
 const fieldClass =
@@ -8,6 +8,13 @@ const fieldClass =
 
 export function ContactForm({ defaultHome = "" }: { defaultHome?: string }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [home, setHome] = useState(defaultHome);
+
+  // Prefill from ?home= client-side (keeps the page statically exportable).
+  useEffect(() => {
+    const h = new URLSearchParams(window.location.search).get("home");
+    if (h) setHome(h);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -68,7 +75,7 @@ export function ContactForm({ defaultHome = "" }: { defaultHome?: string }) {
         <label htmlFor="home" className="mb-1.5 block text-sm font-medium text-stone-ink">
           Home you&apos;re interested in <span className="text-stone-muted">(optional)</span>
         </label>
-        <input id="home" name="home" defaultValue={defaultHome} placeholder="Any model or “not sure yet”" className={fieldClass} />
+        <input id="home" name="home" value={home} onChange={(e) => setHome(e.target.value)} placeholder="Any model or “not sure yet”" className={fieldClass} />
       </div>
       <div>
         <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-stone-ink">

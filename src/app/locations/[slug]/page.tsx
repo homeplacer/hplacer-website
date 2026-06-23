@@ -8,6 +8,7 @@ import { featuredHomes } from "@/lib/homes";
 import { HomeCard } from "@/components/home-card";
 import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
 import { site } from "@/lib/site";
+import { asset } from "@/lib/asset";
 import { CheckIcon, PhoneIcon, ArrowIcon, PinIcon } from "@/components/icons";
 
 export function generateStaticParams() {
@@ -56,7 +57,7 @@ export default async function LocationPage({
       .readdirSync(path.join(process.cwd(), "public", "locations", slug))
       .filter((f) => /\.jpe?g$/i.test(f))
       .sort()
-      .map((f) => `/locations/${slug}/${f}`);
+      .map((f) => asset(`/locations/${slug}/${f}`));
   } catch {}
 
   return (
