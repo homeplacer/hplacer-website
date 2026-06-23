@@ -2053,7 +2053,6 @@
     "description": "Pinehurst (model 57FWY16763AH), a Clayton Rockwell/Fairway single-wide manufactured home. 3 Beds / 2 Baths / 1,178 Sq.Ft. (marketed) / 16 x 76.",
     "decorOptions": [],
     "imageUrls": [
-      "/models/pinehurst/00.jpg",
       "/models/pinehurst/01.jpg",
       "/models/pinehurst/02.jpg",
       "/models/pinehurst/03.jpg",
@@ -2065,10 +2064,7 @@
       "/models/pinehurst/09.jpg",
       "/models/pinehurst/10.jpg",
       "/models/pinehurst/11.jpg",
-      "/models/pinehurst/12.jpg",
-      "/models/pinehurst/13.jpg",
-      "/models/pinehurst/14.jpg",
-      "/models/pinehurst/15.jpg"
+      "/models/pinehurst/12.jpg"
     ],
     "aka": [],
     "bestSeller": false,
