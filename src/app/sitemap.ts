@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/gallery",
     "/financing",
     "/process",
+    "/warranty",
     "/faq",
     "/glossary",
     "/manufactured-vs-site-built",

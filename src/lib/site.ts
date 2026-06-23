@@ -80,6 +80,7 @@ export const navLinks = [
 
 export const resourceLinks = [
   { href: "/process", label: "How It Works" },
+  { href: "/warranty", label: "Warranty" },
   { href: "/faq", label: "FAQ" },
   { href: "/blog", label: "Blog" },
   { href: "/team", label: "Meet the Team" },
