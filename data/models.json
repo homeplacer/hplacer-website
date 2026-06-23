@@ -2783,5 +2783,37 @@
     "bestSeller": false,
     "bestSellerRank": 999,
     "sourceUrl": "https://myappalachiahome.com/models/34tra28684bh/"
+  },
+  {
+    "slug": "clear-48",
+    "brand": "Clayton",
+    "series": "Appalachia",
+    "name": "Clear 48",
+    "modelCode": "34TRA28483FH",
+    "widthFt": 28,
+    "lengthFt": 48,
+    "sqft": 1344,
+    "beds": 3,
+    "baths": 2,
+    "description": "The Clear 48 is a 3-bedroom, 2-bath Clayton Appalachia double-wide (Tradition 48F) with a 28x48 layout and a covered front porch.",
+    "decorOptions": [],
+    "imageUrls": [
+      "/models/clear-48/01.jpg",
+      "/models/clear-48/02.jpg",
+      "/models/clear-48/03.jpg",
+      "/models/clear-48/04.jpg",
+      "/models/clear-48/05.jpg",
+      "/models/clear-48/06.jpg",
+      "/models/clear-48/07.jpg"
+    ],
+    "aka": [
+      "Clear 48",
+      "Clear Choice",
+      "Tradition 48F",
+      "28x48"
+    ],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://myappalachiahome.com/models/34tra28483fh/"
   }
 ]
