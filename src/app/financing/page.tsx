@@ -7,19 +7,24 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Financing",
   description:
-    "FHA, VA, and conventional financing for new manufactured homes on land in South Carolina. Low down payments and help for every credit situation.",
+    "USDA, FHA, VA, and conventional financing for new manufactured homes on land in South Carolina. $0-down options and help for every credit situation.",
 };
 
 const programs = [
   {
-    name: "FHA",
-    rate: "As low as 3.5% down",
-    body: "Government-backed loans built for first-time and budget-conscious buyers. Flexible credit guidelines and low down payments.",
+    name: "USDA",
+    rate: "$0 down · rural areas",
+    body: "Putting a home on land in rural Horry County? A USDA Rural Development loan can finance 100% — zero down — in eligible areas like Loris, Aynor, and Longs. Income limits apply; primary residence only.",
   },
   {
     name: "VA",
     rate: "$0 down for veterans",
     body: "If you’ve served, a VA loan can mean no down payment and no monthly mortgage insurance on your home-and-land package.",
+  },
+  {
+    name: "FHA",
+    rate: "As low as 3.5% down",
+    body: "Government-backed loans built for first-time and budget-conscious buyers. Flexible credit guidelines and low down payments.",
   },
   {
     name: "Conventional",
@@ -38,7 +43,7 @@ export default function FinancingPage() {
       </PageHero>
 
       <section className="container-x py-16">
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {programs.map((p) => (
             <div key={p.name} className="rounded-card border border-stone-line bg-stone-bg p-6">
               <h2 className="font-display text-2xl font-semibold text-stone-ink">{p.name}</h2>
@@ -46,6 +51,15 @@ export default function FinancingPage() {
               <p className="mt-3 text-sm leading-relaxed text-stone-muted">{p.body}</p>
             </div>
           ))}
+        </div>
+
+        <div className="mt-6 flex items-start gap-3 rounded-card border border-brand-200 bg-brand-50 p-5">
+          <CheckIcon className="mt-0.5 size-5 shrink-0 text-brand-600" strokeWidth={2.5} />
+          <p className="text-sm leading-relaxed text-stone-ink/85">
+            <strong className="font-semibold text-stone-ink">A lot of Horry County qualifies for USDA $0-down financing.</strong>{" "}
+            Because we place homes on land out in Conway, Loris, Longs, and Aynor, many of our lots fall in
+            USDA-eligible rural areas — ask us to check your address.
+          </p>
         </div>
 
         <div

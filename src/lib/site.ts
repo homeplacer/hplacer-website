@@ -73,6 +73,7 @@ export const navLinks = [
   { href: "/land-packages", label: "Land Packages" },
   { href: "/gallery", label: "Our Work" },
   { href: "/financing", label: "Financing" },
+  { href: "/warranty", label: "Warranty" },
   { href: "/about", label: "About" },
   { href: "/team", label: "Team" },
   { href: "/contact", label: "Contact" },
