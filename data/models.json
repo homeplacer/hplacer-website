@@ -2756,5 +2756,36 @@
     "bestSeller": false,
     "bestSellerRank": 999,
     "sourceUrl": "https://www.championhomes.com/models/lake-manor-2856h32p01"
+  },
+  {
+    "slug": "tradition-68",
+    "brand": "Clayton",
+    "series": "Appalachia",
+    "name": "Tradition 68",
+    "modelCode": "34TRA28684BH",
+    "widthFt": 28,
+    "lengthFt": 68,
+    "sqft": 1904,
+    "beds": 4,
+    "baths": 2,
+    "description": "The Tradition 68 is a 4-bedroom, 2-bath Clayton Appalachia double-wide with a spacious 28x68 layout.",
+    "decorOptions": [],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/ext/c29b9f7d-d084-458c-8e87-23560ca3603d.png?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/fbd61156-0a8e-4ce0-a877-424ab2793c1b.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/0a891d2c-c56b-42a1-a9bc-d23488d82843.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/0891f185-949d-41fc-853b-c742739e35b0.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/f3fbf89a-2286-476b-8421-b26f42234161.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/72e6670d-d721-410e-90d4-3f7cfa541081.jpg?width=992",
+      "https://api.claytonhomes.com/images/mfg/int/602bed66-4aec-4ea5-9470-3b3b5de7f4e5.jpg?width=992"
+    ],
+    "aka": [
+      "Tradition 68",
+      "Tradition 2868B",
+      "28x68"
+    ],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://myappalachiahome.com/models/34tra28684bh/"
   }
 ]
