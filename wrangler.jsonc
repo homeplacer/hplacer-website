@@ -3,7 +3,12 @@
   "main": ".open-next/worker.js",
   "name": "hplacer-app",
   "account_id": "6caa351d57b30bd04cec8a08e4330ffd",
+  "workers_dev": true,
   "compatibility_date": "2024-12-30",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" }
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "routes": [
+    { "pattern": "hplacer.com", "custom_domain": true },
+    { "pattern": "www.hplacer.com", "custom_domain": true }
+  ]
 }
