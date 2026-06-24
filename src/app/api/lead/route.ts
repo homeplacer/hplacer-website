@@ -160,11 +160,13 @@ async function deliverToFub(lead: {
   // Any failure here is logged and never fails the user's submission.
   if (isService) {
     try {
+      // FUB /events returns the matched/created PERSON object directly, with the
+      // id at the TOP level (not nested under a "person" key).
       const evt = (await eventRes
         .clone()
         .json()
-        .catch(() => null)) as { person?: { id?: number } } | null;
-      const personId = evt?.person?.id;
+        .catch(() => null)) as { id?: number } | null;
+      const personId = evt?.id;
       if (personId) {
         if (created) {
           const assignRes = await fetch(
