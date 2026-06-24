@@ -2321,9 +2321,9 @@
     "series": "The Summit (Cavco Douglas)",
     "name": "Sebastian",
     "modelCode": "32644D",
-    "widthFt": 32,
+    "widthFt": 30,
     "lengthFt": 64,
-    "sqft": 2048,
+    "sqft": 1920,
     "beds": 4,
     "baths": 2,
     "description": "The Sebastian by Cavco Douglas is a spacious 4-bedroom, 2-bath ranch-style double-wide in The Summit series, offering well-designed living space across two sections.",
@@ -2343,7 +2343,8 @@
       "https://d132mt2yijm03y.cloudfront.net/manufacturer/2035/floorplan/235843/12_thumb_xxl.jpg",
       "https://d132mt2yijm03y.cloudfront.net/manufacturer/2035/floorplan/235843/13_thumb_xxl.jpg",
       "https://d132mt2yijm03y.cloudfront.net/manufacturer/2035/floorplan/235843/14_thumb_xxl.jpg",
-      "https://d132mt2yijm03y.cloudfront.net/manufacturer/2035/floorplan/235843/15_thumb_xxl.jpg"
+      "https://d132mt2yijm03y.cloudfront.net/manufacturer/2035/floorplan/235843/15_thumb_xxl.jpg",
+      "/models/sebastian/floorplan.jpg"
     ],
     "aka": [],
     "bestSeller": false,
@@ -2815,5 +2816,117 @@
     "bestSeller": false,
     "bestSellerRank": 999,
     "sourceUrl": "https://myappalachiahome.com/models/34tra28483fh/"
+  },
+  {
+    "slug": "summit-32483a",
+    "brand": "Cavco",
+    "series": "The Summit (Cavco Douglas)",
+    "name": "The Summit 32483A",
+    "modelCode": "32483A",
+    "widthFt": 30,
+    "lengthFt": 48,
+    "sqft": 1440,
+    "beds": 3,
+    "baths": 2,
+    "description": "The Summit 32483A by Cavco Douglas is a 3-bedroom, 2-bath ranch-style double-wide in The Summit series. An open kitchen with island flows into the dining area and a large living room, with a split primary suite, walk-in closets, and a utility room. 1,440 sq ft across two sections.",
+    "decorOptions": [
+      "Open island kitchen with dining and a 17′ living room",
+      "Split-bedroom layout with primary walk-in closets",
+      "Utility room and pantry off the kitchen",
+      "Optional 60″ tub or shower in the second bath",
+      "Optional windows and entry"
+    ],
+    "imageUrls": [
+      "/models/summit-32483a/01.jpg",
+      "/models/summit-32483a/02.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://www.cavcodouglas.com/"
+  },
+  {
+    "slug": "summit-28603n",
+    "brand": "Cavco",
+    "series": "The Summit (Fleetwood)",
+    "name": "The Summit 28603N",
+    "modelCode": "28603N",
+    "widthFt": 28,
+    "lengthFt": 60,
+    "sqft": 1580,
+    "beds": 3,
+    "baths": 2,
+    "description": "The Summit 28603N by Fleetwood Homes is a 3-bedroom, 2-bath double-wide. A central kitchen and dining area open to the living room, with a private primary suite, a built-in entertainment center, and a walk-in pantry. 1,580 sq ft.",
+    "decorOptions": [
+      "Central kitchen with island overhang and walk-in pantry",
+      "Primary suite with walk-in closet",
+      "Built-in entertainment center in the living room",
+      "Optional dormer",
+      "Utility room"
+    ],
+    "imageUrls": [
+      "/models/summit-28603n/01.jpg",
+      "/models/summit-28603n/02.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://www.fleetwoodhomes.com/"
+  },
+  {
+    "slug": "summit-28564t",
+    "brand": "Cavco",
+    "series": "The Summit (Cavco Douglas)",
+    "name": "The Summit 28564T",
+    "modelCode": "28564T",
+    "widthFt": 28,
+    "lengthFt": 56,
+    "sqft": 1474,
+    "beds": 4,
+    "baths": 2.5,
+    "description": "The Summit 28564T by Cavco Douglas is a roomy 4-bedroom, 2½-bath double-wide. A central island kitchen and dining open to the living room, with four bedrooms and three baths — ideal when you need the extra rooms. 1,474 sq ft.",
+    "decorOptions": [
+      "Central island kitchen open to dining and living",
+      "Four bedrooms with a primary walk-in closet",
+      "Optional 72″ shower or glamour bath in the primary",
+      "Utility room and pantry",
+      "Optional windows"
+    ],
+    "imageUrls": [
+      "/models/summit-28564t/01.jpg",
+      "/models/summit-28564t/02.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://www.cavcodouglas.com/"
+  },
+  {
+    "slug": "pinnacle-16763b",
+    "brand": "Cavco",
+    "series": "Pinnacle (Cavco Douglas)",
+    "name": "Pinnacle",
+    "modelCode": "16763B",
+    "widthFt": 15,
+    "lengthFt": 76,
+    "sqft": 1140,
+    "beds": 3,
+    "baths": 2,
+    "description": "The Pinnacle 16763B by Cavco Douglas is an efficient, budget-friendly 3-bedroom, 2-bath single-wide. A long open run of kitchen, dining, and living anchors the home, with a private primary suite and a walk-in closet. 1,140 sq ft, with an alternate 2-bedroom layout available.",
+    "decorOptions": [
+      "Open kitchen with breakfast bar, dining, and living",
+      "Primary suite with walk-in closet",
+      "Utility room and pantry",
+      "Alternate 2-bedroom layout available",
+      "Optional windows"
+    ],
+    "imageUrls": [
+      "/models/pinnacle-16763b/01.jpg",
+      "/models/pinnacle-16763b/02.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://www.cavcodouglas.com/"
   }
 ]
