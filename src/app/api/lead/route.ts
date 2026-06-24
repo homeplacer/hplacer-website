@@ -149,11 +149,16 @@ async function deliverToFub(lead: {
   // 201 = a brand-new person was created; 200 = matched an existing person.
   const created = eventRes.status === 201;
 
-  // SAFE warranty routing: only assign an owner when the person is brand new
-  // (created === 201). An existing contact is never reassigned here — the event
-  // is already on their timeline, and the "Home Placer Warranty" Lead Flow rule
-  // notifies the team. Failure here never fails the submission.
-  if (isService && created) {
+  // SAFE warranty routing (service requests only). Neither step ever steals a
+  // lead from an existing relationship owner:
+  //   1. If the contact is brand NEW (201), assign it to the warranty owner +
+  //      collaborators. An EXISTING contact (200) is never reassigned.
+  //   2. ALWAYS open a task for the warranty owner so the team actively follows
+  //      up on every service request — including existing homeowners already
+  //      owned by their sales agent (the common case). A task notifies + tracks
+  //      without touching ownership or stage.
+  // Any failure here is logged and never fails the user's submission.
+  if (isService) {
     try {
       const evt = (await eventRes
         .clone()
@@ -161,26 +166,53 @@ async function deliverToFub(lead: {
         .catch(() => null)) as { person?: { id?: number } } | null;
       const personId = evt?.person?.id;
       if (personId) {
-        const assignRes = await fetch(
-          `https://api.followupboss.com/v1/people/${personId}`,
-          {
-            method: "PUT",
-            headers: { Authorization: authHeader, "Content-Type": "application/json" },
-            body: JSON.stringify({
-              assignedUserId: warrantyUserId(),
-              collaborators: warrantyCollaborators().map((id) => ({ id })),
-            }),
-          },
-        );
-        if (!assignRes.ok) {
-          const errBody = await assignRes.text().catch(() => "<unreadable>");
+        if (created) {
+          const assignRes = await fetch(
+            `https://api.followupboss.com/v1/people/${personId}`,
+            {
+              method: "PUT",
+              headers: { Authorization: authHeader, "Content-Type": "application/json" },
+              body: JSON.stringify({
+                assignedUserId: warrantyUserId(),
+                collaborators: warrantyCollaborators().map((id) => ({ id })),
+              }),
+            },
+          );
+          if (!assignRes.ok) {
+            const errBody = await assignRes.text().catch(() => "<unreadable>");
+            console.error(
+              `[hplacer] FUB warranty assign PUT ${assignRes.status} for person ${personId}:`,
+              errBody.slice(0, 500),
+            );
+          }
+        }
+
+        // Task for the warranty team — fires for NEW and EXISTING contacts.
+        // FUB /tasks rejects a 'description' field; the text must live in 'name'.
+        const issue = (
+          [lead.message, lead.address ? `Address: ${lead.address}` : null]
+            .filter(Boolean)
+            .join(" — ") || "Service request"
+        ).slice(0, 240);
+        const taskRes = await fetch("https://api.followupboss.com/v1/tasks", {
+          method: "POST",
+          headers: { Authorization: authHeader, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            personId,
+            name: `Warranty/service request (hplacer.com): ${issue}`,
+            assignedUserId: warrantyUserId(),
+            dueDate: new Date().toISOString().slice(0, 10),
+          }),
+        });
+        if (!taskRes.ok) {
+          const errBody = await taskRes.text().catch(() => "<unreadable>");
           console.error(
-            `[hplacer] FUB warranty assign PUT ${assignRes.status} for person ${personId}:`,
+            `[hplacer] FUB warranty task POST ${taskRes.status} for person ${personId}:`,
             errBody.slice(0, 500),
           );
         } else {
           console.log(
-            `[hplacer] new warranty lead ${personId} → assigned to user ${warrantyUserId()}`,
+            `[hplacer] warranty task → user ${warrantyUserId()} for person ${personId}${created ? " (new contact, also assigned)" : ""}`,
           );
         }
       }
