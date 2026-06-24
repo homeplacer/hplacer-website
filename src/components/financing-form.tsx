@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckIcon, ArrowIcon } from "@/components/icons";
+import { submitLead } from "@/lib/lead";
 
 const fieldClass =
   "w-full rounded-lg border border-stone-line bg-stone-bg px-3.5 py-2.5 text-sm text-stone-ink outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
@@ -10,7 +11,8 @@ const fieldClass =
 // No SSN, income, or credit details are collected here; that happens later with
 // a licensed lender. This form just starts the conversation.
 export function FinancingForm() {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [via, setVia] = useState<"api" | "mailto">("api");
   const [hasLand, setHasLand] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -18,19 +20,10 @@ export function FinancingForm() {
     setStatus("sending");
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
-    try {
-      const res = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "financing", hasLand, ...data }),
-      });
-      if (!res.ok) throw new Error("Request failed");
-      setStatus("sent");
-      form.reset();
-      setHasLand("");
-    } catch {
-      setStatus("error");
-    }
+    setVia(await submitLead("financing", data));
+    setStatus("sent");
+    form.reset();
+    setHasLand("");
   }
 
   if (status === "sent") {
@@ -41,8 +34,9 @@ export function FinancingForm() {
         </div>
         <h3 className="mt-4 font-display text-xl font-semibold text-brand-900">You&apos;re all set.</h3>
         <p className="mt-2 text-sm text-stone-muted">
-          A Home Placer team member will reach out to walk you through your financing
-          options — no credit pull to get started, no obligation.
+          {via === "mailto"
+            ? "We've opened a pre-filled email in your mail app — just hit send and we'll walk you through your options. Didn't open? Call (843) 849-HOME."
+            : "A Home Placer team member will reach out to walk you through your financing options — no credit pull to get started, no obligation."}
         </p>
       </div>
     );
@@ -92,12 +86,6 @@ export function FinancingForm() {
           ))}
         </div>
       </div>
-
-      {status === "error" && (
-        <p className="text-sm text-red-600">
-          Something went wrong. Please call us at (843) 849-HOME.
-        </p>
-      )}
 
       <button
         type="submit"

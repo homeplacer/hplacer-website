@@ -2,29 +2,22 @@
 
 import { useState } from "react";
 import { ArrowIcon, CheckIcon } from "@/components/icons";
+import { submitLead } from "@/lib/lead";
 
 // Site-wide "new homes & deals in your inbox" capture. Email-only, lowest
 // possible friction. Posts type: "subscribe" to /api/lead.
 export function EmailCapture() {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [via, setVia] = useState<"api" | "mailto">("api");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("sending");
     const form = e.currentTarget;
     const email = (new FormData(form).get("email") as string)?.trim();
-    try {
-      const res = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "subscribe", email }),
-      });
-      if (!res.ok) throw new Error("Request failed");
-      setStatus("sent");
-      form.reset();
-    } catch {
-      setStatus("error");
-    }
+    setVia(await submitLead("subscribe", { email }));
+    setStatus("sent");
+    form.reset();
   }
 
   return (
@@ -42,7 +35,8 @@ export function EmailCapture() {
 
         {status === "sent" ? (
           <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/20">
-            <CheckIcon className="size-5 text-accent-300" strokeWidth={2.5} /> You&apos;re subscribed — thanks!
+            <CheckIcon className="size-5 text-accent-300" strokeWidth={2.5} />{" "}
+            {via === "mailto" ? "Check your mail app — hit send to subscribe!" : "You're subscribed — thanks!"}
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="w-full max-w-md shrink-0">
@@ -64,11 +58,6 @@ export function EmailCapture() {
                 {status === "sending" ? "…" : "Subscribe"} <ArrowIcon className="size-4" />
               </button>
             </div>
-            {status === "error" && (
-              <p className="mt-2 text-left text-xs text-accent-200">
-                Something went wrong — please try again.
-              </p>
-            )}
           </form>
         )}
       </div>

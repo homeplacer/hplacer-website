@@ -2,30 +2,23 @@
 
 import { useState } from "react";
 import { CheckIcon, ArrowIcon } from "@/components/icons";
+import { submitLead } from "@/lib/lead";
 
 const fieldClass =
   "w-full rounded-lg border border-stone-line bg-stone-bg px-3.5 py-2.5 text-sm text-stone-ink outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
 
 export function ServiceRequestForm() {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [via, setVia] = useState<"api" | "mailto">("api");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("sending");
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
-    try {
-      const res = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "service", ...data }),
-      });
-      if (!res.ok) throw new Error("Request failed");
-      setStatus("sent");
-      form.reset();
-    } catch {
-      setStatus("error");
-    }
+    setVia(await submitLead("service", data));
+    setStatus("sent");
+    form.reset();
   }
 
   if (status === "sent") {
@@ -36,7 +29,9 @@ export function ServiceRequestForm() {
         </div>
         <h3 className="mt-4 font-display text-xl font-semibold text-brand-900">Request received.</h3>
         <p className="mt-2 text-sm text-stone-muted">
-          Our service team will reach out to schedule. For anything urgent, call us directly.
+          {via === "mailto"
+            ? "We've opened a pre-filled email in your mail app — just hit send and our service team will follow up. Didn't open? Call (843) 484-9844."
+            : "Our service team will reach out to schedule. For anything urgent, call us directly."}
         </p>
       </div>
     );
@@ -70,10 +65,6 @@ export function ServiceRequestForm() {
         </label>
         <textarea id="sr-message" name="message" rows={4} required placeholder="Describe the issue or service you need…" className={fieldClass} />
       </div>
-
-      {status === "error" && (
-        <p className="text-sm text-red-600">Something went wrong. Please call our service line and we&apos;ll help.</p>
-      )}
 
       <button
         type="submit"

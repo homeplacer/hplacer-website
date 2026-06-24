@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { CheckIcon, ArrowIcon } from "@/components/icons";
+import { submitLead } from "@/lib/lead";
 
 const fieldClass =
   "w-full rounded-lg border border-stone-line bg-stone-bg px-3.5 py-2.5 text-sm text-stone-ink outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
 
 export function ContactForm({ defaultHome = "" }: { defaultHome?: string }) {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [via, setVia] = useState<"api" | "mailto">("api");
   const [home, setHome] = useState(defaultHome);
 
   // Prefill from ?home= client-side (keeps the page statically exportable).
@@ -21,18 +23,9 @@ export function ContactForm({ defaultHome = "" }: { defaultHome?: string }) {
     setStatus("sending");
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
-    try {
-      const res = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "contact", ...data }),
-      });
-      if (!res.ok) throw new Error("Request failed");
-      setStatus("sent");
-      form.reset();
-    } catch {
-      setStatus("error");
-    }
+    setVia(await submitLead("contact", data));
+    setStatus("sent");
+    form.reset();
   }
 
   if (status === "sent") {
@@ -43,7 +36,9 @@ export function ContactForm({ defaultHome = "" }: { defaultHome?: string }) {
         </div>
         <h3 className="mt-4 font-display text-xl font-semibold text-brand-900">Thanks — we&apos;ve got it.</h3>
         <p className="mt-2 text-sm text-stone-muted">
-          A Home Placer team member will reach out shortly. Need us sooner? Just call.
+          {via === "mailto"
+            ? "We've opened a pre-filled email in your mail app — just hit send and we'll be in touch. Didn't open? Call or text (843) 849-HOME."
+            : "A Home Placer team member will reach out shortly. Need us sooner? Just call."}
         </p>
       </div>
     );
@@ -89,12 +84,6 @@ export function ContactForm({ defaultHome = "" }: { defaultHome?: string }) {
           className={fieldClass}
         />
       </div>
-
-      {status === "error" && (
-        <p className="text-sm text-red-600">
-          Something went wrong sending that. Please call us at (843) 849-HOME.
-        </p>
-      )}
 
       <button
         type="submit"

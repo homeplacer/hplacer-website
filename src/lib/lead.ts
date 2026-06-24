@@ -1,0 +1,53 @@
+import { site } from "./site";
+
+type LeadData = Record<string, FormDataEntryValue | string | undefined>;
+
+const TYPE_LABELS: Record<string, string> = {
+  contact: "Website inquiry",
+  financing: "Financing inquiry",
+  service: "Service request",
+  subscribe: "Email signup",
+};
+
+const FIELD_LABELS: Record<string, string> = {
+  name: "Name",
+  phone: "Phone",
+  email: "Email",
+  home: "Home of interest",
+  hasLand: "Has land?",
+  address: "Home address",
+  message: "Message",
+};
+
+function buildMailto(type: string, data: LeadData): string {
+  const subject = `${TYPE_LABELS[type] ?? "Website lead"} — hplacer.com`;
+  const lines = Object.entries(data)
+    .filter(([k, v]) => v && k !== "type")
+    .map(([k, v]) => `${FIELD_LABELS[k] ?? k}: ${v}`);
+  const body = `${lines.join("\n")}\n\n— Sent from hplacer.com`;
+  return `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+/**
+ * Submit a lead. Tries the /api/lead endpoint first (works on a server
+ * deployment with Resend/FUB configured). On the static GitHub Pages export —
+ * where the API route doesn't exist — it falls back to opening a pre-filled
+ * email to the team so the lead is never silently lost. Returns how it went
+ * out so the form can show the right confirmation. Never throws.
+ */
+export async function submitLead(type: string, data: LeadData): Promise<"api" | "mailto"> {
+  try {
+    const res = await fetch("/api/lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, ...data }),
+    });
+    if (!res.ok) throw new Error("api unavailable");
+    return "api";
+  } catch {
+    if (typeof window !== "undefined") {
+      window.location.href = buildMailto(type, data);
+    }
+    return "mailto";
+  }
+}
