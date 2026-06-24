@@ -1,21 +1,22 @@
-import fs from "node:fs";
-import path from "node:path";
 import type { Brand, Home } from "./home-types";
 import { asset } from "./asset";
+import rawModels from "../../data/models.json";
+import setupPricingJson from "../../data/setup-pricing.json";
+import homePricingJson from "../../data/home-pricing.json";
 
-// Reads the manufacturer-model inventory (data/models.json, built by
-// scripts/build-models.mjs from the extraction workflow) at request time on the
-// server. Pricing, when finalized, is merged from two optional override files
-// keyed by model slug — until then homes show "Call for pricing".
+// The manufacturer-model inventory (data/models.json, built by
+// scripts/build-models.mjs from the extraction workflow) is statically imported
+// so it bundles into the server build — the Cloudflare Workers runtime has no
+// filesystem at request time. Pricing is merged from two override files keyed by
+// model slug (empty {} until finalized — homes show "Call for pricing").
 //
 // Types + pure helpers live in ./home-types so client components can use them
-// without bundling this fs-backed module. Re-exported here for convenience.
+// without bundling this module. Re-exported here for convenience.
 export type { Brand, Home } from "./home-types";
 export { formatPrice, displayPrice, priceLabel } from "./home-types";
 
-const MODELS_FILE = path.join(process.cwd(), "data", "models.json");
-const SETUP_PRICING_FILE = path.join(process.cwd(), "data", "setup-pricing.json");
-const HOME_PRICING_FILE = path.join(process.cwd(), "data", "home-pricing.json");
+const setupPricing = setupPricingJson as Record<string, number>;
+const homePricing = homePricingJson as Record<string, number>;
 
 interface RawModel {
   slug: string;
@@ -37,14 +38,6 @@ interface RawModel {
   sourceUrl: string;
 }
 
-function loadPricing(file: string): Record<string, number> {
-  try {
-    return JSON.parse(fs.readFileSync(file, "utf8"));
-  } catch {
-    return {};
-  }
-}
-
 function firstSentence(s: string): string {
   const m = s.match(/^.*?[.!?](\s|$)/);
   return (m ? m[0] : s).trim();
@@ -55,9 +48,7 @@ let cache: Home[] | null = null;
 export function getAllHomes(): Home[] {
   if (cache) return cache;
 
-  const models = JSON.parse(fs.readFileSync(MODELS_FILE, "utf8")) as RawModel[];
-  const setupPricing = loadPricing(SETUP_PRICING_FILE);
-  const homePricing = loadPricing(HOME_PRICING_FILE);
+  const models = rawModels as unknown as RawModel[];
 
   const homes: Home[] = models.map((m, i) => ({
     id: i + 1,

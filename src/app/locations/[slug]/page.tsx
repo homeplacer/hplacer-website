@@ -1,6 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
 import type { Metadata } from "next";
+import locationsManifest from "../../../../data/locations-manifest.json";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { locations, getLocation, cityGeo } from "@/lib/locations";
@@ -50,15 +49,11 @@ export default async function LocationPage({
   const homes = featuredHomes(3);
 
   // Real Home Placer homes photographed in this town (geo-tagged from Joe's
-  // photos). Empty if none for this town.
-  let townPhotos: string[] = [];
-  try {
-    townPhotos = fs
-      .readdirSync(path.join(process.cwd(), "public", "locations", slug))
-      .filter((f) => /\.jpe?g$/i.test(f))
-      .sort()
-      .map((f) => asset(`/locations/${slug}/${f}`));
-  } catch {}
+  // photos), listed in data/locations-manifest.json. Empty if none for this town.
+  const townPhotos: string[] = ((locationsManifest as Record<string, string[]>)[slug] ?? [])
+    .slice()
+    .sort()
+    .map((f) => asset(`/locations/${slug}/${f}`));
 
   return (
     <>

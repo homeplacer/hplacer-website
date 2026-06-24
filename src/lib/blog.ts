@@ -1,6 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
 import { marked } from "marked";
+import postsJson from "../../data/blog-posts.json";
 
 export interface Post {
   slug: string;
@@ -12,14 +11,14 @@ export interface Post {
   bodyMarkdown: string;
 }
 
-const FILE = path.join(process.cwd(), "data", "blog-posts.json");
-
+// Statically imported so posts bundle into the server build (no runtime fs on
+// the Cloudflare Workers runtime).
 let cache: Post[] | null = null;
 
 export function getAllPosts(): Post[] {
   if (!cache) {
-    const posts = JSON.parse(fs.readFileSync(FILE, "utf8")) as Post[];
-    cache = posts.sort((a, b) => b.date.localeCompare(a.date));
+    const posts = postsJson as unknown as Post[];
+    cache = [...posts].sort((a, b) => b.date.localeCompare(a.date));
   }
   return cache;
 }
