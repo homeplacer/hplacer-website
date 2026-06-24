@@ -1,0 +1,5 @@
+User-Agent: *
+Allow: /
+
+Host: https://hplacer.com
+Sitemap: https://hplacer.com/sitemap.xml

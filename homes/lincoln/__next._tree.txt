@@ -1,0 +1,6 @@
+:HL["/_next/static/chunks/039c0ah39glc7.css","style"]
+:HL["/_next/static/media/791bf8c4bb753ed6-s.p.0ggqn9ig56u4s.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/logo.png","image"]
+:HL["https://api.claytonhomes.com/images/mfg/ext/67722ece-8adb-4c61-b486-049ef4b366ad.png?width=992","image"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"homes","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"lincoln","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"mA4bonciIPZc7MNkzVnZX"}

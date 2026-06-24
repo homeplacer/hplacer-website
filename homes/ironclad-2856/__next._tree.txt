@@ -1,0 +1,6 @@
+:HL["/_next/static/chunks/039c0ah39glc7.css","style"]
+:HL["/_next/static/media/791bf8c4bb753ed6-s.p.0ggqn9ig56u4s.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/logo.png","image"]
+:HL["https://res.cloudinary.com/douaer6ci/image/fetch/s--la2VdXGJ--/c_fill,f_auto,fl_any_format.progressive,h_267,q_70,w_400/https://prd-champion-homes.s3.amazonaws.com/images/Ironclad-2856-Exterior-1.jpg","image"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"homes","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"ironclad-2856","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"mA4bonciIPZc7MNkzVnZX"}
