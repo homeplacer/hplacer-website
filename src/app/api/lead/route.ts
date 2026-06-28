@@ -25,6 +25,21 @@ import { NextResponse } from "next/server";
 
 type LeadType = "contact" | "financing" | "subscribe" | "service";
 
+// First-touch attribution forwarded by the browser (see src/lib/attribution.ts).
+// All optional — older clients / blocked storage simply omit it.
+interface Attribution {
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_content?: string;
+  utm_term?: string;
+  gclid?: string;
+  fbclid?: string;
+  referrer?: string;
+  landing_page?: string;
+  captured_at?: string;
+}
+
 interface LeadBody {
   type?: LeadType;
   name?: string;
@@ -34,9 +49,35 @@ interface LeadBody {
   hasLand?: string;
   address?: string;
   message?: string;
+  attribution?: Attribution;
 }
 
 const clean = (v?: string) => v?.trim() || null;
+
+// Human-readable order for the attribution block appended to the FUB message.
+const ATTR_LABELS: [keyof Attribution, string][] = [
+  ["utm_source", "Source"],
+  ["utm_medium", "Medium"],
+  ["utm_campaign", "Campaign"],
+  ["utm_content", "Content"],
+  ["utm_term", "Term"],
+  ["gclid", "Google Click ID"],
+  ["fbclid", "Facebook Click ID"],
+  ["referrer", "Referrer"],
+  ["landing_page", "Landing page"],
+];
+
+// Render a clearly-delimited, human-readable attribution block for the FUB
+// timeline. Returns "" when there's nothing worth showing (e.g. direct visit
+// with no UTMs/referrer) so we never add noise.
+function formatAttributionBlock(a?: Attribution): string {
+  if (!a) return "";
+  const lines = ATTR_LABELS.map(([k, label]) =>
+    a[k] ? `${label}: ${a[k]}` : null,
+  ).filter(Boolean);
+  if (!lines.length) return "";
+  return `\n\n— Attribution (first touch) —\n${lines.join("\n")}`;
+}
 
 function splitName(name: string | null): { first: string; last: string } {
   if (!name) return { first: "", last: "" };
@@ -84,6 +125,7 @@ async function deliverToFub(lead: {
   hasLand: string | null;
   address: string | null;
   message: string | null;
+  attribution?: Attribution;
 }): Promise<{ ok: boolean; skipped?: string; status?: number }> {
   const key = process.env.FUB_API_KEY;
   if (!key) return { ok: false, skipped: "no FUB_API_KEY" };
@@ -115,11 +157,18 @@ async function deliverToFub(lead: {
     ? ["hplacer.com", "Service Request", "Warranty"]
     : ["hplacer.com", lead.type];
 
-  const eventBody = {
+  // Attribution: append a visible block to the message (always shows on the
+  // person's timeline) AND set the native FUB event fields where they map, so
+  // Joe can see where the lead came from straight on the record.
+  const a = lead.attribution;
+  const baseMessage = messageParts.join(" · ") || `${typeLabel} from hplacer.com`;
+  const message = baseMessage + formatAttributionBlock(a);
+
+  const eventBody: Record<string, unknown> = {
     source,
     system: "Home Placer Website",
     type: typeLabel,
-    message: messageParts.join(" · ") || `${typeLabel} from hplacer.com`,
+    message,
     person: {
       firstName: first || "Website",
       lastName: last || (isService ? "Service" : "Lead"),
@@ -128,6 +177,14 @@ async function deliverToFub(lead: {
       tags,
     },
   };
+
+  // Native FUB event attribution fields (best-effort; FUB ignores blanks).
+  // pageUrl = the first landing URL (carries the UTMs); referrer = external
+  // source; campaign = utm_campaign. The message block above is the guaranteed
+  // fallback if FUB drops any of these.
+  if (a?.landing_page) eventBody.pageUrl = a.landing_page;
+  if (a?.referrer) eventBody.referrer = a.referrer;
+  if (a?.utm_campaign) eventBody.campaign = a.utm_campaign;
 
   const authHeader = fubAuthHeader(key);
 
@@ -274,6 +331,19 @@ export async function POST(req: Request) {
   }
 
   const type: LeadType = body.type ?? "contact";
+
+  // Sanitize forwarded attribution: known keys only, trimmed, length-capped.
+  const rawAttr = body.attribution ?? {};
+  const ATTR_KEYS: (keyof Attribution)[] = [
+    "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term",
+    "gclid", "fbclid", "referrer", "landing_page", "captured_at",
+  ];
+  const attribution: Attribution = {};
+  for (const k of ATTR_KEYS) {
+    const v = rawAttr[k];
+    if (typeof v === "string" && v.trim()) attribution[k] = v.trim().slice(0, 500);
+  }
+
   const lead = {
     type,
     name: clean(body.name),
@@ -283,6 +353,7 @@ export async function POST(req: Request) {
     hasLand: clean(body.hasLand),
     address: clean(body.address),
     message: clean(body.message),
+    attribution,
   };
 
   if (type === "subscribe") {
@@ -293,9 +364,22 @@ export async function POST(req: Request) {
 
   console.log(`[hplacer] lead (${type}):`, { ...lead, at: new Date().toISOString() });
 
+  // Email gets the scalar fields plus flattened attribution (its row renderer
+  // expects a flat string map, not the nested attribution object).
+  const emailLead: Record<string, string | null> = {
+    name: lead.name,
+    phone: lead.phone,
+    email: lead.email,
+    home: lead.home,
+    hasLand: lead.hasLand,
+    address: lead.address,
+    message: lead.message,
+    ...attribution,
+  };
+
   // Fire delivery providers in parallel; never fail the user submission if a
   // provider errors — the server log is the safety net.
-  const results = await Promise.allSettled([deliverToFub(lead), deliverByEmail(lead, type)]);
+  const results = await Promise.allSettled([deliverToFub(lead), deliverByEmail(emailLead, type)]);
   results.forEach((r, i) => {
     if (r.status === "rejected") {
       console.error(`[hplacer] lead delivery ${i} failed:`, r.reason);

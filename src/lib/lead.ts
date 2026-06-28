@@ -1,4 +1,6 @@
 import { site } from "./site";
+import { track } from "./analytics";
+import { getAttribution } from "./attribution";
 
 type LeadData = Record<string, FormDataEntryValue | string | undefined>;
 
@@ -36,17 +38,23 @@ function buildMailto(type: string, data: LeadData): string {
  * out so the form can show the right confirmation. Never throws.
  */
 export async function submitLead(type: string, data: LeadData): Promise<"api" | "mailto"> {
+  // First-touch attribution (utm_*, gclid, fbclid, referrer, landing page),
+  // captured on the visitor's first page load. Additive — never affects the
+  // user-visible form fields.
+  const attribution = getAttribution();
   try {
     const res = await fetch("/api/lead", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type, ...data }),
+      body: JSON.stringify({ type, ...data, attribution }),
     });
     if (!res.ok) throw new Error("api unavailable");
+    track("generate_lead", { form_type: type, method: "api" });
     return "api";
   } catch {
+    track("generate_lead", { form_type: type, method: "mailto" });
     if (typeof window !== "undefined") {
-      window.location.href = buildMailto(type, data);
+      window.location.href = buildMailto(type, { ...data, ...attribution });
     }
     return "mailto";
   }

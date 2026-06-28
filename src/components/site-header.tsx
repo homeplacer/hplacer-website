@@ -5,12 +5,15 @@ import { useState } from "react";
 import { navLinks, site } from "@/lib/site";
 import { asset } from "@/lib/asset";
 import { MenuIcon, CloseIcon, PhoneIcon } from "@/components/icons";
+import { AttributionTracker } from "@/components/attribution-tracker";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 border-b border-stone-line/80 bg-stone-bg/85 backdrop-blur-md">
+      {/* Invisible: records first-touch attribution on initial page load. */}
+      <AttributionTracker />
       <div className="container-x flex h-16 items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setOpen(false)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
