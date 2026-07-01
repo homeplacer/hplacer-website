@@ -2,6 +2,8 @@
 
 _Last updated: 2026-07-01. Written so a fresh Claude Code on another machine can pick up exactly where we left off._
 
+> **This is the quick-start.** The exhaustive, 15-section engineering handoff (every folder/file, standards, rules, environment, roadmap, decisions, recovery guide) lives in [`docs/handoff/`](docs/handoff/00-INDEX.md) — start there after this.
+
 ---
 
 ## 0. MIGRATION CHECKLIST — read first
