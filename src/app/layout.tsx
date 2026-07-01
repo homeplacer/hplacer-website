@@ -4,6 +4,8 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { EmailCapture } from "@/components/email-capture";
+import { GoogleAnalytics } from "@/components/analytics";
+import { AnalyticsEvents } from "@/components/analytics-events";
 import { JsonLd, localBusinessLd } from "@/lib/jsonld";
 import { site } from "@/lib/site";
 
@@ -62,6 +64,8 @@ export default function RootLayout({
       className={`${geistSans.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-stone-bg text-stone-ink">
+        <GoogleAnalytics />
+        <AnalyticsEvents />
         <JsonLd data={localBusinessLd()} />
         <SiteHeader />
         <main className="flex-1">{children}</main>

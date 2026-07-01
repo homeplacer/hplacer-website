@@ -52,4 +52,44 @@ export const faqs: Faq[] = [
     q: "How long does the whole process take?",
     a: "From picking your home to getting keys is typically a matter of weeks, not the months a site-built home takes — we coordinate permits, delivery, foundation, and utilities for you.",
   },
+  {
+    q: "Will the home stay put in a storm?",
+    a: "Yes. Horry and Georgetown counties sit in HUD Wind Zone II, so every home we place is built and anchored to stand up to roughly 100-mph coastal winds. It's set on a permanent foundation with an engineered tie-down system — a world apart from an old mobile home strapped to a rented lot.",
+  },
+  {
+    q: "What's a permanent foundation, and why does it matter?",
+    a: "It's the engineered piers, footings, and anchoring that lock your home to the land for good. It's what lets the home be titled as real property instead of a vehicle — which is what unlocks normal mortgages, better insurance, and long-term value. It's standard on every package we do.",
+  },
+  {
+    q: "How is the home actually delivered and set up?",
+    a: "Your home is built and inspected in a climate-controlled factory, then transported to your lot, set on the permanent foundation, and joined and finished on site. We handle the crane/set crew, skirting, permits, and hooking up power, water, and septic or sewer — usually wrapped up in weeks.",
+  },
+  {
+    q: "Will it look like a 'trailer' on the inside?",
+    a: "Not even close. Today's homes come with modern kitchens, real fixtures, and finishes that read like any new house. Many of our homes are even built with full, taped-and-textured drywall instead of the old strip walls — just ask and we'll point you to the ones that have it.",
+  },
+  {
+    q: "Does the lot need septic or sewer — and what about water?",
+    a: "It depends on the lot. In town you may tie into public sewer and water; on rural land it's usually a septic system and sometimes a well. We evaluate the site up front, handle the permits, and roll it all into your one package price so there are no surprises.",
+  },
+  {
+    q: "How much land do I need?",
+    a: "Not much — a typical quarter-acre lot is plenty for most of our homes, and we can go bigger if you want elbow room. If you don't have land yet, we'll help you find the right lot; if you do, we'll make sure it's buildable before you commit.",
+  },
+  {
+    q: "Can I pick the floor plan, colors, and finishes?",
+    a: "Yes. You choose the model and floor plan, then the decor package — cabinets, flooring, and color options. If you'd rather not wait, we also keep move-in-ready homes on the ground you can walk through today.",
+  },
+  {
+    q: "What credit score do I need to qualify?",
+    a: "There's no single magic number — it varies by loan program, and government-backed loans are more flexible than people expect. We're not a lender, but we work with lenders who specialize in homes on land and handle every credit situation, including buyers still rebuilding theirs.",
+  },
+  {
+    q: "Do I need a down payment?",
+    a: "Often very little. FHA loans run around 3.5% down, and VA and USDA loans can be zero down for buyers who qualify. If you already own your land, that land can count as part of your equity — sometimes covering the down payment entirely.",
+  },
+  {
+    q: "Is it really built as well as a site-built house?",
+    a: "It's built to the federal HUD Code in a factory where materials stay dry and every step is inspected — which catches things a rain-delayed job site can miss. Put that home on a permanent foundation on land you own, and it's real property, just like any other house.",
+  },
 ];

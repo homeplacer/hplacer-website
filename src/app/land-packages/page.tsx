@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { site } from "@/lib/site";
+import { ForturroLandSearch } from "@/components/forturro-land-search";
 import { CheckIcon, PinIcon, ArrowIcon } from "@/components/icons";
 
 export const metadata: Metadata = {
@@ -74,6 +75,9 @@ export default function LandPackagesPage() {
           </Link>
         </aside>
       </section>
+
+      {/* Need land first? Cross over to our sister company's MLS search. */}
+      <ForturroLandSearch />
     </>
   );
 }

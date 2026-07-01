@@ -1,0 +1,128 @@
+{
+ "aynor": {
+  "name": "Aynor",
+  "photos": [
+   {
+    "src": "/recently-placed/aynor/01.jpg",
+    "date": "2025-10-31"
+   },
+   {
+    "src": "/recently-placed/aynor/02.jpg",
+    "date": "2025-09-02"
+   },
+   {
+    "src": "/recently-placed/aynor/03.jpg",
+    "date": "2025-09-02"
+   },
+   {
+    "src": "/recently-placed/aynor/04.jpg",
+    "date": "2025-09-02"
+   }
+  ]
+ },
+ "conway": {
+  "name": "Conway",
+  "photos": [
+   {
+    "src": "/recently-placed/conway/01.jpg",
+    "date": "2026-05-14"
+   },
+   {
+    "src": "/recently-placed/conway/02.jpg",
+    "date": "2026-05-14"
+   },
+   {
+    "src": "/recently-placed/conway/03.jpg",
+    "date": "2026-04-11"
+   },
+   {
+    "src": "/recently-placed/conway/04.jpg",
+    "date": "2025-12-19"
+   }
+  ]
+ },
+ "grand-strand": {
+  "name": "Grand Strand",
+  "photos": [
+   {
+    "src": "/recently-placed/grand-strand/01.jpg",
+    "date": "2026-04-20"
+   },
+   {
+    "src": "/recently-placed/grand-strand/02.jpg",
+    "date": "2025-11-26"
+   },
+   {
+    "src": "/recently-placed/grand-strand/03.jpg",
+    "date": "2025-11-19"
+   },
+   {
+    "src": "/recently-placed/grand-strand/04.jpg",
+    "date": "2025-10-20"
+   }
+  ]
+ },
+ "longs": {
+  "name": "Longs",
+  "photos": [
+   {
+    "src": "/recently-placed/longs/01.jpg",
+    "date": "2026-03-11"
+   },
+   {
+    "src": "/recently-placed/longs/02.jpg",
+    "date": "2026-03-09"
+   },
+   {
+    "src": "/recently-placed/longs/03.jpg",
+    "date": "2025-11-28"
+   },
+   {
+    "src": "/recently-placed/longs/04.jpg",
+    "date": "2025-11-28"
+   }
+  ]
+ },
+ "loris": {
+  "name": "Loris",
+  "photos": [
+   {
+    "src": "/recently-placed/loris/01.jpg",
+    "date": "2026-06-17"
+   },
+   {
+    "src": "/recently-placed/loris/02.jpg",
+    "date": "2026-06-17"
+   },
+   {
+    "src": "/recently-placed/loris/03.jpg",
+    "date": "2026-06-17"
+   },
+   {
+    "src": "/recently-placed/loris/04.jpg",
+    "date": "2026-05-13"
+   }
+  ]
+ },
+ "myrtle-beach": {
+  "name": "Myrtle Beach",
+  "photos": [
+   {
+    "src": "/recently-placed/myrtle-beach/01.jpg",
+    "date": "2026-05-17"
+   },
+   {
+    "src": "/recently-placed/myrtle-beach/02.jpg",
+    "date": "2026-05-17"
+   },
+   {
+    "src": "/recently-placed/myrtle-beach/03.jpg",
+    "date": "2026-01-06"
+   },
+   {
+    "src": "/recently-placed/myrtle-beach/04.jpg",
+    "date": "2024-06-04"
+   }
+  ]
+ }
+}

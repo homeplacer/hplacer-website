@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import locationsManifest from "../../../../data/locations-manifest.json";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { locations, getLocation, cityGeo } from "@/lib/locations";
+import { locations, getLocation, getCounty, cityGeo } from "@/lib/locations";
 import { featuredHomes } from "@/lib/homes";
 import { HomeCard } from "@/components/home-card";
 import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
@@ -23,14 +23,18 @@ export async function generateMetadata({
   const loc = getLocation(slug);
   if (!loc) return { title: "Location not found" };
   const g = cityGeo[loc.slug];
+  const st = getCounty(loc.countyKey)?.stateAbbr ?? "SC";
+  const stateName = st === "NC" ? "North Carolina" : "South Carolina";
   return {
-    title: loc.headline,
+    // Title tag captures the high-volume "mobile home(s) in {city}" search while
+    // keeping the accurate "manufactured" term primary; the on-page H1 stays loc.headline.
+    title: `Manufactured & Mobile Homes in ${loc.name}, ${st}`,
     description: loc.intro,
     alternates: { canonical: `/locations/${loc.slug}` },
     other: g
       ? {
-          "geo.region": "US-SC",
-          "geo.placename": `${loc.name}, South Carolina`,
+          "geo.region": `US-${st}`,
+          "geo.placename": `${loc.name}, ${stateName}`,
           "geo.position": `${g.lat};${g.lng}`,
           ICBM: `${g.lat}, ${g.lng}`,
         }
@@ -46,6 +50,7 @@ export default async function LocationPage({
   const { slug } = await params;
   const loc = getLocation(slug);
   if (!loc) notFound();
+  const county = getCounty(loc.countyKey);
   const homes = featuredHomes(3);
 
   // Real Home Placer homes photographed in this town (geo-tagged from Joe's
@@ -124,6 +129,35 @@ export default async function LocationPage({
           </Link>
         </aside>
       </section>
+
+      {/* Local specifics — county-accurate facts (local SEO + AI-answer signal) */}
+      {county && (
+        <section className="container-x pb-4">
+          <div className="rounded-card border border-stone-line bg-stone-surface p-7 sm:p-9">
+            <h2 className="font-display text-2xl font-semibold text-stone-ink">
+              Building a manufactured home in {loc.name}
+            </h2>
+            <p className="mt-1 text-sm text-stone-muted">
+              {loc.name} is in {county.name}, {county.stateAbbr}.
+            </p>
+            <dl className="mt-6 grid gap-x-10 gap-y-5 sm:grid-cols-2">
+              {[
+                { t: "Wind standard", d: county.windText },
+                { t: "Utilities", d: county.utilitiesText },
+                { t: "Financing", d: `FHA, VA, and conventional land-home loans — and ${county.usdaText}.` },
+                { t: "Permitting", d: county.permittingText },
+                { t: "What's included", d: "The home, a quarter-acre lot, delivery, a permanent foundation, and utility hookups — one package, one closing, no HOA." },
+                { t: "Timeline", d: "Usually a few months from choosing your home to move-in, depending on land readiness and permits." },
+              ].map((f) => (
+                <div key={f.t}>
+                  <dt className="font-semibold text-stone-ink">{f.t}</dt>
+                  <dd className="mt-1 text-sm leading-relaxed text-stone-muted">{f.d}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+      )}
 
       {townPhotos.length > 0 && (
         <section className="bg-stone-surface py-14">

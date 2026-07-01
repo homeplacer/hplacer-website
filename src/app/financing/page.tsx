@@ -43,6 +43,15 @@ export default function FinancingPage() {
       </PageHero>
 
       <section className="container-x py-16">
+        <div className="mx-auto mb-10 max-w-3xl rounded-card border border-brand-200 bg-brand-50/60 p-6 text-center">
+          <p className="leading-relaxed text-stone-ink/90">
+            <strong className="font-semibold text-stone-ink">
+              Every manufactured home we sell — on land you own — qualifies as real property.
+            </strong>{" "}
+            That means the same <strong>conventional, FHA, VA, and USDA</strong> loans as a site-built
+            house: a real 30-year mortgage, not a short, high-rate &ldquo;mobile home&rdquo; loan.
+          </p>
+        </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {programs.map((p) => (
             <div key={p.name} className="rounded-card border border-stone-line bg-stone-bg p-6">

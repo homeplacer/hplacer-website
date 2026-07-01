@@ -20,15 +20,15 @@
   --color-brand-900: #172033;
   --color-brand-950: #0f1728;
 
-  /* accent — blue */
-  --color-accent-50: #eff6ff;
-  --color-accent-100: #dbeafe;
-  --color-accent-200: #bfdbfe;
-  --color-accent-300: #93c5fd;
-  --color-accent-400: #3b82f6;
-  --color-accent-500: #2563eb;
-  --color-accent-600: #1d4ed8;
-  --color-accent-700: #1e40af;
+  /* accent — hot pink */
+  --color-accent-50: #fdf2f8;
+  --color-accent-100: #fce7f3;
+  --color-accent-200: #fbcfe8;
+  --color-accent-300: #f9a8d4;
+  --color-accent-400: #ec4899;
+  --color-accent-500: #db2777;
+  --color-accent-600: #be185d;
+  --color-accent-700: #9d174d;
 
   /* cool stone neutrals */
   --color-stone-bg: #ffffff;

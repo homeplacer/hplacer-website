@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Home, Brand } from "@/lib/home-types";
-import { displayPrice } from "@/lib/home-types";
+import { displayPrice, hasXlBedrooms, isFullDrywall, availableWidths, sqftForWidth } from "@/lib/home-types";
 import { HomeCard } from "@/components/home-card";
 
 type BrandTab = "All" | Brand;
@@ -18,13 +18,22 @@ const SQFT_STEPS = [0, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400];
 const PRICE_STEPS = [0, 200000, 220000, 240000, 260000, 280000, 300000];
 
 // Single-wides are 14 or 16 ft wide; anything wider is a double-wide.
+// "32′ XL" = offered in a 32-ft section (extra-large bedrooms).
 const WIDTH_TYPES = [
   { label: "All widths", value: "all" },
   { label: "Single-wide", value: "single" },
   { label: "Double-wide", value: "double" },
+  { label: "32′ XL", value: "xl" },
 ] as const;
 type WidthType = (typeof WIDTH_TYPES)[number]["value"];
 const isSingleWide = (h: Home) => h.widthFt <= 16;
+
+// Sqft spanning every available section width (so a 28'/32' plan filters and
+// sorts on its full range, not just the 28' base value).
+const sqftSpan = (h: Home) => {
+  const ws = availableWidths(h);
+  return { min: sqftForWidth(h, ws[0]), max: sqftForWidth(h, ws[ws.length - 1]) };
+};
 
 const SORTS = [
   { label: "Best selling", value: "best" },
@@ -57,15 +66,23 @@ export function HomesBrowser({
   const [maxSqft, setMaxSqft] = useState(Infinity);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(Infinity);
+  const [drywallOnly, setDrywallOnly] = useState(false);
   const [sort, setSort] = useState<Sort>("best");
 
-  // Deep-link support: ?brand=Clayton etc. (read client-side so the page stays static)
+  // Deep-link support: ?brand=Clayton, ?wall=drywall. Read on mount — URL params
+  // aren't available during SSR, so this must be an effect (an initializer would
+  // hydration-mismatch). Setting state here is the intended use.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    const b = new URLSearchParams(window.location.search).get("brand");
-    if (!b) return;
-    const match = brandTabs.find((t) => t.toLowerCase() === b.toLowerCase());
-    if (match) setBrand(match);
+    const params = new URLSearchParams(window.location.search);
+    const b = params.get("brand");
+    if (b) {
+      const match = brandTabs.find((t) => t.toLowerCase() === b.toLowerCase());
+      if (match) setBrand(match);
+    }
+    if (params.get("wall") === "drywall") setDrywallOnly(true);
   }, [brandTabs]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -73,8 +90,12 @@ export function HomesBrowser({
       if (brand !== "All" && h.brand !== brand) return false;
       if (widthType === "single" && !isSingleWide(h)) return false;
       if (widthType === "double" && isSingleWide(h)) return false;
+      if (widthType === "xl" && !hasXlBedrooms(h)) return false;
+      if (drywallOnly && !isFullDrywall(h)) return false;
       if (h.beds < minBeds) return false;
-      if (h.sqft < minSqft || h.sqft > maxSqft) return false;
+      // Keep the home if ANY of its available widths falls in the sqft range.
+      const { min: loSqft, max: hiSqft } = sqftSpan(h);
+      if (hiSqft < minSqft || loSqft > maxSqft) return false;
       if (q && !`${h.name} ${h.series} ${h.brand} ${h.modelCode} ${(h.aka ?? []).join(" ")}`.toLowerCase().includes(q)) return false;
       // Price filter only applies to homes that have a price set.
       if (minPrice > 0 || maxPrice < Infinity) {
@@ -85,13 +106,13 @@ export function HomesBrowser({
     });
     return [...filtered].sort((a, b) => {
       if (sort === "best")
-        return ((a.bestSellerRank ?? 999) - (b.bestSellerRank ?? 999)) || b.sqft - a.sqft;
+        return ((a.bestSellerRank ?? 999) - (b.bestSellerRank ?? 999)) || sqftSpan(b).max - sqftSpan(a).max;
       if (sort === "price-asc") return (displayPrice(a) ?? Infinity) - (displayPrice(b) ?? Infinity);
       if (sort === "price-desc") return (displayPrice(b) ?? -Infinity) - (displayPrice(a) ?? -Infinity);
-      if (sort === "sqft-asc") return a.sqft - b.sqft;
-      return b.sqft - a.sqft;
+      if (sort === "sqft-asc") return sqftSpan(a).min - sqftSpan(b).min;
+      return sqftSpan(b).max - sqftSpan(a).max;
     });
-  }, [homes, brand, widthType, query, minBeds, minSqft, maxSqft, minPrice, maxPrice, sort]);
+  }, [homes, brand, widthType, query, minBeds, minSqft, maxSqft, minPrice, maxPrice, drywallOnly, sort]);
 
   const selectClass =
     "rounded-lg border border-stone-line bg-stone-bg px-3 py-2 text-sm font-medium text-stone-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
@@ -105,10 +126,11 @@ export function HomesBrowser({
     setMaxSqft(Infinity);
     setMinPrice(0);
     setMaxPrice(Infinity);
+    setDrywallOnly(false);
   }
 
   const hasFilters =
-    brand !== "All" || widthType !== "all" || query || minBeds || minSqft || maxSqft < Infinity || minPrice || maxPrice < Infinity;
+    brand !== "All" || widthType !== "all" || query || minBeds || minSqft || maxSqft < Infinity || minPrice || maxPrice < Infinity || drywallOnly;
 
   return (
     <div>
@@ -169,6 +191,24 @@ export function HomesBrowser({
               </button>
             ))}
           </div>
+
+          {/* Full-drywall quality filter */}
+          <button
+            type="button"
+            onClick={() => setDrywallOnly((v) => !v)}
+            aria-pressed={drywallOnly}
+            title="Show only homes built with true, site-built-quality full drywall"
+            className={
+              drywallOnly
+                ? "inline-flex items-center gap-1.5 rounded-full bg-brand-700 px-3.5 py-2 text-sm font-semibold text-white"
+                : "inline-flex items-center gap-1.5 rounded-full border border-stone-line bg-stone-bg px-3.5 py-2 text-sm font-medium text-stone-ink hover:border-brand-300"
+            }
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="size-3.5">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+            Full drywall
+          </button>
 
           <span className="hidden h-6 w-px bg-stone-line sm:block" />
 

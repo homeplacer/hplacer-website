@@ -1,7 +1,19 @@
 import Link from "next/link";
-import { navLinks, resourceLinks, site } from "@/lib/site";
+import { navLinks, resourceLinks, site, socialLinks } from "@/lib/site";
 import { asset } from "@/lib/asset";
-import { PhoneIcon, PinIcon } from "@/components/icons";
+import {
+  PhoneIcon,
+  PinIcon,
+  InstagramIcon,
+  TiktokIcon,
+  FacebookIcon,
+} from "@/components/icons";
+
+const SOCIAL_ICONS = {
+  instagram: InstagramIcon,
+  tiktok: TiktokIcon,
+  facebook: FacebookIcon,
+} as const;
 
 export function SiteFooter() {
   const year = 2026;
@@ -37,6 +49,32 @@ export function SiteFooter() {
               <span>on Google ({site.gbp.reviewCount} reviews)</span>
             </a>
           </div>
+
+          <div className="mt-6">
+            <h4 className="font-display text-xs font-semibold uppercase tracking-wider text-accent-300">
+              Follow Home Placer
+            </h4>
+            <div className="mt-3 flex items-center gap-3">
+              {socialLinks
+                .filter((s) => s.live)
+                .map((s) => {
+                  const Icon = SOCIAL_ICONS[s.key];
+                  return (
+                    <a
+                      key={s.key}
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Home Placer on ${s.label}`}
+                      title={`${s.label} · ${s.handle}`}
+                      className="flex size-9 items-center justify-center rounded-full border border-white/15 text-stone-100/80 transition hover:border-accent-300 hover:text-accent-300"
+                    >
+                      <Icon className="size-[18px]" />
+                    </a>
+                  );
+                })}
+            </div>
+          </div>
         </div>
 
         <div>
@@ -66,6 +104,16 @@ export function SiteFooter() {
                 </Link>
               </li>
             ))}
+            <li>
+              <a
+                href={site.forturro.landSearchUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-stone-100/80 hover:text-white"
+              >
+                Search Land for Sale ↗
+              </a>
+            </li>
           </ul>
         </div>
 

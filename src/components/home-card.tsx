@@ -1,11 +1,21 @@
 import Link from "next/link";
 import type { Home } from "@/lib/home-types";
-import { formatPrice, displayPrice } from "@/lib/home-types";
-import { BedIcon, BathIcon, RulerIcon, HomeMark } from "@/components/icons";
+import {
+  formatPrice,
+  displayPrice,
+  hasXlBedrooms,
+  isMultiWidth,
+  isFullDrywall,
+  footprintLabel,
+} from "@/lib/home-types";
+import { BedIcon, BathIcon, RulerIcon, HomeMark, CheckIcon } from "@/components/icons";
 
 export function HomeCard({ home }: { home: Home }) {
   const price = displayPrice(home);
   const photo = home.imageUrls[0];
+  const multiWidth = isMultiWidth(home);
+  // Dual-width plans show both footprints ("28×68 or 32×68"); others show sqft.
+  const sizeLabel = multiWidth ? footprintLabel(home) : `${home.sqft.toLocaleString()} sqft`;
 
   return (
     <Link
@@ -32,6 +42,16 @@ export function HomeCard({ home }: { home: Home }) {
         {home.bestSeller && (
           <span className="absolute right-3 top-3 rounded-full bg-accent-500 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
             ★ Best Seller
+          </span>
+        )}
+        {hasXlBedrooms(home) && (
+          <span className="absolute bottom-3 left-3 rounded-full bg-amber-500 px-2.5 py-1 text-xs font-bold text-amber-950 shadow-sm">
+            {multiWidth ? "Available with XL Rooms" : "32′ · XL Bedrooms"}
+          </span>
+        )}
+        {isFullDrywall(home) && (
+          <span className="absolute bottom-3 right-3 inline-flex items-center gap-1 rounded-full bg-brand-700 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
+            <CheckIcon className="size-3" /> Full Drywall
           </span>
         )}
       </div>
@@ -68,7 +88,7 @@ export function HomeCard({ home }: { home: Home }) {
             <BathIcon className="size-4 text-brand-600" /> {home.baths} ba
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <RulerIcon className="size-4 text-brand-600" /> {home.sqft.toLocaleString()} sqft
+            <RulerIcon className="size-4 text-brand-600" /> {sizeLabel}
           </span>
         </div>
       </div>

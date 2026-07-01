@@ -3,7 +3,8 @@
     "slug": "ultra-flex-28-52",
     "brand": "Clayton",
     "series": "Ultra Pro Flex (Oxford)",
-    "name": "Ultra Flex 28×52",
+    "wallFinish": "strips",
+    "name": "Ultra Flex 28\u00d752",
     "modelCode": "29UPF28523AH",
     "widthFt": 28,
     "lengthFt": 52,
@@ -39,13 +40,20 @@
     ],
     "bestSeller": true,
     "bestSellerRank": 0,
-    "sourceUrl": "https://claytonoxfordhbf.com/models/29upf28523ah/"
+    "sourceUrl": "https://claytonoxfordhbf.com/models/29upf28523ah/",
+    "tourUrl": "https://momento360.com/e/uc/67eb9bf2cf1c44e68692a9d5bc824ac1?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/04ad24f0-9cc4-4113-a27a-6cad32e28b3a.jpg"
+      }
+    ]
   },
   {
     "slug": "ultra-flex-28-68",
     "brand": "Clayton",
     "series": "Ultra Pro Flex (Oxford)",
-    "name": "Ultra Flex 28×68",
+    "wallFinish": "strips",
+    "name": "Ultra Flex 28\u00d768",
     "modelCode": "29UPF28684AH",
     "widthFt": 28,
     "lengthFt": 68,
@@ -81,13 +89,20 @@
     ],
     "bestSeller": true,
     "bestSellerRank": 5,
-    "sourceUrl": "https://claytonoxfordhbf.com/models/29upf28684ah/"
+    "sourceUrl": "https://claytonoxfordhbf.com/models/29upf28684ah/",
+    "tourUrl": "https://momento360.com/e/uc/47e01ce516b3459086ccaf96dc14e97f?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/d3f4cb9e-16f9-4a3a-9f2b-5230ed3f4fea.png"
+      }
+    ]
   },
   {
     "slug": "ultra-flex-32-76",
     "brand": "Clayton",
     "series": "Ultra Pro Flex (Oxford)",
-    "name": "Ultra Flex 32×76",
+    "wallFinish": "strips",
+    "name": "Ultra Flex 32\u00d776",
     "modelCode": "29UPF32764AH",
     "widthFt": 32,
     "lengthFt": 76,
@@ -122,12 +137,14 @@
     ],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonoxfordhbf.com/models/29upf32764ah/"
+    "sourceUrl": "https://claytonoxfordhbf.com/models/29upf32764ah/",
+    "tourUrl": "https://momento360.com/e/uc/dec9a73ee7bc4a4aaad68ea339d18e43?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large29UPF32764AH_29M230"
   },
   {
     "slug": "beacon",
     "brand": "Clayton",
     "series": "Horizon",
+    "wallFinish": "strips",
     "name": "Beacon",
     "modelCode": "29HZN16663AH",
     "widthFt": 16,
@@ -151,12 +168,19 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn16663ah/"
+    "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn16663ah/",
+    "tourUrl": "https://momento360.com/e/uc/f1ab8ef8250d4f538c946e5894f74949?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/c40bf8b0-cda6-4b6b-8e96-ef6ab9706483.jpg"
+      }
+    ]
   },
   {
     "slug": "northstar",
     "brand": "Clayton",
     "series": "Horizon",
+    "wallFinish": "strips",
     "name": "Northstar",
     "modelCode": "29HZN16763AH",
     "widthFt": 16,
@@ -176,18 +200,24 @@
       "https://api.claytonhomes.com/images/mfg/int/dea7ce78-6ac1-49d1-a346-2cb624e6b815.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/fc9d0913-dc18-424c-8e8d-8a009a1a4aba.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/dbc1766c-797f-4596-91cf-bb1843c351cf.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/int/b320b5b6-f1a4-4e7b-9eb1-b8768edafb3f.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/flp/b571c7d7-3e82-4caa-8d07-b119a88b531b.jpg"
+      "https://api.claytonhomes.com/images/mfg/int/b320b5b6-f1a4-4e7b-9eb1-b8768edafb3f.jpg?width=992"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn16763ah/"
+    "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn16763ah/",
+    "tourUrl": "https://momento360.com/e/uc/c964ed5ba2c649ed866498e42e4e76bc?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/b571c7d7-3e82-4caa-8d07-b119a88b531b.jpg"
+      }
+    ]
   },
   {
     "slug": "aspire",
     "brand": "Clayton",
     "series": "Horizon",
+    "wallFinish": "strips",
     "name": "Aspire",
     "modelCode": "29HZN28563AH",
     "widthFt": 28,
@@ -207,18 +237,24 @@
       "https://api.claytonhomes.com/images/mfg/ext/36a203da-9659-4d1a-88bb-1f4fe0d3b57d.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/a8b5f8d7-261e-4589-be4c-1845e57950b6.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/1e69bf28-1d08-43d5-9051-a3cd75590514.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/int/e26eb432-d1ae-4d9f-82c4-eb0a87310848.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/flp/405b7971-a9e7-4e27-b0fd-4af083cf6033.jpg"
+      "https://api.claytonhomes.com/images/mfg/int/e26eb432-d1ae-4d9f-82c4-eb0a87310848.jpg?width=992"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn28563ah/"
+    "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn28563ah/",
+    "tourUrl": "https://momento360.com/e/uc/596b95620c67403cac155b30696bf0c8?utm_campaign=embed&#038;utm_source=other&#038;utm_medium=embed&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/405b7971-a9e7-4e27-b0fd-4af083cf6033.jpg"
+      }
+    ]
   },
   {
     "slug": "haven",
     "brand": "Clayton",
     "series": "Horizon",
+    "wallFinish": "strips",
     "name": "Haven",
     "modelCode": "29HZN28603AH",
     "widthFt": 28,
@@ -240,18 +276,24 @@
       "https://api.claytonhomes.com/images/mfg/ext/e0a37792-949d-4ece-8ce1-2d9625e800e5.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/ext/83c45851-5511-4ac3-ba54-1c638d485661.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/ext/30e378ea-2d32-4725-8c77-c73f6ae76c8d.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/ext/7abd50bb-c61a-4825-bd42-f747d946591f.png?width=992",
-      "https://api.claytonhomes.com/images/mfg/flp/ef7c5867-8f72-4675-b2c0-44aef5ee0292.jpg"
+      "https://api.claytonhomes.com/images/mfg/ext/7abd50bb-c61a-4825-bd42-f747d946591f.png?width=992"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn28603ah/"
+    "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn28603ah/",
+    "tourUrl": "https://momento360.com/e/uc/b7f635f30a094377a80c2ba3a74cd484?utm_campaign=embed&#038;utm_source=other&#038;utm_medium=embed&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/ef7c5867-8f72-4675-b2c0-44aef5ee0292.jpg"
+      }
+    ]
   },
   {
     "slug": "eclipse",
     "brand": "Clayton",
     "series": "Horizon",
+    "wallFinish": "strips",
     "name": "Eclipse",
     "modelCode": "29HZR28684AH",
     "widthFt": 28,
@@ -281,12 +323,22 @@
     "aka": [],
     "bestSeller": true,
     "bestSellerRank": 4,
-    "sourceUrl": "https://claytonbuilthorizon.com/models/29hzr28684ah/"
+    "sourceUrl": "https://claytonbuilthorizon.com/models/29hzr28684ah/",
+    "tourUrl": "https://momento360.com/e/uc/b530d0a695fb47d8aa38b0bb0d95abaf?utm_campaign=embed&#038;utm_source=other&#038;utm_medium=embed&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/1f243a79-580b-4442-9838-323b8a45ccca.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/b4d4e5d9-8aad-4614-831e-db8cfde3b42a.jpg"
+      }
+    ]
   },
   {
     "slug": "vision",
     "brand": "Clayton",
     "series": "Giles",
+    "wallFinish": "strips",
     "name": "Vision",
     "modelCode": "46ESS32684AH",
     "widthFt": 32,
@@ -329,18 +381,24 @@
       "https://api.claytonhomes.com/images/mfg/int/d2aa0861-71c1-4a54-9b66-b51305c3817d.jpg",
       "https://api.claytonhomes.com/images/mfg/int/d2761617-ec39-4a0c-a8ff-52aa76b22fdd.jpg",
       "https://api.claytonhomes.com/images/mfg/int/df3309df-e009-4278-b987-a0b7eaed25f6.jpg",
-      "https://api.claytonhomes.com/images/mfg/int/adf1ae4c-7f43-4c5b-a5a1-eb287f644bf1.jpg",
-      "https://api.claytonhomes.com/images/mfg/flp/57a1a532-145c-423c-aa31-e9660940305c.jpg"
+      "https://api.claytonhomes.com/images/mfg/int/adf1ae4c-7f43-4c5b-a5a1-eb287f644bf1.jpg"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytongiles.com/models/46ess32684ah/"
+    "sourceUrl": "https://claytongiles.com/models/46ess32684ah/",
+    "tourUrl": "https://my.matterport.com/show/?m=Rby8zrUEkZ1",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/57a1a532-145c-423c-aa31-e9660940305c.jpg"
+      }
+    ]
   },
   {
     "slug": "leo",
     "brand": "Clayton",
     "series": "Giles",
+    "wallFinish": "strips",
     "name": "Leo",
     "modelCode": "46XCL28563AH",
     "widthFt": 28,
@@ -371,12 +429,19 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytongiles.com/models/46xcl28563ah/"
+    "sourceUrl": "https://claytongiles.com/models/46xcl28563ah/",
+    "tourUrl": "https://momento360.com/e/uc/01be78e4fb5f4233934085ab17942797?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/d69bb718-4564-4898-b100-ca0a26be713f.jpg"
+      }
+    ]
   },
   {
     "slug": "diamond",
     "brand": "Clayton",
     "series": "Giles",
+    "wallFinish": "strips",
     "name": "Diamond",
     "modelCode": "46XCL32603AH",
     "widthFt": 32,
@@ -397,18 +462,24 @@
       "https://api.claytonhomes.com/images/mfg/int/aef41f3f-f360-44d8-b48e-34081c62c288.png",
       "https://api.claytonhomes.com/images/mfg/int/dcc705ea-f149-4533-aba2-a9a805fc7ca1.png",
       "https://api.claytonhomes.com/images/mfg/int/849e8a8a-33c6-44e0-8f16-bf145ccf05d6.png",
-      "https://api.claytonhomes.com/images/mfg/int/7e325b2e-c52d-4112-82a3-45ce526d699e.png",
-      "https://api.claytonhomes.com/images/mfg/flp/ce33a58e-456f-4e8e-8bd9-62cf75ffe336.png"
+      "https://api.claytonhomes.com/images/mfg/int/7e325b2e-c52d-4112-82a3-45ce526d699e.png"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytongiles.com/models/46xcl32603ah/"
+    "sourceUrl": "https://claytongiles.com/models/46xcl32603ah/",
+    "tourUrl": "https://momento360.com/e/uc/36b566daa2fe4a329a9439aa23a925d5?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/ce33a58e-456f-4e8e-8bd9-62cf75ffe336.png"
+      }
+    ]
   },
   {
     "slug": "hartford",
     "brand": "Clayton",
     "series": "Alliance",
+    "wallFinish": "strips",
     "name": "Hartford",
     "modelCode": "46ALL28403AH",
     "widthFt": 28,
@@ -439,12 +510,19 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytongiles.com/models/46all28403ah/"
+    "sourceUrl": "https://claytongiles.com/models/46all28403ah/",
+    "tourUrl": "https://momento360.com/e/uc/e2c8bcf04cf0470684207f57bdb5bb3d?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/1fe68758-2360-40eb-b74e-3b4610ad2338.jpg"
+      }
+    ]
   },
   {
     "slug": "richmond",
     "brand": "Clayton",
     "series": "Giles",
+    "wallFinish": "strips",
     "name": "Richmond",
     "modelCode": "46ALL28483AH",
     "widthFt": 28,
@@ -475,12 +553,19 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytongiles.com/models/46all28483ah/"
+    "sourceUrl": "https://claytongiles.com/models/46all28483ah/",
+    "tourUrl": "https://momento360.com/e/uc/f1da605e2fba42938bda1b7520cd3c16?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/ab3d9643-b018-4879-8b84-0fda502a7ded.jpg"
+      }
+    ]
   },
   {
     "slug": "vivid",
     "brand": "Cavco",
     "series": "Vivid",
+    "wallFinish": "strips",
     "name": "Vivid",
     "modelCode": "vivid",
     "widthFt": 28,
@@ -509,12 +594,14 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://newhomes.cavcohomes.com/vivid/"
+    "sourceUrl": "https://newhomes.cavcohomes.com/vivid/",
+    "tourUrl": "https://my.matterport.com/show/?m=4dUDUFd5nAd&title=0&ts=1&nt=1"
   },
   {
     "slug": "atmos",
     "brand": "Cavco",
     "series": "Atmos",
+    "wallFinish": "drywall",
     "name": "Atmos",
     "modelCode": "atmos",
     "widthFt": 28,
@@ -531,34 +618,55 @@
       "Board-and-batten siding"
     ],
     "imageUrls": [
-      "/models/atmos/01.jpg",
-      "/models/atmos/02.jpg",
-      "/models/atmos/03.jpg",
-      "/models/atmos/04.jpg",
-      "/models/atmos/05.jpg",
-      "/models/atmos/06.jpg",
-      "/models/atmos/07.jpg",
-      "/models/atmos/08.jpg",
-      "/models/atmos/09.jpg",
-      "/models/atmos/10.jpg",
-      "/models/atmos/11.jpg",
-      "/models/atmos/12.jpg",
-      "/models/atmos/13.jpg",
-      "/models/atmos/14.jpg",
-      "/models/atmos/15.jpg",
-      "/models/atmos/16.jpg"
+      "/recently-placed/galleries/2514100/01.jpg",
+      "/recently-placed/galleries/2514100/02.jpg",
+      "/recently-placed/galleries/2514100/03.jpg",
+      "/recently-placed/galleries/2514100/04.jpg",
+      "/recently-placed/galleries/2514100/05.jpg",
+      "/recently-placed/galleries/2514100/06.jpg",
+      "/recently-placed/galleries/2514100/07.jpg",
+      "/recently-placed/galleries/2514100/08.jpg",
+      "/recently-placed/galleries/2514100/09.jpg",
+      "/recently-placed/galleries/2514100/10.jpg",
+      "/recently-placed/galleries/2514100/11.jpg",
+      "/recently-placed/galleries/2514100/12.jpg",
+      "/recently-placed/galleries/2514100/13.jpg",
+      "/recently-placed/galleries/2514100/14.jpg",
+      "/recently-placed/galleries/2514100/15.jpg",
+      "/recently-placed/galleries/2514100/16.jpg",
+      "/recently-placed/galleries/2514100/17.jpg",
+      "/recently-placed/galleries/2514100/18.jpg",
+      "/recently-placed/galleries/2514100/19.jpg",
+      "/recently-placed/galleries/2514100/20.jpg",
+      "/recently-placed/galleries/2514100/21.jpg",
+      "/recently-placed/galleries/2514100/22.jpg",
+      "/recently-placed/galleries/2514100/23.jpg",
+      "/recently-placed/galleries/2514100/24.jpg",
+      "/recently-placed/galleries/2514100/25.jpg",
+      "/recently-placed/galleries/2514100/26.jpg",
+      "/recently-placed/galleries/2514100/27.jpg",
+      "/recently-placed/galleries/2514100/28.jpg",
+      "/recently-placed/galleries/2514100/29.jpg",
+      "/recently-placed/galleries/2514100/30.jpg",
+      "/recently-placed/galleries/2514100/31.jpg",
+      "/recently-placed/galleries/2514100/32.jpg",
+      "/recently-placed/galleries/2514100/33.jpg",
+      "/recently-placed/galleries/2514100/34.jpg",
+      "/recently-placed/galleries/2514100/35.jpg"
     ],
     "aka": [
       "Cavco Atmos"
     ],
     "bestSeller": true,
     "bestSellerRank": 6,
-    "sourceUrl": "https://newhomes.cavcohomes.com/atmos/"
+    "sourceUrl": "https://newhomes.cavcohomes.com/atmos/",
+    "tourUrl": "https://my.matterport.com/show/?m=1crfTtm7AJV&title=0&ts=1&nt=1"
   },
   {
     "slug": "ironclad-2856",
     "brand": "Champion",
     "series": "Iron Clad",
+    "wallFinish": "drywall",
     "name": "Ironclad 2856-08",
     "modelCode": "ironclad-2856-08",
     "widthFt": 28,
@@ -598,12 +706,14 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-2856-08"
+    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-2856-08",
+    "tourUrl": "https://my.matterport.com/show/?m=iPgVZGQvTEr"
   },
   {
     "slug": "ironclad-3276",
     "brand": "Champion",
     "series": "Iron Clad",
+    "wallFinish": "drywall",
     "name": "Ironclad 3276-20",
     "modelCode": "3276-20",
     "widthFt": 32,
@@ -651,12 +761,14 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-3276"
+    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-3276",
+    "tourUrl": "https://my.matterport.com/show/?m=y62msdMHPN5"
   },
   {
     "slug": "ironclad-3276-21",
     "brand": "Champion",
     "series": "Iron Clad",
+    "wallFinish": "drywall",
     "name": "Ironclad 3276-21",
     "modelCode": "ironclad-3276-21",
     "widthFt": 32,
@@ -708,12 +820,14 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-3276-21"
+    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/ironclad-3276-21",
+    "tourUrl": "https://my.matterport.com/show/?m=XrZWvZgtrHu"
   },
   {
     "slug": "dutch-2963-ashley",
     "brand": "Champion",
     "series": "Dutch Elite",
+    "wallFinish": "drywall",
     "name": "Dutch 2963 - Ashley",
     "modelCode": "dutch-2963-ashley",
     "widthFt": 29,
@@ -750,12 +864,14 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-2963-ashley"
+    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-2963-ashley",
+    "tourUrl": "https://my.matterport.com/show?m=WpE3dZRqs3H"
   },
   {
     "slug": "garner-3975",
     "brand": "Champion",
     "series": "Dutch Elite",
+    "wallFinish": "drywall",
     "name": "Garner 3975",
     "modelCode": "dutch-3975-garner",
     "widthFt": 30.33,
@@ -792,12 +908,14 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-3975-garner"
+    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-3975-garner",
+    "tourUrl": "https://my.matterport.com/show/?m=26bLC4R8iwy"
   },
   {
     "slug": "dutch-elite-1676-01",
     "brand": "Champion",
     "series": "Dutch Elite",
+    "wallFinish": "drywall",
     "name": "Dutch Elite 1676-01",
     "modelCode": "dutch-elite-1676-01",
     "widthFt": 16,
@@ -828,12 +946,14 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1676-01"
+    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1676-01",
+    "tourUrl": "https://my.matterport.com/show/?m=4YJzwgZWJMZ"
   },
   {
     "slug": "dutch-elite-1676-07",
     "brand": "Champion",
     "series": "Dutch Elite",
+    "wallFinish": "drywall",
     "name": "Dutch Elite 1676-07",
     "modelCode": "dutch-elite-1676-07",
     "widthFt": 16,
@@ -861,12 +981,14 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1676-07"
+    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-1676-07",
+    "tourUrl": "https://my.matterport.com/show/?m=Hdjs5Whevk7"
   },
   {
     "slug": "dutch-elite-2852-02-spruce-pine",
     "brand": "Champion",
     "series": "Dutch Elite",
+    "wallFinish": "drywall",
     "name": "Dutch Elite 2852-02 Spruce Pine",
     "modelCode": "2852-02",
     "widthFt": 28,
@@ -925,12 +1047,14 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-2852-02-spruce-pine"
+    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-2852-02-spruce-pine",
+    "tourUrl": "https://my.matterport.com/show/?m=nRjcDY2jtQ4"
   },
   {
     "slug": "piedmont",
     "brand": "Champion",
     "series": "Dutch Elite",
+    "wallFinish": "drywall",
     "name": "Piedmont",
     "modelCode": "dutch-elite-2945",
     "widthFt": 29,
@@ -958,6 +1082,7 @@
     "slug": "greenwood",
     "brand": "Champion",
     "series": "Dutch Elite",
+    "wallFinish": "drywall",
     "name": "Greenwood",
     "modelCode": "dutch-elite-2955-greenwood",
     "widthFt": 29,
@@ -993,12 +1118,14 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-2955-greenwood"
+    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-2955-greenwood",
+    "tourUrl": "https://my.matterport.com/show?m=TuDxNm9E8wF"
   },
   {
     "slug": "dutch-elite-3258-03",
     "brand": "Champion",
     "series": "Dutch Elite",
+    "wallFinish": "drywall",
     "name": "Dutch Elite 3258-03",
     "modelCode": "dutch-elite-3258-03",
     "widthFt": 32,
@@ -1055,12 +1182,14 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-3258-03"
+    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-3258-03",
+    "tourUrl": "https://my.matterport.com/show?m=5LftHMzn7Jy"
   },
   {
     "slug": "silver-birch",
     "brand": "Champion",
     "series": "Dutch Elite",
+    "wallFinish": "drywall",
     "name": "Silver Birch",
     "modelCode": "dutch-elite-3262-02-silver-birch",
     "widthFt": 32,
@@ -1103,12 +1232,14 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-3262-02-silver-birch"
+    "sourceUrl": "https://www.championhomesofnc.com/home-plans-photos/dutch-elite-3262-02-silver-birch",
+    "tourUrl": "https://my.matterport.com/show/?m=YbG1Wwk1YTx"
   },
   {
     "slug": "shenandoah",
     "brand": "Champion",
     "series": "Dutch Elite",
+    "wallFinish": "drywall",
     "name": "Shenandoah",
     "modelCode": "dutch-elite-3268",
     "widthFt": 32,
@@ -1142,6 +1273,7 @@
     "slug": "holston",
     "brand": "Champion",
     "series": "Dutch Elite",
+    "wallFinish": "drywall",
     "name": "Holston",
     "modelCode": "dutch-elite-3277-holston",
     "widthFt": 32,
@@ -1169,6 +1301,7 @@
     "slug": "spirit",
     "brand": "Clayton",
     "series": "Giles (Miyo)",
+    "wallFinish": "strips",
     "name": "Spirit",
     "modelCode": "46MYO16562AH",
     "widthFt": 16,
@@ -1199,12 +1332,22 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16562ah/"
+    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16562ah/",
+    "tourUrl": "https://momento360.com/e/uc/692bb88aad62454d9d64095cb1dd915c?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/3451f2c5-13f1-4679-be8e-e5d7e726bf69.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/849978d6-9b57-4119-9e14-2919f398e584.jpg"
+      }
+    ]
   },
   {
     "slug": "intuition",
     "brand": "Clayton",
     "series": "Giles (Miyo)",
+    "wallFinish": "strips",
     "name": "Intuition",
     "modelCode": "46MYO16663AH",
     "widthFt": 16,
@@ -1231,19 +1374,27 @@
       "https://api.claytonhomes.com/images/mfg/int/9367f98e-ed17-4879-b24f-429c17c1980e.jpg",
       "https://api.claytonhomes.com/images/mfg/int/aa432c77-3a7b-47d4-9f40-9aa715d394ef.jpg",
       "https://api.claytonhomes.com/images/mfg/int/211cd39a-e675-40b7-9caa-00b8838cbbe1.jpg",
-      "https://api.claytonhomes.com/images/mfg/int/d13c96ec-016f-48d9-bacf-de644e9233d7.jpg",
-      "https://api.claytonhomes.com/images/mfg/flp/69be89e4-111a-4016-a33c-8f6fa2889228.jpg",
-      "https://api.claytonhomes.com/images/mfg/flp/9497c308-31bc-46fe-8120-6ad23788f7d2.jpg"
+      "https://api.claytonhomes.com/images/mfg/int/d13c96ec-016f-48d9-bacf-de644e9233d7.jpg"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16663ah/"
+    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16663ah/",
+    "tourUrl": "https://momento360.com/e/uc/1aa71a0eb3e34925bdfe0f6ea749a990?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/69be89e4-111a-4016-a33c-8f6fa2889228.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/9497c308-31bc-46fe-8120-6ad23788f7d2.jpg"
+      }
+    ]
   },
   {
     "slug": "rally",
     "brand": "Clayton",
     "series": "Giles (Miyo)",
+    "wallFinish": "strips",
     "name": "Rally",
     "modelCode": "46MYI16763AH",
     "widthFt": 16,
@@ -1266,18 +1417,24 @@
       "https://api.claytonhomes.com/images/mfg/int/fed74e8d-17d4-4f78-86f5-fcdf08802d43.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/5ea904b1-3940-4d6c-961a-ebcb222cb1b6.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/afdc1f4f-0dd9-416c-9c72-44d61c5c4d6b.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/int/6d0fe7c4-0696-4d49-984c-14c80b80a143.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/flp/eded766f-268b-4c16-b908-def7746b2ad8.jpg"
+      "https://api.claytonhomes.com/images/mfg/int/6d0fe7c4-0696-4d49-984c-14c80b80a143.jpg?width=992"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myi16763ah/"
+    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myi16763ah/",
+    "tourUrl": "https://momento360.com/e/uc/f3e07f57120349b3a2fa26c1fdc06d92?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/eded766f-268b-4c16-b908-def7746b2ad8.jpg"
+      }
+    ]
   },
   {
     "slug": "dynamic",
     "brand": "Clayton",
     "series": "Giles (Miyo)",
+    "wallFinish": "strips",
     "name": "Dynamic",
     "modelCode": "46MYO16723AH",
     "widthFt": 16,
@@ -1310,12 +1467,22 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16723ah/"
+    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16723ah/",
+    "tourUrl": "https://momento360.com/e/uc/750c4c02defc45f8977061c4f9d4d46a?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/11c78fde-d9f9-4153-ab1a-7adef7d879eb.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/1291c7d0-2911-4c62-9f8d-09b64cb5f7db.jpg"
+      }
+    ]
   },
   {
     "slug": "essence",
     "brand": "Clayton",
     "series": "Giles (Miyo)",
+    "wallFinish": "strips",
     "name": "Essence",
     "modelCode": "46MYO16763BH",
     "widthFt": 16,
@@ -1343,18 +1510,24 @@
       "https://api.claytonhomes.com/images/mfg/int/8a856ad8-f9ee-4a67-a4bf-8f40ef27ba43.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/fc8dd3bd-9a99-476b-ac4c-df5454ce748c.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/ab1f0acc-ff3b-4903-b018-8d7e9ddd2f29.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/int/d0c03fc2-b774-4374-9b20-e54f035c7438.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/flp/5cddb274-861d-40e9-9b31-71ee4c510c8a.jpg"
+      "https://api.claytonhomes.com/images/mfg/int/d0c03fc2-b774-4374-9b20-e54f035c7438.jpg?width=992"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16763bh/"
+    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16763bh/",
+    "tourUrl": "https://momento360.com/e/uc/0e2929d5e62f4c6ba296e35d7bc54d7a?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/5cddb274-861d-40e9-9b31-71ee4c510c8a.jpg"
+      }
+    ]
   },
   {
     "slug": "desire",
     "brand": "Clayton",
     "series": "Giles (Miyo)",
+    "wallFinish": "strips",
     "name": "DESIRE",
     "modelCode": "46MYO16763DH",
     "widthFt": 16,
@@ -1388,12 +1561,22 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16763dh/"
+    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo16763dh/",
+    "tourUrl": "https://momento360.com/e/uc/f04055ff06fa465cbd1d3e19f8f01bd3?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/531a2e18-cfae-4922-826f-db4c8d1257c5.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/bcf70fda-dbac-44e7-b43b-fe4c876e5dbf.jpg"
+      }
+    ]
   },
   {
     "slug": "glimpse",
     "brand": "Clayton",
     "series": "Giles (Miyo)",
+    "wallFinish": "strips",
     "name": "Glimpse",
     "modelCode": "46MYO28523AH",
     "widthFt": 28,
@@ -1426,12 +1609,22 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo28523ah/"
+    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo28523ah/",
+    "tourUrl": "https://momento360.com/e/uc/59d600e60b674fab8b53c1455bab51c1?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/c4d1adf1-b00a-433a-a1f0-ba7dd4e9b45b.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/2685677e-499e-434f-bac3-6131fc6eb88f.jpg"
+      }
+    ]
   },
   {
     "slug": "reveal",
     "brand": "Clayton",
     "series": "Giles (Miyo)",
+    "wallFinish": "strips",
     "name": "REVEAL",
     "modelCode": "46MYO28563AH",
     "widthFt": 28,
@@ -1439,7 +1632,7 @@
     "sqft": 1568,
     "beds": 3,
     "baths": 2,
-    "description": "Clayton MiYO REVEAL (46MYO28563AH) — a 28x56 multi-section manufactured home with 3 bedrooms and 2 bathrooms. Marketed at 1,475 sq.ft.",
+    "description": "Clayton MiYO REVEAL (46MYO28563AH) \u2014 a 28x56 multi-section manufactured home with 3 bedrooms and 2 bathrooms. Marketed at 1,475 sq.ft.",
     "decorOptions": [
       "Vinyl Clay",
       "Vinyl Flint",
@@ -1466,12 +1659,22 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo28563ah/"
+    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo28563ah/",
+    "tourUrl": "https://momento360.com/e/uc/45f5b9715fa94d9487bfc9c41b3d4230?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/a317eba1-57b0-40a6-87ac-169ede9d5279.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/08f5b2f5-f394-4a54-a8fa-2e73511abdf2.jpg"
+      }
+    ]
   },
   {
     "slug": "purpose",
     "brand": "Clayton",
     "series": "Giles (Miyo)",
+    "wallFinish": "strips",
     "name": "Purpose",
     "modelCode": "46MYI32564AH",
     "widthFt": 32,
@@ -1496,18 +1699,24 @@
       "https://api.claytonhomes.com/images/mfg/ext/32482c08-0c40-46eb-bfe7-dd396ffebfa5.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/ext/189d9f95-3bb8-4cb2-ac53-b2937859f956.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/ext/e11565e2-5416-47b3-a020-978ba7d36103.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/ext/787a52d9-8cdf-4fbf-b2b8-606a9f6bf818.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/flp/8a405482-4e04-4148-ba80-e9a8defe0c00.jpg"
+      "https://api.claytonhomes.com/images/mfg/ext/787a52d9-8cdf-4fbf-b2b8-606a9f6bf818.jpg?width=992"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myi32564ah/"
+    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myi32564ah/",
+    "tourUrl": "https://momento360.com/e/uc/c38b54325b7646b496c6b13362f321b6?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/8a405482-4e04-4148-ba80-e9a8defe0c00.jpg"
+      }
+    ]
   },
   {
     "slug": "impact",
     "brand": "Clayton",
     "series": "Giles (Miyo)",
+    "wallFinish": "strips",
     "name": "IMPACT",
     "modelCode": "46MYO28644AH",
     "widthFt": 28,
@@ -1515,7 +1724,7 @@
     "sqft": 1792,
     "beds": 4,
     "baths": 2,
-    "description": "Clayton Built MiYO (Giles series) IMPACT — a 28x64 double-section manufactured home with 4 bedrooms and 2 bathrooms. Marketed at 1,686 sq ft.",
+    "description": "Clayton Built MiYO (Giles series) IMPACT \u2014 a 28x64 double-section manufactured home with 4 bedrooms and 2 bathrooms. Marketed at 1,686 sq ft.",
     "decorOptions": [
       "Vinyl Clay",
       "Vinyl Flint",
@@ -1542,12 +1751,22 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo28644ah/"
+    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo28644ah/",
+    "tourUrl": "https://momento360.com/e/uc/1550135c8ad94b8ab3d1e5c70ccc7d72?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/54d757fd-179f-438a-af21-880de01676e9.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/19b8ec0b-2da0-480c-9d0f-8eb90d64a5d3.jpg"
+      }
+    ]
   },
   {
     "slug": "ambition",
     "brand": "Clayton",
     "series": "Giles (Miyo)",
+    "wallFinish": "strips",
     "name": "Ambition",
     "modelCode": "46MYO28764AH",
     "widthFt": 28,
@@ -1555,7 +1774,7 @@
     "sqft": 2128,
     "beds": 4,
     "baths": 2,
-    "description": "Clayton MiYO \"Ambition\" — a four-bedroom, two-bathroom manufactured home with a marketed 2,002 sq.ft. of living space in a 28x76 multi-section configuration.",
+    "description": "Clayton MiYO \"Ambition\" \u2014 a four-bedroom, two-bathroom manufactured home with a marketed 2,002 sq.ft. of living space in a 28x76 multi-section configuration.",
     "decorOptions": [
       "Vinyl Clay",
       "Vinyl Flint",
@@ -1582,12 +1801,22 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo28764ah/"
+    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo28764ah/",
+    "tourUrl": "https://momento360.com/e/uc/0e7d87402f4944b98610de8054b058e4?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/5d4a2f40-5004-481f-8bd6-a56625c1a9eb.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/5ea776d4-844c-45bf-9c9f-07d9831e5a4f.jpg"
+      }
+    ]
   },
   {
     "slug": "empower",
     "brand": "Clayton",
     "series": "Giles (Miyo)",
+    "wallFinish": "strips",
     "name": "EMPOWER",
     "modelCode": "46MYO32684AH",
     "widthFt": 32,
@@ -1595,7 +1824,7 @@
     "sqft": 2176,
     "beds": 4,
     "baths": 2,
-    "description": "Clayton MiYO EMPOWER — a 4-bed, 2-bath multi-section manufactured home in the Giles (MiYO) series, 32 ft wide by 68 ft long.",
+    "description": "Clayton MiYO EMPOWER \u2014 a 4-bed, 2-bath multi-section manufactured home in the Giles (MiYO) series, 32 ft wide by 68 ft long.",
     "decorOptions": [
       "Vinyl Clay",
       "Vinyl Flint",
@@ -1621,12 +1850,21 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo32684ah/"
+    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myo32684ah/",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/293761cf-1957-4bbd-8cea-fde9a19898b6.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/9fe7054b-c67b-4b61-bd85-f264b5bce8eb.jpg"
+      }
+    ]
   },
   {
     "slug": "thrive",
     "brand": "Clayton",
     "series": "Giles (Miyo)",
+    "wallFinish": "strips",
     "name": "Thrive",
     "modelCode": "46MYI32764AH",
     "widthFt": 32,
@@ -1652,18 +1890,24 @@
       "https://api.claytonhomes.com/images/mfg/ext/8c12ba46-7f5b-4366-b314-8156d461c187.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/ext/77730916-6c8c-48a5-a6e1-e90b2645d277.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/ext/dcf4a9a6-fc93-42b7-a572-c26899ea7ca9.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/ext/e8293911-bd41-475c-b2bc-2e4fc91791de.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/flp/185ae034-a9b5-4ce3-abd2-6611e6454362.jpg"
+      "https://api.claytonhomes.com/images/mfg/ext/e8293911-bd41-475c-b2bc-2e4fc91791de.jpg?width=992"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myi32764ah/"
+    "sourceUrl": "https://claytonbuiltmiyo.com/models/46myi32764ah/",
+    "tourUrl": "https://momento360.com/e/uc/a7beaa7d4d554ac9b68bea7c6479dbba?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/185ae034-a9b5-4ce3-abd2-6611e6454362.jpg"
+      }
+    ]
   },
   {
     "slug": "yesterday",
     "brand": "Clayton",
     "series": "Rockwell (Tempo)",
+    "wallFinish": "drywall",
     "name": "Yesterday",
     "modelCode": "57TPO16441AH",
     "widthFt": 16,
@@ -1681,19 +1925,27 @@
       "https://api.claytonhomes.com/images/mfg/int/44883c41-ec2c-40e3-a298-c2f39e59d4f3.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/1a55b9d3-c2d2-4d26-a911-9912def319ad.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/437def17-b68d-41dc-b701-0ea96706319c.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/int/b8a79dac-5c23-4fcb-89b7-42ac765c9a41.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/flp/d6119ab0-8b45-4b8e-98e9-fea92840e958.jpg",
-      "https://api.claytonhomes.com/images/mfg/flp/3faa69b7-7eba-499b-9aff-72ae0aae6f9e.jpg"
+      "https://api.claytonhomes.com/images/mfg/int/b8a79dac-5c23-4fcb-89b7-42ac765c9a41.jpg?width=992"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo16441ah/"
+    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo16441ah/",
+    "tourUrl": "https://momento360.com/e/uc/42205040200945fbb5aa4c064ae81611?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/d6119ab0-8b45-4b8e-98e9-fea92840e958.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/3faa69b7-7eba-499b-9aff-72ae0aae6f9e.jpg"
+      }
+    ]
   },
   {
     "slug": "still-the-one",
     "brand": "Clayton",
     "series": "Rockwell (Tempo)",
+    "wallFinish": "drywall",
     "name": "Still The One",
     "modelCode": "57TPO16562AH",
     "widthFt": 16,
@@ -1701,7 +1953,7 @@
     "sqft": 896,
     "beds": 2,
     "baths": 2,
-    "description": "Clayton Tempo \"Still The One\" (model 57TPO16562AH) — a 2-bed, 2-bath single-section manufactured home measuring 16x56 ft. Marketed at 840 sq.ft. Part of the Clayton Tempo (Rockwell) national series, named in the Tempo song-name convention.",
+    "description": "Clayton Tempo \"Still The One\" (model 57TPO16562AH) \u2014 a 2-bed, 2-bath single-section manufactured home measuring 16x56 ft. Marketed at 840 sq.ft. Part of the Clayton Tempo (Rockwell) national series, named in the Tempo song-name convention.",
     "decorOptions": [],
     "imageUrls": [
       "https://api.claytonhomes.com/images/mfg/ext/a2143fb7-cc06-4651-bd1f-b018803f4eb9.jpg?width=992",
@@ -1720,12 +1972,14 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo16562ah/"
+    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo16562ah/",
+    "tourUrl": "https://momento360.com/e/uc/7717e6eb85734832869d6f9b6052ebba?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large"
   },
   {
     "slug": "born-to-run",
     "brand": "Clayton",
     "series": "Rockwell (Tempo)",
+    "wallFinish": "drywall",
     "name": "Born To Run",
     "modelCode": "57TPO16602AH",
     "widthFt": 16,
@@ -1746,18 +2000,24 @@
       "https://api.claytonhomes.com/images/mfg/int/5a2acdfb-3f0a-44af-a231-a015633dd28c.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/49ebd2d1-aa9b-4709-a1a9-0893ff69fa02.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/f17f4656-fcfb-4408-9665-c22c8c7112e1.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/int/bc38b0d3-cec7-4190-bf8f-dfef6cac4af6.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/flp/459d1564-c965-40a0-92a6-46ae75716e13.jpg"
+      "https://api.claytonhomes.com/images/mfg/int/bc38b0d3-cec7-4190-bf8f-dfef6cac4af6.jpg?width=992"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo16602ah/"
+    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo16602ah/",
+    "tourUrl": "https://momento360.com/e/uc/78461eacbe8f493587113fd7158e7e45?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/459d1564-c965-40a0-92a6-46ae75716e13.jpg"
+      }
+    ]
   },
   {
     "slug": "rhythm-nation",
     "brand": "Clayton",
     "series": "Rockwell (Tempo)",
+    "wallFinish": "drywall",
     "name": "Rhythm Nation",
     "modelCode": "57TPO16663AH",
     "widthFt": 16,
@@ -1780,18 +2040,24 @@
       "https://api.claytonhomes.com/images/mfg/int/d627175b-a666-402c-b721-f790aaeb6fdf.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/86580400-f0eb-40a6-ad21-b45da2bf6930.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/ae1ad085-8b17-47ec-82ce-b3f5eeed1cad.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/int/4fc082a6-a88a-4a54-89e4-0cfb1a3cdaa6.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/flp/1773ef36-c719-4a83-ac5a-c11491b7a71b.jpg"
+      "https://api.claytonhomes.com/images/mfg/int/4fc082a6-a88a-4a54-89e4-0cfb1a3cdaa6.jpg?width=992"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo16663ah/"
+    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo16663ah/",
+    "tourUrl": "https://momento360.com/e/uc/e6656cfc4f184010a758bf06dc03d44c?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/1773ef36-c719-4a83-ac5a-c11491b7a71b.jpg"
+      }
+    ]
   },
   {
     "slug": "move-on-up",
     "brand": "Clayton",
     "series": "Rockwell (Tempo)",
+    "wallFinish": "drywall",
     "name": "Move On Up",
     "modelCode": "57TMI16723AH",
     "widthFt": 16,
@@ -1815,18 +2081,24 @@
       "https://api.claytonhomes.com/images/mfg/int/21866c7c-330d-435d-8ec3-344fe0343a75.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/a2baac6d-dc52-4c7b-b1a8-2de925c37a13.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/ab240040-0b5d-4856-b39f-24a1599e4e71.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/int/d69dc6ea-3b8b-41f3-8b2a-5fbbb7ffd23b.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/flp/f8101a17-f4e9-420c-8fef-dc8cd1f32c5a.jpg"
+      "https://api.claytonhomes.com/images/mfg/int/d69dc6ea-3b8b-41f3-8b2a-5fbbb7ffd23b.jpg?width=992"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuilttempo.com/models/57tmi16723ah/"
+    "sourceUrl": "https://claytonbuilttempo.com/models/57tmi16723ah/",
+    "tourUrl": "https://momento360.com/e/uc/8cedcb708e2b4188b2913be4a3e755de?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/f8101a17-f4e9-420c-8fef-dc8cd1f32c5a.jpg"
+      }
+    ]
   },
   {
     "slug": "stayin-alive",
     "brand": "Clayton",
     "series": "Rockwell (Tempo)",
+    "wallFinish": "drywall",
     "name": "Stayin' Alive",
     "modelCode": "57TPO28563PH",
     "widthFt": 28,
@@ -1859,12 +2131,22 @@
     ],
     "bestSeller": true,
     "bestSellerRank": 1,
-    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo28563ph/"
+    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo28563ph/",
+    "tourUrl": "https://momento360.com/e/uc/6f069a2a8e794fe7b2b912468c0e5efd?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/d626e4a2-bcd2-4e16-90d1-dcab36c51f1a.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/c8d49c64-1af4-4b76-8212-82938fb13445.jpg"
+      }
+    ]
   },
   {
     "slug": "shout",
     "brand": "Clayton",
     "series": "Rockwell (Tempo)",
+    "wallFinish": "drywall",
     "name": "Shout",
     "modelCode": "57TMI28563AH",
     "widthFt": 28,
@@ -1872,7 +2154,7 @@
     "sqft": 1568,
     "beds": 3,
     "baths": 2,
-    "description": "Clayton Tempo \"Shout\" — a 3-bedroom, 2-bathroom multi-section manufactured home in the Tempo National series. HUD Independent Exclusive. Marketed at ~1,475 sq.ft. with modern amenities and multiple interior/exterior finish options.",
+    "description": "Clayton Tempo \"Shout\" \u2014 a 3-bedroom, 2-bathroom multi-section manufactured home in the Tempo National series. HUD Independent Exclusive. Marketed at ~1,475 sq.ft. with modern amenities and multiple interior/exterior finish options.",
     "decorOptions": [
       "Clay",
       "Flint",
@@ -1900,12 +2182,22 @@
     "aka": [],
     "bestSeller": true,
     "bestSellerRank": 3,
-    "sourceUrl": "https://claytonbuilttempo.com/models/57tmi28563ah/"
+    "sourceUrl": "https://claytonbuilttempo.com/models/57tmi28563ah/",
+    "tourUrl": "https://momento360.com/e/uc/c2f4608676e24913942d72cd08374f85?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/309fa230-ff4e-4619-870d-b8420e4fc72e.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/1900e5f8-9d77-4f13-adb9-c284f41c2859.jpg"
+      }
+    ]
   },
   {
     "slug": "limelight",
     "brand": "Clayton",
     "series": "Rockwell (Tempo)",
+    "wallFinish": "drywall",
     "name": "Limelight",
     "modelCode": "57TPO32563AH",
     "widthFt": 32,
@@ -1930,19 +2222,27 @@
       "https://api.claytonhomes.com/images/mfg/int/ba5175d1-5728-43af-b9f3-593ea1f2d25e.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/8a21c52d-4d76-439a-8fd8-39aa848c0b74.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/3227d8d6-fce2-497e-a454-a197658fe6e1.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/int/96abd908-d70c-4163-b968-8e31716ad032.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/flp/4332c41a-b29c-4c98-87dc-d20e94fe9aec.jpg",
-      "https://api.claytonhomes.com/images/mfg/flp/8b94adb2-0f99-45b4-8210-64d5b7b8802e.jpg"
+      "https://api.claytonhomes.com/images/mfg/int/96abd908-d70c-4163-b968-8e31716ad032.jpg?width=992"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo32563ah/"
+    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo32563ah/",
+    "tourUrl": "https://momento360.com/e/uc/52c10d9e02824495a80923576db9ef72?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/4332c41a-b29c-4c98-87dc-d20e94fe9aec.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/8b94adb2-0f99-45b4-8210-64d5b7b8802e.jpg"
+      }
+    ]
   },
   {
     "slug": "rocket-man",
     "brand": "Clayton",
     "series": "Rockwell (Tempo)",
+    "wallFinish": "drywall",
     "name": "Rocket Man",
     "modelCode": "57TPO28663AH",
     "widthFt": 28,
@@ -1973,12 +2273,22 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo28663ah/"
+    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo28663ah/",
+    "tourUrl": "https://momento360.com/e/uc/7adf3930fcb64740986c55e34aa3d850?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/1572376d-42ab-42e8-b010-cf551ddebb43.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/069dfdfa-77dd-4bc8-81ea-2e98e4ae318a.jpg"
+      }
+    ]
   },
   {
     "slug": "hey-jude",
     "brand": "Clayton",
     "series": "Rockwell (Tempo)",
+    "wallFinish": "drywall",
     "name": "Hey Jude",
     "modelCode": "57TPO28724AH",
     "widthFt": 28,
@@ -2008,19 +2318,27 @@
       "https://api.claytonhomes.com/images/mfg/int/965e36af-abb8-4b79-a47b-0b386b4e75f1.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/b31dec72-9604-4c11-8e63-21ddae072796.jpg?width=992",
       "https://api.claytonhomes.com/images/mfg/int/79dd0201-274e-4267-8278-bc20832246ed.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/int/6e22a993-2801-4b9d-ad86-631f2c22d9b2.jpg?width=992",
-      "https://api.claytonhomes.com/images/mfg/flp/c0a7ab1a-c416-4207-afb6-ade51373b7e7.jpg",
-      "https://api.claytonhomes.com/images/mfg/flp/232c157c-df17-4be9-9d3e-3d806d5086d9.jpg"
+      "https://api.claytonhomes.com/images/mfg/int/6e22a993-2801-4b9d-ad86-631f2c22d9b2.jpg?width=992"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo28724ah/"
+    "sourceUrl": "https://claytonbuilttempo.com/models/57tpo28724ah/",
+    "tourUrl": "https://momento360.com/e/uc/fa694db04a254e98b483023c8b1a7517?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/c0a7ab1a-c416-4207-afb6-ade51373b7e7.jpg"
+      },
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/232c157c-df17-4be9-9d3e-3d806d5086d9.jpg"
+      }
+    ]
   },
   {
     "slug": "corbin",
     "brand": "Clayton",
     "series": "335 Fairway (Rockwell)",
+    "wallFinish": "drywall",
     "name": "Corbin",
     "modelCode": "57FWY16763BH",
     "widthFt": 16,
@@ -2031,18 +2349,23 @@
     "description": "Clayton Rockwell (Fairway) single-section manufactured home, model Corbin (57FWY16763BH), 3 bed / 2 bath.",
     "decorOptions": [],
     "imageUrls": [
-      "https://api.claytonhomes.com/images/mfg/ext/a0dc88d5-bb50-4131-80cf-338c3bb5d0b4.jpg",
-      "https://api.claytonhomes.com/images/mfg/flp/620144b7-c810-4fe8-8f78-1b8b95aaa8e3.jpg"
+      "https://api.claytonhomes.com/images/mfg/ext/a0dc88d5-bb50-4131-80cf-338c3bb5d0b4.jpg"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://rockwell-fairway.com/models/57fwy16763bh/"
+    "sourceUrl": "https://rockwell-fairway.com/models/57fwy16763bh/",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/620144b7-c810-4fe8-8f78-1b8b95aaa8e3.jpg"
+      }
+    ]
   },
   {
     "slug": "pinehurst",
     "brand": "Clayton",
     "series": "Rockwell (Fairway)",
+    "wallFinish": "drywall",
     "name": "Pinehurst",
     "modelCode": "57FWY16763AH",
     "widthFt": 16,
@@ -2069,12 +2392,19 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://rockwell-fairway.com/models/57fwy16763ah/"
+    "sourceUrl": "https://rockwell-fairway.com/models/57fwy16763ah/",
+    "tourUrl": "https://my.matterport.com/show/?m=HyvqLSokzCG",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/07c1655a-5615-4100-be5d-5fd0b2321a77.jpg"
+      }
+    ]
   },
   {
     "slug": "sapona",
     "brand": "Clayton",
     "series": "Rockwell (Fairway)",
+    "wallFinish": "drywall",
     "name": "Sapona",
     "modelCode": "57FWY28523AH",
     "widthFt": 28,
@@ -2085,18 +2415,24 @@
     "description": "The Sapona is a 3-bedroom, 2-bath single/multi-section manufactured home in the Rockwell Fairway series by Clayton Home Building Group. Marketed at 1,369 sq ft with dimensions of 28x52, it offers customizable Selections across exteriors, interiors, and additional options.",
     "decorOptions": [],
     "imageUrls": [
-      "https://api.claytonhomes.com/images/mfg/ext/6854df61-b493-419e-b1a2-ae73dacc07ff.jpg",
-      "https://api.claytonhomes.com/images/mfg/flp/687feab6-084f-4d8d-a3db-b284166ed8b4.jpg"
+      "https://api.claytonhomes.com/images/mfg/ext/6854df61-b493-419e-b1a2-ae73dacc07ff.jpg"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://rockwell-fairway.com/models/57fwy28523ah/"
+    "sourceUrl": "https://rockwell-fairway.com/models/57fwy28523ah/",
+    "tourUrl": "https://my.matterport.com/show/?m=6acS98dUR4k",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/687feab6-084f-4d8d-a3db-b284166ed8b4.jpg"
+      }
+    ]
   },
   {
     "slug": "tanglewood",
     "brand": "Clayton",
     "series": "Rockwell (Fairway)",
+    "wallFinish": "drywall",
     "name": "Tanglewood",
     "modelCode": "57FWY28603AH",
     "widthFt": 28,
@@ -2104,7 +2440,7 @@
     "sqft": 1680,
     "beds": 3,
     "baths": 2,
-    "description": "Tanglewood — a 3-bedroom, 2-bath Clayton Rockwell (Fairway) home. Marketed at 1,580 sq.ft. Available in 28' wide (57FWY28603AH) and 32' wide (57FWY32603AH) configurations. The virtual tour shows the 28' wide model; other widths may vary in layout.",
+    "description": "Tanglewood \u2014 a 3-bedroom, 2-bath Clayton Rockwell (Fairway) home. Offered in both 28' wide (57FWY28603AH) and 32' wide (57FWY32603AH) configurations \u2014 the same floor plan, with larger rooms in the 32' section.",
     "decorOptions": [
       "Exteriors",
       "Interiors",
@@ -2131,12 +2467,28 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://rockwell-fairway.com/models/57fwy28603ah/"
+    "sourceUrl": "https://rockwell-fairway.com/models/57fwy28603ah/",
+    "widthOptions": [
+      28,
+      32
+    ],
+    "tourUrl": "https://my.matterport.com/show/?m=K1Ut2vPSH9d",
+    "floorPlans": [
+      {
+        "widthFt": 28,
+        "url": "https://api.claytonhomes.com/images/mfg/flp/980cdebf-06e6-4449-972f-f7e2681d9710.jpg"
+      },
+      {
+        "widthFt": 32,
+        "url": "https://api.claytonhomes.com/images/mfg/flp/8d47b778-e302-48e3-8f0e-1ef429f7b812.jpg"
+      }
+    ]
   },
   {
     "slug": "birdie",
     "brand": "Clayton",
     "series": "Rockwell (Fairway)",
+    "wallFinish": "drywall",
     "name": "Birdie",
     "modelCode": "57FWY28644AH",
     "widthFt": 28,
@@ -2162,19 +2514,33 @@
       "https://api.claytonhomes.com/images/mfg/int/bf24cca5-06fe-4725-ab1f-40bd1158f30e.png",
       "https://api.claytonhomes.com/images/mfg/int/70c6e657-37e9-44b4-924b-fdeb9029512e.png",
       "https://api.claytonhomes.com/images/mfg/int/6022061e-9396-4f8e-a569-fc81e429126f.png",
-      "https://api.claytonhomes.com/images/mfg/flp/f35c45e8-5794-4c78-bb4e-d74213c7f73b.jpg",
-      "https://api.claytonhomes.com/images/mfg/flp/055b5a95-4fea-4192-9761-c1de4be039de.jpg",
       "https://api.claytonhomes.com/images/mfg/flp/98672926-4272-4995-922e-0977f5bdcc57.png"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://rockwell-fairway.com/models/57fwy28644ah/"
+    "sourceUrl": "https://rockwell-fairway.com/models/57fwy28644ah/",
+    "widthOptions": [
+      28,
+      32
+    ],
+    "tourUrl": "https://momento360.com/e/uc/b27aa47c528e4060ab03be65e7aff8eb?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "widthFt": 28,
+        "url": "https://api.claytonhomes.com/images/mfg/flp/f35c45e8-5794-4c78-bb4e-d74213c7f73b.jpg"
+      },
+      {
+        "widthFt": 32,
+        "url": "https://api.claytonhomes.com/images/mfg/flp/055b5a95-4fea-4192-9761-c1de4be039de.jpg"
+      }
+    ]
   },
   {
     "slug": "caddie",
     "brand": "Clayton",
     "series": "Rockwell (Fairway)",
+    "wallFinish": "drywall",
     "name": "Caddie",
     "modelCode": "57fwy28683bh",
     "widthFt": 28,
@@ -2182,7 +2548,7 @@
     "sqft": 1904,
     "beds": 3,
     "baths": 2,
-    "description": "Caddie — part of the Rockwell Fairway series by Clayton Home Building Group. A 3-bed/2-bath multi-section home, 28' wide (also available 32' wide), marketed at 1,790 sq.ft.",
+    "description": "Caddie \u2014 part of the Rockwell Fairway series by Clayton Home Building Group. A 3-bed, 2-bath multi-section home with a 68' length, offered in both 28' and 32' widths.",
     "decorOptions": [],
     "imageUrls": [
       "/models/caddie/01.jpg",
@@ -2205,12 +2571,27 @@
     "aka": [],
     "bestSeller": true,
     "bestSellerRank": 2,
-    "sourceUrl": "https://rockwell-fairway.com/models/57fwy28683bh/"
+    "sourceUrl": "https://rockwell-fairway.com/models/57fwy28683bh/",
+    "widthOptions": [
+      28,
+      32
+    ],
+    "floorPlans": [
+      {
+        "widthFt": 28,
+        "url": "https://api.claytonhomes.com/images/mfg/flp/4d567a93-a41d-4b91-9e14-6e7a719c1615.jpg"
+      },
+      {
+        "widthFt": 32,
+        "url": "https://api.claytonhomes.com/images/mfg/flp/45d8c12d-4bf2-46cc-ab26-9cd8e2632d3a.jpg"
+      }
+    ]
   },
   {
     "slug": "palmer",
     "brand": "Clayton",
     "series": "Rockwell (Fairway)",
+    "wallFinish": "drywall",
     "name": "Palmer",
     "modelCode": "57fwy28683ah",
     "widthFt": 28,
@@ -2218,22 +2599,36 @@
     "sqft": 1904,
     "beds": 3,
     "baths": 2,
-    "description": "The Palmer is a 3-bedroom, 2-bathroom home in the Rockwell Fairway series spanning a 28' x 68' footprint (also available 32' wide). Marketed at 1,790 sq.ft. Downloadable sales sheets are provided for each width variant.",
+    "description": "The Palmer is a 3-bedroom, 2-bathroom home in the Rockwell Fairway series by Clayton Home Building Group, with a 68' length. Offered in both 28' and 32' widths \u2014 the 32' section gives every room extra space.",
     "decorOptions": [],
     "imageUrls": [
-      "https://api.claytonhomes.com/images/mfg/ext/620368b6-8387-4012-9023-7b962576afa7.jpg",
-      "https://api.claytonhomes.com/images/mfg/flp/02eef5a8-8877-434d-879f-4c8d75e3269a.jpg",
-      "https://api.claytonhomes.com/images/mfg/flp/c59f192d-876d-4a51-801b-49e14b2dcbcf.jpg"
+      "https://api.claytonhomes.com/images/mfg/ext/620368b6-8387-4012-9023-7b962576afa7.jpg"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://rockwell-fairway.com/models/57fwy28683ah/"
+    "sourceUrl": "https://rockwell-fairway.com/models/57fwy28683ah/",
+    "widthOptions": [
+      28,
+      32
+    ],
+    "tourUrl": "https://my.matterport.com/show/?m=w4DcQREEzBJ",
+    "floorPlans": [
+      {
+        "widthFt": 28,
+        "url": "https://api.claytonhomes.com/images/mfg/flp/02eef5a8-8877-434d-879f-4c8d75e3269a.jpg"
+      },
+      {
+        "widthFt": 32,
+        "url": "https://api.claytonhomes.com/images/mfg/flp/c59f192d-876d-4a51-801b-49e14b2dcbcf.jpg"
+      }
+    ]
   },
   {
     "slug": "augusta",
     "brand": "Clayton",
     "series": "Rockwell (Fairway)",
+    "wallFinish": "drywall",
     "name": "Augusta",
     "modelCode": "57FWY28764AH",
     "widthFt": 28,
@@ -2241,22 +2636,33 @@
     "sqft": 2128,
     "beds": 4,
     "baths": 2,
-    "description": "Augusta is a Clayton Rockwell (Fairway series) multi-section manufactured home, model 57FWY28764AH. It offers 4 bedrooms and 2 bathrooms in a 28' x 76' floor plan (also available in a 32' width). Marketed at 2,001 sq.ft.",
+    "description": "Augusta is a Clayton Rockwell (Fairway series) multi-section manufactured home, model 57FWY28764AH. It offers 4 bedrooms and 2 bathrooms across a 76' length, offered in both 28' and 32' widths.",
     "decorOptions": [],
     "imageUrls": [
       "https://api.claytonhomes.com/images/mfg/ext/64d1a61c-fd80-44ce-a06c-7ace7db7e362.jpg",
-      "https://api.claytonhomes.com/images/mfg/ext/40afc6dc-c47c-4c65-a203-fb668639abf1.jpg",
-      "https://api.claytonhomes.com/images/mfg/flp/fb1de5b1-4d55-41f1-89c8-ad5afcd548b1.jpg"
+      "https://api.claytonhomes.com/images/mfg/ext/40afc6dc-c47c-4c65-a203-fb668639abf1.jpg"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://rockwell-fairway.com/models/57fwy28764ah/"
+    "sourceUrl": "https://rockwell-fairway.com/models/57fwy28764ah/",
+    "widthOptions": [
+      28,
+      32
+    ],
+    "tourUrl": "https://my.matterport.com/show/?m=JpqJhgCMdU5",
+    "floorPlans": [
+      {
+        "widthFt": 32,
+        "url": "https://api.claytonhomes.com/images/mfg/flp/fb1de5b1-4d55-41f1-89c8-ad5afcd548b1.jpg"
+      }
+    ]
   },
   {
     "slug": "pegasus",
     "brand": "Cavco",
     "series": "Pegasus (Rocky Mount)",
+    "wallFinish": "drywall",
     "name": "Pegasus",
     "modelCode": "28483H",
     "widthFt": 28,
@@ -2264,31 +2670,44 @@
     "sqft": 1344,
     "beds": 3,
     "baths": 2,
-    "description": "Fleetwood Rocky Mount's Pegasus is a value-priced double-wide with strong standard features — LED recessed lighting throughout, 42-inch kitchen overhead cabinets, and porcelain bath sinks. Shown with a front porch.",
+    "description": "Fleetwood Rocky Mount's Pegasus is a value-priced double-wide with strong standard features \u2014 LED recessed lighting throughout, 42-inch kitchen overhead cabinets, and porcelain bath sinks. Shown with a front porch.",
     "decorOptions": [
       "Front porch"
     ],
     "imageUrls": [
-      "/models/pegasus/01.jpg",
-      "/models/pegasus/02.jpg",
-      "/models/pegasus/03.jpg",
-      "/models/pegasus/04.jpg",
-      "/models/pegasus/05.jpg",
-      "/models/pegasus/06.jpg",
-      "/models/pegasus/07.jpg",
-      "/models/pegasus/08.jpg"
+      "/recently-placed/galleries/2603220/01.jpg",
+      "/recently-placed/galleries/2603220/02.jpg",
+      "/recently-placed/galleries/2603220/03.jpg",
+      "/recently-placed/galleries/2603220/04.jpg",
+      "/recently-placed/galleries/2603220/05.jpg",
+      "/recently-placed/galleries/2603220/06.jpg",
+      "/recently-placed/galleries/2603220/07.jpg",
+      "/recently-placed/galleries/2603220/08.jpg",
+      "/recently-placed/galleries/2603220/09.jpg",
+      "/recently-placed/galleries/2603220/10.jpg",
+      "/recently-placed/galleries/2603220/11.jpg",
+      "/recently-placed/galleries/2603220/12.jpg",
+      "/recently-placed/galleries/2603220/13.jpg",
+      "/recently-placed/galleries/2603220/14.jpg",
+      "/recently-placed/galleries/2603220/15.jpg",
+      "/recently-placed/galleries/2603220/16.jpg",
+      "/recently-placed/galleries/2603220/17.jpg",
+      "/recently-placed/galleries/2603220/18.jpg",
+      "/recently-placed/galleries/2603220/19.jpg"
     ],
     "aka": [
       "Cavco Pegasus"
     ],
     "bestSeller": true,
     "bestSellerRank": 7,
-    "sourceUrl": "https://www.cavcohomes.com/our-homes/fleetwoodhomes/standard/us/556-pegasus-28483h"
+    "sourceUrl": "https://www.cavcohomes.com/our-homes/fleetwoodhomes/standard/us/556-pegasus-28483h",
+    "tourUrl": "https://my.matterport.com/show/?m=nKs5XVNNs8m"
   },
   {
     "slug": "axis",
     "brand": "Cavco",
     "series": "Axis (Rocky Mount)",
+    "wallFinish": "drywall",
     "name": "Axis",
     "modelCode": "32563N",
     "widthFt": 32,
@@ -2296,7 +2715,7 @@
     "sqft": 1792,
     "beds": 3,
     "baths": 2,
-    "description": "Part of Fleetwood Rocky Mount's upgraded Ovation line, the Axis blends on-trend contemporary design with superior functionality and elevated standard features — a beautiful double-wide without the high price.",
+    "description": "Part of Fleetwood Rocky Mount's upgraded Ovation line, the Axis blends on-trend contemporary design with superior functionality and elevated standard features \u2014 a beautiful double-wide without the high price.",
     "decorOptions": [],
     "imageUrls": [
       "https://cdn2.cavco.com/public/phhweb/gallery/file/8B40CC653B4C4340BBA18BB5F6F5DECA/26_c_270_ovation_axis_ap3263n_exterior_001_web_1769725768725_724_10.jpg",
@@ -2313,12 +2732,14 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.cavcohomes.com/our-homes/fleetwoodhomes/standard/us/556-axis-32563n"
+    "sourceUrl": "https://www.cavcohomes.com/our-homes/fleetwoodhomes/standard/us/556-axis-32563n",
+    "tourUrl": "https://my.matterport.com/show/?m=dSSA3BjwfBJ"
   },
   {
     "slug": "sebastian",
     "brand": "Cavco",
     "series": "The Summit (Cavco Douglas)",
+    "wallFinish": "drywall-optional",
     "name": "Sebastian",
     "modelCode": "32644D",
     "widthFt": 30,
@@ -2343,18 +2764,24 @@
       "https://d132mt2yijm03y.cloudfront.net/manufacturer/2035/floorplan/235843/12_thumb_xxl.jpg",
       "https://d132mt2yijm03y.cloudfront.net/manufacturer/2035/floorplan/235843/13_thumb_xxl.jpg",
       "https://d132mt2yijm03y.cloudfront.net/manufacturer/2035/floorplan/235843/14_thumb_xxl.jpg",
-      "https://d132mt2yijm03y.cloudfront.net/manufacturer/2035/floorplan/235843/15_thumb_xxl.jpg",
-      "/models/sebastian/floorplan.jpg"
+      "https://d132mt2yijm03y.cloudfront.net/manufacturer/2035/floorplan/235843/15_thumb_xxl.jpg"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.cavcohomecenters.com/plan/235843-3974/cavco-home-center-of-tifton/tifton/the-summit/sebastian-32644d/"
+    "sourceUrl": "https://www.cavcohomecenters.com/plan/235843-3974/cavco-home-center-of-tifton/tifton/the-summit/sebastian-32644d/",
+    "floorPlans": [
+      {
+        "url": "/models/sebastian/floorplan.jpg"
+      }
+    ],
+    "tourUrl": "https://my.matterport.com/show/?m=Mr8NKiQRLX3"
   },
   {
     "slug": "reece",
     "brand": "Cavco",
     "series": "Lifestyle (Cavco Moultrie)",
+    "wallFinish": "drywall",
     "name": "Reece",
     "modelCode": "LY32663A",
     "widthFt": 32,
@@ -2387,20 +2814,27 @@
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.cavcohomecenters.com/plan/235517-5559/cavco-home-center-of-lafayette/lafayette/lifestyle/reece-32663a/"
+    "sourceUrl": "https://www.cavcohomecenters.com/plan/235517-5559/cavco-home-center-of-lafayette/lafayette/lifestyle/reece-32663a/",
+    "tourUrl": "https://my.matterport.com/show/?m=Kq6G4gUHb6f",
+    "floorPlans": [
+      {
+        "url": "https://d132mt2yijm03y.cloudfront.net/manufacturer/2693/floorplan/235517/Reece%2032663A.jpg"
+      }
+    ]
   },
   {
     "slug": "ultra-flex-jewel-32-60",
     "brand": "Clayton",
     "series": "Ultra Pro Flex (Oxford)",
-    "name": "Ultra Flex Jewel 32×60",
+    "wallFinish": "strips",
+    "name": "Ultra Flex Jewel 32\u00d760",
     "modelCode": "29UPF32603AH",
     "widthFt": 32,
     "lengthFt": 60,
     "sqft": 1920,
     "beds": 3,
     "baths": 2,
-    "description": "The Ultra Flex Jewel is a 3-bedroom, 2-bath Clayton Oxford Ultra Pro Flex home with a spacious 32x60 double-wide layout — one of Clayton Oxford's top-selling floor plans.",
+    "description": "The Ultra Flex Jewel is a 3-bedroom, 2-bath Clayton Oxford Ultra Pro Flex home with a spacious 32x60 double-wide layout \u2014 one of Clayton Oxford's top-selling floor plans.",
     "decorOptions": [
       "Midnight Sky"
     ],
@@ -2415,25 +2849,27 @@
     ],
     "aka": [
       "Jewel",
-      "Ultra Flex 32×60",
+      "Ultra Flex 32\u00d760",
       "32x60"
     ],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonoxfordhbf.com/models/29upf32603ah/"
+    "sourceUrl": "https://claytonoxfordhbf.com/models/29upf32603ah/",
+    "tourUrl": "https://momento360.com/e/uc/d36db8434194409cbd137a6536636b66?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large"
   },
   {
     "slug": "ultra-a-plus-16-76",
     "brand": "Clayton",
     "series": "Ultra XL (Oxford)",
-    "name": "Ultra A-Plus 16×76",
+    "wallFinish": "strips",
+    "name": "Ultra A-Plus 16\u00d776",
     "modelCode": "29UXL16763PH",
     "widthFt": 16,
     "lengthFt": 76,
     "sqft": 1216,
     "beds": 3,
     "baths": 2,
-    "description": "The Ultra A-Plus is a 3-bedroom, 2-bath Clayton Oxford single-wide home with a generous 16x76 layout — a top mover for value-minded buyers.",
+    "description": "The Ultra A-Plus is a 3-bedroom, 2-bath Clayton Oxford single-wide home with a generous 16x76 layout \u2014 a top mover for value-minded buyers.",
     "decorOptions": [],
     "imageUrls": [
       "https://api.claytonhomes.com/images/mfg/ext/91e5fe2a-8b05-4024-898a-540900da9263.jpg?width=992",
@@ -2452,12 +2888,19 @@
     ],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonoxfordhbf.com/models/29uxl16763ph/"
+    "sourceUrl": "https://claytonoxfordhbf.com/models/29uxl16763ph/",
+    "tourUrl": "https://momento360.com/e/uc/f1c55cd7c0144399908cb3ee85516c87?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/7494c66e-0fde-4770-8998-10f3f9deffc1.png"
+      }
+    ]
   },
   {
     "slug": "vista",
     "brand": "Clayton",
     "series": "Horizon",
+    "wallFinish": "strips",
     "name": "Vista",
     "modelCode": "29HZN28483AH",
     "widthFt": 28,
@@ -2482,12 +2925,19 @@
     ],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn28483ah/"
+    "sourceUrl": "https://claytonbuilthorizon.com/models/29hzn28483ah/",
+    "tourUrl": "https://momento360.com/e/uc/dd4d987b98474ae1bd9cf9124414dff3?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/1226b152-ebd4-4b91-b4b9-15564a4c706f.jpg"
+      }
+    ]
   },
   {
     "slug": "pure-28563x",
     "brand": "Cavco",
     "series": "Pure (Rocky Mount)",
+    "wallFinish": "drywall",
     "name": "Pure",
     "modelCode": "28563X",
     "widthFt": 28,
@@ -2512,12 +2962,14 @@
     ],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.cavcohomes.com/our-homes/fleetwoodhomes/standard/us/"
+    "sourceUrl": "https://www.cavcohomes.com/our-homes/fleetwoodhomes/standard/us/",
+    "tourUrl": "https://my.matterport.com/show/?m=RT5wXsKU9pc"
   },
   {
     "slug": "palm-harbor-28563t",
     "brand": "Cavco",
     "series": "Palm Harbor (Rocky Mount)",
+    "wallFinish": "drywall",
     "name": "Palm Harbor",
     "modelCode": "28563T",
     "widthFt": 28,
@@ -2542,12 +2994,14 @@
     ],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.cavcohomes.com/our-homes/fleetwoodhomes/standard/us/556-palm-harbor-28563t"
+    "sourceUrl": "https://www.cavcohomes.com/our-homes/fleetwoodhomes/standard/us/556-palm-harbor-28563t",
+    "tourUrl": "https://my.matterport.com/show/?m=LK2H47SL2R5"
   },
   {
     "slug": "heritage-pointe-32764d",
     "brand": "Cavco",
     "series": "Heritage Pointe (Fleetwood)",
+    "wallFinish": "drywall",
     "name": "Heritage Pointe",
     "modelCode": "32764D",
     "widthFt": 32,
@@ -2555,7 +3009,7 @@
     "sqft": 2432,
     "beds": 4,
     "baths": 3,
-    "description": "The Heritage Pointe is a spacious 4-bedroom, 3-bath Cavco (Fleetwood) double-wide built at the Rocky Mount plant — a 32x76 home with an optional 5th bedroom, island kitchen, and a tiled walk-in shower.",
+    "description": "The Heritage Pointe is a spacious 4-bedroom, 3-bath Cavco (Fleetwood) double-wide built at the Rocky Mount plant \u2014 a 32x76 home with an optional 5th bedroom, island kitchen, and a tiled walk-in shower.",
     "decorOptions": [],
     "imageUrls": [
       "/models/heritage-pointe-32764d/01.jpg",
@@ -2579,6 +3033,7 @@
     "slug": "anniversary-76",
     "brand": "Clayton",
     "series": "Giles",
+    "wallFinish": "strips",
     "name": "Anniversary 76",
     "modelCode": "46ESS16763AH",
     "widthFt": 16,
@@ -2605,12 +3060,19 @@
     ],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytongiles.com/models/46ess16763ah/"
+    "sourceUrl": "https://claytongiles.com/models/46ess16763ah/",
+    "tourUrl": "https://momento360.com/e/uc/82184ea46e76406dbe180d4b7013074f?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/e5a76b14-7cae-475b-8dba-64d8baacf6eb.jpg"
+      }
+    ]
   },
   {
     "slug": "emerald",
     "brand": "Clayton",
     "series": "Giles",
+    "wallFinish": "strips",
     "name": "Emerald",
     "modelCode": "46XCL16763AH",
     "widthFt": 16,
@@ -2635,12 +3097,19 @@
     ],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytongiles.com/models/46xcl16763ah/"
+    "sourceUrl": "https://claytongiles.com/models/46xcl16763ah/",
+    "tourUrl": "https://momento360.com/e/uc/0245cfb75ba940b4a950163eccfa440e?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/b5d98f3a-bff2-444c-a7d0-c9a69f414470.jpg"
+      }
+    ]
   },
   {
     "slug": "lincoln",
     "brand": "Clayton",
     "series": "Giles",
+    "wallFinish": "strips",
     "name": "Lincoln",
     "modelCode": "46ALL28523AH",
     "widthFt": 28,
@@ -2665,12 +3134,19 @@
     ],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytongiles.com/models/46all28523ah/"
+    "sourceUrl": "https://claytongiles.com/models/46all28523ah/",
+    "tourUrl": "https://momento360.com/e/uc/c2eaa490cdc7417a9d7e870f594022d4?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/38378c28-6fa9-4c52-b728-cc43296e6086.jpg"
+      }
+    ]
   },
   {
     "slug": "phoenix",
     "brand": "Clayton",
     "series": "Giles",
+    "wallFinish": "strips",
     "name": "Phoenix",
     "modelCode": "46ALL16602BH",
     "widthFt": 16,
@@ -2696,12 +3172,19 @@
     ],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://claytongiles.com/models/46all16602bh/"
+    "sourceUrl": "https://claytongiles.com/models/46all16602bh/",
+    "tourUrl": "https://momento360.com/e/uc/9de409fade234085a6349d6f210102d2?utm_campaign=embed&#038;utm_source=other&#038;reset-heading=true&#038;size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/4acdf68f-5008-473a-b219-0bbdc9aaa3a2.jpg"
+      }
+    ]
   },
   {
     "slug": "kritzer-3256-04",
     "brand": "Champion",
     "series": "Kritzer",
+    "wallFinish": "drywall",
     "name": "Kritzer 3256-04",
     "modelCode": "3256-04",
     "widthFt": 32,
@@ -2727,12 +3210,14 @@
     ],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.championhomes.com/models/kritzer"
+    "sourceUrl": "https://www.championhomes.com/models/kritzer",
+    "tourUrl": "https://my.matterport.com/show/?m=9pQTnZM9ne5"
   },
   {
     "slug": "lake-manor-2856h32p01",
     "brand": "Champion",
     "series": "Lake Manor",
+    "wallFinish": "drywall",
     "name": "Lake Manor 2856H32P01",
     "modelCode": "2856H32P01",
     "widthFt": 28,
@@ -2758,6 +3243,7 @@
     "slug": "tradition-68",
     "brand": "Clayton",
     "series": "Appalachia",
+    "wallFinish": "strips",
     "name": "Tradition 68",
     "modelCode": "34TRA28684BH",
     "widthFt": 28,
@@ -2783,12 +3269,19 @@
     ],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://myappalachiahome.com/models/34tra28684bh/"
+    "sourceUrl": "https://myappalachiahome.com/models/34tra28684bh/",
+    "tourUrl": "https://my.matterport.com/show/?m=aa2GGU46jcX",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/77e761e7-3417-4dc5-a6fb-920b957b37ea.png"
+      }
+    ]
   },
   {
     "slug": "clear-48",
     "brand": "Clayton",
     "series": "Appalachia",
+    "wallFinish": "strips",
     "name": "Clear 48",
     "modelCode": "34TRA28483FH",
     "widthFt": 28,
@@ -2815,12 +3308,19 @@
     ],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://myappalachiahome.com/models/34tra28483fh/"
+    "sourceUrl": "https://myappalachiahome.com/models/34tra28483fh/",
+    "tourUrl": "https://my.matterport.com/show/?m=zXaRy3sTrUr",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/a4195ebe-1c38-4eba-8706-6783bccf3372.jpg"
+      }
+    ]
   },
   {
     "slug": "summit-32483a",
     "brand": "Cavco",
     "series": "The Summit (Cavco Douglas)",
+    "wallFinish": "drywall-optional",
     "name": "The Summit 32483A",
     "modelCode": "32483A",
     "widthFt": 30,
@@ -2830,25 +3330,31 @@
     "baths": 2,
     "description": "The Summit 32483A by Cavco Douglas is a 3-bedroom, 2-bath ranch-style double-wide in The Summit series. An open kitchen with island flows into the dining area and a large living room, with a split primary suite, walk-in closets, and a utility room. 1,440 sq ft across two sections.",
     "decorOptions": [
-      "Open island kitchen with dining and a 17′ living room",
+      "Open island kitchen with dining and a 17\u2032 living room",
       "Split-bedroom layout with primary walk-in closets",
       "Utility room and pantry off the kitchen",
-      "Optional 60″ tub or shower in the second bath",
+      "Optional 60\u2033 tub or shower in the second bath",
       "Optional windows and entry"
     ],
     "imageUrls": [
-      "/models/summit-32483a/01.jpg",
-      "/models/summit-32483a/02.jpg"
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/2B2AE2D5051C406285E57F8856A2675B/26ts32483a_rf0_1768853607714_990_12.jpg",
+      "https://www.cavcohomes.com/binaries/content/gallery/fleetwood/building-centers/douglas/24_fw-260_therose-kh12401u_livingroom-002_web/24_fw-260_therose-kh12401u_livingroom-002_web/cavco%3AextraLarge"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.cavcodouglas.com/"
+    "sourceUrl": "https://www.cavcodouglas.com/",
+    "floorPlans": [
+      {
+        "url": "/models/summit-32483a/02.jpg"
+      }
+    ]
   },
   {
     "slug": "summit-28603n",
     "brand": "Cavco",
     "series": "The Summit (Fleetwood)",
+    "wallFinish": "drywall-optional",
     "name": "The Summit 28603N",
     "modelCode": "28603N",
     "widthFt": 28,
@@ -2865,18 +3371,35 @@
       "Utility room"
     ],
     "imageUrls": [
-      "/models/summit-28603n/01.jpg",
-      "/models/summit-28603n/02.jpg"
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/56CE8038634849C2B7EC8D1EAD6B66FE/25_c_260_vivid_28603n_exterior_001_web_1743624240116_810_12.jpg",
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/56CE8038634849C2B7EC8D1EAD6B66FE/25_c_260_vivid_28603n_exterior_002_web_1743624237478_810_12.jpg",
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/56CE8038634849C2B7EC8D1EAD6B66FE/26ao28603n_rf0_1134_12.jpg",
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/56CE8038634849C2B7EC8D1EAD6B66FE/25_c_260_vivid_28603n_livingroom_001_web_1743624218964_810_12.jpg",
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/56CE8038634849C2B7EC8D1EAD6B66FE/25_c_260_vivid_28603n_livingroom_002_web_1743624463098_810_12.jpg",
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/56CE8038634849C2B7EC8D1EAD6B66FE/25_c_260_vivid_28603n_kitchen_001_web_1743624228216_810_12.jpg",
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/56CE8038634849C2B7EC8D1EAD6B66FE/25_c_260_vivid_28603n_kitchen_002_web_1743624223871_1323_12.jpg",
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/56CE8038634849C2B7EC8D1EAD6B66FE/25_c_260_vivid_28603n_bed_001_web_1743624262724_1323_12.jpg",
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/56CE8038634849C2B7EC8D1EAD6B66FE/25_c_260_vivid_28603n_bed_002_web_1743624259149_810_12.jpg",
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/56CE8038634849C2B7EC8D1EAD6B66FE/25_c_260_vivid_28603n_bath_001_web_1743624296488_1323_12.jpg",
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/56CE8038634849C2B7EC8D1EAD6B66FE/25_c_260_vivid_28603n_bath_002_web_1743624291346_1323_12.jpg",
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/56CE8038634849C2B7EC8D1EAD6B66FE/25_c_260_vivid_28603n_interior_001_web_1743624232082_1323_12.jpg",
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/56CE8038634849C2B7EC8D1EAD6B66FE/25_c_260_vivid_28603n_utility_001_web_1743624452143_1323_12.jpg"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.fleetwoodhomes.com/"
+    "sourceUrl": "https://www.fleetwoodhomes.com/",
+    "floorPlans": [
+      {
+        "url": "/models/summit-28603n/02.jpg"
+      }
+    ]
   },
   {
     "slug": "summit-28564t",
     "brand": "Cavco",
     "series": "The Summit (Cavco Douglas)",
+    "wallFinish": "drywall-optional",
     "name": "The Summit 28564T",
     "modelCode": "28564T",
     "widthFt": 28,
@@ -2884,27 +3407,33 @@
     "sqft": 1474,
     "beds": 4,
     "baths": 2.5,
-    "description": "The Summit 28564T by Cavco Douglas is a roomy 4-bedroom, 2½-bath double-wide. A central island kitchen and dining open to the living room, with four bedrooms and three baths — ideal when you need the extra rooms. 1,474 sq ft.",
+    "description": "The Summit 28564T by Cavco Douglas is a roomy 4-bedroom, 2\u00bd-bath double-wide. A central island kitchen and dining open to the living room, with four bedrooms and three baths \u2014 ideal when you need the extra rooms. 1,474 sq ft.",
     "decorOptions": [
       "Central island kitchen open to dining and living",
       "Four bedrooms with a primary walk-in closet",
-      "Optional 72″ shower or glamour bath in the primary",
+      "Optional 72\u2033 shower or glamour bath in the primary",
       "Utility room and pantry",
       "Optional windows"
     ],
     "imageUrls": [
-      "/models/summit-28564t/01.jpg",
-      "/models/summit-28564t/02.jpg"
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/5ECF5E61354D45068AD9A59887725F8D/26ts28564t_rf0_1134_12.jpg",
+      "https://www.cavcohomes.com/binaries/content/gallery/fleetwood/building-centers/douglas/24_fw-260_therose-kh12401u_livingroom-002_web/24_fw-260_therose-kh12401u_livingroom-002_web/cavco%3AextraLarge"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.cavcodouglas.com/"
+    "sourceUrl": "https://www.cavcodouglas.com/",
+    "floorPlans": [
+      {
+        "url": "/models/summit-28564t/02.jpg"
+      }
+    ]
   },
   {
     "slug": "pinnacle-16763b",
     "brand": "Cavco",
     "series": "Pinnacle (Cavco Douglas)",
+    "wallFinish": "strips",
     "name": "Pinnacle",
     "modelCode": "16763B",
     "widthFt": 15,
@@ -2921,12 +3450,431 @@
       "Optional windows"
     ],
     "imageUrls": [
-      "/models/pinnacle-16763b/01.jpg",
-      "/models/pinnacle-16763b/02.jpg"
+      "https://cdn2.cavco.com/public/phhweb/gallery/file/E9567CC674B7491FB87D74678C1A5AC8/26pn16763b_rf0_1134_12.jpg",
+      "https://www.cavcohomes.com/binaries/content/gallery/fleetwood/building-centers/douglas/24_fw-260_therose-kh12401u_livingroom-002_web/24_fw-260_therose-kh12401u_livingroom-002_web/cavco%3AextraLarge"
     ],
     "aka": [],
     "bestSeller": false,
     "bestSellerRank": 999,
-    "sourceUrl": "https://www.cavcodouglas.com/"
+    "sourceUrl": "https://www.cavcodouglas.com/",
+    "floorPlans": [
+      {
+        "url": "/models/pinnacle-16763b/02.jpg"
+      }
+    ]
+  },
+  {
+    "slug": "levi",
+    "brand": "Clayton",
+    "series": "NXT",
+    "wallFinish": "drywall",
+    "name": "Levi",
+    "modelCode": "27NXT16602AH",
+    "widthFt": 16,
+    "lengthFt": 60,
+    "sqft": 960,
+    "beds": 2,
+    "baths": 2,
+    "description": "A two-bedroom, two-bath manufactured home in Clayton's NXT line \u2014 16\u00d760 (960 sq ft) with a modern open-concept layout. Listed at about 900 heated sq ft.",
+    "decorOptions": [],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/ext/42031cda-a6a9-4509-9fb2-0f62ea86729b.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/b2739786-d5c6-438e-9257-8f68c4177a88.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/96ed92b2-f94d-443a-be02-5fa2472dd408.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/f0854062-6c04-4019-92ad-f9b9a22ed05e.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/d4f647dd-8413-48a0-86c3-b2e0efe6331b.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/2067b9e7-b3ae-498b-a3bb-a1b247706576.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/d07bd9b7-e1b7-4d3c-81a8-9c3e919a6277.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://claytonbuiltnxt.com/models/27nxt16602ah/",
+    "tourUrl": "https://momento360.com/e/uc/849dfe0c86ab4fff97cae91de4927761?utm_campaign=embed&utm_source=other&reset-heading=true&size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/47aa0982-cc8a-4292-8508-6f60024985c4.jpg"
+      }
+    ]
+  },
+  {
+    "slug": "lexi",
+    "brand": "Clayton",
+    "series": "NXT",
+    "wallFinish": "drywall",
+    "name": "Lexi",
+    "modelCode": "27NXT16763DH",
+    "widthFt": 16,
+    "lengthFt": 76,
+    "sqft": 1216,
+    "beds": 3,
+    "baths": 2,
+    "description": "A three-bedroom, two-bath manufactured home in Clayton's NXT line \u2014 16\u00d776 (1216 sq ft) with a modern open-concept layout. Listed at about 1,140 heated sq ft.",
+    "decorOptions": [],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/ext/ec7fc8a4-0cb6-4fa3-bf3c-183ae5a1bf82.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/986c5031-e834-4413-994c-60287253351e.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/2de852f8-bcc1-47e0-a7ed-54ceb78a1277.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/ea62379e-c765-4051-a17f-a1d6877972b3.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/320e9c8c-7d3b-4366-9204-7b2d92ed5a14.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/cebab0ed-1c36-4f83-8865-f4c3cbf5b550.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/0d717afc-227a-4973-8a3d-c0b5a93c90e4.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/9f14fcdc-4bc3-4176-9b27-f73683efd2ac.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/9261c1a3-b3e4-4dee-8de4-58ae21ace720.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://claytonbuiltnxt.com/models/27nxt16763dh/",
+    "tourUrl": "https://momento360.com/e/uc/36b7f564d26a4bdf885bef52ab210a02?utm_campaign=embed&utm_source=other&reset-heading=true&size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/0e270acd-5ab2-412f-a743-1606e378737e.jpg"
+      }
+    ]
+  },
+  {
+    "slug": "wilder",
+    "brand": "Clayton",
+    "series": "NXT",
+    "wallFinish": "drywall",
+    "name": "Wilder",
+    "modelCode": "27NXT28523AH",
+    "widthFt": 28,
+    "lengthFt": 52,
+    "sqft": 1456,
+    "beds": 3,
+    "baths": 2,
+    "description": "A three-bedroom, two-bath manufactured home in Clayton's NXT line \u2014 28\u00d752 (1456 sq ft) with a modern open-concept layout. Listed at about 1,369 heated sq ft.",
+    "decorOptions": [],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/ext/9bb0b790-3097-46e0-bda7-1b0853cdf24a.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/0f0b9b8e-17cd-4e9b-b4bb-a22545c6eb24.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/9d91bf67-7653-46c1-84be-a7fbc061f920.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/b0250c02-579b-4d5c-9814-aa11c22696a3.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/3cabe2e7-5f82-4d7c-bddd-9a89fd850905.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/c61a8e68-e903-4a02-bebb-6fbd8798107c.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/285a6237-b27e-4d60-9de7-fa080be43cc0.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/95b3d077-5308-4f0d-8898-dee1db7a91e5.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/619873f0-4f07-48c0-bee8-82319abd5889.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://claytonbuiltnxt.com/models/27nxt28523ah/",
+    "tourUrl": "https://momento360.com/e/uc/2c82d0b3209a4a5f82c9cacc4527ee1e?utm_campaign=embed&utm_source=other&reset-heading=true&size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/5e25049a-a8ff-425f-a03e-b6ec0a089e1d.jpg"
+      }
+    ]
+  },
+  {
+    "slug": "emilie",
+    "brand": "Clayton",
+    "series": "NXT",
+    "wallFinish": "drywall",
+    "name": "Emilie",
+    "modelCode": "27NXI28563AH",
+    "widthFt": 28,
+    "lengthFt": 56,
+    "sqft": 1568,
+    "beds": 3,
+    "baths": 2,
+    "description": "A three-bedroom, two-bath manufactured home in Clayton's NXT line \u2014 28\u00d756 (1568 sq ft) with a modern open-concept layout. Listed at about 1,474 heated sq ft.",
+    "decorOptions": [],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/ext/fe59d7bc-e194-41e3-aa88-6f2e829b9bc5.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/d6b7c105-8d8e-4af8-a101-c546b545838c.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/4f149a41-fec4-4507-ad33-7e6a1b72b120.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/10543694-c4d2-4626-9398-1614a221a88a.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/b8ecc242-bbde-4ee7-abdf-4aadb71a2f49.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/ad3453b9-193a-4643-bb80-f875b06c6787.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/553be0f4-03a1-40a5-bcaf-10aa0b83276c.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/bfdd61a8-14c6-4272-8657-64bcd61eda0e.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/1486a278-962d-4b05-979e-ef5c35f7b7f6.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/abf015c6-c360-4f8b-b1a2-e59842a8ec2c.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://claytonbuiltnxt.com/models/27nxi28563ah/",
+    "tourUrl": "https://momento360.com/e/uc/39e5eee23b2b4250a9db2803a22af7b9?utm_campaign=embed&utm_source=other&reset-heading=true&size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/dc991528-c57d-4482-a889-3cc7c97e335a.jpg"
+      }
+    ]
+  },
+  {
+    "slug": "lizzie",
+    "brand": "Clayton",
+    "series": "NXT",
+    "wallFinish": "drywall",
+    "name": "Lizzie",
+    "modelCode": "27NXT28563CH",
+    "widthFt": 28,
+    "lengthFt": 56,
+    "sqft": 1568,
+    "beds": 3,
+    "baths": 2,
+    "description": "A three-bedroom, two-bath manufactured home in Clayton's NXT line \u2014 28\u00d756 (1568 sq ft) with a modern open-concept layout. Listed at about 1,474 heated sq ft.",
+    "decorOptions": [],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/ext/e39f369d-d21c-483e-b4e7-3f5ff86a2842.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/fcb6b9cc-8677-4b88-8cd0-216f41417281.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/b27b47e3-8764-46aa-a535-d884f736faf7.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/99859c02-9f9d-4c3c-be22-2959f67b80b7.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/152c5043-2c6e-4ff0-a8c6-f321968abbbd.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/03e79b56-d919-424f-8a7d-a92bb1d205df.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/e7f15249-c799-4d45-b233-a4b96c50427b.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/99f8ed63-0095-4c19-b8ec-cea90fd8f1ad.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/10be622c-4fce-4953-b087-930687dd1768.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://claytonbuiltnxt.com/models/27nxt28563ch/",
+    "tourUrl": "https://momento360.com/e/uc/e6fcc3f6f3814fc898f7473ef968c835?utm_campaign=embed&utm_source=other&reset-heading=true&size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/6ce81946-4c9d-40e8-874f-cc2b8ed9a0cc.jpg"
+      }
+    ]
+  },
+  {
+    "slug": "isabella",
+    "brand": "Clayton",
+    "series": "NXT",
+    "wallFinish": "drywall",
+    "name": "Isabella",
+    "modelCode": "27NXT28603AH",
+    "widthFt": 28,
+    "lengthFt": 60,
+    "sqft": 1680,
+    "beds": 3,
+    "baths": 2,
+    "description": "A three-bedroom, two-bath manufactured home in Clayton's NXT line \u2014 28\u00d760 (1680 sq ft) with a modern open-concept layout. Listed at about 1,580 heated sq ft.",
+    "decorOptions": [],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/ext/52eda8f4-eed6-4468-968e-b5e331729b53.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/0c19ddad-5e5d-4bc6-b179-36f2ce8cb1ae.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/935a1296-f051-432f-b5dc-57ad093850a5.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/af8505ec-aa8f-4d99-8706-3716e1a79067.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/53170b2f-5b37-4ccd-93e3-f402e1c9189d.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/9930ed3a-226e-45fa-a430-1e2446e53e64.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/ee3f927f-e815-4cce-a9c9-4a21f22a7b44.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/ced438db-dae4-4a13-b422-6017cbd1bcba.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/28c5c6f5-8df1-433c-8eab-8048bde89b0b.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/6c6f7384-f39e-4fb1-ba2f-b8369071f8e2.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/d90e06e5-d338-451a-83d8-5f1544bc10e5.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://claytonbuiltnxt.com/models/27nxt28603ah/",
+    "tourUrl": "https://momento360.com/e/uc/c604c566643e4334b0215aab6f4e9731?utm_campaign=embed&utm_source=other&reset-heading=true&size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/214bbb71-e5e2-4800-9db7-6be8fd14e2ae.jpg"
+      }
+    ]
+  },
+  {
+    "slug": "everett",
+    "brand": "Clayton",
+    "series": "NXT",
+    "wallFinish": "drywall",
+    "name": "Everett",
+    "modelCode": "27NXT28684AH",
+    "widthFt": 28,
+    "lengthFt": 68,
+    "sqft": 1904,
+    "beds": 4,
+    "baths": 3,
+    "description": "A four-bedroom, three-bath manufactured home in Clayton's NXT line \u2014 28\u00d768 (1904 sq ft) with a modern open-concept layout. Listed at about 1,790 heated sq ft.",
+    "decorOptions": [],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/ext/087243fc-e64e-47f9-962c-798bdf4300c4.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/47d60088-9d09-4bb7-859e-f103e5c77111.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/314ab087-799c-4f50-a991-8d0e491bc263.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/8b09bf90-3dc7-4864-93c5-82e8184babf7.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/7e742d22-a585-4200-8bf0-438c64ba5b5c.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/af31b9e1-f9ed-4e4b-8ac3-c9986bd03a21.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/6e6921bf-ad02-4eed-a38e-910f20a0e97f.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/4c73ac75-640d-4bc1-b619-e3f9c474766f.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/0ca267d5-d125-4464-969f-3e494fafcaed.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/a845b693-5c5f-4934-952d-ef008295e7bf.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/319155a8-0adb-48a4-9f49-9bbd9088d587.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/c940867f-8cee-44e3-90bc-874d26d90eda.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://claytonbuiltnxt.com/models/27nxt28684ah/",
+    "tourUrl": "https://momento360.com/e/uc/7f35cd39d75e4b7b8938840da6f0ec25?utm_campaign=embed&utm_source=other&reset-heading=true&size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/005a99b7-ac81-4f06-b463-54f7fcbb9ce4.jpg"
+      }
+    ]
+  },
+  {
+    "slug": "nellie",
+    "brand": "Clayton",
+    "series": "NXT",
+    "wallFinish": "drywall",
+    "name": "Nellie",
+    "modelCode": "27NXI28764AH",
+    "widthFt": 28,
+    "lengthFt": 76,
+    "sqft": 2128,
+    "beds": 4,
+    "baths": 2,
+    "description": "A four-bedroom, two-bath manufactured home in Clayton's NXT line \u2014 28\u00d776 (2128 sq ft) with a modern open-concept layout. Listed at about 2,001 heated sq ft.",
+    "decorOptions": [],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/ext/66480749-b8d8-4d21-bf20-e47eb2a0ee1c.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/d067b95e-5f28-40b8-98bb-ee28ca9f5948.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/6b59cb9f-6422-4f62-9f41-24c6099ece32.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/a9f790d2-1c02-4241-af94-5b6bd50d7b8a.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/b93a1c01-2266-43d9-9708-1e295978dfe2.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/22360e1d-55e7-4d57-aa81-7c978ab252c9.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/810000c0-8e35-49d5-bada-052d6e58fa42.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/54897d17-218e-45f7-b36f-01eeedb07da8.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/9e64f72b-c7b5-46a5-8ae7-8f373b3c52c1.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/64d0d1e5-be96-45de-9ea8-4f212cefb3f8.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/26d5c5ba-a530-41c4-9888-f2726883b5f7.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/576d4275-e7b6-4ee6-baa1-84e18ada2d73.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://claytonbuiltnxt.com/models/27nxi28764ah/",
+    "tourUrl": "https://momento360.com/e/uc/45615541bf2546a1b9aafd9814223f20?utm_campaign=embed&utm_source=other&reset-heading=true&size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/f8601c62-e785-4d66-92c0-db1091725ca9.jpg"
+      }
+    ]
+  },
+  {
+    "slug": "tinsley",
+    "brand": "Clayton",
+    "series": "NXT",
+    "wallFinish": "drywall",
+    "name": "Tinsley",
+    "modelCode": "27NXT28764CH",
+    "widthFt": 28,
+    "lengthFt": 76,
+    "sqft": 2128,
+    "beds": 4,
+    "baths": 2,
+    "description": "A four-bedroom, two-bath manufactured home in Clayton's NXT line \u2014 28\u00d776 (2128 sq ft) with a modern open-concept layout. Listed at about 2,001 heated sq ft.",
+    "decorOptions": [],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/ext/4725b474-67e6-4ca5-bdc1-c61c53db709b.jpg",
+      "https://api.claytonhomes.com/images/mfg/ext/700ee55a-33d2-4207-b392-8130cef9c8ac.jpg",
+      "https://api.claytonhomes.com/images/mfg/ext/0635ace1-02e6-4797-8a3d-2ca561089ce6.jpg",
+      "https://api.claytonhomes.com/images/mfg/ext/d2cd944e-27de-41e2-bd1f-614db72e045b.jpg",
+      "https://api.claytonhomes.com/images/mfg/ext/78e971f1-ff84-4501-9740-d3e734d7c607.jpg",
+      "https://api.claytonhomes.com/images/mfg/ext/cb460747-681a-48d3-9822-2c8c11fd4ec9.jpg",
+      "https://api.claytonhomes.com/images/mfg/ext/fdd06df1-8220-4b9f-9e0e-bcbcf48d2e07.jpg",
+      "https://api.claytonhomes.com/images/mfg/ext/39d90cb0-daf6-44bd-9ada-719c9b08caa5.jpg",
+      "https://api.claytonhomes.com/images/mfg/ext/5e9a3900-fea5-4ec3-b1db-70f11b7a9bd0.jpg",
+      "https://api.claytonhomes.com/images/mfg/ext/9df71657-d8f0-45ae-936e-e2d625d91cf9.jpg",
+      "https://api.claytonhomes.com/images/mfg/ext/2fd3214d-208a-4e15-bf54-9933280fc7d5.jpg",
+      "https://api.claytonhomes.com/images/mfg/ext/65647f7c-7bf9-4b37-85a9-0a9623d87f03.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://claytonbuiltnxt.com/models/27nxt28764ch/",
+    "tourUrl": "https://momento360.com/e/uc/584821be256a4106ac10b928c312f5e2?utm_campaign=embed&utm_source=other&reset-heading=true&size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/bb4373d1-3e1a-478b-b47d-790913d19b94.jpg"
+      }
+    ]
+  },
+  {
+    "slug": "brown-eyed-girl",
+    "brand": "Clayton",
+    "series": "Tempo",
+    "wallFinish": "drywall",
+    "name": "Brown Eyed Girl",
+    "modelCode": "57TMI28604AH",
+    "widthFt": 28,
+    "lengthFt": 60,
+    "sqft": 1680,
+    "beds": 4,
+    "baths": 2,
+    "description": "A four-bedroom, two-bath manufactured home in Clayton's Tempo line \u2014 28\u00d760 (1680 sq ft) with a modern open-concept layout. Listed at about 1,580 heated sq ft.",
+    "decorOptions": [],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/ext/8b93adbe-bddf-4dfd-9404-018a87ea019a.jpg",
+      "https://api.claytonhomes.com/images/mfg/ext/a32c1aab-09cb-47a3-8f82-826323665a73.jpg",
+      "https://api.claytonhomes.com/images/mfg/ext/8ba4120c-9840-465e-98b3-b3d96c1d0675.jpg",
+      "https://api.claytonhomes.com/images/mfg/ext/e1f7ade4-1d40-4617-bd9b-ba8fb2150b1f.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/57a76463-8511-4a65-aab2-219d7b294c2c.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/9efce48d-ab40-408b-9dfa-1a4eb51cadbd.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/181b9f3e-03dd-46c3-ad9b-3a2187f2e47d.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/1f3c954d-e45f-4b68-a3c0-cd5b50f2a036.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/d492ded9-f5fa-4dad-a04c-533f182e62a8.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/e66ff9c9-6bd4-47f5-8cd6-746b939aa6ae.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/69dbaeea-29f8-4c1b-82bf-b21b67e8af6a.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/965e4997-b20d-4978-9017-11cf063affc3.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/34b612c8-850a-4578-aa54-504adde28ad0.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/4e77995e-330d-4eee-a7c9-7ad717a98f15.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/ecda75e0-e528-4afc-a7ce-52d46abaec58.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/234341b6-1986-42c7-ba83-20970857748f.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/7f718cf2-0d7e-4854-aaf4-4da02d7ce015.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://claytonbuilttempo.com/models/57tmi28604ah/",
+    "tourUrl": "https://momento360.com/e/uc/095791f5a6084c54ac115b04d6becdb7?utm_campaign=embed&utm_source=other&reset-heading=true&size=large",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/05ccbabd-1fbe-4cac-8134-b2a250ba456c.jpg"
+      }
+    ]
+  },
+  {
+    "slug": "tradition-48f",
+    "brand": "Clayton",
+    "series": "Appalachia",
+    "wallFinish": "strips",
+    "name": "Tradition 48F",
+    "modelCode": "34TRA28483FH",
+    "widthFt": 28,
+    "lengthFt": 48,
+    "sqft": 1344,
+    "beds": 3,
+    "baths": 2,
+    "description": "A three-bedroom, two-bath manufactured home in Clayton's Appalachia line \u2014 28\u00d748 (1344 sq ft) with a modern open-concept layout. Listed at about 1,263 heated sq ft.",
+    "decorOptions": [],
+    "imageUrls": [
+      "https://api.claytonhomes.com/images/mfg/int/57c9fa4c-0632-4c7f-bcce-2189feb75d23.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/081bf438-f39f-4f6e-b744-3bd970936037.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/8e683455-fa01-4452-a610-d879d6474d01.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/360e127d-1c12-4d4d-82f7-38157296515d.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/924d66a9-c76a-43b2-8d1e-b3351dffab48.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/861d2de5-55e3-46fe-a19b-110bbe3a6f9e.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/0a9e5cd6-0893-4664-a666-6882c366ab49.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/f3ed5463-a434-4d4d-85b9-50be6d4633e6.jpg",
+      "https://api.claytonhomes.com/images/mfg/int/cfc81ffe-6e5f-4690-a055-79d7030bf7b6.jpg"
+    ],
+    "aka": [],
+    "bestSeller": false,
+    "bestSellerRank": 999,
+    "sourceUrl": "https://myappalachiahome.com/models/34tra28483fh/",
+    "tourUrl": "https://my.matterport.com/show/?m=zXaRy3sTrUr",
+    "floorPlans": [
+      {
+        "url": "https://api.claytonhomes.com/images/mfg/flp/a4195ebe-1c38-4eba-8706-6783bccf3372.jpg"
+      }
+    ]
   }
 ]

@@ -4,6 +4,8 @@ import { bestSellerHomes, BRANDS } from "@/lib/homes";
 import { galleryByCategory } from "@/lib/gallery";
 import { asset } from "@/lib/asset";
 import { HomeCard } from "@/components/home-card";
+import { Testimonials } from "@/components/testimonials";
+import { ForturroLandSearch } from "@/components/forturro-land-search";
 import {
   ArrowIcon,
   CheckIcon,
@@ -13,11 +15,14 @@ import {
 } from "@/components/icons";
 
 export const metadata = {
+  title: "Manufactured & Mobile Home Dealer in Horry County, SC — New Homes on Land",
+  description:
+    "Home Placer is a licensed manufactured & mobile home + land dealer serving Horry & Georgetown County, SC and Brunswick & Columbus County, NC. New Clayton, Cavco & Champion homes on land — one package, from the low $200s, no HOA.",
   alternates: { canonical: "/" },
 };
 
 export default function HomePage() {
-  const homes = bestSellerHomes().slice(0, 6);
+  const homes = bestSellerHomes().slice(0, 8); // all best-sellers incl. Pegasus + Atmos
   const work = [...galleryByCategory("homes").slice(0, 4), ...galleryByCategory("development").slice(0, 2)];
 
   return (
@@ -28,15 +33,15 @@ export default function HomePage() {
         <div className="container-x relative grid gap-12 py-20 md:py-28 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
           <div>
             <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-accent-300 ring-1 ring-white/15">
-              Licensed land + home dealer · Horry County
+              Manufactured home + land dealer · Horry County, SC
             </p>
             <h1 className="mt-5 max-w-2xl font-display text-4xl font-semibold leading-[1.05] sm:text-5xl lg:text-6xl">
               A brand-new home — and the land it sits on — from the low&nbsp;$200s.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-stone-100/80">
-              Home Placer pairs Clayton, Cavco, and Champion homes with land in
-              Conway, Loris, Longs, Aynor, and Myrtle Beach. One package, one
-              team, no HOA.
+              Home Placer pairs new Clayton, Cavco, and Champion manufactured homes
+              with land across Horry and Georgetown counties in SC and Brunswick and
+              Columbus counties in NC. One package, one team, no HOA.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
@@ -53,7 +58,7 @@ export default function HomePage() {
               </a>
             </div>
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-stone-100/75">
-              {["No HOA", "Land + home bundled", "1-year warranty", "Licensed SC dealer"].map((t) => (
+              {["No HOA", "Land + home bundled", "1-year warranty", "Licensed in SC & NC"].map((t) => (
                 <li key={t} className="inline-flex items-center gap-2">
                   <CheckIcon className="size-4 text-accent-300" /> {t}
                 </li>
@@ -190,7 +195,15 @@ export default function HomePage() {
       <section className="bg-stone-surface py-16">
         <div className="container-x flex flex-col items-center text-center">
           <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">Where we place homes</p>
-          <h2 className="mt-2 font-display text-3xl font-semibold text-stone-ink">All across the Grand Strand</h2>
+          <h2 className="mt-2 font-display text-3xl font-semibold text-stone-ink">
+            Four counties, two states
+          </h2>
+          <p className="mt-3 max-w-2xl text-stone-muted">
+            We place manufactured homes on land across <strong className="font-semibold text-stone-ink">Horry</strong> and{" "}
+            <strong className="font-semibold text-stone-ink">Georgetown</strong> counties in South Carolina and{" "}
+            <strong className="font-semibold text-stone-ink">Brunswick</strong> and{" "}
+            <strong className="font-semibold text-stone-ink">Columbus</strong> counties in North Carolina.
+          </p>
           <ul className="mt-7 flex flex-wrap justify-center gap-3">
             {site.locations.map((l) => (
               <li key={l.slug}>
@@ -203,8 +216,17 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
+          <Link
+            href="/locations"
+            className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-900"
+          >
+            See all 27 towns we serve <ArrowIcon className="size-4" />
+          </Link>
         </div>
       </section>
+
+      {/* ──────────────── Find land (cross-over to Forturro) ──────────────── */}
+      <ForturroLandSearch />
 
       {/* ──────────────────── Our work ──────────────────── */}
       {work.length > 0 && (
@@ -218,14 +240,15 @@ export default function HomePage() {
                 </h2>
                 <p className="mt-3 text-stone-muted">
                   We don&apos;t just sell homes — we develop the land and set the home, start to
-                  finish. Here&apos;s a look at real Home Placer work across Horry County.
+                  finish. Here&apos;s a look at real Home Placer homes recently placed across the Grand
+                  Strand and into southeastern North Carolina.
                 </p>
               </div>
               <Link
-                href="/gallery"
+                href="/recently-placed"
                 className="inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-900"
               >
-                See our work <ArrowIcon className="size-4" />
+                See homes we&apos;ve placed <ArrowIcon className="size-4" />
               </Link>
             </div>
             <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
@@ -244,6 +267,9 @@ export default function HomePage() {
           </div>
         </section>
       )}
+
+      {/* ──────────────────── Reviews ──────────────────── */}
+      <Testimonials />
 
       {/* ──────────────────── Final CTA ──────────────────── */}
       <section className="container-x py-20">

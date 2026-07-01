@@ -1,4 +1,4 @@
-import type { Brand, Home } from "./home-types";
+import type { Brand, Home, FloorPlan, WallFinish } from "./home-types";
 import { asset } from "./asset";
 import rawModels from "../../data/models.json";
 import setupPricingJson from "../../data/setup-pricing.json";
@@ -33,8 +33,12 @@ interface RawModel {
   decorOptions: string[];
   imageUrls: string[];
   aka?: string[];
+  wallFinish?: WallFinish;
   bestSeller?: boolean;
   bestSellerRank?: number;
+  widthOptions?: number[];
+  tourUrl?: string;
+  floorPlans?: FloorPlan[];
   sourceUrl: string;
 }
 
@@ -67,8 +71,12 @@ export function getAllHomes(): Home[] {
     decorOptions: m.decorOptions ?? [],
     imageUrls: (m.imageUrls ?? []).map(asset),
     aka: m.aka ?? [],
+    wallFinish: m.wallFinish,
     bestSeller: m.bestSeller ?? false,
     bestSellerRank: m.bestSellerRank ?? 999,
+    widthOptions: m.widthOptions,
+    tourUrl: m.tourUrl,
+    floorPlans: (m.floorPlans ?? []).map((f) => ({ ...f, url: asset(f.url) })),
     price: homePricing[m.slug],
     setupPrice: setupPricing[m.slug],
   }));
@@ -93,6 +101,11 @@ export function bestSellerHomes(): Home[] {
   return getAllHomes()
     .filter((h) => h.bestSeller)
     .sort((a, b) => (a.bestSellerRank ?? 999) - (b.bestSellerRank ?? 999));
+}
+
+// Homes that ship with true, site-built-quality full drywall as standard.
+export function fullDrywallHomes(): Home[] {
+  return getAllHomes().filter((h) => h.wallFinish === "drywall");
 }
 
 export function featuredHomes(n = 6): Home[] {

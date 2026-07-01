@@ -8,6 +8,14 @@ import type { NextRequest } from "next/server";
 // redirected again. Cloudflare exposes the visitor scheme via the CF-Visitor
 // header ({"scheme":"https"}) and X-Forwarded-Proto.
 export function middleware(req: NextRequest) {
+  // Never force HTTPS for local development — `next dev` has no TLS, so a
+  // redirect to https://localhost just dead-ends. Host-based (not NODE_ENV) so
+  // production Always-HTTPS on hplacer.com is unaffected.
+  const host = req.nextUrl.hostname;
+  if (host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0") {
+    return NextResponse.next();
+  }
+
   const xfp = req.headers.get("x-forwarded-proto");
   let scheme: string | null = xfp;
   if (!scheme) {
