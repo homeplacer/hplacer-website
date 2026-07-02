@@ -8,7 +8,7 @@ import {
   isFullDrywall,
   footprintLabel,
 } from "@/lib/home-types";
-import { BedIcon, BathIcon, RulerIcon, HomeMark, CheckIcon } from "@/components/icons";
+import { BedIcon, BathIcon, RulerIcon, HomeMark, CheckIcon, ArrowIcon } from "@/components/icons";
 
 export function HomeCard({ home }: { home: Home }) {
   const price = displayPrice(home);
@@ -64,20 +64,16 @@ export function HomeCard({ home }: { home: Home }) {
             </h3>
             <p className="truncate text-xs text-stone-muted">{home.series}</p>
           </div>
-          <span className="shrink-0 text-right leading-none">
-            {price != null ? (
-              <>
-                <span className="block font-display text-lg font-semibold text-brand-700">
-                  {formatPrice(price)}
-                </span>
-                <span className="mt-0.5 block text-[10px] font-semibold uppercase tracking-wide text-stone-muted">
-                  {home.setupPrice ? "full setup" : "starting"}
-                </span>
-              </>
-            ) : (
-              <span className="block text-sm font-semibold text-brand-700">Call for pricing</span>
-            )}
-          </span>
+          {price != null && (
+            <span className="shrink-0 text-right leading-none">
+              <span className="block font-display text-lg font-semibold text-brand-700">
+                {formatPrice(price)}
+              </span>
+              <span className="mt-0.5 block text-[10px] font-semibold uppercase tracking-wide text-stone-muted">
+                {home.setupPrice ? "full setup" : "starting"}
+              </span>
+            </span>
+          )}
         </div>
 
         <div className="mt-4 flex items-center gap-4 border-t border-stone-line pt-3 text-sm text-stone-ink/80">
@@ -91,6 +87,15 @@ export function HomeCard({ home }: { home: Home }) {
             <RulerIcon className="size-4 text-brand-600" /> {sizeLabel}
           </span>
         </div>
+
+        {/* When there's no price yet, the card's job is to capture the lead — a
+            clear CTA that carries to the detail page's "Get this home's price"
+            form (whole card is the link). Priced cards let the price speak. */}
+        {price == null && (
+          <span className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-lg border border-brand-200 bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700 transition group-hover:border-brand-300 group-hover:bg-brand-100">
+            Get this home&rsquo;s price <ArrowIcon className="size-4" />
+          </span>
+        )}
       </div>
     </Link>
   );

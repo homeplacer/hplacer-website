@@ -19,6 +19,7 @@ import {
 } from "@/lib/home-types";
 import { HomeCard } from "@/components/home-card";
 import { HomeGallery } from "@/components/home-gallery";
+import { WantThisHouseForm } from "@/components/want-this-house-form";
 import { WidthSelector } from "@/components/width-selector";
 import { WidthProvider } from "@/components/width-context";
 import { FloorPlanSection } from "@/components/floor-plan-section";
@@ -233,12 +234,21 @@ export default async function HomeDetailPage({
           )}
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href={`/contact?home=${encodeURIComponent(home.name)}`}
-              className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-800"
-            >
-              Request this home <ArrowIcon className="size-4" />
-            </Link>
+            {price != null ? (
+              <Link
+                href={`/contact?home=${encodeURIComponent(home.name)}`}
+                className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-800"
+              >
+                Request this home <ArrowIcon className="size-4" />
+              </Link>
+            ) : (
+              <Link
+                href="#get-price"
+                className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-800"
+              >
+                Get this home&rsquo;s price <ArrowIcon className="size-4" />
+              </Link>
+            )}
             <a
               href={`tel:${site.phoneDial}`}
               className="inline-flex items-center gap-2 rounded-full border border-stone-line px-6 py-3 text-base font-semibold text-stone-ink transition hover:border-brand-300"
@@ -256,6 +266,41 @@ export default async function HomeDetailPage({
           </ul>
         </div>
       </section>
+
+      {/* Get this home's price — the lead-capture moment when pricing isn't posted */}
+      {price == null && (
+        <section id="get-price" className="container-x scroll-mt-24 py-8">
+          <div className="grid gap-8 rounded-card border border-stone-line bg-stone-surface p-6 sm:p-8 lg:grid-cols-2 lg:items-start">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">No guessing</p>
+              <h2 className="mt-2 font-display text-2xl font-semibold text-stone-ink sm:text-3xl">
+                Get {home.name}&rsquo;s price
+              </h2>
+              <p className="mt-3 leading-relaxed text-stone-muted">
+                Tell us a little and we&apos;ll send your all-in package price — {home.name} on a
+                ¼-acre lot, delivered, set, and connected to utilities — plus an estimated monthly
+                payment. Already have land? We&apos;ll price it home-only.
+              </p>
+              <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-stone-muted">
+                {["Real numbers, not a range", "No pressure", "Financing help (FHA / VA / USDA)"].map((t) => (
+                  <li key={t} className="inline-flex items-center gap-1.5">
+                    <CheckIcon className="size-4 text-brand-600" /> {t}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-6 text-sm text-stone-muted">
+                Prefer to talk?{" "}
+                <a href={`tel:${site.phoneDial}`} className="font-semibold text-brand-700 hover:text-brand-900">
+                  Call or text {site.phoneDisplay}
+                </a>
+              </p>
+            </div>
+            <div className="rounded-2xl bg-stone-bg p-6 ring-1 ring-stone-line sm:p-8">
+              <WantThisHouseForm model={home.name} />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Available now — tour CTA + link to the live MLS collab (compliant link, not republished data) */}
       <section className="container-x py-4">

@@ -69,6 +69,11 @@ export function HomesBrowser({
   const [drywallOnly, setDrywallOnly] = useState(false);
   const [sort, setSort] = useState<Sort>("best");
 
+  // While no home has a price (pre-launch pricing), the price sort + price range
+  // filter are dead controls — hide them rather than show empty/no-op options.
+  const anyPriced = useMemo(() => homes.some((h) => displayPrice(h) != null), [homes]);
+  const sortOptions = anyPriced ? SORTS : SORTS.filter((o) => !o.value.startsWith("price-"));
+
   // Deep-link support: ?brand=Clayton, ?wall=drywall. Read on mount — URL params
   // aren't available during SSR, so this must be an effect (an initializer would
   // hydration-mismatch). Setting state here is the intended use.
@@ -228,20 +233,22 @@ export function HomesBrowser({
             </select>
           </div>
 
-          {/* Price range */}
-          <div className="inline-flex items-center gap-1.5">
-            <select aria-label="Min price" value={minPrice} onChange={(e) => setMinPrice(Number(e.target.value))} className={selectClass}>
-              {PRICE_STEPS.map((s) => (<option key={s} value={s}>{s === 0 ? "Min price" : fmtK(s)}</option>))}
-            </select>
-            <span className="text-stone-muted">–</span>
-            <select aria-label="Max price" value={maxPrice === Infinity ? 0 : maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value) === 0 ? Infinity : Number(e.target.value))} className={selectClass}>
-              <option value={0}>Max price</option>
-              {PRICE_STEPS.filter((s) => s > 0).map((s) => (<option key={s} value={s}>{fmtK(s)}</option>))}
-            </select>
-          </div>
+          {/* Price range — only when at least one home has a price set */}
+          {anyPriced && (
+            <div className="inline-flex items-center gap-1.5">
+              <select aria-label="Min price" value={minPrice} onChange={(e) => setMinPrice(Number(e.target.value))} className={selectClass}>
+                {PRICE_STEPS.map((s) => (<option key={s} value={s}>{s === 0 ? "Min price" : fmtK(s)}</option>))}
+              </select>
+              <span className="text-stone-muted">–</span>
+              <select aria-label="Max price" value={maxPrice === Infinity ? 0 : maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value) === 0 ? Infinity : Number(e.target.value))} className={selectClass}>
+                <option value={0}>Max price</option>
+                {PRICE_STEPS.filter((s) => s > 0).map((s) => (<option key={s} value={s}>{fmtK(s)}</option>))}
+              </select>
+            </div>
+          )}
 
           <select aria-label="Sort" value={sort} onChange={(e) => setSort(e.target.value as Sort)} className={`${selectClass} ml-auto`}>
-            {SORTS.map((o) => (<option key={o.value} value={o.value}>{o.label}</option>))}
+            {sortOptions.map((o) => (<option key={o.value} value={o.value}>{o.label}</option>))}
           </select>
         </div>
       </div>
