@@ -6,6 +6,39 @@ _Last updated: 2026-07-01. Written so a fresh Claude Code on another machine can
 
 ---
 
+## Latest session — 2026-07-02 (Builder-Claude, HPlacer Dev Lead)
+
+**Repo:** `main` was 8 days stale (GitHub-Pages era); fast-forwarded to the real
+production code (Cloudflare Workers / OpenNext — was branch `first-touch-attribution`).
+`main` is now the source of truth again.
+
+**Merged to `main`:**
+- **#1 — FUB lead resilience (R6):** `/api/lead` now retries transient FUB/Resend
+  failures (429/5xx/network) with backoff; validates the warranty owner/collaborator
+  ids against FUB (a stale `FUB_WARRANTY_USER_ID` no longer silently drops the
+  assignment — task is created unassigned instead); and emits one greppable
+  `CRITICAL LEAD_NOT_DELIVERED` marker if nothing captures a lead. Closes the platform
+  FUB-audit R6 finding. Also recorded the Builder-Claude / D-021 charter in `CLAUDE.md`.
+- **#2 — Pricing hardening:** the pricing loader now sanitizes both pricing files
+  (accepts a number, `"$264,900"`, or the nested `{price,setupPrice}` object; drops
+  garbage → "Call for pricing" with a build warning) so a malformed entry can't render
+  `[object Object]` or break the price sort/filter. Added ready-to-fill
+  `data/{setup,home}-pricing.example.json` (all 93 slugs → 0).
+
+**⛔ BLOCKED — needs Spencer-Claude (platform):**
+- **#3 (open PR) — read-only land-listing API for the Forturro cross-over.** Phase 3
+  (D-021 horizontal reuse) can't proceed: the platform has **no `/api/v1` listing
+  endpoint** yet, and building it is platform work, not HP's. Request + proposed
+  contract: [`docs/platform-requests/2026-07-02-readonly-land-listing-api.md`](docs/platform-requests/2026-07-02-readonly-land-listing-api.md).
+  **Blocked on Spencer-Claude.** Interim: the current `search.forturro.com` deep-link
+  cross-over stays (non-blocking for launch).
+
+**Builder's next task (when unblocked / when Joe says go):** blog-queue refill
+(~12 posts before ~Aug 6) — NOT started this session per Joe. Pricing numbers,
+domain transfer, Bing PIN, Apple Business Connect remain Joe's (see §4–5).
+
+---
+
 ## 0. MIGRATION CHECKLIST — read first
 
 What travels and what doesn't when you move to a new machine:
