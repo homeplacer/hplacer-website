@@ -7,10 +7,12 @@ import { submitLead } from "@/lib/lead";
 const fieldClass =
   "w-full rounded-lg border border-stone-line bg-stone-bg px-3.5 py-2.5 text-sm text-stone-ink outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
 
-// "Want this same house?" lead capture, shown on every placed-home page.
-// Submits to FUB (via /api/lead) with the address + model baked into the note
-// so the team knows exactly which home the buyer liked. Mailto fallback.
-export function WantThisHouseForm({ address, model }: { address: string; model?: string }) {
+// "Want this same house?" lead capture. Used two ways:
+//   • placed-home pages — pass the real `address` (+ model) of the home they liked
+//   • model detail pages — pass just `model` (no address) to request a home's price
+// Submits to FUB (via /api/lead) with that context baked into the note so the team
+// knows exactly which home the buyer wants. Mailto fallback.
+export function WantThisHouseForm({ address, model }: { address?: string; model?: string }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
   const [via, setVia] = useState<"api" | "mailto">("api");
 
@@ -22,9 +24,15 @@ export function WantThisHouseForm({ address, model }: { address: string; model?:
     const note = data.message?.trim();
     // Enrich so the FUB lead is instantly actionable — context in structured
     // fields (home of interest + address), the buyer's own words in the message.
-    data.home = model ? `${model} (like the one at ${address})` : `A home like ${address}`;
-    data.address = address;
-    data.message = note || `Interested in a home like the one at ${address}.`;
+    if (address) {
+      data.home = model ? `${model} (like the one at ${address})` : `A home like ${address}`;
+      data.address = address;
+      data.message = note || `Interested in a home like the one at ${address}.`;
+    } else {
+      data.home = model || "Website inquiry";
+      data.message =
+        note || `Interested in ${model || "this home"} — please send pricing and an estimated monthly payment.`;
+    }
     setVia(await submitLead("contact", data));
     setStatus("sent");
     form.reset();
