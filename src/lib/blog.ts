@@ -39,8 +39,21 @@ export function getPost(slug: string): Post | undefined {
   return getAllPosts().find((p) => p.slug === slug);
 }
 
+// Defense-in-depth: blog HTML comes from first-party markdown (committed JSON),
+// but strip anything that could execute if a post ever carries raw HTML — scripts,
+// embeds, inline event handlers, and javascript:/data:text/html URIs. A CSP
+// backstops this. workerd has no DOM, so this is a regex strip, not DOMPurify;
+// if untrusted authors are ever added, move to a proper sanitizer.
+function sanitizeHtml(html: string): string {
+  return html
+    .replace(/<(script|style|iframe|object|embed|link|meta|base)\b[^>]*>[\s\S]*?<\/\1>/gi, "")
+    .replace(/<(script|style|iframe|object|embed|link|meta|base)\b[^>]*\/?>/gi, "")
+    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/\s(href|src)\s*=\s*("|')?\s*(?:javascript|vbscript|data:text\/html)[^"'>\s]*/gi, ' $1="#"');
+}
+
 export function renderMarkdown(md: string): string {
-  return marked.parse(md, { async: false }) as string;
+  return sanitizeHtml(marked.parse(md, { async: false }) as string);
 }
 
 export function formatDate(iso: string): string {

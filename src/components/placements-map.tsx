@@ -64,11 +64,15 @@ export function PlacementsMap({ points }: { points: Placement[] }) {
             fillColor: "#db2777",
             fillOpacity: 0.95,
           }).addTo(map);
+          // Escape popup values before building innerHTML — data is internal
+          // today, but never inject unescaped strings into a DOM string.
+          const esc = (s: string) =>
+            s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
           const photoHtml = p.photo
-            ? `<a href="${p.photo}" target="_blank" rel="noopener"><img src="${p.photo}" alt="${p.address}" style="width:100%;max-width:220px;height:auto;border-radius:6px;display:block;margin-bottom:6px" /></a>`
+            ? `<a href="${esc(p.photo)}" target="_blank" rel="noopener noreferrer"><img src="${esc(p.photo)}" alt="${esc(p.address)}" style="width:100%;max-width:220px;height:auto;border-radius:6px;display:block;margin-bottom:6px" /></a>`
             : "";
           marker.bindPopup(
-            `${photoHtml}<strong>${p.address}</strong><br>${p.model ? p.model + " &middot; " : ""}${p.city}, SC &middot; $${p.price.toLocaleString("en-US")}`,
+            `${photoHtml}<strong>${esc(p.address)}</strong><br>${p.model ? esc(p.model) + " &middot; " : ""}${esc(p.city)}, SC &middot; $${p.price.toLocaleString("en-US")}`,
             p.photo ? { minWidth: 220 } : undefined,
           );
           bounds.push([p.lat, p.lon]);

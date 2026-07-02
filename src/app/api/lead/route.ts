@@ -59,7 +59,16 @@ interface LeadBody {
   attribution?: Attribution;
 }
 
-const clean = (v?: string) => v?.trim() || null;
+// Trim, drop empties, and cap length so an oversized field can't flood logs or
+// the FUB/Resend payload. Default cap suits short fields; message overrides it.
+const clean = (v?: string, max = 500) => {
+  const t = v?.trim();
+  return t ? t.slice(0, max) : null;
+};
+
+// Escape user input before interpolating it into the notification email's HTML.
+const escapeHtml = (s: string) =>
+  s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
 // Human-readable order for the attribution block appended to the FUB message.
 const ATTR_LABELS: [keyof Attribution, string][] = [
@@ -405,7 +414,7 @@ async function deliverByEmail(
     .filter(([, v]) => v)
     .map(
       ([k, v]) =>
-        `<tr><td style="padding:4px 12px 4px 0;color:#6f6a62">${k}</td><td><strong>${v}</strong></td></tr>`,
+        `<tr><td style="padding:4px 12px 4px 0;color:#6f6a62">${escapeHtml(k)}</td><td><strong>${escapeHtml(String(v))}</strong></td></tr>`,
     )
     .join("");
 
@@ -432,6 +441,13 @@ async function deliverByEmail(
 }
 
 export async function POST(req: Request) {
+  // Reject oversized bodies early — a lead is a handful of short fields, so a
+  // multi-MB POST is abuse (log-flood / cheap DoS on the Worker).
+  const contentLength = Number(req.headers.get("content-length") || 0);
+  if (contentLength > 32_768) {
+    return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+  }
+
   let body: LeadBody;
   try {
     body = await req.json();
@@ -461,7 +477,7 @@ export async function POST(req: Request) {
     home: clean(body.home),
     hasLand: clean(body.hasLand),
     address: clean(body.address),
-    message: clean(body.message),
+    message: clean(body.message, 5000),
     attribution,
   };
 
