@@ -5,6 +5,7 @@ import { galleryByCategory } from "@/lib/gallery";
 import { asset } from "@/lib/asset";
 import { HomeCard } from "@/components/home-card";
 import { Testimonials } from "@/components/testimonials";
+import { ContactForm } from "@/components/contact-form";
 import { ForturroLandSearch } from "@/components/forturro-land-search";
 import {
   ArrowIcon,
@@ -45,14 +46,20 @@ export default function HomePage() {
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
-                href="/homes"
+                href="#get-price"
                 className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-accent-600"
               >
-                Browse homes <ArrowIcon className="size-4" />
+                Get your price <ArrowIcon className="size-4" />
+              </Link>
+              <Link
+                href="/homes"
+                className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-base font-semibold text-white ring-1 ring-white/20 transition hover:bg-white/15"
+              >
+                Browse homes
               </Link>
               <a
                 href={`tel:${site.phoneDial}`}
-                className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-base font-semibold text-white ring-1 ring-white/20 transition hover:bg-white/15"
+                className="inline-flex items-center gap-2 rounded-full px-3 py-3 text-base font-semibold text-white/90 transition hover:text-white"
               >
                 <PhoneIcon className="size-4" /> {site.phoneDisplay}
               </a>
@@ -121,6 +128,47 @@ export default function HomePage() {
           {homes.map((h) => (
             <HomeCard key={h.id} home={h} />
           ))}
+        </div>
+      </section>
+
+      {/* ──────────────── Get your price (inline lead capture) ──────────────── */}
+      <section id="get-price" className="relative scroll-mt-24 overflow-hidden bg-brand-950 text-white">
+        <div className="topo absolute inset-0" aria-hidden />
+        <div className="container-x relative grid gap-10 py-20 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wider text-accent-300">
+              No guessing games
+            </p>
+            <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
+              See your price &amp; monthly payment
+            </h2>
+            <p className="mt-4 max-w-md text-stone-100/80">
+              Every package is a home plus land, so the price depends on the model and the
+              lot. Tell us what you&apos;re after and we&apos;ll send real numbers — home,
+              land, setup, and an estimated payment. No pressure, no runaround.
+            </p>
+            <ul className="mt-7 space-y-3 text-sm text-stone-100/85">
+              {[
+                "Packages from the low $200s — home + land, one price",
+                "No HOA, and financing help for FHA / VA / USDA buyers",
+                "A licensed SC & NC dealer — a real person, not a call center",
+              ].map((t) => (
+                <li key={t} className="flex items-start gap-3">
+                  <CheckIcon className="mt-0.5 size-4 shrink-0 text-accent-300" strokeWidth={2.5} /> {t}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-7 text-sm text-stone-100/70">
+              Prefer to talk?{" "}
+              <a href={`tel:${site.phoneDial}`} className="font-semibold text-white underline-offset-4 hover:underline">
+                Call or text {site.phoneDisplay}
+              </a>
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-stone-bg p-6 shadow-2xl ring-1 ring-white/10 sm:p-8">
+            <ContactForm />
+          </div>
         </div>
       </section>
 
@@ -284,7 +332,7 @@ export default function HomePage() {
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Link
-                href="/contact"
+                href="#get-price"
                 className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-6 py-3 text-base font-semibold text-white transition hover:bg-accent-600"
               >
                 Get started <ArrowIcon className="size-4" />
