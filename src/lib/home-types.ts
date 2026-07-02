@@ -98,7 +98,7 @@ export function formatPrice(n: number): string {
 // is still being finalized.
 export function priceLabel(h: Home): string {
   const p = displayPrice(h);
-  return p != null ? formatPrice(p) : "Call for pricing";
+  return typeof p === "number" && Number.isFinite(p) ? formatPrice(p) : "Call for pricing";
 }
 
 // True when this home ships with true, site-built-quality full drywall as

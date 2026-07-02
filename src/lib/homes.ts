@@ -15,8 +15,67 @@ import homePricingJson from "../../data/home-pricing.json";
 export type { Brand, Home } from "./home-types";
 export { formatPrice, displayPrice, priceLabel } from "./home-types";
 
-const setupPricing = setupPricingJson as Record<string, number>;
-const homePricing = homePricingJson as Record<string, number>;
+// Coerce a raw pricing value into a clean positive dollar amount, or null to
+// ignore it. Accepts the shapes a human might actually enter so a formatting slip
+// degrades to "Call for pricing" instead of rendering "[object Object]" or NaN on
+// every card (and breaking the price sort/filter, which do arithmetic on this):
+//   264900                                  the canonical shape (a number)
+//   "264900" / "$264,900"                   a string, e.g. pasted from a quote
+//   { setupPrice: 275000, price: 245000 }   an object — the shape the platform
+//                                           roadmap documents; pick the field this
+//                                           file is for, else fall back sensibly.
+function coercePrice(raw: unknown, prefer: "price" | "setupPrice"): number | null {
+  const num = (v: unknown): number | null => {
+    if (typeof v === "number") return v;
+    if (typeof v === "string") {
+      const cleaned = v.replace(/[^0-9.]/g, "");
+      return cleaned ? Number(cleaned) : null;
+    }
+    return null;
+  };
+
+  let n: number | null;
+  if (raw && typeof raw === "object") {
+    const o = raw as Record<string, unknown>;
+    n = num(o[prefer] ?? o.setupPrice ?? o.price ?? o.value);
+  } else {
+    n = num(raw);
+  }
+  return n != null && Number.isFinite(n) && n > 0 ? n : null;
+}
+
+// Sanitize a pricing map (statically imported JSON) into a clean slug → dollars
+// map. Invalid entries are dropped (with a warning) rather than trusted, so a
+// malformed pricing file can never break /homes. 0 / null / "" are treated as
+// intentional "not priced yet" placeholders (quiet).
+function normalizePricing(
+  raw: unknown,
+  prefer: "price" | "setupPrice",
+  label: string,
+): Record<string, number> {
+  if (!raw || typeof raw !== "object") return {};
+  const out: Record<string, number> = {};
+  for (const [slug, value] of Object.entries(raw as Record<string, unknown>)) {
+    const n = coercePrice(value, prefer);
+    if (n == null) {
+      const placeholder = value === 0 || value === null || value === "";
+      if (!placeholder) {
+        console.warn(`[hplacer] ignoring invalid ${prefer} for "${slug}" in ${label}:`, value);
+      }
+      continue;
+    }
+    if (n < 10000) {
+      console.warn(
+        `[hplacer] ${prefer} for "${slug}" looks low ($${n}) in ${label}. If you meant thousands, write ${n}000. Using as-is.`,
+      );
+    }
+    out[slug] = n;
+  }
+  return out;
+}
+
+const setupPricing = normalizePricing(setupPricingJson, "setupPrice", "setup-pricing.json");
+const homePricing = normalizePricing(homePricingJson, "price", "home-pricing.json");
 
 interface RawModel {
   slug: string;

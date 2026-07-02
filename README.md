@@ -68,6 +68,25 @@ two numbers per home:
 Drop in `{ "<slug>": 264900, ... }` and the site flips from "Call for pricing"
 to real figures automatically (full-setup leads, home-only shown beside it).
 
+**Ready-to-fill templates** — `data/setup-pricing.example.json` and
+`data/home-pricing.example.json` list every model slug set to `0` (a "not priced
+yet" placeholder). Copy one over the real file and replace the zeros:
+
+```bash
+cp data/setup-pricing.example.json data/setup-pricing.json   # then edit the numbers
+```
+
+The loader is forgiving about how you enter a value — all of these work and
+resolve to the same price, so a formatting slip degrades to "Call for pricing"
+instead of breaking the page:
+
+- `"<slug>": 264900` — a plain number (canonical)
+- `"<slug>": "$264,900"` — a formatted string (e.g. pasted from a quote)
+- `"<slug>": { "setupPrice": 275000, "price": 245000 }` — an object
+
+Anything non-numeric, `0`, or negative is ignored (shown as "Call for pricing");
+a suspiciously low value logs a build warning in case a `000` was dropped.
+
 ## Leads
 
 All forms post to `/api/lead`. Delivery is **env-gated** — it logs by default and
