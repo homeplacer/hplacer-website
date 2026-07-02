@@ -10,6 +10,13 @@ import { NextResponse } from "next/server";
 //   FUB_WARRANTY_COLLABORATORS → CSV of collaborator ids (default 1,35,46 = Joe,Tara,Wade)
 // Always logs server-side as a fallback record. Same-origin form posts → no CORS.
 //
+// RESILIENCE (R6): every FUB/Resend call retries transient failures (429/5xx/
+// network) with backoff; warranty routing ids are validated against FUB so a
+// stale FUB_WARRANTY_USER_ID can't silently swallow assignments; and if neither
+// channel captures a lead we emit a single greppable "CRITICAL LEAD_NOT_DELIVERED"
+// marker with the full payload. (Durable KV/Queue outbox = follow-up; needs a
+// Worker binding.)
+//
 // FUB /v1/events auto-merges a person by email OR phone (201 = new person,
 // 200 = matched an existing person). We normalize the phone to E.164 to maximize
 // that match rate and always send both email + phone when present.
@@ -116,6 +123,74 @@ function fubAuthHeader(key: string): string {
   return `Basic ${Buffer.from(`${key}:`).toString("base64")}`;
 }
 
+// --- Resilience (R6) -------------------------------------------------------
+// A transient FUB/Resend hiccup (network blip, 429 rate-limit, 5xx) must not
+// drop a lead. Retry those a few times with exponential backoff + jitter; treat
+// 4xx (bad request / auth) as permanent and return immediately. Never throws on
+// a normal HTTP error response — only rethrows the last *network* error after
+// exhausting attempts, so callers keep their existing status-based handling.
+const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504]);
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+async function fetchWithRetry(
+  url: string,
+  init: RequestInit,
+  label: string,
+  attempts = 3,
+): Promise<Response> {
+  let lastErr: unknown;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const res = await fetch(url, init);
+      // Success, a permanent (non-retryable) error, or the last try → return.
+      if (res.ok || !RETRYABLE_STATUS.has(res.status) || i === attempts - 1) {
+        return res;
+      }
+      console.warn(`[hplacer] ${label} ${res.status} — retry ${i + 1}/${attempts - 1}`);
+    } catch (e) {
+      lastErr = e;
+      if (i === attempts - 1) throw e;
+      console.warn(`[hplacer] ${label} network error — retry ${i + 1}/${attempts - 1}:`, e);
+    }
+    await sleep(250 * 2 ** i + Math.floor(Math.random() * 100));
+  }
+  // Unreachable (the loop returns or throws on the last attempt) — satisfies TS.
+  throw lastErr ?? new Error(`[hplacer] ${label} exhausted retries`);
+}
+
+// Validate warranty-routing ids against FUB so a stale/typo'd FUB_WARRANTY_USER_ID
+// (or collaborator id) can't silently swallow assignments (R6). Cached per-isolate
+// with a short TTL — the ids change ~never, so this is one GET per id per ~10 min.
+const USER_VALID_TTL_MS = 10 * 60 * 1000;
+const userValidCache = new Map<number, { ok: boolean; at: number }>();
+
+async function isValidFubUser(id: number, authHeader: string): Promise<boolean> {
+  const now = Date.now();
+  const cached = userValidCache.get(id);
+  if (cached && now - cached.at < USER_VALID_TTL_MS) return cached.ok;
+  try {
+    const res = await fetchWithRetry(
+      `https://api.followupboss.com/v1/users/${id}`,
+      { headers: { Authorization: authHeader } },
+      `FUB validate user ${id}`,
+    );
+    const ok = res.ok;
+    userValidCache.set(id, { ok, at: now });
+    if (!ok) {
+      console.error(
+        `[hplacer] CRITICAL FUB_WARRANTY config: user id ${id} not valid (${res.status}). ` +
+          `Fix the secret — warranty leads are still captured but won't auto-assign to this id.`,
+      );
+    }
+    return ok;
+  } catch (e) {
+    // Couldn't reach FUB to validate — don't block routing on the validator.
+    // Assume valid and let the actual assign/task call log if it then fails.
+    console.warn(`[hplacer] could not validate FUB user ${id} (assuming ok):`, e);
+    return true;
+  }
+}
+
 async function deliverToFub(lead: {
   type: LeadType;
   name: string | null;
@@ -188,11 +263,15 @@ async function deliverToFub(lead: {
 
   const authHeader = fubAuthHeader(key);
 
-  const eventRes = await fetch("https://api.followupboss.com/v1/events", {
-    method: "POST",
-    headers: { Authorization: authHeader, "Content-Type": "application/json" },
-    body: JSON.stringify(eventBody),
-  });
+  const eventRes = await fetchWithRetry(
+    "https://api.followupboss.com/v1/events",
+    {
+      method: "POST",
+      headers: { Authorization: authHeader, "Content-Type": "application/json" },
+      body: JSON.stringify(eventBody),
+    },
+    `FUB /events ${lead.type}`,
+  );
 
   if (!eventRes.ok) {
     const errBody = await eventRes.text().catch(() => "<unreadable>");
@@ -225,17 +304,29 @@ async function deliverToFub(lead: {
         .catch(() => null)) as { id?: number } | null;
       const personId = evt?.id;
       if (personId) {
-        if (created) {
-          const assignRes = await fetch(
+        // Validate the configured warranty ids before using them (R6): a stale
+        // owner id would otherwise 400 the assign and be dropped silently, and a
+        // task assigned to a bad id would fail too. Owner must be valid to assign;
+        // collaborators are filtered to the valid subset.
+        const ownerId = warrantyUserId();
+        const ownerOk = await isValidFubUser(ownerId, authHeader);
+        const validCollaborators: number[] = [];
+        for (const id of warrantyCollaborators()) {
+          if (await isValidFubUser(id, authHeader)) validCollaborators.push(id);
+        }
+
+        if (created && ownerOk) {
+          const assignRes = await fetchWithRetry(
             `https://api.followupboss.com/v1/people/${personId}`,
             {
               method: "PUT",
               headers: { Authorization: authHeader, "Content-Type": "application/json" },
               body: JSON.stringify({
-                assignedUserId: warrantyUserId(),
-                collaborators: warrantyCollaborators().map((id) => ({ id })),
+                assignedUserId: ownerId,
+                collaborators: validCollaborators.map((id) => ({ id })),
               }),
             },
+            `FUB warranty assign person ${personId}`,
           );
           if (!assignRes.ok) {
             const errBody = await assignRes.text().catch(() => "<unreadable>");
@@ -244,25 +335,38 @@ async function deliverToFub(lead: {
               errBody.slice(0, 500),
             );
           }
+        } else if (created && !ownerOk) {
+          console.error(
+            `[hplacer] warranty assign SKIPPED for new person ${personId}: ` +
+              `warranty owner id ${ownerId} is not a valid FUB user. Task created unassigned.`,
+          );
         }
 
         // Task for the warranty team — fires for NEW and EXISTING contacts.
         // FUB /tasks rejects a 'description' field; the text must live in 'name'.
+        // Assign to the warranty owner only when it's a valid id; otherwise leave
+        // the task unassigned so it still lands (FUB routes to the person's owner)
+        // instead of the whole POST 400-ing on a bad assignedUserId.
         const issue = (
           [lead.message, lead.address ? `Address: ${lead.address}` : null]
             .filter(Boolean)
             .join(" — ") || "Service request"
         ).slice(0, 240);
-        const taskRes = await fetch("https://api.followupboss.com/v1/tasks", {
-          method: "POST",
-          headers: { Authorization: authHeader, "Content-Type": "application/json" },
-          body: JSON.stringify({
-            personId,
-            name: `Warranty/service request (hplacer.com): ${issue}`,
-            assignedUserId: warrantyUserId(),
-            dueDate: new Date().toISOString().slice(0, 10),
-          }),
-        });
+        const taskBody: Record<string, unknown> = {
+          personId,
+          name: `Warranty/service request (hplacer.com): ${issue}`,
+          dueDate: new Date().toISOString().slice(0, 10),
+        };
+        if (ownerOk) taskBody.assignedUserId = ownerId;
+        const taskRes = await fetchWithRetry(
+          "https://api.followupboss.com/v1/tasks",
+          {
+            method: "POST",
+            headers: { Authorization: authHeader, "Content-Type": "application/json" },
+            body: JSON.stringify(taskBody),
+          },
+          `FUB warranty task person ${personId}`,
+        );
         if (!taskRes.ok) {
           const errBody = await taskRes.text().catch(() => "<unreadable>");
           console.error(
@@ -271,7 +375,8 @@ async function deliverToFub(lead: {
           );
         } else {
           console.log(
-            `[hplacer] warranty task → user ${warrantyUserId()} for person ${personId}${created ? " (new contact, also assigned)" : ""}`,
+            `[hplacer] warranty task → ${ownerOk ? `user ${ownerId}` : "unassigned (invalid owner id)"} ` +
+              `for person ${personId}${created && ownerOk ? " (new contact, also assigned)" : ""}`,
           );
         }
       }
@@ -304,16 +409,20 @@ async function deliverByEmail(
     )
     .join("");
 
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      from,
-      to,
-      subject: `New ${type} lead — hplacer.com`,
-      html: `<h2>New ${type} lead</h2><table>${rows}</table>`,
-    }),
-  });
+  const res = await fetchWithRetry(
+    "https://api.resend.com/emails",
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from,
+        to,
+        subject: `New ${type} lead — hplacer.com`,
+        html: `<h2>New ${type} lead</h2><table>${rows}</table>`,
+      }),
+    },
+    `Resend ${type}`,
+  );
   if (!res.ok) {
     const errBody = await res.text().catch(() => "<unreadable>");
     console.error(`[hplacer] Resend ${res.status} for ${type} lead:`, errBody.slice(0, 500));
@@ -378,15 +487,35 @@ export async function POST(req: Request) {
   };
 
   // Fire delivery providers in parallel; never fail the user submission if a
-  // provider errors — the server log is the safety net.
-  const results = await Promise.allSettled([deliverToFub(lead), deliverByEmail(emailLead, type)]);
-  results.forEach((r, i) => {
-    if (r.status === "rejected") {
-      console.error(`[hplacer] lead delivery ${i} failed:`, r.reason);
-    } else if (!r.value.ok && !r.value.skipped) {
-      console.error(`[hplacer] lead delivery ${i} non-ok:`, r.value);
-    }
-  });
+  // provider errors — delivery has its own retries, and the log is the safety net.
+  const [fubSettled, emailSettled] = await Promise.allSettled([
+    deliverToFub(lead),
+    deliverByEmail(emailLead, type),
+  ]);
+
+  const toResult = (
+    s: PromiseSettledResult<{ ok: boolean; skipped?: string; status?: number }>,
+  ): { ok: boolean; skipped?: string; status?: number; error?: string } =>
+    s.status === "fulfilled" ? s.value : { ok: false, error: String(s.reason) };
+
+  const fub = toResult(fubSettled);
+  const email = toResult(emailSettled);
+
+  if (!fub.ok && !fub.skipped) console.error(`[hplacer] FUB delivery non-ok:`, fub);
+  if (!email.ok && !email.skipped) console.error(`[hplacer] email delivery non-ok:`, email);
+
+  // Guaranteed no-silent-loss (R6): if NEITHER channel durably captured the lead,
+  // emit ONE greppable, alert-ready marker carrying the full payload so it can be
+  // recovered/replayed. (A durable KV/Queue outbox is the follow-up hardening —
+  // it needs a Worker binding; see HANDOFF.) A "skipped" channel (no key set) is
+  // not a failure, but it also didn't capture the lead — so a skipped FUB + failed
+  // email, or vice-versa, still trips this.
+  if (!fub.ok && !email.ok) {
+    console.error(
+      "[hplacer] CRITICAL LEAD_NOT_DELIVERED",
+      JSON.stringify({ lead, fub, email, at: new Date().toISOString() }),
+    );
+  }
 
   return NextResponse.json({ ok: true });
 }
