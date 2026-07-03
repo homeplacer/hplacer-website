@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Financing",
   description:
     "USDA, FHA, VA, and conventional financing for new manufactured homes on land in South Carolina. $0-down options and help for every credit situation.",
+  alternates: { canonical: "/financing" },
 };
 
 const programs = [

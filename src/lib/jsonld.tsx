@@ -6,13 +6,14 @@ import { displayPrice } from "@/lib/home-types";
 
 const stateName = (abbr: string) => (abbr === "NC" ? "North Carolina" : "South Carolina");
 
-// Renders a JSON-LD <script>. Data comes only from our own content, so it's
-// safe to inject as a stringified object.
+// Renders a JSON-LD <script>. Data comes only from our own content; we still
+// escape `<` (→ <) so a stray "</script>" in any value can't break out of
+// the script tag.
 export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }}
     />
   );
 }
@@ -25,7 +26,7 @@ export function localBusinessLd() {
     name: site.legalName,
     alternateName: site.name,
     image: `${site.url}/opengraph-image`,
-    logo: `${site.url}/icon`,
+    logo: `${site.url}/icon.png`,
     url: site.url,
     telephone: site.phoneDial,
     email: site.email,
@@ -306,14 +307,24 @@ export function breadcrumbLd(items: { name: string; path: string }[]) {
 }
 
 export function articleLd(post: { title: string; description: string; slug: string; date: string }) {
+  const url = `${site.url}/blog/${post.slug}`;
   return {
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": "BlogPosting",
     headline: post.title,
     description: post.description,
+    // Posts have no per-post image; use the site OG card so shares/rich-results
+    // always have one. (When posts gain hero images, swap this to the post image.)
+    image: `${site.url}/opengraph-image`,
     datePublished: post.date,
-    author: { "@type": "Organization", name: site.legalName },
-    publisher: { "@type": "Organization", name: site.legalName },
-    url: `${site.url}/blog/${post.slug}`,
+    dateModified: post.date,
+    author: { "@type": "Organization", name: site.legalName, url: site.url },
+    publisher: {
+      "@type": "Organization",
+      name: site.legalName,
+      logo: { "@type": "ImageObject", url: `${site.url}/icon.png` },
+    },
+    mainEntityOfPage: url,
+    url,
   };
 }

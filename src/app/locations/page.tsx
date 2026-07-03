@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Manufactured Homes on Land — Horry, Georgetown, Brunswick & Columbus Counties",
   description:
     "Home Placer places new manufactured homes on land across four counties: Horry & Georgetown in SC and Brunswick & Columbus in NC — 27 towns from Myrtle Beach and Conway to Leland, Shallotte, and Whiteville.",
+  alternates: { canonical: "/locations" },
 };
 
 export default function LocationsPage() {

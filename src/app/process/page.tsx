@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "How It Works — From First Call to Front-Door Key",
   description:
     "The Home Placer process for buying a new manufactured home on land in Horry County, SC — pick a home, pick land, we handle setup, you move in.",
+  alternates: { canonical: "/process" },
 };
 
 const steps = [

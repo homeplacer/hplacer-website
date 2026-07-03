@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Brands — Clayton, Cavco & Champion",
   description:
     "Home Placer carries new Clayton, Cavco, and Champion manufactured homes — hand-picked floor plans placed on land across Horry County, SC.",
+  alternates: { canonical: "/brands" },
 };
 
 export default function BrandsPage() {

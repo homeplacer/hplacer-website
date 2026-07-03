@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Manufactured Home Glossary",
   description:
     "Plain-English definitions of manufactured-home terms — HUD code, single-wide, double-wide, chattel, land-home package, and more.",
+  alternates: { canonical: "/glossary" },
 };
 
 export default function GlossaryPage() {

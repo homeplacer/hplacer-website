@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Blog — Buying a Manufactured Home in SC",
   description:
     "Straight talk on buying a new manufactured home on land in Horry County, SC — pricing, financing, brands, and the land-home package process.",
+  alternates: { canonical: "/blog" },
 };
 
 export default function BlogPage() {
