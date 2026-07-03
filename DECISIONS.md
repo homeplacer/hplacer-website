@@ -7,6 +7,35 @@ sister platform, not a fork.*
 
 ---
 
+## D-HP-005 — Phase-1 engineering standards (2026-07-03)
+Concrete "how" for the platform build, refining D-HP-004. Every architectural
+decision must pass one test: **"if HP grows from one SC dealership into a national
+manufactured-housing platform, would I still make this decision?"** If no, propose a
+better architecture before implementing.
+
+- **Versioned APIs from day one** — expose the service layer under **`/api/v1/*`** for
+  long-term stability; never force breaking changes on existing clients.
+- **Database design invariants** — assume **every major object** will eventually need:
+  audit history, permissions, AI-interaction history, attachments/documents, notes,
+  workflow status, and reporting. Design schemas so adding these is additive, not a
+  corner-painting migration.
+- **Unified auth + RBAC** — **one** identity system for employees, customers, and
+  future vendors/contractors/administrators, with role-based permissions from day one.
+  **Do not** build customer auth separately from employee auth. Auth is the first
+  foundational project after Phase 0.
+- **Package Builder = flagship product** — a guided workflow (land → utilities → flood
+  → septic → foundation → home → upgrades → site work → delivery → install → taxes →
+  insurance → payment → proposal → scheduling → CRM → construction), not a calculator;
+  a first-class module consuming platform APIs.
+- **AI = specialized assistants** — narrow-domain assistants (Sales, Construction,
+  Warranty, Permitting, Inventory, Marketing, Finance, Operations, Management,
+  Estimator), each owning a domain and consuming the same APIs — not one generic bot.
+- **Document APIs + data models early** — as each API/schema lands in Phase 1, write it
+  up in `docs/`; early documentation is the cheapest defense against tech debt.
+
+**Owner:** Joe directed 2026-07-03. **Refines** D-HP-004; **does not** change the
+launch-readiness-first sequencing (D-HP-002). Applies from Phase 1 onward.
+
 ## D-HP-004 — Build for who we're becoming: API-first, DB-first, modular (2026-07-03)
 **Decision:** HP is architected as the **operating system for a manufactured-housing
 company**, not a website. Every dynamic feature from here on follows:
