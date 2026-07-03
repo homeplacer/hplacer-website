@@ -31,7 +31,8 @@ export default function ComparisonPage() {
 
       <section className="container-x py-12">
         <div className="mx-auto max-w-4xl overflow-hidden rounded-card border border-stone-line">
-          <table className="w-full text-left text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[34rem] text-left text-sm">
             <thead className="bg-brand-900 text-white">
               <tr>
                 <th className="p-4 font-semibold"></th>
@@ -49,6 +50,7 @@ export default function ComparisonPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
 
         <div className="mx-auto mt-10 max-w-4xl rounded-card border border-stone-line bg-stone-surface p-8">
