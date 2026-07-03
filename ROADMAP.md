@@ -24,6 +24,37 @@ employees enjoy, customers trust, and the business scales on.
   (D1 data layer, CF Workers deploy, auth model, workflow/notification/AI patterns,
   UI conventions) as templates; keep HP's data + CRM boundary its own (Forturro
   D-021). Each platform evolves independently. (D-HP-003.)
+- **Build for who we're becoming** — API-first, database-first, modular, auth-
+  foundational; the website is one client of the platform, not the platform. Phase,
+  but never in a way that requires a rewrite later. (D-HP-004 — see below.)
+
+## Target architecture — build for who we're becoming (D-HP-004)
+
+HP is not a website; it is the **operating system for a manufactured-housing
+company** — marketing → lead → CRM → package → financing → construction →
+permitting → delivery → install → warranty → long-term ownership. We build in
+phases and only ship what delivers value today, but **every decision must expand
+into that platform without a rewrite.** No temporary solutions we'll have to replace.
+
+**Non-negotiable patterns (apply to every dynamic feature from here on):**
+- **API-first.** `UI → API → business logic → database`. The UI never owns business
+  logic. The website, customer/employee/dealer portals, mobile apps, and AI
+  assistants are all just *clients* of the same Home Placer APIs.
+- **Database-first.** The DB (Cloudflare D1) is the system of record — homes, land,
+  lots, communities, customers, leads, quotes, packages, appointments, tasks,
+  construction jobs, warranty/service tickets, documents, employees, permissions,
+  AI conversations, notifications, audit logs. No feature assumes static JSON forever.
+- **Modular / service-oriented.** Independent modules with clear interfaces: Auth,
+  Inventory, Land, Customers, CRM, Construction, Warranty, Scheduling, Financing,
+  Documents, Reporting, Marketing, AI, Notifications, Search. Not one monolith.
+- **Auth is foundational, not a later feature.** It unlocks the employee dashboard,
+  customer portal, saved homes/quotes, documents, messaging, roles, and audit history
+  — so it moves to the front of the platform build (Phase 1).
+- **Reusable components + shared patterns** (Forturro reuse — see `DECISIONS.md`).
+
+Before any feature: *does it reduce employee work? eliminate a manual process? can
+AI automate it? scale nationally? be reused by another module? will we regret this
+architecture in three years?* If a materially better approach exists, propose it first.
 
 ## Current state (honest)
 
@@ -44,29 +75,38 @@ SEO/schema, forms/lead-pipeline correctness, mobile, performance, security, brok
 links, analytics. Tracked as a punch list in `TODO.md`. **No new backend.**
 *Exit:* production-readiness audit green; pricing + marketing live.
 
-### Phase 1 — Foundation (the pivotal move)
-Introduce a **Cloudflare D1 data layer** + lightweight **admin/auth** so inventory
-(homes, **land**, build-ready lots, placed homes) is managed without redeploys.
-Land + lots become first-class data. Mirrors Forturro's D1 pattern; own boundary.
-*Enables everything downstream.* Gated on Phase 0 + a real signal that manual JSON
-management is a bottleneck.
+### Phase 1 — Platform foundation (the pivotal move)
+Stand up the spine every later module consumes, built API-first from day one:
+- **Database** (Cloudflare D1) as the system of record; start with the **Inventory**
+  + **Land** modules (homes, land, build-ready lots, communities, display/placed/sold
+  homes, model availability, pricing history) — migrate off static JSON.
+- **Auth + roles** as foundational infrastructure (employee vs customer vs — later —
+  dealer; RBAC + audit log). Reuse Forturro's auth pattern; own the instance/boundary.
+- A versioned **`/api/*` service layer** over that data (business logic behind the
+  API, not in pages) + an **admin UI** so inventory is edited without deploys.
+*Everything downstream (portals, package builder, quotes, scheduling) consumes this.*
 
-### Phase 2 — Sales tools (highest conversion ROI)
-Package builder (home + lot + options → configured package), payment/financing
-**estimator** (FHA/VA/USDA — education, not advice), quote generation, appointment
-scheduling, home/land comparison.
+### Phase 2 — Sales tools (highest conversion ROI, all API/DB-backed)
+The **Package Builder as a core product**, not a calculator — guiding a buyer through
+land → utilities/flood/septic/foundation → home → floorplan → upgrades → site work →
+delivery → install → closing/taxes/insurance → **monthly payment → proposal →
+schedule → save → send to sales**. Plus the financing **estimator** (FHA/VA/USDA —
+education, not advice), quote/proposal generation, appointment scheduling, comparison.
 
 ### Phase 3 — Ops & CRM depth
-Lead routing/workflow (reuse Forturro workflow patterns; own CRM boundary),
-employee portal (pipeline, quotes, tasks), reporting/analytics.
+Lead routing/workflow (reuse Forturro workflow patterns; own CRM boundary), employee
+portal (pipeline, quotes, tasks), vendor/manufacturer management, reporting/analytics.
 
 ### Phase 4 — Customer lifecycle
-Customer portal (financing → permitting → construction → delivery → setup →
-warranty), construction progress tracking, warranty/service, referral partners.
+Customer portal + construction/permitting/utilities/septic/survey/delivery/install
+tracking, warranty/service tickets, documents, referral + future dealer portal, mobile.
 
 ### Cross-cutting (continuous)
-- **AI** only where it earns its keep: lead qualification, home/land recommendations,
-  financing/permit education, internal drafting. No AI theater.
+- **AI** only where it earns its keep, trending toward **specialized assistants** with
+  narrow responsibilities (sales, construction, estimating, permitting, warranty,
+  inventory, marketing, support, finance, ops) rather than one general chatbot — each
+  a client of the same APIs. Start small (lead qualification, recommendations,
+  financing/permit education, internal drafting). No AI theater.
 - **Marketing:** SEO, Google Business Profile, local search, Ads/LSA, reviews, content.
 - **External AI advisory:** ChatGPT (architecture/UX/strategy critique), Gemini
   (Google-ecosystem + permitting research, joe@forturro.com). Research/critique only

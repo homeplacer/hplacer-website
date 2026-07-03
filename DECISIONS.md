@@ -7,6 +7,34 @@ sister platform, not a fork.*
 
 ---
 
+## D-HP-004 — Build for who we're becoming: API-first, DB-first, modular (2026-07-03)
+**Decision:** HP is architected as the **operating system for a manufactured-housing
+company**, not a website. Every dynamic feature from here on follows:
+- **API-first** — `UI → API → business logic → database`; business logic lives behind
+  versioned `/api/*`, never in pages. The website, portals (employee/customer/future
+  dealer), mobile apps, and AI assistants are all clients of the same APIs.
+- **Database-first** — Cloudflare D1 is the system of record; nothing assumes static
+  JSON forever. Everything becomes data (inventory, land, lots, customers, leads,
+  quotes, packages, appointments, tasks, construction jobs, warranty/service, docs,
+  employees, permissions, AI conversations, notifications, audit logs).
+- **Modular / service-oriented** — independent modules (Auth, Inventory, Land,
+  Customers, CRM, Construction, Warranty, Scheduling, Financing, Documents, Reporting,
+  Marketing, AI, Notifications, Search) with clear interfaces; no monolith.
+- **Auth is foundational** — moved to the front of the platform build (Phase 1), since
+  it unlocks portals, saved quotes/homes, documents, messaging, roles, and audit.
+- **No temporary solutions** that require replacing later; think several phases ahead
+  while building only what delivers value today.
+
+**Why:** "build for the company we are becoming, not just the company we are today" —
+the destination is a national platform running the whole business (marketing →
+ownership). Phasing stays; the constraint is that each phase expands into that
+platform **without a rewrite**. **Relationship to D-HP-002:** does NOT change "launch
+readiness first" — Phase 0 stays marketing/lead hardening. It governs *how* we build
+everything from Phase 1 on, and sets guardrails so Phase-0 choices don't create debt
+(e.g. any new dynamic behavior goes through an API + is DB-ready, not a static hack).
+**Owner:** Joe directed 2026-07-03. **Supersedes nothing; refines the roadmap** (see
+`ROADMAP.md` §Target architecture + Phase 1 re-scoped to DB + auth + API + admin).
+
 ## D-HP-003 — Sister to Forturro: share patterns, not coupling (2026-07-02)
 **Decision:** Home Placer reuses Forturro's *engineering patterns* — Cloudflare D1
 data layer, Workers/OpenNext deploy, HMAC-cookie auth model, workflow/notification/
