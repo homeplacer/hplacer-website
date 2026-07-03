@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   title: "Land Packages",
   description:
     "One package, one price: a brand-new home plus the land it sits on. See what's included, what drives the price, and how Home Placer handles permits, delivery, foundation, and utilities across Horry & Georgetown counties, SC.",
+  alternates: { canonical: "/land-packages" },
 };
 
 const included = [

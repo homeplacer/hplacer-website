@@ -49,6 +49,7 @@ export async function generateMetadata({
   return {
     title: `${home.name} — ${home.brand} ${home.series} (${home.beds} bd / ${home.baths} ba)`,
     description: home.excerpt,
+    alternates: { canonical: `/homes/${home.slug}` },
     openGraph: home.imageUrls[0] ? { images: [home.imageUrls[0]] } : undefined,
   };
 }

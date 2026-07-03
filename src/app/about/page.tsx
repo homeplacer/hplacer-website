@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "About",
   description:
     "Home Placer is a licensed manufactured-home dealer in Horry County, SC, pairing new homes with land at honest prices.",
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {

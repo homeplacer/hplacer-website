@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Contact",
   description:
     "Talk to Home Placer about new manufactured homes on land in Horry County, SC. Call (843) 849-HOME or send a message.",
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {

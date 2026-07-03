@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Manufactured vs Site-Built Homes — An Honest Comparison",
   description:
     "How a new manufactured home on land compares to a site-built house on cost, speed, quality, financing, and value — straight from a licensed SC dealer.",
+  alternates: { canonical: "/manufactured-vs-site-built" },
 };
 
 const rows = [

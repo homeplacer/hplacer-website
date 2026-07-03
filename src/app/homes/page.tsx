@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Manufactured & Mobile Homes for Sale",
   description:
     "Browse new Clayton, Cavco, and Champion manufactured homes — what many buyers still call mobile homes — available with land across Horry County, SC, from the low $200s.",
+  alternates: { canonical: "/homes" },
 };
 
 export default function HomesPage() {

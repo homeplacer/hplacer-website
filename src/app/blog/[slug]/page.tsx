@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllPosts, getPost, renderMarkdown, formatDate } from "@/lib/blog";
-import { JsonLd, articleLd } from "@/lib/jsonld";
+import { JsonLd, articleLd, breadcrumbLd } from "@/lib/jsonld";
 import { PhoneIcon, ArrowIcon } from "@/components/icons";
 import { site } from "@/lib/site";
 
@@ -21,7 +21,13 @@ export async function generateMetadata({
   return {
     title: post.title,
     description: post.description,
-    openGraph: { type: "article", title: post.title, description: post.description },
+    alternates: { canonical: `/blog/${slug}` },
+    openGraph: {
+      type: "article",
+      url: `/blog/${slug}`,
+      title: post.title,
+      description: post.description,
+    },
   };
 }
 
@@ -40,6 +46,13 @@ export default async function BlogPostPage({
   return (
     <>
       <JsonLd data={articleLd(post)} />
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Home", path: "/" },
+          { name: "Blog", path: "/blog" },
+          { name: post.title, path: `/blog/${post.slug}` },
+        ])}
+      />
       <article className="container-x max-w-3xl py-12">
         <div className="text-sm text-stone-muted">
           <Link href="/blog" className="hover:text-brand-700">
