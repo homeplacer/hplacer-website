@@ -7,7 +7,7 @@ import { submitLead } from "@/lib/lead";
 // Site-wide "new homes & deals in your inbox" capture. Email-only, lowest
 // possible friction. Posts type: "subscribe" to /api/lead.
 export function EmailCapture() {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [via, setVia] = useState<"api" | "mailto">("api");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -15,7 +15,12 @@ export function EmailCapture() {
     setStatus("sending");
     const form = e.currentTarget;
     const email = (new FormData(form).get("email") as string)?.trim();
-    setVia(await submitLead("subscribe", { email }));
+    const result = await submitLead("subscribe", { email });
+    if (result === "error") {
+      setStatus("error");
+      return;
+    }
+    setVia(result);
     setStatus("sent");
     form.reset();
   }
@@ -58,6 +63,11 @@ export function EmailCapture() {
                 {status === "sending" ? "…" : "Subscribe"} <ArrowIcon className="size-4" />
               </button>
             </div>
+            {status === "error" && (
+              <p className="mt-2 text-left text-sm text-red-200">
+                That didn&apos;t go through — please check your email and try again.
+              </p>
+            )}
           </form>
         )}
       </div>

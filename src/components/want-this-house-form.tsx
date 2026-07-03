@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckIcon, ArrowIcon } from "@/components/icons";
 import { submitLead } from "@/lib/lead";
+import { site } from "@/lib/site";
 
 const fieldClass =
   "w-full rounded-lg border border-stone-line bg-stone-bg px-3.5 py-2.5 text-sm text-stone-ink outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
@@ -13,7 +14,7 @@ const fieldClass =
 // Submits to FUB (via /api/lead) with that context baked into the note so the team
 // knows exactly which home the buyer wants. Mailto fallback.
 export function WantThisHouseForm({ address, model }: { address?: string; model?: string }) {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [via, setVia] = useState<"api" | "mailto">("api");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -33,7 +34,12 @@ export function WantThisHouseForm({ address, model }: { address?: string; model?
       data.message =
         note || `Interested in ${model || "this home"} — please send pricing and an estimated monthly payment.`;
     }
-    setVia(await submitLead("contact", data));
+    const result = await submitLead("contact", data);
+    if (result === "error") {
+      setStatus("error");
+      return;
+    }
+    setVia(result);
     setStatus("sent");
     form.reset();
   }
@@ -56,6 +62,12 @@ export function WantThisHouseForm({ address, model }: { address?: string; model?
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {status === "error" && (
+        <p className="rounded-lg border border-red-300 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">
+          Something didn&apos;t look right — please check your name and phone, then try again. Or call{" "}
+          <a href={`tel:${site.phoneDial}`} className="font-semibold underline">{site.phoneDisplay}</a>.
+        </p>
+      )}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="wth-name" className="mb-1.5 block text-sm font-medium text-stone-ink">

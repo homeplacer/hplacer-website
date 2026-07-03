@@ -318,11 +318,14 @@ async function deliverToFub(lead: {
         // task assigned to a bad id would fail too. Owner must be valid to assign;
         // collaborators are filtered to the valid subset.
         const ownerId = warrantyUserId();
-        const ownerOk = await isValidFubUser(ownerId, authHeader);
-        const validCollaborators: number[] = [];
-        for (const id of warrantyCollaborators()) {
-          if (await isValidFubUser(id, authHeader)) validCollaborators.push(id);
-        }
+        const collabIds = warrantyCollaborators();
+        // Validate owner + collaborators in ONE parallel batch — was sequential
+        // (up to 4 serial FUB GETs on a cold isolate before routing could fire).
+        const [ownerOk, ...collabOk] = await Promise.all([
+          isValidFubUser(ownerId, authHeader),
+          ...collabIds.map((id) => isValidFubUser(id, authHeader)),
+        ]);
+        const validCollaborators = collabIds.filter((_, i) => collabOk[i]);
 
         if (created && ownerOk) {
           const assignRes = await fetchWithRetry(
@@ -388,6 +391,14 @@ async function deliverToFub(lead: {
               `for person ${personId}${created && ownerOk ? " (new contact, also assigned)" : ""}`,
           );
         }
+      } else {
+        // The event still created/merged the person (lead captured), but without an
+        // id we can't assign an owner or open the follow-up task — surface it so a
+        // FUB response-shape change doesn't silently drop warranty routing.
+        console.error(
+          "[hplacer] warranty: FUB /events returned no personId — assign + task skipped " +
+            "(lead still captured, but no owner/collaborators/follow-up task).",
+        );
       }
     } catch (e) {
       console.error("[hplacer] warranty routing step errored:", e);

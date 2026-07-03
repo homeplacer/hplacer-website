@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckIcon, ArrowIcon } from "@/components/icons";
 import { submitLead } from "@/lib/lead";
+import { site } from "@/lib/site";
 
 const fieldClass =
   "w-full rounded-lg border border-stone-line bg-stone-bg px-3.5 py-2.5 text-sm text-stone-ink outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
@@ -11,7 +12,7 @@ const fieldClass =
 // No SSN, income, or credit details are collected here; that happens later with
 // a licensed lender. This form just starts the conversation.
 export function FinancingForm() {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [via, setVia] = useState<"api" | "mailto">("api");
   const [hasLand, setHasLand] = useState("");
 
@@ -20,7 +21,12 @@ export function FinancingForm() {
     setStatus("sending");
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
-    setVia(await submitLead("financing", data));
+    const result = await submitLead("financing", data);
+    if (result === "error") {
+      setStatus("error");
+      return;
+    }
+    setVia(result);
     setStatus("sent");
     form.reset();
     setHasLand("");
@@ -44,6 +50,12 @@ export function FinancingForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {status === "error" && (
+        <p className="rounded-lg border border-red-300 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">
+          Something didn&apos;t look right — please check your name and phone, then try again. Or call{" "}
+          <a href={`tel:${site.phoneDial}`} className="font-semibold underline">{site.phoneDisplay}</a>.
+        </p>
+      )}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="fin-name" className="mb-1.5 block text-sm font-medium text-stone-ink">
