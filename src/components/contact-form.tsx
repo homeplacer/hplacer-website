@@ -3,27 +3,37 @@
 import { useEffect, useState } from "react";
 import { CheckIcon, ArrowIcon } from "@/components/icons";
 import { submitLead } from "@/lib/lead";
+import { site } from "@/lib/site";
 
 const fieldClass =
   "w-full rounded-lg border border-stone-line bg-stone-bg px-3.5 py-2.5 text-sm text-stone-ink outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
 
 export function ContactForm({ defaultHome = "" }: { defaultHome?: string }) {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [via, setVia] = useState<"api" | "mailto">("api");
   const [home, setHome] = useState(defaultHome);
 
   // Prefill from ?home= client-side (keeps the page statically exportable).
+  // URL params aren't available during SSR, so this must be an effect; setting
+  // state here is the intended use (same pattern as homes-browser.tsx).
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const h = new URLSearchParams(window.location.search).get("home");
     if (h) setHome(h);
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("sending");
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
-    setVia(await submitLead("contact", data));
+    const result = await submitLead("contact", data);
+    if (result === "error") {
+      setStatus("error");
+      return;
+    }
+    setVia(result);
     setStatus("sent");
     form.reset();
   }
@@ -46,6 +56,12 @@ export function ContactForm({ defaultHome = "" }: { defaultHome?: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {status === "error" && (
+        <p className="rounded-lg border border-red-300 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">
+          Something didn&apos;t look right — please check your name and phone, then try again. Or call{" "}
+          <a href={`tel:${site.phoneDial}`} className="font-semibold underline">{site.phoneDisplay}</a>.
+        </p>
+      )}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-stone-ink">

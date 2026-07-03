@@ -37,7 +37,7 @@ function buildMailto(type: string, data: LeadData): string {
  * email to the team so the lead is never silently lost. Returns how it went
  * out so the form can show the right confirmation. Never throws.
  */
-export async function submitLead(type: string, data: LeadData): Promise<"api" | "mailto"> {
+export async function submitLead(type: string, data: LeadData): Promise<"api" | "mailto" | "error"> {
   // First-touch attribution (utm_*, gclid, fbclid, referrer, landing page),
   // captured on the visitor's first page load. Additive — never affects the
   // user-visible form fields.
@@ -48,9 +48,16 @@ export async function submitLead(type: string, data: LeadData): Promise<"api" | 
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ type, ...data, attribution }),
     });
-    if (!res.ok) throw new Error("api unavailable");
-    track("generate_lead", { form_type: type, method: "api" });
-    return "api";
+    if (res.ok) {
+      track("generate_lead", { form_type: type, method: "api" });
+      return "api";
+    }
+    // The SERVER rejected the input (4xx: validation / payload too large). Opening
+    // a mailto with the same bad data won't help and silently no-ops on mobile
+    // without a mail client — surface an error so the user can correct it. A 5xx
+    // (server down) falls through to the offline mailto fallback below.
+    if (res.status >= 400 && res.status < 500) return "error";
+    throw new Error("api unavailable");
   } catch {
     track("generate_lead", { form_type: type, method: "mailto" });
     if (typeof window !== "undefined") {
