@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { navLinks, resourceLinks, site, socialLinks } from "@/lib/site";
+import { stateAbbrForSlug } from "@/lib/locations";
 import { asset } from "@/lib/asset";
 import {
   PhoneIcon,
@@ -125,7 +126,7 @@ export function SiteFooter() {
             {site.locations.map((l) => (
               <li key={l.slug}>
                 <Link href={`/locations/${l.slug}`} className="text-stone-100/80 hover:text-white">
-                  {l.name}, SC
+                  {l.name}, {stateAbbrForSlug(l.slug)}
                 </Link>
               </li>
             ))}

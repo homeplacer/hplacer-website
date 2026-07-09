@@ -4,6 +4,7 @@ import { PageHero } from "@/components/page-hero";
 import { ContactForm } from "@/components/contact-form";
 import { ForturroLandSearch } from "@/components/forturro-land-search";
 import { site } from "@/lib/site";
+import { stateAbbrForSlug } from "@/lib/locations";
 import { galleryByCategory } from "@/lib/gallery";
 import { faqs, type Faq } from "@/lib/faqs";
 import { CheckIcon, PinIcon, ArrowIcon, PhoneIcon } from "@/components/icons";
@@ -102,7 +103,7 @@ export default function LandPackagesPage() {
           <ul className="mt-5 space-y-3">
             {site.locations.map((l) => (
               <li key={l.slug} className="flex items-center gap-3 text-stone-100/85">
-                <PinIcon className="size-4 text-accent-300" /> {l.name}, SC
+                <PinIcon className="size-4 text-accent-300" /> {l.name}, {stateAbbrForSlug(l.slug)}
               </li>
             ))}
           </ul>
