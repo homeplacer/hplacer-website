@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowIcon, CheckIcon } from "@/components/icons";
 import { submitLead } from "@/lib/lead";
+import { Honeypot } from "@/components/honeypot";
 
 // Site-wide "new homes & deals in your inbox" capture. Email-only, lowest
 // possible friction. Posts type: "subscribe" to /api/lead.
@@ -12,10 +13,14 @@ export function EmailCapture() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (status === "sending") return; // guard against double-submit while in flight
     setStatus("sending");
     const form = e.currentTarget;
-    const email = (new FormData(form).get("email") as string)?.trim();
-    const result = await submitLead("subscribe", { email });
+    const fd = new FormData(form);
+    const email = (fd.get("email") as string)?.trim();
+    // Honeypot: forwarded so the server can drop bot submissions (empty for humans).
+    const company = (fd.get("company") as string) || undefined;
+    const result = await submitLead("subscribe", { email, company });
     if (result === "error") {
       setStatus("error");
       return;
@@ -45,6 +50,7 @@ export function EmailCapture() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="w-full max-w-md shrink-0">
+            <Honeypot />
             <div className="flex flex-col gap-2 sm:flex-row">
               <input
                 name="email"

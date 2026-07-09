@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CheckIcon, ArrowIcon } from "@/components/icons";
 import { submitLead } from "@/lib/lead";
 import { site } from "@/lib/site";
+import { Honeypot } from "@/components/honeypot";
 
 const fieldClass =
   "w-full rounded-lg border border-stone-line bg-stone-bg px-3.5 py-2.5 text-sm text-stone-ink outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
@@ -19,6 +20,7 @@ export function WantThisHouseForm({ address, model }: { address?: string; model?
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (status === "sending") return; // guard against double-submit while in flight
     setStatus("sending");
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
@@ -62,6 +64,7 @@ export function WantThisHouseForm({ address, model }: { address?: string; model?
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <Honeypot />
       {status === "error" && (
         <p className="rounded-lg border border-red-300 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">
           Something didn&apos;t look right — please check your name and phone, then try again. Or call{" "}
@@ -79,7 +82,7 @@ export function WantThisHouseForm({ address, model }: { address?: string; model?
           <label htmlFor="wth-phone" className="mb-1.5 block text-sm font-medium text-stone-ink">
             Phone
           </label>
-          <input id="wth-phone" name="phone" type="tel" required autoComplete="tel" className={fieldClass} />
+          <input id="wth-phone" name="phone" type="tel" inputMode="tel" pattern="[0-9()+.\s-]{7,}" title="Please enter a valid phone number." required autoComplete="tel" className={fieldClass} />
         </div>
       </div>
       <div>
