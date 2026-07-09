@@ -9,6 +9,7 @@ import {
   footprintLabel,
 } from "@/lib/home-types";
 import { BedIcon, BathIcon, RulerIcon, HomeMark, CheckIcon, ArrowIcon } from "@/components/icons";
+import { FallbackImage } from "@/components/fallback-image";
 
 export function HomeCard({ home }: { home: Home }) {
   const price = displayPrice(home);
@@ -24,12 +25,16 @@ export function HomeCard({ home }: { home: Home }) {
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-brand-100 via-stone-surface to-accent-100">
         {photo ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <FallbackImage
             src={photo}
             alt={`${home.name} by ${home.brand}`}
             loading="lazy"
             className="size-full object-cover transition duration-300 group-hover:scale-[1.03]"
+            fallback={
+              <div className="absolute inset-0 grid place-items-center text-brand-300/70">
+                <HomeMark className="size-14" strokeWidth={1.25} />
+              </div>
+            }
           />
         ) : (
           <div className="absolute inset-0 grid place-items-center text-brand-300/70">

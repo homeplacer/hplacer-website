@@ -74,7 +74,7 @@ export default async function LocationPage({
         <div className="topo absolute inset-0" aria-hidden />
         <div className="container-x relative py-16">
           <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-accent-300 ring-1 ring-white/15">
-            <PinIcon className="size-3.5" /> {loc.county}, SC
+            <PinIcon className="size-3.5" /> {loc.county}, {county?.stateAbbr ?? "SC"}
           </p>
           <h1 className="mt-5 max-w-3xl font-display text-4xl font-semibold leading-tight sm:text-5xl">
             {loc.headline}
@@ -172,7 +172,7 @@ export default async function LocationPage({
                 <img
                   key={src}
                   src={src}
-                  alt={`Home Placer manufactured home placed near ${loc.name}, SC`}
+                  alt={`Home Placer manufactured home placed near ${loc.name}, ${county?.stateAbbr ?? "SC"}`}
                   loading="lazy"
                   className="aspect-[4/3] w-full rounded-card border border-stone-line object-cover shadow-sm"
                 />

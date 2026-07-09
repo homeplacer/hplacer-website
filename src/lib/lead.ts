@@ -31,11 +31,11 @@ function buildMailto(type: string, data: LeadData): string {
 }
 
 /**
- * Submit a lead. Tries the /api/lead endpoint first (works on a server
- * deployment with Resend/FUB configured). On the static GitHub Pages export —
- * where the API route doesn't exist — it falls back to opening a pre-filled
- * email to the team so the lead is never silently lost. Returns how it went
- * out so the form can show the right confirmation. Never throws.
+ * Submit a lead. POSTs to the /api/lead route (Cloudflare Worker), which delivers
+ * to Follow Up Boss + Resend when those are configured. On a 5xx / network failure
+ * it falls back to opening a pre-filled email to the team so a lead is never
+ * silently lost; a 4xx (validation) surfaces as an error so the user can fix it.
+ * Returns how it went out so the form can show the right confirmation. Never throws.
  */
 export async function submitLead(type: string, data: LeadData): Promise<"api" | "mailto" | "error"> {
   // First-touch attribution (utm_*, gclid, fbclid, referrer, landing page),

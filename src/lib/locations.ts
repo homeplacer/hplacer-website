@@ -417,3 +417,13 @@ export const cityGeo: Record<string, { lat: number; lng: number }> = {
 export function getLocation(slug: string): LocationInfo | undefined {
   return locations.find((l) => l.slug === slug);
 }
+
+// State abbreviation for a curated `site.locations` entry (which only carries
+// slug + name). Resolves through the full location → its county → stateAbbr, so
+// the NC towns (Leland, Shallotte, Southport, Calabash, Whiteville) label
+// correctly instead of everything defaulting to "SC". Falls back to "SC" only if
+// a slug can't be resolved (shouldn't happen for the curated subset).
+export function stateAbbrForSlug(slug: string): "SC" | "NC" {
+  const loc = getLocation(slug);
+  return (loc && getCounty(loc.countyKey)?.stateAbbr) || "SC";
+}

@@ -4,8 +4,10 @@ import { PageHero } from "@/components/page-hero";
 import { ContactForm } from "@/components/contact-form";
 import { ForturroLandSearch } from "@/components/forturro-land-search";
 import { site } from "@/lib/site";
+import { stateAbbrForSlug } from "@/lib/locations";
 import { galleryByCategory } from "@/lib/gallery";
 import { faqs, type Faq } from "@/lib/faqs";
+import { JsonLd, faqLd } from "@/lib/jsonld";
 import { CheckIcon, PinIcon, ArrowIcon, PhoneIcon } from "@/components/icons";
 
 export const metadata: Metadata = {
@@ -64,6 +66,9 @@ export default function LandPackagesPage() {
 
   return (
     <>
+      {/* FAQPage schema for the questions shown on this page (mirrors the visible
+          accordion below — same curated subset, no hidden or invented content). */}
+      {packageFaqs.length > 0 && <JsonLd data={faqLd(packageFaqs)} />}
       <PageHero eyebrow="What you actually get" title="Home + land, one package">
         Buying a manufactured home is usually a scavenger hunt — a home from one place, a
         lot from another, a setup crew from somewhere else. We bundle all of it into a
@@ -102,7 +107,7 @@ export default function LandPackagesPage() {
           <ul className="mt-5 space-y-3">
             {site.locations.map((l) => (
               <li key={l.slug} className="flex items-center gap-3 text-stone-100/85">
-                <PinIcon className="size-4 text-accent-300" /> {l.name}, SC
+                <PinIcon className="size-4 text-accent-300" /> {l.name}, {stateAbbrForSlug(l.slug)}
               </li>
             ))}
           </ul>

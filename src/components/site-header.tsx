@@ -51,7 +51,7 @@ export function SiteHeader() {
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="grid size-10 place-items-center rounded-md text-stone-ink hover:bg-stone-sunken lg:hidden"
+            className="grid size-11 place-items-center rounded-md text-stone-ink hover:bg-stone-sunken lg:hidden"
           >
             {open ? <CloseIcon /> : <MenuIcon />}
           </button>

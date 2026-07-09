@@ -57,6 +57,9 @@ interface LeadBody {
   address?: string;
   message?: string;
   attribution?: Attribution;
+  // Honeypot decoy (see src/components/honeypot.tsx). Real users never fill it;
+  // a non-empty value means a bot, and the submission is dropped.
+  company?: string;
 }
 
 // Trim, drop empties, and cap length so an oversized field can't flood logs or
@@ -464,6 +467,14 @@ export async function POST(req: Request) {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  // Honeypot: the hidden "company" field is invisible to real users, so any value
+  // is a bot. Drop it silently — return a normal 200 so the bot gets no signal —
+  // without delivering to FUB/Resend or logging a lead.
+  if (typeof body.company === "string" && body.company.trim()) {
+    console.log("[hplacer] lead dropped: honeypot tripped");
+    return NextResponse.json({ ok: true });
   }
 
   const type: LeadType = body.type ?? "contact";

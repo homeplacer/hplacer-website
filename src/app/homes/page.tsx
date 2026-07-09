@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getAllHomes } from "@/lib/homes";
 import { HomesBrowser } from "@/components/homes-browser";
+import { JsonLd, homesItemListLd } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "Manufactured & Mobile Homes for Sale",
@@ -14,6 +15,7 @@ export default function HomesPage() {
 
   return (
     <>
+      <JsonLd data={homesItemListLd(all)} />
       <section className="border-b border-stone-line bg-stone-surface">
         <div className="container-x py-14">
           <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">
