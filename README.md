@@ -5,7 +5,7 @@ Horry County, SC. We pair brand-new Clayton, Cavco, and Champion homes with land
 across the Grand Strand — one package, one price, no HOA.
 
 **Stack:** Next.js 16 (App Router) · TypeScript · Tailwind 4 · `marked` for blog
-markdown · deploy target Vercel.
+markdown · deployed to **Cloudflare Workers** via OpenNext (**not Vercel**).
 
 ## Run it
 
@@ -14,6 +14,13 @@ npm install
 npm run dev      # http://localhost:3000
 npm run build    # production build (prerenders ~125 pages)
 ```
+
+## Deploy
+
+hplacer.com deploys to **Cloudflare Workers** via OpenNext — **not Vercel**, and
+**merging to `main` does not deploy**. Production deploy is a manual `npm run deploy`
+(after `wrangler login` to the Home Placer Cloudflare account). Full steps,
+verification, and rollback are in **[`DEPLOY.md`](DEPLOY.md)**.
 
 ## Where things live
 
@@ -102,5 +109,5 @@ All forms post to `/api/lead`. Delivery is **env-gated** — it logs by default 
 - [ ] Add pricing files (above)
 - [ ] Set `FUB_API_KEY` and/or `RESEND_API_KEY` (+ verify the hplacer.com domain in Resend)
 - [ ] Replace hotlinked manufacturer photos with owned images
-- [ ] Connect the GitHub repo + Vercel project, point the `hplacer.com` domain
+- [ ] Deploy to **Cloudflare Workers** with `npm run deploy` (see [`DEPLOY.md`](DEPLOY.md)); `hplacer.com` + `www` are Cloudflare custom domains
 - [ ] Submit `https://hplacer.com/sitemap.xml` to Google + Bing
