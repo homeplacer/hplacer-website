@@ -293,6 +293,24 @@ export function faqLd(faqs: { q: string; a: string }[]) {
   };
 }
 
+// ItemList for the /homes catalog — tells search engines the set of homes shown
+// on the page, each linking to its own detail page (where the full Product schema
+// lives). Names + URLs only; mirrors the visible list, no invented data.
+export function homesItemListLd(homes: { slug: string; name: string; brand: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Manufactured & mobile homes available with land — Home Placer",
+    numberOfItems: homes.length,
+    itemListElement: homes.map((h, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${site.url}/homes/${h.slug}`,
+      name: `${h.name} by ${h.brand}`,
+    })),
+  };
+}
+
 export function breadcrumbLd(items: { name: string; path: string }[]) {
   return {
     "@context": "https://schema.org",
