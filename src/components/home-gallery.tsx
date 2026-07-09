@@ -3,10 +3,30 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { HomeMark } from "@/components/icons";
+import { FallbackImage } from "@/components/fallback-image";
 
 // Max thumbnails shown inline under the main image; the rest live behind a
 // "+N" tile that opens the lightbox (whose filmstrip browses every photo).
 const MAX_THUMBS = 12;
+
+// Fallbacks for hotlinked manufacturer photos that 404 — reuse the house-mark
+// placeholder look so a dead CDN image degrades to the empty state, not a broken
+// icon. The container behind supplies the gradient (same as the no-photo case).
+const HERO_FALLBACK = (
+  <div className="grid size-full place-items-center text-brand-300/70">
+    <HomeMark className="size-24" strokeWidth={1} />
+  </div>
+);
+const TILE_FALLBACK = (
+  <div className="grid size-full place-items-center bg-stone-surface text-brand-300/60">
+    <HomeMark className="size-6" strokeWidth={1.25} />
+  </div>
+);
+const STAGE_FALLBACK = (
+  <div className="grid place-items-center p-12 text-white/40">
+    <HomeMark className="size-24" strokeWidth={1} />
+  </div>
+);
 
 export function HomeGallery({
   images,
@@ -106,11 +126,12 @@ export function HomeGallery({
             aria-label={`Expand photo ${active + 1} of ${count}`}
             className="group absolute inset-0 cursor-zoom-in"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <FallbackImage
+              key={images[active]}
               src={images[active]}
               alt={`${name} — photo ${active + 1}`}
               className="size-full object-cover transition duration-300 group-hover:scale-[1.02]"
+              fallback={HERO_FALLBACK}
             />
             <span className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-stone-ink/65 px-3 py-1.5 text-xs font-semibold text-white opacity-0 transition group-hover:opacity-100">
               <ExpandIcon className="size-3.5" /> Expand
@@ -143,12 +164,12 @@ export function HomeGallery({
                   : "opacity-80 ring-1 ring-stone-line hover:opacity-100 hover:ring-brand-300")
               }
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <FallbackImage
                 src={src}
                 alt={`${name} thumbnail ${i + 1}`}
                 loading="lazy"
                 className="size-full object-cover"
+                fallback={TILE_FALLBACK}
               />
               {i === active && (
                 <span className="pointer-events-none absolute inset-0 grid place-items-center bg-stone-ink/25 opacity-0 transition group-hover:opacity-100">
@@ -164,12 +185,12 @@ export function HomeGallery({
               aria-label={`See all ${count} photos`}
               className="relative aspect-square w-full overflow-hidden rounded-lg ring-1 ring-stone-line transition hover:ring-brand-300"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <FallbackImage
                 src={images[MAX_THUMBS - 1]}
                 alt=""
                 loading="lazy"
                 className="size-full object-cover"
+                fallback={TILE_FALLBACK}
               />
               <span className="absolute inset-0 grid place-items-center bg-stone-ink/65 text-sm font-semibold text-white">
                 +{count - (MAX_THUMBS - 1)}
@@ -225,13 +246,14 @@ export function HomeGallery({
                 </button>
               )}
 
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <FallbackImage
+                key={images[active]}
                 src={images[active]}
                 alt={`${name} — photo ${active + 1}`}
                 decoding="async"
                 className="max-h-full max-w-full select-none rounded-lg object-contain shadow-2xl"
                 draggable={false}
+                fallback={STAGE_FALLBACK}
               />
 
               {count > 1 && (
@@ -267,8 +289,7 @@ export function HomeGallery({
                       (i === active ? "ring-2 ring-white" : "opacity-50 hover:opacity-90")
                     }
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={src} alt="" loading="lazy" className="size-full object-cover" />
+                    <FallbackImage src={src} alt="" loading="lazy" className="size-full object-cover" fallback={TILE_FALLBACK} />
                   </button>
                 ))}
               </div>
