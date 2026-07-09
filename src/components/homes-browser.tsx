@@ -166,6 +166,7 @@ export function HomesBrowser({
                 key={b}
                 type="button"
                 onClick={() => setBrand(b)}
+                aria-pressed={b === brand}
                 className={
                   b === brand
                     ? "rounded-full bg-brand-700 px-3.5 py-2 text-sm font-semibold text-white"
@@ -186,6 +187,7 @@ export function HomesBrowser({
                 key={w.value}
                 type="button"
                 onClick={() => setWidthType(w.value)}
+                aria-pressed={w.value === widthType}
                 className={
                   w.value === widthType
                     ? "rounded-full bg-brand-700 px-3.5 py-2 text-sm font-semibold text-white"
