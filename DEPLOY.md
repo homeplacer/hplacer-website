@@ -1,37 +1,90 @@
 # Deploying hplacer.com
 
-The site is a **Next.js** app (server-rendered + a `/api/lead` route), so it needs
-a host that runs Next.js — **not** GitHub Pages. Recommended: **Vercel**, with the
-domain staying at **GoDaddy**.
+**hplacer.com runs on Cloudflare Workers (Next.js 16 → OpenNext) — NOT Vercel.**
+The site is already live; this doc is how to ship an update and verify it.
 
-## 1. Put it on Vercel (one time)
-1. Go to **vercel.com** → sign in with the GitHub account (`homeplacer`).
-2. **Add New → Project → Import** the `hplacer-website` repo.
-3. Framework auto-detects as **Next.js**. Leave build settings default. Click **Deploy**.
-   - You'll get a temporary URL like `hplacer-website.vercel.app` to preview.
+> ⚠️ **Vercel is obsolete — do not follow any Vercel deploy instructions.** Earlier
+> versions of this doc (and the README) described deploying to Vercel with GoDaddy
+> DNS. That path is dead: nameservers are on Cloudflare, the app is a Cloudflare
+> Worker, and **a `git push` / merge to `main` does not deploy anything.**
 
-## 2. Add the lead keys (so forms deliver)
-In Vercel → Project → **Settings → Environment Variables**, add (see `.env.example`):
-- `FUB_API_KEY` — Follow Up Boss API key (FUB → Admin → API)
-- `RESEND_API_KEY`, `LEADS_TO`, `LEADS_FROM` — optional email copy (resend.com)
+## How it deploys
 
-Redeploy after adding them. Until then the site still works; leads just log instead of delivering.
+- **Host:** Cloudflare Workers via **OpenNext** (`@opennextjs/cloudflare`).
+- **Worker:** `hplacer-app`
+- **Production domains:** `hplacer.com` and `www.hplacer.com` (Cloudflare custom domains).
+- **No CI/CD.** No GitHub Action deploys on push. **Merging a PR to `main` does NOT
+  deploy production.** The only automated deploy is the `hplacer-blog-publish`
+  scheduled task, which runs `npm run deploy` Mon & Thu to surface date-gated blog
+  posts. Everything else is a **manual** `npm run deploy` by an operator.
 
-## 3. Point hplacer.com (GoDaddy → Vercel)
-In Vercel → Project → **Settings → Domains**, add `hplacer.com` and `www.hplacer.com`.
-Vercel shows you the exact records. They'll look like:
+## Prerequisite — Wrangler must be authed to the Home Placer account
 
-| Host | Type | Value |
-|------|------|-------|
-| `@`  | A     | `76.76.21.21` (Vercel shows the current IP) |
-| `www`| CNAME | `cname.vercel-dns.com` |
+`npm run deploy` uploads to Cloudflare, so Wrangler must be authenticated to the
+**Home Placer** account (not the Forturro account):
 
-Then in **GoDaddy → My Products → hplacer.com → DNS → Manage DNS**:
-1. Edit the existing **A record** for `@` → set the value to Vercel's IP.
-2. Edit/add the **CNAME** for `www` → `cname.vercel-dns.com`.
-3. Save. SSL is automatic; the site goes live in ~15–60 min.
+- Account email: **carolina@hplacer.com**
+- Account ID: **`6caa351d57b30bd04cec8a08e4330ffd`**
 
-> Keep the domain registered at GoDaddy — you're only changing two DNS records, not transferring.
+```bash
+wrangler login       # interactive browser OAuth — authorize the Home Placer account
+wrangler whoami      # VERIFY: Account ID must be 6caa351d57b30bd04cec8a08e4330ffd
+```
 
-## Updating the site later
-Every `git push` to `main` auto-builds and deploys on Vercel. (Local: edit → commit → push.)
+Do **not** use `wrangler --temporary` — that deploys to a throwaway preview
+account (wrong target). Cloudflare allows only one account login at a time, so if
+you were in the Forturro account, re-log into Home Placer first.
+
+## Deploy an update
+
+`npm run deploy` builds from the **working tree, not git HEAD** — so sync `main`
+and keep the tree clean before deploying:
+
+```bash
+cd hplacer
+git checkout main
+git pull origin main
+npm run deploy       # = build-manifests → opennextjs-cloudflare build → opennextjs-cloudflare deploy
+```
+
+The deploy also populates the static-assets incremental cache into the `ASSETS`
+bundle, so prerendered pages are served from cache instead of re-rendered per
+request (background: `OPENNEXT-CACHE-AUDIT.md`).
+
+## Post-deploy verification (safe — single requests, no load testing)
+
+Do **not** hammer the site — high request volume trips Cloudflare's per-IP
+protection. A handful of single requests is enough:
+
+1. **Homepage** — `https://hplacer.com/` returns **200** with full content.
+2. **`/homes`** — returns **200** and the model grid renders.
+3. **One detail page** — e.g. `https://hplacer.com/homes/palmer` returns **200**.
+4. **Cache is working** — request a page **twice**; the response header shows
+   **`x-nextjs-cache: HIT`**. This is the pass/fail signal — a `MISS` on every
+   request means the incremental cache has regressed.
+5. **`/api/lead` stays dynamic** — `GET https://hplacer.com/api/lead` returns
+   **405** (POST-only) with **no** `x-nextjs-cache` header. Do **not** POST a test
+   lead — it would create a real Follow Up Boss record.
+
+Then watch **Cloudflare → Workers analytics** over a few hours (CPU P90, cache
+rate, `1102`/`5xx`). No traffic generation needed.
+
+## Rollback
+
+- **Revert + redeploy (canonical — repo and live Worker stay in sync):**
+  ```bash
+  cd hplacer && git checkout main && git revert --no-edit <bad-commit> && git push && npm run deploy
+  ```
+- **Immediate Worker rollback (fastest):**
+  ```bash
+  cd hplacer && npx wrangler rollback      # reverts hplacer-app to the previous version
+  ```
+  Use this to restore production right now, then follow up with the git revert so
+  the repo matches the live Worker.
+
+## Secrets (reference — not part of a routine deploy)
+
+Lead-delivery keys are **Cloudflare Worker secrets**, not committed to the repo:
+`FUB_API_KEY` (required for FUB delivery), optional `RESEND_API_KEY` / `LEADS_TO`.
+Manage with `wrangler secret put <NAME>`. Blank secrets make leads log instead of
+deliver. Don't change secrets as part of a normal code deploy.
