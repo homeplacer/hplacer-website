@@ -85,6 +85,8 @@ rate, `1102`/`5xx`). No traffic generation needed.
 ## Secrets (reference — not part of a routine deploy)
 
 Lead-delivery keys are **Cloudflare Worker secrets**, not committed to the repo:
-`FUB_API_KEY` (required for FUB delivery), optional `RESEND_API_KEY` / `LEADS_TO`.
+`FUB_API_KEY` (required for FUB delivery), optional `RESEND_API_KEY` / `LEADS_TO`, and
+optional `LEAD_FAILURE_WEBHOOK_URL` (posts a minimal alert to a team webhook if a lead
+can't be delivered at all — unset = alert off, the failure is still logged).
 Manage with `wrangler secret put <NAME>`. Blank secrets make leads log instead of
 deliver. Don't change secrets as part of a normal code deploy.

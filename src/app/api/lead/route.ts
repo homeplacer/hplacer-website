@@ -8,6 +8,8 @@ import { NextResponse } from "next/server";
 //   RESEND_API_KEY             → emails the team (LEADS_TO, default leads@hplacer.com)
 //   FUB_WARRANTY_USER_ID       → owner for NEW service leads (default 39 = Brett)
 //   FUB_WARRANTY_COLLABORATORS → CSV of collaborator ids (default 1,35,46 = Joe,Tara,Wade)
+//   LEAD_FAILURE_WEBHOOK_URL   → (optional) POSTs a minimal alert to a team webhook
+//                                (Slack-compatible) if a lead can't be delivered at all
 // Always logs server-side as a fallback record. Same-origin form posts → no CORS.
 //
 // RESILIENCE (R6): every FUB/Resend call retries transient failures (429/5xx/
@@ -454,6 +456,70 @@ async function deliverByEmail(
   return { ok: true, status: res.status };
 }
 
+// Delivery result shape shared by deliverToFub / deliverByEmail (via toResult).
+type DeliveryResult = { ok: boolean; skipped?: string; status?: number; error?: string };
+
+// Optional ops alert: when a lead can't be delivered by ANY channel (both FUB and
+// the email backup failed), ping a team webhook so the failure isn't just an
+// unwatched log line. Env-gated by LEAD_FAILURE_WEBHOOK_URL — if it's unset this is
+// a no-op and behavior is unchanged (the CRITICAL log marker still records the full
+// lead for recovery). This NEVER touches FUB, never messages the customer, and never
+// throws or hangs the form response: a slow/broken webhook is bounded by a timeout
+// and any error is caught + logged.
+//
+// The payload is intentionally MINIMAL — enough for a human to know a lead was lost
+// and go recover the full record from the Worker log. Included: lead type, timestamp,
+// name, phone LAST 4 ONLY, and which channels failed. NOT included: email, full phone,
+// message, or attribution (those stay only in the server log). Body is Slack-compatible
+// (a `text` field) plus structured fields for a generic JSON consumer.
+async function sendLeadFailureAlert(info: {
+  type: LeadType;
+  name: string | null;
+  phone: string | null; // already E.164-normalized; only the last 4 are forwarded
+  fub: DeliveryResult;
+  email: DeliveryResult;
+  at: string;
+}): Promise<void> {
+  const url = process.env.LEAD_FAILURE_WEBHOOK_URL;
+  if (!url) return; // not configured → no-op, behavior unchanged
+
+  const last4 = info.phone ? info.phone.replace(/\D/g, "").slice(-4) : null;
+  const reason = (r: DeliveryResult) =>
+    r.skipped ? `skipped (${r.skipped})` : r.error ? `error (${r.error})` : r.status ? `status ${r.status}` : "failed";
+
+  const text =
+    `🚨 Home Placer: a lead was NOT delivered — both FUB and the email backup failed.\n` +
+    `• type: ${info.type}\n` +
+    `• name: ${info.name ?? "(none)"}\n` +
+    `• phone: ${last4 ? `•••• ${last4}` : "(none)"}\n` +
+    `• at: ${info.at}\n` +
+    `• fub: ${reason(info.fub)} · email: ${reason(info.email)}\n` +
+    `Recover the full lead from the Worker log (grep "CRITICAL LEAD_NOT_DELIVERED").`;
+
+  try {
+    await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text, // Slack-compatible
+        event: "lead_not_delivered",
+        type: info.type,
+        at: info.at,
+        name: info.name,
+        phoneLast4: last4,
+        fub: reason(info.fub),
+        email: reason(info.email),
+      }),
+      // Bound the wait so a hung/slow webhook can't delay the form response; the
+      // failure path is already rare, and the user still gets their 200.
+      signal: AbortSignal.timeout(3000),
+    });
+  } catch (e) {
+    // A webhook hiccup must never crash or block /api/lead — log and move on.
+    console.error("[hplacer] lead-failure alert webhook error (non-fatal):", e);
+  }
+}
+
 export async function POST(req: Request) {
   // Reject oversized bodies early — a lead is a handful of short fields, so a
   // multi-MB POST is abuse (log-flood / cheap DoS on the Worker).
@@ -549,10 +615,15 @@ export async function POST(req: Request) {
   // not a failure, but it also didn't capture the lead — so a skipped FUB + failed
   // email, or vice-versa, still trips this.
   if (!fub.ok && !email.ok) {
+    const at = new Date().toISOString();
     console.error(
       "[hplacer] CRITICAL LEAD_NOT_DELIVERED",
-      JSON.stringify({ lead, fub, email, at: new Date().toISOString() }),
+      JSON.stringify({ lead, fub, email, at }),
     );
+    // Wake a human so this isn't just an unwatched log line. No-op unless
+    // LEAD_FAILURE_WEBHOOK_URL is set; internally timeout-bounded and never throws,
+    // so it can't hang or fail the form response below.
+    await sendLeadFailureAlert({ type, name: lead.name, phone: lead.phone, fub, email, at });
   }
 
   return NextResponse.json({ ok: true });
