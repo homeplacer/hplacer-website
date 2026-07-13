@@ -56,6 +56,9 @@ export const site = {
     // Deep-linked, land-only, Horry County (Ylopo property-type = land).
     landSearchUrl:
       "https://search.forturro.com/search/map?s[orderBy]=sourceCreationDate%2Cdesc&s[page]=1&s[locations][0][county]=Horry&s[locations][0][state]=SC&s[propertyTypes][0]=land&utm_source=hplacer&utm_medium=referral&utm_campaign=land-search",
+    // Home Placer's own available-inventory page, hosted on Forturro. No
+    // tracking params yet (2026-07-13 — add later if attribution is needed).
+    availableHomesUrl: "https://forturro.com/home-placer",
   },
 
   // Cities where Home Placer places homes on land.

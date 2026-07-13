@@ -105,6 +105,11 @@ export function SiteFooter() {
               </li>
             ))}
             <li>
+              <a href={site.forturro.availableHomesUrl} className="text-stone-100/80 hover:text-white">
+                Available Homes
+              </a>
+            </li>
+            <li>
               <a
                 href={site.forturro.landSearchUrl}
                 target="_blank"
