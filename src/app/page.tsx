@@ -64,6 +64,12 @@ export default function HomePage() {
                 </li>
               ))}
             </ul>
+            <a
+              href={site.forturro.availableHomesUrl}
+              className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-stone-100/70 underline decoration-white/30 underline-offset-4 hover:text-white hover:decoration-white/60"
+            >
+              Available Homes <ArrowIcon className="size-3.5" />
+            </a>
           </div>
 
           {/* Hero photo — real #1 best-seller home */}
