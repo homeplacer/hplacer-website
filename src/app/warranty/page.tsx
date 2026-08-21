@@ -99,16 +99,16 @@ export default function WarrantyPage() {
           <div>
             <h2 className="font-display text-2xl font-semibold text-stone-ink">Something not right? We&apos;re on it.</h2>
             <p className="mt-3 text-stone-muted">
-              If you spot an issue, send us a service request or call our service line — our team handles
+              Submit a warranty request with photos, or call our service line — our team handles
               warranty work start to finish.
             </p>
           </div>
           <div className="flex flex-col gap-3">
             <Link
-              href="/service-request"
+              href="/warranty-request"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-accent-500 px-6 py-3 text-base font-semibold text-white transition hover:bg-accent-600"
             >
-              Request service <ArrowIcon className="size-4" />
+              Submit a warranty request <ArrowIcon className="size-4" />
             </Link>
             <a
               href={`tel:${site.warrantyPhoneDial}`}

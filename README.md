@@ -15,6 +15,20 @@ npm run dev      # http://localhost:3000
 npm run build    # production build (prerenders ~125 pages)
 ```
 
+## Employee portal
+
+The staff-only field portal for `portal.hplacer.com` lives in **[`portal/`](portal/)**
+as a separate Cloudflare Worker — separate script, route, D1 database, and
+private R2 bucket. It is never served from hplacer.com, and this app neither
+imports nor proxies it. Run it locally with `npm run portal:dev` (no Cloudflare
+account needed); see [`portal/README.md`](portal/README.md) for the architecture,
+the security model, and what still has to be provisioned.
+
+Homeowner warranty requests from [`/warranty-request`](src/app/warranty-request/)
+are the one place this site talks to the portal: `/api/warranty-request` forwards
+them server-side over a shared token, and falls back to the existing lead
+pipeline if the portal is unreachable.
+
 ## Deploy
 
 hplacer.com deploys to **Cloudflare Workers** via OpenNext — **not Vercel**, and
