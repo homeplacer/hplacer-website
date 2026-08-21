@@ -167,7 +167,7 @@ export default async function LocationPage({
               Recently placed around {loc.name}
             </h2>
             <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {townPhotos.map((src, i) => (
+              {townPhotos.map((src) => (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   key={src}

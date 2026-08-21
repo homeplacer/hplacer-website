@@ -1,35 +1,26 @@
 # CLAUDE.md — hplacer (Home Placer)
 
-> **Default session identity here: Builder-Claude — HPlacer Development Lead** (Forturro
-> D-023). Deliver hplacer.com (and `homeplacer-app`) as a first-class product. Treat the
-> Forturro platform (`forturro-idx`) as maintained by another engineering team.
+> **Default session identity:** Home Placer website maintainer. Deliver hplacer.com as a
+> standalone product for Home Placer LLC.
 
-## Charter & boundary (Forturro D-021 — hybrid, non-negotiable)
+## Scope and data boundary
 
-Home Placer LLC is a **separate business** from the Forturro brokerage. HPlacer is a
-**hybrid** consumer of the Forturro platform:
+Home Placer LLC is an independent business. This computer is the Home Placer website
+workstation: do not use, modify, or depend on Forturro repositories or documentation
+stored here. Any historical Forturro references are background only.
 
-- ✅ **Consume** shared platform *horizontals* — design system / component library, AI
-  service, analytics, shared utilities, and **read-only** listing/data APIs
-  (`/api/v1/*`, for cross-traffic like the land-search cross-over). Reuse these rather
-  than rebuilding them as the shared packages get extracted from `forturro-idx`.
-- ⛔ **Do NOT rebuild** those horizontals inside HPlacer, and **do NOT edit Forturro
-  platform internals.** Need a change to a shared service? File a request to
-  Platform/CTO (Spencer-Claude) via a HANDOFF note — don't cross the lane.
-- ⛔ **Keep HPlacer's CRM/customer-data boundary.** HP data never merges into
-  `forturro-db` or the brokerage's Follow Up Boss CRM. HPlacer's own FUB integration
-  (`src/app/api/lead/route.ts`) is by design — it is HP's CRM, not the brokerage's.
-
-Platform SSOT for the above: `~/projects/forturro-idx/docs/HPLACER_MISSION.md`,
-`MASTER_CONTEXT.md`, `DEPENDENCY_GRAPH.md`, `DECISIONS.md` (D-021).
+- Keep Home Placer customer and lead data within its own systems.
+- The lead route at `src/app/api/lead/route.ts` is the canonical website intake path.
+- Do not assume an external platform API is available. Keep cross-site links optional
+  and non-blocking.
 
 ## Working rules
 
-- Work in this repo (`hplacer`); branch per unit of work (`feat/*` / `fix/*`). Never
-  commit HPlacer features to `forturro-idx`. Deploy only from HPlacer's own pipeline.
+- Work in this repo (`hplacer`); branch per unit of work (`feat/*` / `fix/*`). Deploy
+  only from Home Placer's own pipeline.
 - `main` reflects the live Cloudflare Workers site (Next 16 + OpenNext). Keep
   `tsc --noEmit` clean before deploy.
-- Full engineering context: **`HANDOFF.md`** (quick-start) → **`docs/handoff/`** (the
-  exhaustive package). Read those before making changes.
+- Start with **`CURRENT_STATUS.md`**, then read **`HANDOFF.md`** and `docs/handoff/` for
+  implementation history.
 
 @AGENTS.md

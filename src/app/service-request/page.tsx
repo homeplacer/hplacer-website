@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { PageHero } from "@/components/page-hero";
 import { ServiceRequestForm } from "@/components/service-request-form";
 import { site } from "@/lib/site";
 import { PhoneIcon, CheckIcon } from "@/components/icons";

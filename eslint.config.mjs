@@ -9,6 +9,8 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    // OpenNext output is generated Worker/runtime code, not project source.
+    ".open-next/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
