@@ -108,18 +108,21 @@ function splitName(name: string | null): { first: string; last: string } {
 
 // Normalize to E.164 to maximize FUB's email/phone auto-merge match rate.
 // US-centric: 10 digits → +1XXXXXXXXXX; 11 digits starting with 1 → +1...;
-// already-international (leading +) is kept; an unrecognized shape is returned as
-// bare digits rather than dropped, so a real number is never silently lost.
+// already-international (leading +) is kept. Values that cannot be a practical
+// phone number are rejected rather than creating an unusable CRM contact.
 function normalizePhone(raw: string | null): string | null {
   if (!raw) return null;
   const trimmed = raw.trim();
   const hadPlus = trimmed.startsWith("+");
   const d = trimmed.replace(/\D/g, "");
   if (!d) return null;
+  // E.164 permits at most 15 digits. Seven digits is the shortest practical
+  // local phone number, while US entries must be a full ten digits.
+  if (d.length < 7 || d.length > 15) return null;
   if (hadPlus) return `+${d}`;
   if (d.length === 10) return `+1${d}`;
   if (d.length === 11 && d.startsWith("1")) return `+${d}`;
-  return d;
+  return null;
 }
 
 const warrantyUserId = (): number => {
@@ -570,9 +573,11 @@ export async function POST(req: Request) {
   };
 
   if (type === "subscribe") {
-    if (!lead.email) return NextResponse.json({ error: "Email is required" }, { status: 422 });
+    if (!lead.name || !lead.phone || !lead.email) {
+      return NextResponse.json({ error: "Name, phone, and email are required" }, { status: 422 });
+    }
   } else if (!lead.name || !lead.phone) {
-    return NextResponse.json({ error: "Name and phone are required" }, { status: 422 });
+    return NextResponse.json({ error: "Name and a valid phone number are required" }, { status: 422 });
   }
 
   console.log(`[hplacer] lead (${type}):`, { ...lead, at: new Date().toISOString() });
