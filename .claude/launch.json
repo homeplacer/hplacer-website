@@ -4,9 +4,21 @@
     {
       "name": "hplacer",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "hplacer-portal",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "portal:dev"
+      ],
+      "port": 8788
     }
   ]
 }

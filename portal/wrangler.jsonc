@@ -1,0 +1,48 @@
+{
+  // Home Placer employee portal — a SEPARATE Cloudflare Worker from the public
+  // hplacer.com site (see ../wrangler.jsonc). Nothing here is provisioned yet:
+  // the ids below are placeholders and `npm run portal:deploy` is intentionally
+  // absent. See portal/README.md for the full provisioning checklist.
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "hplacer-portal",
+  "main": "src/worker.ts",
+  "compatibility_date": "2024-12-30",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // No `assets` binding and no `workers_dev`: the portal has no public surface
+  // and must not be reachable on a *.workers.dev hostname.
+  "workers_dev": false,
+
+  "routes": [{ "pattern": "portal.hplacer.com", "custom_domain": true }],
+
+  "vars": {
+    "PORTAL_ENVIRONMENT": "production",
+    // Filled in when the Cloudflare Access application is created. Until both
+    // are set the Worker refuses every request (fail closed).
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": ""
+  },
+
+  "d1_databases": [
+    {
+      "binding": "PORTAL_DB",
+      "database_name": "hplacer-portal",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  "r2_buckets": [
+    {
+      "binding": "PORTAL_PHOTOS",
+      "bucket_name": "hplacer-portal-photos"
+    }
+  ],
+
+  "triggers": {
+    // Morning sweep: low-stock alerts and equipment coming due for service.
+    "crons": ["0 11 * * *"]
+  },
+
+  "observability": { "enabled": true }
+}

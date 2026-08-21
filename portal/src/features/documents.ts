@@ -1,0 +1,194 @@
+/**
+ * Document routes: register a Google Drive link, upload a photo to private R2,
+ * and stream a stored object back to an authorized employee.
+ */
+import { assertCan, can, type Actor } from "../auth/authz.ts";
+import {
+  DOCUMENT_TYPES,
+  attachDriveDocument,
+  readDocumentContent,
+  softDeleteDocument,
+  uploadPhoto,
+  type DocumentListRow,
+  type DocumentTarget,
+  type DocumentType,
+} from "../domain/documents.ts";
+import { badRequest } from "../platform/errors.ts";
+import { optionalField, readFields, readForm, requiredField, type Fields, type RequestContext } from "../api/context.ts";
+import { json, redirect } from "../api/responses.ts";
+import type { Router } from "../api/router.ts";
+import { securityHeaders } from "../ui/layout.ts";
+import { html, raw, type SafeHtml } from "../ui/html.ts";
+import { badge, empty, externalLink, formatDate } from "../ui/layout.ts";
+
+export function registerDocuments(router: Router): void {
+  router.post("/api/documents/drive", attachDriveRoute);
+  router.post("/api/documents/upload", uploadRoute);
+  router.get("/api/documents/:id/content", contentRoute);
+  router.post("/api/documents/:id/delete", deleteRoute);
+  router.delete("/api/documents/:id", deleteRoute);
+}
+
+function targetFromFields(fields: Fields): DocumentTarget {
+  return {
+    jobId: fields.job_id || null,
+    lotId: fields.lot_id || null,
+    homeId: fields.home_id || null,
+    assetId: fields.asset_id || null,
+    inspectionId: fields.inspection_id || null,
+    repairTicketId: fields.repair_ticket_id || null,
+    workTaskId: fields.work_task_id || null,
+    materialRequestId: fields.material_request_id || null,
+    defectId: fields.defect_id || null,
+  };
+}
+
+function safeRedirect(value: string | null | undefined, fallback: string): string {
+  // Only same-origin paths, so a crafted form cannot bounce a signed-in
+  // employee off to another site.
+  return value && value.startsWith("/") && !value.startsWith("//") ? value : fallback;
+}
+
+async function attachDriveRoute(ctx: RequestContext): Promise<Response> {
+  assertCan(ctx.actor, "document.upload");
+  const fields = await readFields(ctx.request);
+  const id = await attachDriveDocument(ctx.db, ctx.actor, {
+    documentType: (requiredField(fields, "document_type", "Document type") as DocumentType),
+    webViewUrl: requiredField(fields, "web_view_url", "Drive link"),
+    driveFileId: optionalField(fields, "drive_file_id"),
+    fileName: requiredField(fields, "file_name", "File name"),
+    caption: optionalField(fields, "caption"),
+    target: targetFromFields(fields),
+  });
+  if (isJson(ctx)) return json({ id }, 201);
+  return redirect(`${safeRedirect(fields.redirect_to, "/")}?ok=uploaded`);
+}
+
+async function uploadRoute(ctx: RequestContext): Promise<Response> {
+  assertCan(ctx.actor, "document.upload");
+  const form = await readForm(ctx.request);
+  const file = form.get("file");
+  if (!file || typeof file === "string") throw badRequest("Choose a photo to upload");
+
+  const fields: Fields = {};
+  for (const [key, value] of form.entries()) if (typeof value === "string") fields[key] = value;
+
+  const id = await uploadPhoto(ctx.db, ctx.store, ctx.actor.employeeId, {
+    documentType: ((fields.document_type as DocumentType) || "photo"),
+    fileName: file.name || "photo.jpg",
+    contentType: file.type || "application/octet-stream",
+    bytes: await file.arrayBuffer(),
+    caption: fields.caption ?? null,
+    target: targetFromFields(fields),
+  });
+
+  if (isJson(ctx)) return json({ id }, 201);
+  return redirect(`${safeRedirect(fields.redirect_to, "/")}?ok=uploaded`);
+}
+
+/**
+ * Serves a private R2 object. Authorization is re-checked here, not inherited
+ * from whatever page linked to it.
+ */
+async function contentRoute(ctx: RequestContext): Promise<Response> {
+  const { document, bytes } = await readDocumentContent(ctx.db, ctx.store, ctx.actor, ctx.params.id);
+  return new Response(bytes, {
+    headers: securityHeaders({
+      "Content-Type": document.content_type ?? "application/octet-stream",
+      // `attachment` for anything that is not an image: a stored HTML or SVG
+      // file must never render in the portal's origin.
+      "Content-Disposition": `${document.content_type?.startsWith("image/") ? "inline" : "attachment"}; filename="${document.file_name.replace(/"/g, "")}"`,
+      "Cache-Control": "private, no-store",
+    }),
+  });
+}
+
+async function deleteRoute(ctx: RequestContext): Promise<Response> {
+  const fields = ctx.request.method === "POST" ? await readFields(ctx.request) : {};
+  await softDeleteDocument(ctx.db, ctx.actor, ctx.params.id);
+  if (isJson(ctx) || ctx.request.method === "DELETE") return json({ ok: true });
+  return redirect(`${safeRedirect(fields.redirect_to, "/")}?ok=saved`);
+}
+
+function isJson(ctx: RequestContext): boolean {
+  const accept = ctx.request.headers.get("Accept") ?? "";
+  const contentType = ctx.request.headers.get("Content-Type") ?? "";
+  return contentType.includes("application/json") || (accept.includes("application/json") && !accept.includes("text/html"));
+}
+
+// ---------------------------------------------------------------------------
+// Shared UI fragments
+// ---------------------------------------------------------------------------
+
+export function documentList(documents: DocumentListRow[]): SafeHtml {
+  if (documents.length === 0) return empty("Nothing attached yet.");
+  return html`${documents.map(
+    (document) => html`<div class="card">
+      <div class="row">
+        <h3>${document.file_name}</h3>
+        ${badge(document.document_type, document.upload_status === "stored" ? "" : "warn")}
+      </div>
+      <div class="meta">${formatDate(document.created_at)} · ${document.uploaded_by_name} ·
+        ${document.storage_provider === "r2" ? "private storage" : "Google Drive"}</div>
+      ${document.caption ? html`<p>${document.caption}</p>` : ""}
+      ${document.storage_provider === "google_drive"
+        ? externalLink(document.external_url, "Open in Drive")
+        : html`<a href="/api/documents/${document.id}/content">Open file</a>`}
+    </div>`,
+  )}`;
+}
+
+export function documentTargetInputs(target: DocumentTarget): SafeHtml {
+  const entries: [string, string | null | undefined][] = [
+    ["job_id", target.jobId],
+    ["lot_id", target.lotId],
+    ["home_id", target.homeId],
+    ["asset_id", target.assetId],
+    ["inspection_id", target.inspectionId],
+    ["repair_ticket_id", target.repairTicketId],
+    ["work_task_id", target.workTaskId],
+    ["material_request_id", target.materialRequestId],
+    ["defect_id", target.defectId],
+  ];
+  return html`${entries
+    .filter(([, value]) => value)
+    .map(([name, value]) => html`<input type="hidden" name="${name}" value="${value as string}">`)}`;
+}
+
+/** The photo/document attach control, reused on every detail page. */
+export function uploadForm(actor: Actor, target: DocumentTarget, redirectTo: string): SafeHtml {
+  if (!can(actor, "document.upload")) return raw("");
+  return html`
+    <details class="card">
+      <summary><strong>Attach a photo or a Drive link</strong></summary>
+
+      <form method="post" action="/api/documents/upload" enctype="multipart/form-data">
+        ${documentTargetInputs(target)}
+        <input type="hidden" name="redirect_to" value="${redirectTo}">
+        <label for="file-${redirectTo}">Photo or PDF</label>
+        <input id="file-${redirectTo}" type="file" name="file" accept="image/*,application/pdf" capture="environment" required>
+        <label for="caption-${redirectTo}">Caption</label>
+        <input id="caption-${redirectTo}" name="caption">
+        <label for="doctype-${redirectTo}">Type</label>
+        <select id="doctype-${redirectTo}" name="document_type">
+          ${DOCUMENT_TYPES.map((value) => html`<option value="${value}" ${raw(value === "photo" ? "selected" : "")}>${value}</option>`)}
+        </select>
+        <div class="btn-row"><button type="submit">Upload</button></div>
+      </form>
+
+      <form method="post" action="/api/documents/drive">
+        ${documentTargetInputs(target)}
+        <input type="hidden" name="redirect_to" value="${redirectTo}">
+        <label for="drive-${redirectTo}">Google Drive link</label>
+        <input id="drive-${redirectTo}" name="web_view_url" inputmode="url" placeholder="https://drive.google.com/file/d/…">
+        <label for="drivename-${redirectTo}">File name</label>
+        <input id="drivename-${redirectTo}" name="file_name">
+        <label for="drivetype-${redirectTo}">Type</label>
+        <select id="drivetype-${redirectTo}" name="document_type">
+          ${DOCUMENT_TYPES.map((value) => html`<option value="${value}">${value}</option>`)}
+        </select>
+        <div class="btn-row"><button class="secondary" type="submit">Link Drive file</button></div>
+      </form>
+    </details>`;
+}
+
