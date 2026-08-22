@@ -19,15 +19,15 @@
     "PORTAL_ENVIRONMENT": "production",
     // Filled in when the Cloudflare Access application is created. Until both
     // are set the Worker refuses every request (fail closed).
-    "ACCESS_TEAM_DOMAIN": "",
-    "ACCESS_AUD": ""
+    "ACCESS_TEAM_DOMAIN": "summer-night-a430",
+    "ACCESS_AUD": "e9456b473d8025e42c5275b89e670ff570d932b28a4715cd154679da1c1aa738"
   },
 
   "d1_databases": [
     {
       "binding": "PORTAL_DB",
       "database_name": "hplacer-portal",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "database_id": "29f39df2-9c28-4c95-a87d-edb420c723ed",
       "migrations_dir": "migrations"
     }
   ],
