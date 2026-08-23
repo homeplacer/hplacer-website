@@ -286,6 +286,33 @@ describe("Monday link registry", () => {
     assert.ok(link);
   });
 
+  it("permits an equipment board configured to accept either VIN or serial", async () => {
+    await upsertBoard(harness.db, {
+      boardKey: "equipment",
+      mondayBoardId: "18009779855",
+      name: "Fleet & Equipment",
+      canonicalKeyKind: "vin",
+      matchMode: "vin_or_serial",
+    });
+    const serialLink = await linkEntity(harness.db, port, {
+      entityType: "asset",
+      entityId: "ast_ex1",
+      boardKey: "equipment",
+      mondayItemId: "3000000101",
+    });
+    assert.ok(serialLink, "a serial-only asset can link when the board explicitly allows either identifier");
+    await assert.rejects(
+      upsertBoard(harness.db, {
+        boardKey: "homes",
+        mondayBoardId: "1000000001",
+        name: "Homes",
+        canonicalKeyKind: "serial_number",
+        matchMode: "vin_or_serial",
+      }),
+      /Only the equipment board/,
+    );
+  });
+
   it("finds every record that shares a canonical key", async () => {
     const matches = await findByCanonicalKey(harness.db, "clt-2026-tn 903318x");
     assert.equal(matches.length, 1);

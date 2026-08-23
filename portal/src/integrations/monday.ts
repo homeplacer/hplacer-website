@@ -27,6 +27,9 @@ export const MONDAY_BOARD_KEYS = ["homes", "equipment", "jobs", "tasks", "repair
 export type MondayBoardKey = (typeof MONDAY_BOARD_KEYS)[number];
 
 export type CanonicalKeyKind = "serial_number" | "vin" | "asset_tag" | "job_number" | "ticket_number";
+/** How a board finds candidates. Individual links always retain their actual canonical key kind. */
+export type MondayBoardMatchMode = "canonical" | "vin_or_serial";
+export type DiscoveryKeyKind = CanonicalKeyKind | "vin_or_serial";
 
 export interface MondayBoardRow {
   board_key: string;
@@ -34,6 +37,7 @@ export interface MondayBoardRow {
   name: string;
   canonical_key_kind: string;
   active: number;
+  match_mode?: MondayBoardMatchMode;
 }
 
 export interface MondayLinkRow {
@@ -106,19 +110,39 @@ const KEY_KIND_BY_BOARD: Record<MondayBoardKey, CanonicalKeyKind[]> = {
 };
 
 export async function listBoards(db: Db): Promise<MondayBoardRow[]> {
-  const rows = await db.prepare("SELECT * FROM monday_boards ORDER BY board_key").all<MondayBoardRow>();
+  const rows = await db
+    .prepare(
+      `SELECT b.*, coalesce(m.match_mode, 'canonical') AS match_mode
+         FROM monday_boards b
+         LEFT JOIN monday_board_match_modes m ON m.board_key = b.board_key
+        ORDER BY b.board_key`,
+    )
+    .all<MondayBoardRow>();
   return rows.results;
 }
 
 export async function upsertBoard(
   db: Db,
-  input: { boardKey: MondayBoardKey; mondayBoardId: string; name: string; canonicalKeyKind: CanonicalKeyKind },
+  input: {
+    boardKey: MondayBoardKey;
+    mondayBoardId: string;
+    name: string;
+    canonicalKeyKind: CanonicalKeyKind;
+    matchMode?: MondayBoardMatchMode;
+  },
 ): Promise<void> {
   if (!(MONDAY_BOARD_KEYS as readonly string[]).includes(input.boardKey)) throw badRequest("Unknown board");
   if (!/^\d+$/.test(input.mondayBoardId.trim())) throw badRequest("A Monday board id is numeric");
   if (!KEY_KIND_BY_BOARD[input.boardKey].includes(input.canonicalKeyKind)) {
     const kinds = KEY_KIND_BY_BOARD[input.boardKey].map((kind) => kind.replace(/_/g, " ")).join(" or ");
     throw badRequest(`The ${input.boardKey} board must key on ${kinds}`);
+  }
+  const matchMode = input.matchMode ?? "canonical";
+  if (matchMode === "vin_or_serial" && input.boardKey !== "equipment") {
+    throw badRequest("Only the equipment board can match on VIN or serial number");
+  }
+  if (matchMode === "vin_or_serial" && !["vin", "serial_number"].includes(input.canonicalKeyKind)) {
+    throw badRequest("A VIN-or-serial equipment board must use VIN or serial number as its primary key");
   }
   await db
     .prepare(
@@ -129,6 +153,14 @@ export async function upsertBoard(
                                              canonical_key_kind = excluded.canonical_key_kind`,
     )
     .bind(input.boardKey, input.mondayBoardId.trim(), input.name.trim(), input.canonicalKeyKind, nowIso())
+    .run();
+  await db
+    .prepare(
+      `INSERT INTO monday_board_match_modes (board_key, match_mode, created_at, updated_at)
+       VALUES (?, ?, ?, ?)
+       ON CONFLICT (board_key) DO UPDATE SET match_mode = excluded.match_mode, updated_at = excluded.updated_at`,
+    )
+    .bind(input.boardKey, matchMode, nowIso(), nowIso())
     .run();
 }
 
@@ -205,13 +237,20 @@ export async function linkEntity(db: Db, port: MondaySyncPort, input: LinkInput)
   if (!/^\d+$/.test(itemId)) throw badRequest("A Monday item id is numeric");
 
   const board = await db
-    .prepare("SELECT * FROM monday_boards WHERE board_key = ? AND active = 1")
+    .prepare(
+      `SELECT b.*, coalesce(m.match_mode, 'canonical') AS match_mode
+         FROM monday_boards b LEFT JOIN monday_board_match_modes m ON m.board_key = b.board_key
+        WHERE b.board_key = ? AND b.active = 1`,
+    )
     .bind(input.boardKey)
     .first<MondayBoardRow>();
   if (!board) throw badRequest(`The ${input.boardKey} board has not been configured yet`);
 
   const { key, kind } = await canonicalKeyFor(db, input.entityType, input.entityId);
-  if (board.canonical_key_kind !== kind) {
+  const acceptsKind = board.match_mode === "vin_or_serial"
+    ? kind === "vin" || kind === "serial_number"
+    : board.canonical_key_kind === kind;
+  if (!acceptsKind) {
     throw conflict(`That board keys on ${board.canonical_key_kind.replace("_", " ")}, but this record's key is a ${kind.replace("_", " ")}`);
   }
 

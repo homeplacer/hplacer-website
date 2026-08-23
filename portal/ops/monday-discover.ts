@@ -31,7 +31,7 @@ import { newId, nowIso } from "../src/platform/ids.ts";
 import { createMondayClient, fetchBoardItems, type MondayItem } from "../src/integrations/monday-client.ts";
 import { keychainTokenSource } from "../src/integrations/monday-credentials.ts";
 import { buildPortalIndex, planImport, summarizePlan, type ImportPlan } from "../src/integrations/monday-discovery.ts";
-import { QueuedMondaySyncPort, linkEntity, type CanonicalKeyKind, type MondayBoardKey } from "../src/integrations/monday.ts";
+import { QueuedMondaySyncPort, linkEntity, type CanonicalKeyKind, type DiscoveryKeyKind, type MondayBoardKey, type MondayBoardMatchMode } from "../src/integrations/monday.ts";
 
 interface Options {
   board: MondayBoardKey;
@@ -104,9 +104,14 @@ async function main(): Promise<void> {
   const db = new SqliteDb(options.dbPath);
 
   const board = await db
-    .prepare("SELECT board_key, monday_board_id, name, canonical_key_kind, active FROM monday_boards WHERE board_key = ?")
+    .prepare(
+      `SELECT b.board_key, b.monday_board_id, b.name, b.canonical_key_kind, b.active,
+              coalesce(m.match_mode, 'canonical') AS match_mode
+         FROM monday_boards b LEFT JOIN monday_board_match_modes m ON m.board_key = b.board_key
+        WHERE b.board_key = ?`,
+    )
     .bind(options.board)
-    .first<{ board_key: MondayBoardKey; monday_board_id: string; name: string; canonical_key_kind: CanonicalKeyKind; active: number }>();
+    .first<{ board_key: MondayBoardKey; monday_board_id: string; name: string; canonical_key_kind: CanonicalKeyKind; match_mode: MondayBoardMatchMode; active: number }>();
 
   if (!board) {
     console.error(`The "${options.board}" board is not configured. Add it at /admin/monday in the portal first.`);
@@ -138,11 +143,12 @@ async function main(): Promise<void> {
     );
   }
 
-  const index = await buildPortalIndex(db, board.board_key, board.canonical_key_kind);
+  const discoveryKind: DiscoveryKeyKind = board.match_mode === "vin_or_serial" ? "vin_or_serial" : board.canonical_key_kind;
+  const index = await buildPortalIndex(db, board.board_key, discoveryKind);
   const plan = planImport(items, index, {
     boardKey: board.board_key,
     mondayBoardId: board.monday_board_id,
-    kind: board.canonical_key_kind,
+    kind: discoveryKind,
     preferColumns: options.keyColumns,
     columnTitles,
   });

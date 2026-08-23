@@ -237,4 +237,34 @@ describe("mapping Monday items to portal records", () => {
     assert.equal(plan.writable[0].entity_label, "PK-01");
     assert.equal(plan.unmatched, 1);
   });
+
+  it("matches a fleet board on either VIN or serial, without weakening ambiguity checks", async () => {
+    const index = await buildPortalIndex(harness.db, "equipment", "vin_or_serial");
+    const plan = planImport(
+      [
+        item("401", "Road truck", { identifier: "1FT8W2BT4PEC55011" }),
+        item("402", "Excavator", { identifier: "DR135G21008841" }),
+      ],
+      index,
+      { boardKey: "equipment", mondayBoardId: "18009779855", kind: "vin_or_serial", preferColumns: ["identifier"] },
+    );
+    assert.equal(plan.matched, 2);
+    assert.deepEqual(plan.writable.map((entry) => entry.entity_label).sort(), ["EX-01", "PK-01"]);
+  });
+
+  it("keeps a duplicated VIN-or-serial identifier fail-closed", async () => {
+    await harness.db
+      .prepare("UPDATE assets SET serial_number = ? WHERE id = ?")
+      .bind("1FVACWDT0LHLR2201", "ast_ex1")
+      .run();
+    const index = await buildPortalIndex(harness.db, "equipment", "vin_or_serial");
+    const plan = planImport([item("403", "Duplicate identifier", { identifier: "1FVACWDT0LHLR2201" })], index, {
+      boardKey: "equipment",
+      mondayBoardId: "18009779855",
+      kind: "vin_or_serial",
+      preferColumns: ["identifier"],
+    });
+    assert.equal(plan.ambiguous, 1);
+    assert.equal(plan.writable.length, 0);
+  });
 });
