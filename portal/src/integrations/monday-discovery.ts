@@ -15,7 +15,7 @@
  */
 import { canonicalKey } from "../platform/ids.ts";
 import type { Db } from "../platform/types.ts";
-import type { CanonicalKeyKind, DiscoveryKeyKind, MondayBoardKey, MondayEntityType } from "./monday.ts";
+import type { DiscoveryKeyKind, MondayBoardKey, MondayEntityType } from "./monday.ts";
 import type { MondayItem } from "./monday-client.ts";
 
 export interface PortalRecord {
