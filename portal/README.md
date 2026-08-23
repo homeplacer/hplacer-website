@@ -4,9 +4,10 @@ The employee portal lives at `portal.hplacer.com` as a **separate Cloudflare
 Worker** from the public website. It is deliberately isolated from the marketing
 site so employee data, documents, and field photos are never public assets.
 
-Nothing in this directory is deployed yet. See
-[Provisioning](#provisioning-what-still-has-to-be-created) for the exact list of
-Cloudflare resources, credentials, and settings a real deployment needs.
+The production portal is deployed at `https://portal.hplacer.com` and is
+protected by Cloudflare Access with Home Placer Google Workspace sign-in. The
+Worker has its own D1 database and private R2 photo bucket; it is separate from
+the public marketing site.
 
 ---
 
@@ -71,10 +72,9 @@ PORTAL_DEV_IDENTITY=tara@hplacer.com npm run portal:dev
 curl -H 'X-Portal-Dev-Identity: dale@hplacer.com' http://127.0.0.1:8788/
 ```
 
-The demo staff are `ops@` (admin), `brandon@`, `joe@`, `tara@`, `greg@`, `brett@`
-(supervisors; Tara also holds the billing role), and `dale@`, `marcus@`, `wes@`,
-`nina@` (field crew). Signing in as `tara@` shows the billing queue; as `dale@`,
-the same URL returns 403.
+The local seed has fictional staff solely for development. It is never applied
+to production. Production access is controlled by the active employee records
+and verified Google Workspace identities.
 
 Other commands:
 
