@@ -56,16 +56,36 @@ export interface AssetSummary extends AssetRow {
   assigned_to_name: string | null;
   open_defect_count: number;
   last_inspected_at: string | null;
+  verification_status: AssetVerificationStatus | null;
+  source_notes: string | null;
+}
+
+export const ASSET_VERIFICATION_STATUSES = ["verified", "needs_serial", "needs_model", "needs_owner", "needs_vin", "unassigned"] as const;
+export type AssetVerificationStatus = (typeof ASSET_VERIFICATION_STATUSES)[number];
+
+export interface AssetSourceMetadata {
+  asset_id: string;
+  source_file: string;
+  source_reference: string;
+  source_notes: string | null;
+  verification_status: AssetVerificationStatus;
+  imported_at: string;
+  updated_at: string;
+  resolution_notes: string | null;
+  resolved_by: string | null;
+  resolved_by_name: string | null;
+  resolved_at: string | null;
 }
 
 export async function listAssets(db: Db, options: { type?: string; status?: string; search?: string } = {}): Promise<AssetSummary[]> {
   const rows = await db
     .prepare(
-      `SELECT a.*, e.display_name AS assigned_to_name,
+      `SELECT a.*, e.display_name AS assigned_to_name, asm.verification_status, asm.source_notes,
               (SELECT count(*) FROM defects d WHERE d.asset_id = a.id AND d.status = 'open') AS open_defect_count,
               (SELECT max(performed_at) FROM inspections i WHERE i.asset_id = a.id) AS last_inspected_at
          FROM assets a
          LEFT JOIN employees e ON e.id = a.assigned_to
+         LEFT JOIN asset_source_metadata asm ON asm.asset_id = a.id
         WHERE (?1 IS NULL OR a.asset_type = ?1)
           AND (?2 IS NULL OR a.status = ?2)
           AND (?3 IS NULL OR a.asset_tag LIKE ?3 OR ifnull(a.serial_number, '') LIKE ?3
@@ -75,6 +95,81 @@ export async function listAssets(db: Db, options: { type?: string; status?: stri
     .bind(options.type ?? null, options.status ?? null, options.search ? `%${options.search.toUpperCase()}%` : null)
     .all<AssetSummary>();
   return rows.results;
+}
+
+export async function assetSourceMetadata(db: Db, assetId: string): Promise<AssetSourceMetadata | null> {
+  return db
+    .prepare(
+      `SELECT asm.*, e.display_name AS resolved_by_name
+         FROM asset_source_metadata asm
+         LEFT JOIN employees e ON e.id = asm.resolved_by
+        WHERE asm.asset_id = ?`,
+    )
+    .bind(assetId)
+    .first<AssetSourceMetadata>();
+}
+
+export interface ResolveAssetVerificationInput {
+  assetId: string;
+  serialNumber?: string | null;
+  vin?: string | null;
+  model?: string | null;
+  assignedTo?: string | null;
+  resolutionNotes?: string | null;
+  resolvedBy: string;
+}
+
+/**
+ * Clear a fleet-register verification flag only after recording what was
+ * checked. The original source note remains immutable for later audit.
+ */
+export async function resolveAssetVerification(db: Db, input: ResolveAssetVerificationInput): Promise<void> {
+  const metadata = await assetSourceMetadata(db, input.assetId);
+  if (!metadata) throw notFound("This equipment record has no imported-source verification flag");
+  if (metadata.verification_status === "verified") throw badRequest("This equipment record is already verified");
+
+  const serial = input.serialNumber?.trim() ? canonicalKey(input.serialNumber) : null;
+  const vin = input.vin?.trim() ? canonicalKey(input.vin) : null;
+  const model = input.model?.trim() || null;
+  const notes = input.resolutionNotes?.trim() || null;
+  if (metadata.verification_status === "needs_serial" && !serial) throw badRequest("Enter the confirmed serial number before clearing this flag");
+  if (metadata.verification_status === "needs_vin" && !vin) throw badRequest("Enter the confirmed VIN before clearing this flag");
+  if (vin && vin.length !== 17) throw badRequest("A VIN is 17 characters");
+  if (!notes) throw badRequest("Record how this source question was resolved");
+
+  const asset = await requireAsset(db, input.assetId);
+  const duplicate = await db
+    .prepare(
+      `SELECT asset_tag FROM assets
+        WHERE id <> ?1
+          AND ((?2 IS NOT NULL AND serial_number = ?2) OR (?3 IS NOT NULL AND vin = ?3))`,
+    )
+    .bind(asset.id, serial, vin)
+    .first<{ asset_tag: string }>();
+  if (duplicate) throw conflict(`${duplicate.asset_tag} already uses that serial number or VIN`);
+
+  const timestamp = nowIso();
+  await db
+    .prepare(
+      `UPDATE assets
+          SET serial_number = coalesce(?1, serial_number),
+              vin = coalesce(?2, vin),
+              model = coalesce(?3, model),
+              assigned_to = ?4,
+              updated_at = ?5
+        WHERE id = ?6`,
+    )
+    .bind(serial, vin, model, input.assignedTo, timestamp, asset.id)
+    .run();
+  await db
+    .prepare(
+      `UPDATE asset_source_metadata
+          SET verification_status = 'verified', resolution_notes = ?1,
+              resolved_by = ?2, resolved_at = ?3, updated_at = ?3
+        WHERE asset_id = ?4`,
+    )
+    .bind(notes, input.resolvedBy, timestamp, asset.id)
+    .run();
 }
 
 export async function getAsset(db: Db, idOrTag: string): Promise<AssetRow | null> {

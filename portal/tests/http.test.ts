@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { after, before, beforeEach, describe, it } from "node:test";
+import { after, afterEach, before, beforeEach, describe, it } from "node:test";
 import { handleRequest } from "../src/app.ts";
 import { recentAudit } from "../src/domain/audit.ts";
 import { createHarness, form, identityFor, jsonBody, type Harness } from "./harness.ts";
@@ -120,6 +120,70 @@ describe("authorization through HTTP", () => {
     assert.ok(denied);
     assert.equal(denied?.actor_email, "greg@hplacer.com");
     assert.match(denied?.detail ?? "", /^403/);
+  });
+});
+
+describe("fleet-source verification", () => {
+  let harness: Harness;
+
+  beforeEach(async () => {
+    harness = await createHarness();
+    await harness.db
+      .prepare(
+        `INSERT INTO asset_source_metadata
+           (asset_id, source_file, source_reference, source_notes, verification_status)
+         VALUES ('ast_ex1', 'HP_Fleet_Equipment_List_082126.xlsx', 'Row 5', 'Serial number was blank in the source register.', 'needs_serial')`,
+      )
+      .run();
+  });
+
+  afterEach(() => harness.close());
+
+  it("shows the imported-source flag through the UI and API", async () => {
+    const detail = await (await harness.request("/equipment/EX-01", { as: "dale@hplacer.com" })).text();
+    assert.match(detail, /Fleet record verification/);
+    assert.match(detail, /needs serial/);
+    assert.match(detail, /supervisor or admin must review/i);
+
+    const response = await harness.request("/api/equipment/EX-01/source-verification", { as: "dale@hplacer.com" });
+    assert.equal(response.status, 200);
+    const body = (await response.json()) as { sourceMetadata: { verification_status: string; source_reference: string } };
+    assert.equal(body.sourceMetadata.verification_status, "needs_serial");
+    assert.equal(body.sourceMetadata.source_reference, "Row 5");
+  });
+
+  it("only lets a supervisor clear a flag, retaining the source note and audit trail", async () => {
+    const denied = await harness.request("/api/equipment/EX-01/source-verification", {
+      as: "dale@hplacer.com",
+      ...form({ serial_number: "DR135G21008841", resolution_notes: "Confirmed on the machine data plate." }),
+    });
+    assert.equal(denied.status, 403);
+
+    const resolved = await harness.request("/api/equipment/EX-01/source-verification", {
+      as: "greg@hplacer.com",
+      ...form({ serial_number: "DR135G21008841", model: "135G", resolution_notes: "Confirmed on the machine data plate." }),
+    });
+    assert.equal(resolved.status, 303);
+    assert.equal(resolved.headers.get("Location"), "/equipment/EX-01?ok=source_verified");
+
+    const metadata = await harness.db
+      .prepare("SELECT verification_status, source_notes, resolution_notes, resolved_by FROM asset_source_metadata WHERE asset_id = 'ast_ex1'")
+      .first<{ verification_status: string; source_notes: string; resolution_notes: string; resolved_by: string }>();
+    assert.deepEqual({ ...metadata }, {
+      verification_status: "verified",
+      source_notes: "Serial number was blank in the source register.",
+      resolution_notes: "Confirmed on the machine data plate.",
+      resolved_by: "emp_greg",
+    });
+  });
+
+  it("does not allow a missing serial flag to be cleared without the serial", async () => {
+    const response = await harness.request("/api/equipment/EX-01/source-verification", {
+      as: "greg@hplacer.com",
+      ...form({ resolution_notes: "Looked at it." }),
+    });
+    assert.equal(response.status, 400);
+    assert.match(await response.text(), /confirmed serial number/i);
   });
 });
 
