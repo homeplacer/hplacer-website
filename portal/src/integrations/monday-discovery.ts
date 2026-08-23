@@ -15,7 +15,7 @@
  */
 import { canonicalKey } from "../platform/ids.ts";
 import type { Db } from "../platform/types.ts";
-import type { CanonicalKeyKind, MondayBoardKey, MondayEntityType } from "./monday.ts";
+import type { CanonicalKeyKind, DiscoveryKeyKind, MondayBoardKey, MondayEntityType } from "./monday.ts";
 import type { MondayItem } from "./monday-client.ts";
 
 export interface PortalRecord {
@@ -26,7 +26,7 @@ export interface PortalRecord {
 }
 
 export interface PortalIndex {
-  kind: CanonicalKeyKind;
+  kind: DiscoveryKeyKind;
   byKey: Map<string, PortalRecord[]>;
   /** entityId → the Monday item it is already linked to. */
   linkedEntity: Map<string, { mondayItemId: string; syncState: string }>;
@@ -43,7 +43,7 @@ const ENTITY_FOR_BOARD: Record<MondayBoardKey, MondayEntityType> = {
 };
 
 /** Loads every portal record a board could correspond to, keyed canonically. */
-export async function buildPortalIndex(db: Db, boardKey: MondayBoardKey, kind: CanonicalKeyKind): Promise<PortalIndex> {
+export async function buildPortalIndex(db: Db, boardKey: MondayBoardKey, kind: DiscoveryKeyKind): Promise<PortalIndex> {
   const entityType = ENTITY_FOR_BOARD[boardKey];
   const byKey = new Map<string, PortalRecord[]>();
 
@@ -64,9 +64,17 @@ export async function buildPortalIndex(db: Db, boardKey: MondayBoardKey, kind: C
       .prepare("SELECT id, asset_tag, serial_number, vin FROM assets")
       .all<{ id: string; asset_tag: string; serial_number: string | null; vin: string | null }>();
     for (const row of rows.results) {
-      const value = kind === "vin" ? row.vin : kind === "serial_number" ? row.serial_number : row.asset_tag;
-      if (!value) continue;
-      add({ entityType, entityId: row.id, canonicalKey: canonicalKey(value), label: row.asset_tag });
+      const values = kind === "vin"
+        ? [row.vin]
+        : kind === "serial_number"
+          ? [row.serial_number]
+          : kind === "vin_or_serial"
+            ? [row.vin, row.serial_number]
+            : [row.asset_tag];
+      for (const value of values) {
+        if (!value) continue;
+        add({ entityType, entityId: row.id, canonicalKey: canonicalKey(value), label: row.asset_tag });
+      }
     }
   } else if (entityType === "job") {
     const rows = await db.prepare("SELECT id, job_number, title FROM jobs").all<{ id: string; job_number: string; title: string }>();
@@ -128,7 +136,7 @@ export interface KeyExtraction {
  */
 export function extractCandidateKeys(
   item: MondayItem,
-  kind: CanonicalKeyKind,
+  kind: DiscoveryKeyKind,
   options: { preferColumns?: string[]; columnTitles?: Map<string, string> } = {},
 ): KeyExtraction[] {
   const prefer = new Set((options.preferColumns ?? []).map((value) => value.trim().toLowerCase()).filter(Boolean));
@@ -146,29 +154,32 @@ export function extractCandidateKeys(
   // With an explicit column, only that column is trusted.
   const scanned = prefer.size > 0 ? fields.filter((field) => prefer.has(field.source.slice("column:".length).toLowerCase())) : fields;
 
-  const pattern =
-    kind === "vin" ? VIN_PATTERN
-    : kind === "asset_tag" ? ASSET_TAG_PATTERN
-    : kind === "job_number" ? JOB_NUMBER_PATTERN
-    : kind === "ticket_number" ? TICKET_PATTERN
-    : SERIAL_PATTERN;
+  const patterns = kind === "vin_or_serial"
+    ? [VIN_PATTERN, SERIAL_PATTERN]
+    : [kind === "vin" ? VIN_PATTERN
+      : kind === "asset_tag" ? ASSET_TAG_PATTERN
+      : kind === "job_number" ? JOB_NUMBER_PATTERN
+      : kind === "ticket_number" ? TICKET_PATTERN
+      : SERIAL_PATTERN];
 
   const seen = new Set<string>();
   const out: KeyExtraction[] = [];
   for (const field of scanned) {
     const text = field.text.toUpperCase();
-    pattern.lastIndex = 0;
-    for (const found of text.matchAll(pattern)) {
-      const key = canonicalKey(found[0]);
-      if (!key || key.length < minimumLength(kind) || seen.has(key)) continue;
-      seen.add(key);
-      out.push({ key, source: field.source });
+    for (const pattern of patterns) {
+      pattern.lastIndex = 0;
+      for (const found of text.matchAll(pattern)) {
+        const key = canonicalKey(found[0]);
+        if (!key || key.length < minimumLength(kind === "vin_or_serial" && key.length === 17 ? "vin" : kind) || seen.has(key)) continue;
+        seen.add(key);
+        out.push({ key, source: field.source });
+      }
     }
   }
   return out;
 }
 
-function minimumLength(kind: CanonicalKeyKind): number {
+function minimumLength(kind: DiscoveryKeyKind): number {
   switch (kind) {
     case "vin":
       return 17;
@@ -178,6 +189,8 @@ function minimumLength(kind: CanonicalKeyKind): number {
       return 5;
     case "ticket_number":
       return 8;
+    case "vin_or_serial":
+      return 6;
     default:
       return 6;
   }
@@ -204,7 +217,7 @@ export interface ItemPlan {
 export interface ImportPlan {
   board_key: MondayBoardKey;
   monday_board_id: string;
-  canonical_key_kind: CanonicalKeyKind;
+  canonical_key_kind: DiscoveryKeyKind;
   items_seen: number;
   matched: number;
   already_linked: number;
@@ -219,7 +232,7 @@ export interface ImportPlan {
 export interface PlanOptions {
   boardKey: MondayBoardKey;
   mondayBoardId: string;
-  kind: CanonicalKeyKind;
+  kind: DiscoveryKeyKind;
   preferColumns?: string[];
   columnTitles?: Map<string, string>;
 }

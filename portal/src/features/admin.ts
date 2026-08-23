@@ -16,6 +16,7 @@ import {
   pendingSyncQueue,
   upsertBoard,
   type CanonicalKeyKind,
+  type MondayBoardMatchMode,
   type MondayBoardKey,
   type MondayEntityType,
 } from "../integrations/monday.ts";
@@ -241,7 +242,7 @@ async function renderMonday(ctx: RequestContext): Promise<Response> {
     ${boards.map(
       (board) => html`<div class="card">
         <div class="row"><h3>${board.name}</h3>${badge(board.board_key)}</div>
-        <div class="meta">Board ${board.monday_board_id} · keyed on ${board.canonical_key_kind.replace(/_/g, " ")}</div>
+        <div class="meta">Board ${board.monday_board_id} · keyed on ${board.match_mode === "vin_or_serial" ? "VIN or serial number" : board.canonical_key_kind.replace(/_/g, " ")}</div>
       </div>`,
     )}
 
@@ -255,6 +256,11 @@ async function renderMonday(ctx: RequestContext): Promise<Response> {
       <label for="canonical_key_kind">Keyed on</label>
       <select id="canonical_key_kind" name="canonical_key_kind">
         ${KEY_KINDS.map((value) => html`<option value="${value}">${value.replace(/_/g, " ")}</option>`)}
+      </select>
+      <label for="match_mode">Equipment matching</label>
+      <select id="match_mode" name="match_mode">
+        <option value="canonical">Use the selected key only</option>
+        <option value="vin_or_serial">For equipment: VIN or serial number</option>
       </select>
       <div class="btn-row"><button type="submit">Save board</button></div>
     </form>
@@ -382,6 +388,7 @@ async function upsertBoardRoute(ctx: RequestContext): Promise<Response> {
     mondayBoardId: requiredField(fields, "monday_board_id", "Board id"),
     name: requiredField(fields, "name", "Label"),
     canonicalKeyKind: requiredField(fields, "canonical_key_kind", "Key kind") as CanonicalKeyKind,
+    matchMode: (optionalField(fields, "match_mode") ?? "canonical") as MondayBoardMatchMode,
   });
   return wantsJson(ctx) ? json({ ok: true }) : redirect("/admin/monday?ok=saved");
 }
