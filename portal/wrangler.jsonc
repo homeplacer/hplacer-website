@@ -1,8 +1,8 @@
 {
-  // Home Placer employee portal — a SEPARATE Cloudflare Worker from the public
-  // hplacer.com site (see ../wrangler.jsonc). Nothing here is provisioned yet:
-  // the ids below are placeholders and `npm run portal:deploy` is intentionally
-  // absent. See portal/README.md for the full provisioning checklist.
+  // Home Placer employee portal — a SEPARATE production Worker from the public
+  // hplacer.com site (see ../wrangler.jsonc). Its D1, R2, route, and Access
+  // identifiers below are live production bindings. See portal/README.md for
+  // the operational model and local-development commands.
   "$schema": "../node_modules/wrangler/config-schema.json",
   "name": "hplacer-portal",
   "main": "src/worker.ts",
