@@ -3,6 +3,7 @@ import { assertCan, can } from "../auth/authz.ts";
 import {
   ASSET_TYPES,
   ASSET_TYPE_LABELS,
+  assetSourceMetadata,
   assetCanonicalKey,
   createAsset,
   createServiceSchedule,
@@ -11,12 +12,14 @@ import {
   listServiceRecords,
   recordService,
   requireAsset,
+  resolveAssetVerification,
   serviceSchedulesFor,
   setAssetStatus,
   type AssetType,
 } from "../domain/assets.ts";
 import { listDefects } from "../domain/defects.ts";
 import { listDocuments } from "../domain/documents.ts";
+import { listEmployees } from "../domain/employees.ts";
 import {
   getInspection,
   listInspections,
@@ -54,6 +57,7 @@ export function registerEquipment(router: Router): void {
   router.post("/api/equipment/:tag/status", setStatusRoute);
   router.post("/api/equipment/:tag/service", recordServiceRoute);
   router.post("/api/equipment/:tag/schedules", createScheduleRoute);
+  router.post("/api/equipment/:tag/source-verification", resolveSourceVerificationRoute);
   router.post("/api/inspections", submitInspectionRoute);
 
   router.get("/api/equipment", async (ctx) => {
@@ -64,6 +68,11 @@ export function registerEquipment(router: Router): void {
       search: ctx.url.searchParams.get("q") ?? undefined,
     });
     return json({ assets });
+  });
+  router.get("/api/equipment/:tag/source-verification", async (ctx) => {
+    assertCan(ctx.actor, "asset.read");
+    const asset = await requireAsset(ctx.db, ctx.params.tag);
+    return json({ sourceMetadata: await assetSourceMetadata(ctx.db, asset.id) });
   });
 }
 
@@ -112,6 +121,7 @@ async function renderList(ctx: RequestContext): Promise<Response> {
               ${asset.open_defect_count > 0 ? ` · ${asset.open_defect_count} open defect${asset.open_defect_count === 1 ? "" : "s"}` : ""}
               · last checked ${formatDate(asset.last_inspected_at)}
             </div>
+            ${asset.verification_status && asset.verification_status !== "verified" ? html`<p>${badge("needs source verification", "warn")}</p>` : ""}
           </a>`,
         )}
 
@@ -130,6 +140,8 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
   const services = await listServiceRecords(ctx.db, asset.id, 10);
   const documents = await listDocuments(ctx.db, { assetId: asset.id });
   const link = await getLink(ctx.db, "asset", asset.id);
+  const sourceMetadata = await assetSourceMetadata(ctx.db, asset.id);
+  const employees = sourceMetadata && can(ctx.actor, "asset.write") ? await listEmployees(ctx.db) : [];
 
   const body = html`
     <h1>${asset.asset_tag}</h1>
@@ -159,6 +171,37 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
         <a class="btn secondary" href="/repairs/new?assetId=${asset.id}">Report a repair</a>
       </div>
     </div>
+
+    ${sourceMetadata
+      ? html`<h2>Fleet record verification</h2>
+          <div class="card">
+            <div class="row"><h3>Imported from ${sourceMetadata.source_file}</h3>
+              ${badge(sourceMetadata.verification_status, sourceMetadata.verification_status === "verified" ? "ok" : "warn")}</div>
+            <p class="meta">Source row: ${sourceMetadata.source_reference} · imported ${formatDate(sourceMetadata.imported_at)}</p>
+            ${sourceMetadata.source_notes ? html`<p>${sourceMetadata.source_notes}</p>` : ""}
+            ${sourceMetadata.verification_status === "verified"
+              ? html`<p class="meta">Resolved ${formatDate(sourceMetadata.resolved_at)}${sourceMetadata.resolved_by_name ? ` by ${sourceMetadata.resolved_by_name}` : ""}${sourceMetadata.resolution_notes ? ` · ${sourceMetadata.resolution_notes}` : ""}</p>`
+              : can(ctx.actor, "asset.write")
+                ? html`<form method="post" action="/api/equipment/${asset.asset_tag}/source-verification">
+                    <p class="meta">Confirm the record below, then document what you checked. The original import note stays on file.</p>
+                    <label for="serial_number">Confirmed serial number</label>
+                    <input id="serial_number" name="serial_number" value="${asset.serial_number ?? ""}">
+                    <label for="vin">Confirmed VIN</label>
+                    <input id="vin" name="vin" value="${asset.vin ?? ""}">
+                    <label for="model">Confirmed model</label>
+                    <input id="model" name="model" value="${asset.model ?? ""}">
+                    <label for="assigned_to">Assigned operator (if now known)</label>
+                    <select id="assigned_to" name="assigned_to">
+                      <option value="">Not assigned</option>
+                      ${employees.map((person) => html`<option value="${person.id}" ${raw(person.id === asset.assigned_to ? "selected" : "")}>${person.display_name}</option>`)}
+                    </select>
+                    <label for="resolution_notes">How was this verified?</label>
+                    <textarea id="resolution_notes" name="resolution_notes" required placeholder="Example: VIN confirmed from registration on 2026-08-23."></textarea>
+                    <div class="btn-row"><button type="submit">Mark verified</button></div>
+                  </form>`
+                : html`<p class="meta">A supervisor or admin must review this imported-source flag.</p>`}
+          </div>`
+      : ""}
 
     ${defects.length > 0
       ? html`<h2>Open defects</h2>
@@ -290,6 +333,22 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
     back: { href: "/equipment", label: "Equipment" },
     flash: flashFrom(ctx.url),
   });
+}
+
+async function resolveSourceVerificationRoute(ctx: RequestContext): Promise<Response> {
+  assertCan(ctx.actor, "asset.write");
+  const asset = await requireAsset(ctx.db, ctx.params.tag);
+  const fields = await readFields(ctx.request);
+  await resolveAssetVerification(ctx.db, {
+    assetId: asset.id,
+    serialNumber: optionalField(fields, "serial_number"),
+    vin: optionalField(fields, "vin"),
+    model: optionalField(fields, "model"),
+    assignedTo: optionalField(fields, "assigned_to"),
+    resolutionNotes: requiredField(fields, "resolution_notes", "Verification note"),
+    resolvedBy: ctx.actor.employeeId,
+  });
+  return wantsJson(ctx) ? json({ ok: true }) : redirect(`/equipment/${asset.asset_tag}?ok=source_verified`);
 }
 
 async function renderInspectionForm(ctx: RequestContext): Promise<Response> {
@@ -589,4 +648,3 @@ export function wantsJson(ctx: RequestContext): boolean {
   const contentType = ctx.request.headers.get("Content-Type") ?? "";
   return contentType.includes("application/json") || (accept.includes("application/json") && !accept.includes("text/html"));
 }
-
