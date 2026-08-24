@@ -10,8 +10,11 @@ import {
   homeRepairHistory,
   homeReportTemplateKey,
   homeReports,
+  homeIdentityLabel,
   listHomes,
+  missingHomeIdentity,
   requireHome,
+  updateHomeIdentity,
   updateSiteAddress,
 } from "../domain/homes.ts";
 import { getJob, listJobs, listLots } from "../domain/jobs.ts";
@@ -57,6 +60,7 @@ export function registerHomes(router: Router): void {
   router.post("/api/homes", createHomeRoute);
   router.post("/api/homes/:id/lot", assignLotRoute);
   router.post("/api/homes/:id/site-address", updateSiteAddressRoute);
+  router.post("/api/homes/:id/identity", updateHomeIdentityRoute);
   router.post("/api/homes/:id/workflow/delivery-date", saveDeliveryDateRoute);
   router.post("/api/homes/:id/workflow/:key", saveWorkflowItemRoute);
 
@@ -99,10 +103,11 @@ async function renderList(ctx: RequestContext): Promise<Response> {
       ? empty("No homes match that.")
       : homes.map(
           (home) => html`<a class="card" href="/homes/${home.id}">
-            <div class="row"><h3>${home.serial_number}</h3>${badge(home.status, home.status === "complete" ? "ok" : "")}</div>
+            <div class="row"><h3>${homeIdentityLabel(home)}</h3>${home.identity_incomplete === 1 ? badge("identity incomplete", "warn") : badge(home.status, home.status === "complete" ? "ok" : "")}</div>
             <div class="meta">${home.manufacturer ?? ""} ${home.model ?? ""}
               ${home.job_number ? ` · ${home.job_number}` : ""}${home.lot_number ? ` lot ${home.lot_number}` : ""}
               ${home.open_repair_count > 0 ? ` · ${home.open_repair_count} open repair(s)` : ""}</div>
+            ${home.identity_incomplete === 1 ? html`<div class="notice bad">Missing: ${missingHomeIdentity(home).join(", ")}</div>` : ""}
             ${formatSiteAddress(home) ? html`<div class="meta">${formatSiteAddress(home)}</div>` : ""}
           </a>`,
         )}
@@ -132,7 +137,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
     .reduce((sum, repair) => sum + (repair.bill_back_amount_cents ?? 0), 0);
 
   const body = html`
-    <h1>${home.serial_number}</h1>
+    <h1>${homeIdentityLabel(home)}</h1>
     <p class="lede">${home.manufacturer ?? ""} ${home.model ?? ""} ${home.model_year ?? ""}</p>
 
     <div class="card">
@@ -152,6 +157,21 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
         ["Monday item", link ? `${link.monday_item_id} (${link.sync_state})` : "not linked"],
       ])}
     </div>
+
+    ${home.identity_incomplete === 1 ? html`<div class="notice bad"><strong>Identity incomplete.</strong> Missing: ${missingHomeIdentity(home).join(", ")}.</div>` : ""}
+    ${can(ctx.actor, "home.write") ? html`<details class="card" ${raw(home.identity_incomplete === 1 ? "open" : "")}>
+      <summary><strong>Edit home identity</strong></summary>
+      <form method="post" action="/api/homes/${home.id}/identity">
+        <label for="identity_serial">Serial number</label><input id="identity_serial" name="serial_number" value="${home.identity_incomplete === 1 && home.serial_number.startsWith("PENDING-") ? "" : home.serial_number}" autocapitalize="characters">
+        <label for="identity_make">Make</label><input id="identity_make" name="manufacturer" value="${home.manufacturer ?? ""}">
+        <label for="identity_model">Model</label><input id="identity_model" name="model" value="${home.model ?? ""}">
+        <label for="identity_year">Year</label><input id="identity_year" name="model_year" inputmode="numeric" value="${home.model_year ?? ""}">
+        <label for="identity_sections">Section count</label><input id="identity_sections" name="section_count" inputmode="numeric" value="${home.section_count ?? ""}">
+        <label for="identity_hud">HUD plate numbers</label><input id="identity_hud" name="hud_label_numbers" value="${home.hud_label_numbers ?? ""}">
+        <div class="btn-row"><button type="submit">Save home identity</button></div>
+        <p class="meta">Unknown fields may remain blank. A supplied serial must be unique.</p>
+      </form>
+    </details>` : ""}
 
     <h2>Home workflow</h2>
     <p class="lede">Shared plans and an ordered checklist for this home. Actual delivery, setup, and inspection dates remain in the filed reports below.</p>
@@ -300,7 +320,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
   `;
 
   return page(body, {
-    title: home.serial_number,
+    title: homeIdentityLabel(home),
     actor: ctx.actor,
     section: "/homes",
     back: { href: "/homes", label: "Homes" },
@@ -436,8 +456,9 @@ async function renderNewHome(ctx: RequestContext): Promise<Response> {
   const body = html`
     <h1>Add a home</h1>
     <form method="post" action="/api/homes">
-      <label for="serial_number">Serial number (from the data plate)</label>
-      <input id="serial_number" name="serial_number" required autocapitalize="characters">
+      <p class="notice">Identity details may be left blank and completed later from the home record.</p>
+      <label for="serial_number">Serial number (optional)</label>
+      <input id="serial_number" name="serial_number" autocapitalize="characters">
       <label for="manufacturer">Make</label>
       <input id="manufacturer" name="manufacturer">
       <label for="model">Model</label>
@@ -475,7 +496,7 @@ async function createHomeRoute(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "home.write");
   const fields = await readFields(ctx.request);
   const id = await createHome(ctx.db, {
-    serialNumber: requiredField(fields, "serial_number", "Serial number"),
+    serialNumber: optionalField(fields, "serial_number"),
     manufacturer: optionalField(fields, "manufacturer"),
     model: optionalField(fields, "model"),
     modelYear: numberField(fields, "model_year", "Year"),
@@ -492,6 +513,20 @@ async function createHomeRoute(ctx: RequestContext): Promise<Response> {
     },
   });
   return wantsJson(ctx) ? json({ id }, 201) : redirect(`/homes/${id}?ok=saved`);
+}
+
+async function updateHomeIdentityRoute(ctx: RequestContext): Promise<Response> {
+  assertCan(ctx.actor, "home.write");
+  const fields = await readFields(ctx.request);
+  await updateHomeIdentity(ctx.db, ctx.params.id, {
+    serialNumber: optionalField(fields, "serial_number"),
+    manufacturer: optionalField(fields, "manufacturer"),
+    model: optionalField(fields, "model"),
+    modelYear: numberField(fields, "model_year", "Year"),
+    sectionCount: numberField(fields, "section_count", "Section count"),
+    hudLabelNumbers: optionalField(fields, "hud_label_numbers"),
+  });
+  return wantsJson(ctx) ? json({ ok: true }) : redirect(`/homes/${ctx.params.id}?ok=saved`);
 }
 
 async function assignLotRoute(ctx: RequestContext): Promise<Response> {

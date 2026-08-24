@@ -58,6 +58,7 @@ export interface AssetSummary extends AssetRow {
   last_inspected_at: string | null;
   verification_status: AssetVerificationStatus | null;
   source_notes: string | null;
+  primary_photo_id: string | null;
 }
 
 export const ASSET_VERIFICATION_STATUSES = ["verified", "needs_serial", "needs_model", "needs_owner", "needs_vin", "unassigned"] as const;
@@ -77,10 +78,12 @@ export interface AssetSourceMetadata {
   resolved_at: string | null;
 }
 
-export async function listAssets(db: Db, options: { type?: string; status?: string; search?: string } = {}): Promise<AssetSummary[]> {
+export async function listAssets(db: Db, options: { type?: string; status?: string; search?: string; verification?: "main" | "review" | "all" } = {}): Promise<AssetSummary[]> {
   const rows = await db
     .prepare(
       `SELECT a.*, e.display_name AS assigned_to_name, asm.verification_status, asm.source_notes,
+              (SELECT d.id FROM documents d WHERE d.asset_id = a.id AND d.caption = 'Equipment photo'
+                AND d.upload_status = 'stored' ORDER BY d.created_at DESC LIMIT 1) AS primary_photo_id,
               (SELECT count(*) FROM defects d WHERE d.asset_id = a.id AND d.status = 'open') AS open_defect_count,
               (SELECT max(performed_at) FROM inspections i WHERE i.asset_id = a.id) AS last_inspected_at
          FROM assets a
@@ -90,9 +93,12 @@ export async function listAssets(db: Db, options: { type?: string; status?: stri
           AND (?2 IS NULL OR a.status = ?2)
           AND (?3 IS NULL OR a.asset_tag LIKE ?3 OR ifnull(a.serial_number, '') LIKE ?3
                OR ifnull(a.vin, '') LIKE ?3 OR ifnull(a.model, '') LIKE ?3)
+          AND (?4 = 'all'
+            OR (?4 = 'main' AND a.status <> 'retired' AND (asm.verification_status = 'verified' OR asm.asset_id IS NULL))
+            OR (?4 = 'review' AND asm.verification_status IS NOT NULL AND asm.verification_status <> 'verified'))
         ORDER BY a.asset_type, a.asset_tag`,
     )
-    .bind(options.type ?? null, options.status ?? null, options.search ? `%${options.search.toUpperCase()}%` : null)
+    .bind(options.type ?? null, options.status ?? null, options.search ? `%${options.search.toUpperCase()}%` : null, options.verification ?? "main")
     .all<AssetSummary>();
   return rows.results;
 }

@@ -39,6 +39,31 @@ export interface HomeRow {
   customer_phone: string | null;
   customer_phone_key: string | null;
   customer_email: string | null;
+  identity_incomplete: number;
+}
+
+export const HOME_IDENTITY_FIELDS = [
+  { key: "serial_number", label: "Serial number" },
+  { key: "manufacturer", label: "Make" },
+  { key: "model", label: "Model" },
+  { key: "model_year", label: "Year" },
+  { key: "section_count", label: "Section count" },
+  { key: "hud_label_numbers", label: "HUD plate numbers" },
+] as const;
+
+export function isProvisionalSerial(serial: string): boolean {
+  return serial.startsWith("PENDING-");
+}
+
+export function missingHomeIdentity(home: Pick<HomeRow, "serial_number" | "manufacturer" | "model" | "model_year" | "section_count" | "hud_label_numbers">): string[] {
+  return HOME_IDENTITY_FIELDS.filter((field) => {
+    if (field.key === "serial_number") return isProvisionalSerial(home.serial_number);
+    return home[field.key] === null || home[field.key] === "";
+  }).map((field) => field.label);
+}
+
+export function homeIdentityLabel(home: Pick<HomeRow, "serial_number">): string {
+  return isProvisionalSerial(home.serial_number) ? "Home pending identity" : home.serial_number;
 }
 
 /** The one-line address a crew or a homeowner would say out loud. */
@@ -88,7 +113,7 @@ export async function requireHome(db: Db, idOrSerial: string): Promise<HomeRow> 
 }
 
 export interface CreateHomeInput {
-  serialNumber: string;
+  serialNumber?: string | null;
   manufacturer?: string | null;
   model?: string | null;
   modelYear?: number | null;
@@ -101,8 +126,9 @@ export interface CreateHomeInput {
 }
 
 export async function createHome(db: Db, input: CreateHomeInput): Promise<string> {
-  const serial = canonicalKey(input.serialNumber ?? "");
-  if (serial.length < 4) throw badRequest("Enter the full serial number from the data plate");
+  const id = newId("hom");
+  const identity = normalizeHomeIdentity(id, input);
+  const serial = identity.serialNumber;
 
   const existing = await db.prepare("SELECT id FROM homes WHERE serial_number = ?").bind(serial).first<{ id: string }>();
   if (existing) throw conflict(`Serial number ${serial} is already in the portal`);
@@ -113,25 +139,25 @@ export async function createHome(db: Db, input: CreateHomeInput): Promise<string
     if (input.jobId && input.jobId !== lot.job_id) throw badRequest("That lot belongs to a different job");
   }
 
-  const id = newId("hom");
   const timestamp = nowIso();
   await db
     .prepare(
       `INSERT INTO homes (id, serial_number, manufacturer, model, model_year, section_count, hud_label_numbers,
-                          job_id, lot_id, status, warranty_expires_on, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'delivery_pending', ?, ?, ?)`,
+                          job_id, lot_id, status, warranty_expires_on, identity_incomplete, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'delivery_pending', ?, ?, ?, ?)`,
     )
     .bind(
       id,
       serial,
-      input.manufacturer ?? null,
-      input.model ?? null,
-      input.modelYear ?? null,
-      input.sectionCount ?? null,
-      input.hudLabelNumbers ?? null,
+      identity.manufacturer,
+      identity.model,
+      identity.modelYear,
+      identity.sectionCount,
+      identity.hudLabelNumbers,
       input.jobId ?? null,
       input.lotId ?? null,
       input.warrantyExpiresOn ?? null,
+      identity.incomplete ? 1 : 0,
       timestamp,
       timestamp,
     )
@@ -141,6 +167,49 @@ export async function createHome(db: Db, input: CreateHomeInput): Promise<string
     await updateSiteAddress(db, id, input.siteAddress);
   }
   return id;
+}
+
+export type UpdateHomeIdentityInput = Omit<CreateHomeInput, "jobId" | "lotId" | "warrantyExpiresOn" | "siteAddress">;
+
+export async function updateHomeIdentity(db: Db, homeId: string, input: UpdateHomeIdentityInput): Promise<void> {
+  const home = await requireHome(db, homeId);
+  const identity = normalizeHomeIdentity(home.id, input);
+  const duplicate = await db.prepare("SELECT id FROM homes WHERE serial_number = ? AND id <> ?").bind(identity.serialNumber, home.id).first<{ id: string }>();
+  if (duplicate) throw conflict(`Serial number ${identity.serialNumber} is already in the portal`);
+  await db.prepare(`UPDATE homes SET serial_number = ?, manufacturer = ?, model = ?, model_year = ?, section_count = ?,
+    hud_label_numbers = ?, identity_incomplete = ?, updated_at = ? WHERE id = ?`)
+    .bind(identity.serialNumber, identity.manufacturer, identity.model, identity.modelYear, identity.sectionCount,
+      identity.hudLabelNumbers, identity.incomplete ? 1 : 0, nowIso(), home.id).run();
+}
+
+function normalizeHomeIdentity(homeId: string, input: UpdateHomeIdentityInput): {
+  serialNumber: string; manufacturer: string | null; model: string | null; modelYear: number | null;
+  sectionCount: number | null; hudLabelNumbers: string | null; incomplete: boolean;
+} {
+  const suppliedSerial = input.serialNumber?.trim();
+  const serialNumber = suppliedSerial ? canonicalKey(suppliedSerial) : `PENDING-${homeId.slice(-12).toUpperCase()}`;
+  if (suppliedSerial && serialNumber.length < 4) throw badRequest("Enter the full serial number from the data plate, or leave it blank");
+  const modelYear = input.modelYear ?? null;
+  if (modelYear !== null && (!Number.isInteger(modelYear) || modelYear < 1900 || modelYear > 2100)) throw badRequest("Year must be a whole year between 1900 and 2100");
+  const sectionCount = input.sectionCount ?? null;
+  if (sectionCount !== null && (!Number.isInteger(sectionCount) || sectionCount < 1 || sectionCount > 10)) throw badRequest("Section count must be a whole number between 1 and 10");
+  const identity = {
+    serialNumber,
+    manufacturer: input.manufacturer?.trim() || null,
+    model: input.model?.trim() || null,
+    modelYear,
+    sectionCount,
+    hudLabelNumbers: input.hudLabelNumbers?.trim() || null,
+  };
+  const missingShape = {
+    serial_number: identity.serialNumber,
+    manufacturer: identity.manufacturer,
+    model: identity.model,
+    model_year: identity.modelYear,
+    section_count: identity.sectionCount,
+    hud_label_numbers: identity.hudLabelNumbers,
+  };
+  return { ...identity, incomplete: missingHomeIdentity(missingShape).length > 0 };
 }
 
 // ---------------------------------------------------------------------------
