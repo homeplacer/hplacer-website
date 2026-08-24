@@ -34,6 +34,7 @@ import { registerDocuments } from "./features/documents.ts";
 import { registerEquipment } from "./features/equipment.ts";
 import { registerHomes } from "./features/homes.ts";
 import { registerInventory } from "./features/inventory.ts";
+import { registerPortableJohn } from "./features/portable-john.ts";
 import { handlePublicWarrantyIntake, isPublicIntakeRequest } from "./features/public-intake.ts";
 import { registerSubdivisions } from "./features/subdivisions.ts";
 import { registerRepairs } from "./features/repairs.ts";
@@ -51,6 +52,7 @@ export function buildRouter(): Router {
   registerRepairs(router);
   registerWarranty(router);
   registerInventory(router);
+  registerPortableJohn(router);
   registerDocuments(router);
   registerAdmin(router);
   return router;
