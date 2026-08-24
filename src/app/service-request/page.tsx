@@ -20,9 +20,13 @@ export default function ServiceRequestPage() {
           Request service
         </h1>
         <p className="mt-4 max-w-md text-stone-muted">
-          Already living in a Home Placer home? Tell us what you need — warranty, repair, or
-          a question — and our service team will follow up. Prefer to call? Use our service
-          line below.
+          Already living in a Home Placer home? Tell us what you need and our service team will
+          follow up. Prefer to call? Use our service line below.
+        </p>
+        <p className="mt-4 max-w-md text-sm text-stone-muted">
+          Warranty issue with the home itself?{" "}
+          <a href="/warranty-request" className="font-semibold underline">Submit a warranty request</a>{" "}
+          instead — you can attach photos and it goes straight to our service board.
         </p>
 
         <a

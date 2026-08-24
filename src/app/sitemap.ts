@@ -59,6 +59,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/team",
     "/contact",
     "/service-request",
+    "/warranty-request",
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPaths.map((p) => ({

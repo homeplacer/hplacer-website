@@ -1,0 +1,48 @@
+{
+  // Home Placer employee portal — a SEPARATE production Worker from the public
+  // hplacer.com site (see ../wrangler.jsonc). Its D1, R2, route, and Access
+  // identifiers below are live production bindings. See portal/README.md for
+  // the operational model and local-development commands.
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "hplacer-portal",
+  "main": "src/worker.ts",
+  "compatibility_date": "2024-12-30",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // No `assets` binding and no `workers_dev`: the portal has no public surface
+  // and must not be reachable on a *.workers.dev hostname.
+  "workers_dev": false,
+
+  "routes": [{ "pattern": "portal.hplacer.com", "custom_domain": true }],
+
+  "vars": {
+    "PORTAL_ENVIRONMENT": "production",
+    // Filled in when the Cloudflare Access application is created. Until both
+    // are set the Worker refuses every request (fail closed).
+    "ACCESS_TEAM_DOMAIN": "summer-night-a430",
+    "ACCESS_AUD": "e9456b473d8025e42c5275b89e670ff570d932b28a4715cd154679da1c1aa738"
+  },
+
+  "d1_databases": [
+    {
+      "binding": "PORTAL_DB",
+      "database_name": "hplacer-portal",
+      "database_id": "29f39df2-9c28-4c95-a87d-edb420c723ed",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  "r2_buckets": [
+    {
+      "binding": "PORTAL_PHOTOS",
+      "bucket_name": "hplacer-portal-photos"
+    }
+  ],
+
+  "triggers": {
+    // Morning sweep: low-stock alerts and equipment coming due for service.
+    "crons": ["0 11 * * *"]
+  },
+
+  "observability": { "enabled": true }
+}
