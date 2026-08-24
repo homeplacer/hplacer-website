@@ -6,6 +6,7 @@ import { assertCan, can, type Actor } from "../auth/authz.ts";
 import {
   DOCUMENT_TYPES,
   attachDriveDocument,
+  getDocument,
   readDocumentContent,
   softDeleteDocument,
   uploadPhoto,
@@ -43,13 +44,21 @@ function targetFromFields(fields: Fields): DocumentTarget {
   };
 }
 
-const HOME_COMPLIANCE_DOCUMENTS = {
+export const HOME_COMPLIANCE_DOCUMENTS = {
   manufactured_home_permit: { label: "Manufactured-home permit", type: "permit" as DocumentType },
   county_inspection: { label: "County inspection", type: "report" as DocumentType },
   foundation_inspection: { label: "Foundation inspection", type: "report" as DocumentType },
   septic_or_sewer: { label: "Septic or sewer paperwork", type: "report" as DocumentType },
   site_plan: { label: "Site plan", type: "plat" as DocumentType },
   property_paperwork: { label: "Property paperwork", type: "other" as DocumentType },
+  site_map: { label: "Site map", type: "plat" as DocumentType },
+  plat: { label: "Plat", type: "plat" as DocumentType },
+  building_permit: { label: "Building permit", type: "permit" as DocumentType },
+  final_inspection_report: { label: "Final inspection report", type: "report" as DocumentType },
+  septic_permit: { label: "Septic permit", type: "permit" as DocumentType },
+  sewer_receipt: { label: "Sewer receipt", type: "receipt" as DocumentType },
+  foundation_certificate: { label: "Foundation certificate", type: "report" as DocumentType },
+  home_inspection: { label: "Home inspection", type: "report" as DocumentType },
 } as const;
 
 function documentTypeFromFields(fields: Fields): DocumentType {
@@ -126,6 +135,10 @@ async function contentRoute(ctx: RequestContext): Promise<Response> {
 
 async function deleteRoute(ctx: RequestContext): Promise<Response> {
   const fields = ctx.request.method === "POST" ? await readFields(ctx.request) : {};
+  const document = await getDocument(ctx.db, ctx.params.id);
+  if (document && (document.caption === "Site map" || document.caption === "Plat") && fields.confirm_delete !== "yes") {
+    throw badRequest(`Confirm deletion of ${document.caption}`);
+  }
   await softDeleteDocument(ctx.db, ctx.actor, ctx.params.id);
   if (isJson(ctx) || ctx.request.method === "DELETE") return json({ ok: true });
   return redirect(`${safeRedirect(fields.redirect_to, "/")}?ok=saved`);
@@ -245,4 +258,40 @@ export function homeComplianceUploadForm(actor: Actor, target: DocumentTarget, r
         <div class="btn-row"><button class="secondary" type="submit">Link Drive file</button></div>
       </form>
     </details>`;
+}
+
+/** Focused workflow paperwork slot with an empty state and secure upload. */
+export function workflowDocumentArea(
+  actor: Actor,
+  target: DocumentTarget,
+  redirectTo: string,
+  documents: DocumentListRow[],
+  category: keyof typeof HOME_COMPLIANCE_DOCUMENTS,
+  options: { confirmDelete?: boolean } = {},
+): SafeHtml {
+  const definition = HOME_COMPLIANCE_DOCUMENTS[category];
+  const attached = documents.filter((document) => document.caption === definition.label);
+  return html`<div class="card">
+    <h3>${definition.label}</h3>
+    ${attached.length === 0 ? html`<p class="meta">Nothing uploaded yet.</p>` : attached.map((document) => html`
+      <div class="row"><span>${document.file_name}</span>
+        ${document.storage_provider === "google_drive"
+          ? externalLink(document.external_url, "Open")
+          : html`<a href="/api/documents/${document.id}/content">Open</a>`}
+      </div>
+      <p class="meta">${formatDate(document.created_at)} · ${document.uploaded_by_name}</p>
+      <form method="post" action="/api/documents/${document.id}/delete">
+        <input type="hidden" name="redirect_to" value="${redirectTo}">
+        ${options.confirmDelete ? html`<label><input type="checkbox" name="confirm_delete" value="yes" required> Confirm delete ${definition.label}</label>` : ""}
+        <div class="btn-row"><button class="secondary" type="submit">Delete</button></div>
+      </form>`)}
+    ${can(actor, "document.upload") ? html`<form method="post" action="/api/documents/upload" enctype="multipart/form-data">
+      ${documentTargetInputs(target)}
+      <input type="hidden" name="redirect_to" value="${redirectTo}">
+      <input type="hidden" name="home_document_category" value="${category}">
+      <label for="workflow-file-${category}">Upload ${definition.label}</label>
+      <input id="workflow-file-${category}" type="file" name="file" accept="image/*,application/pdf" required>
+      <div class="btn-row"><button type="submit">Upload</button></div>
+    </form>` : ""}
+  </div>`;
 }
