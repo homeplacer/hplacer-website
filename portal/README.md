@@ -23,8 +23,15 @@ the public marketing site.
   home also has an ordered workflow checklist covering delivery, install,
   permits, utilities, inspections, HVAC, skirting, and finish work. Every
   checklist change records who made it and when
+- **Provisional homes** — supervisors can create a home before its serial,
+  make, model, year, section count, or HUD plates are known. The record lists
+  every missing identity field and can be completed later without weakening
+  serial-number duplicate prevention
 - **Equipment**, keyed by asset tag with a serial number or VIN behind it —
   excavators, skid steers, bulldozers, trailers, dump trucks, and pickups
+- **Verified fleet view and private equipment photos** — the main list excludes
+  unresolved imports, keeps them in a source-review view, and shows protected
+  thumbnails uploaded against each asset record
 - **Daily pre-use inspections** — checklist per machine type, hour or odometer
   capture, defects, and automatic tag-out on a critical failure
 - **Service tracking** — intervals by hours, miles, or calendar days, with a
@@ -88,7 +95,7 @@ Other commands:
 npm run portal:check
 ```
 
-which runs `portal:typecheck`, `portal:test` (258 tests, `node --test`), and
+which runs `portal:typecheck`, `portal:test` (265 tests, `node --test`), and
 `eslint portal`. `npm run portal:migrate -- ./portal/.local/portal.sqlite --seed`
 builds a local database file that survives a restart; point the dev server at it
 with `PORTAL_DB_PATH`.

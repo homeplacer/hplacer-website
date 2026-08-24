@@ -2,6 +2,18 @@
 
 *What shipped, newest first. Companion: `ROADMAP.md`, `DECISIONS.md`, `TODO.md`.*
 
+## 2026-08-24 — Provisional homes, verified fleet list, equipment photos
+
+- New homes may be created before any identity detail is known. The portal uses
+  an internal unique placeholder, names every missing field, permits later
+  supervisor edits, and still rejects duplicate real serial numbers.
+- The main equipment list now contains verified imports and staff-created real
+  assets only. Unresolved imports are segregated into Source review; generic
+  imported rows with neither serial nor VIN are retired without deleting their
+  records, documents, or history.
+- Equipment detail pages now have a private photo manager. The verified fleet
+  list shows protected thumbnails when present and a clean fallback otherwise.
+
 ## 2026-08-24 — Complete per-home operations workflow
 
 - Expanded the home checklist into an ordered delivery-to-finish workflow with

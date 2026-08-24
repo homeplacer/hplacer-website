@@ -59,6 +59,7 @@ export const HOME_COMPLIANCE_DOCUMENTS = {
   sewer_receipt: { label: "Sewer receipt", type: "receipt" as DocumentType },
   foundation_certificate: { label: "Foundation certificate", type: "report" as DocumentType },
   home_inspection: { label: "Home inspection", type: "report" as DocumentType },
+  equipment_photo: { label: "Equipment photo", type: "photo" as DocumentType },
 } as const;
 
 function documentTypeFromFields(fields: Fields): DocumentType {

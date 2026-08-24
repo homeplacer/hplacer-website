@@ -44,7 +44,7 @@ import { flashFrom, json, redirect } from "../api/responses.ts";
 import type { Router } from "../api/router.ts";
 import { html, query, raw } from "../ui/html.ts";
 import { badge, empty, formatDate, kv, money, page, tabs } from "../ui/layout.ts";
-import { documentList, uploadForm } from "./documents.ts";
+import { documentList, uploadForm, workflowDocumentArea } from "./documents.ts";
 
 export function registerEquipment(router: Router): void {
   router.get("/equipment", renderList);
@@ -66,6 +66,7 @@ export function registerEquipment(router: Router): void {
       type: ctx.url.searchParams.get("type") ?? undefined,
       status: ctx.url.searchParams.get("status") ?? undefined,
       search: ctx.url.searchParams.get("q") ?? undefined,
+      verification: (ctx.url.searchParams.get("scope") as "main" | "review" | "all" | null) ?? "main",
     });
     return json({ assets });
   });
@@ -84,23 +85,26 @@ async function renderList(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "asset.read");
   const type = ctx.url.searchParams.get("type") ?? undefined;
   const search = ctx.url.searchParams.get("q") ?? undefined;
-  const assets = await listAssets(ctx.db, { type, search });
+  const scope = ctx.url.searchParams.get("scope") === "review" ? "review" : "main";
+  const assets = await listAssets(ctx.db, { type, search, verification: scope });
 
   const body = html`
     <h1>Equipment</h1>
-    <p class="lede">Tap a machine to file today's pre-use inspection.</p>
+    <p class="lede">${scope === "main" ? "Verified fleet and staff-entered assets." : "Imported records held out of the main fleet until their source details are verified."}</p>
 
     <form method="get" action="/equipment">
       <label for="q">Search by tag, serial, VIN, or model</label>
       <input id="q" name="q" value="${search ?? ""}" inputmode="search" autocomplete="off">
       ${type ? html`<input type="hidden" name="type" value="${type}">` : ""}
+      ${scope === "review" ? html`<input type="hidden" name="scope" value="review">` : ""}
       <div class="btn-row"><button type="submit">Search</button></div>
     </form>
 
     ${tabs([
-      { href: "/equipment", label: "All", current: !type },
+      { href: "/equipment", label: "Verified fleet", current: scope === "main" && !type },
+      { href: "/equipment?scope=review", label: "Source review", current: scope === "review" && !type },
       ...ASSET_TYPES.map((value) => ({
-        href: `/equipment${query({ type: value, q: search })}`,
+        href: `/equipment${query({ type: value, q: search, scope: scope === "review" ? "review" : undefined })}`,
         label: ASSET_TYPE_LABELS[value],
         current: type === value,
       })),
@@ -110,9 +114,14 @@ async function renderList(ctx: RequestContext): Promise<Response> {
       ? empty("No equipment matches that.")
       : assets.map(
           (asset) => html`<a class="card" href="/equipment/${asset.asset_tag}">
-            <div class="row">
+            <div class="row" style="align-items:flex-start">
+              ${asset.primary_photo_id
+                ? html`<img src="/api/documents/${asset.primary_photo_id}/content" alt="${asset.asset_tag}" width="88" height="66" style="object-fit:cover;border-radius:8px">`
+                : html`<span class="empty" style="width:88px;height:66px;display:grid;place-items:center;margin:0">No photo</span>`}
+              <div style="flex:1">
               <h3>${asset.asset_tag} · ${asset.manufacturer ?? ""} ${asset.model ?? ""}</h3>
               ${badge(asset.status, asset.status === "out_of_service" ? "bad" : asset.status === "available" ? "ok" : "")}
+              </div>
             </div>
             <div class="meta">
               ${ASSET_TYPE_LABELS[asset.asset_type as AssetType] ?? asset.asset_type}
@@ -147,6 +156,9 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
     <h1>${asset.asset_tag}</h1>
     <p class="lede">${asset.manufacturer ?? ""} ${asset.model ?? ""} ${asset.model_year ?? ""} ·
       ${ASSET_TYPE_LABELS[asset.asset_type as AssetType] ?? asset.asset_type}</p>
+
+    <h2>Equipment photo</h2>
+    ${workflowDocumentArea(ctx.actor, { assetId: asset.id }, `/equipment/${asset.asset_tag}`, documents, "equipment_photo")}
 
     <div class="card">
       <div class="row">

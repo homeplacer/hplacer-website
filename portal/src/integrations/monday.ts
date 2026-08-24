@@ -173,6 +173,7 @@ export async function canonicalKeyFor(db: Db, entityType: MondayEntityType, enti
   if (entityType === "home") {
     const row = await db.prepare("SELECT serial_number FROM homes WHERE id = ?").bind(entityId).first<{ serial_number: string }>();
     if (!row) throw notFound("Home not found");
+    if (row.serial_number.startsWith("PENDING-")) throw badRequest("Add the home's serial number before linking it to Monday");
     return { key: canonicalKey(row.serial_number), kind: "serial_number" };
   }
   if (entityType === "asset") {
