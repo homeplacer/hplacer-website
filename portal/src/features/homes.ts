@@ -17,6 +17,7 @@ import {
 import { getJob, listJobs, listLots } from "../domain/jobs.ts";
 import { listInspections, loadTemplate } from "../domain/inspections.ts";
 import { listWarrantyRequests } from "../domain/warranty.ts";
+import { homeWorkflow, saveDeliveryDate } from "../domain/home-workflow.ts";
 import { getLink } from "../integrations/monday.ts";
 import { badRequest } from "../platform/errors.ts";
 import { numberField, optionalField, readFields, requiredField, type RequestContext } from "../api/context.ts";
@@ -56,6 +57,7 @@ export function registerHomes(router: Router): void {
   router.post("/api/homes", createHomeRoute);
   router.post("/api/homes/:id/lot", assignLotRoute);
   router.post("/api/homes/:id/site-address", updateSiteAddressRoute);
+  router.post("/api/homes/:id/workflow/delivery-date", saveDeliveryDateRoute);
 
   router.get("/api/homes", async (ctx) => {
     assertCan(ctx.actor, "home.read");
@@ -122,6 +124,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
   const inspections = await listInspections(ctx.db, { homeId: home.id, limit: 20 });
   const link = await getLink(ctx.db, "home", home.id);
   const warranty = await listWarrantyRequests(ctx.db, { homeId: home.id, limit: 20 });
+  const workflow = await homeWorkflow(ctx.db, home.id);
 
   const billedTotal = repairs
     .filter((repair) => repair.bill_back_status === "billed")
@@ -148,6 +151,20 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
         ["Monday item", link ? `${link.monday_item_id} (${link.sync_state})` : "not linked"],
       ])}
     </div>
+
+    <h2>Home checklist</h2>
+    ${workflow.map((item) => html`<div class="card">
+      <div class="row"><h3>${item.label}</h3>${badge(item.value_date ? "scheduled" : "not set", item.value_date ? "ok" : "warn")}</div>
+      ${can(ctx.actor, "home.workflow.edit")
+        ? html`<form method="post" action="/api/homes/${home.id}/workflow/delivery-date">
+            <label for="delivery_date">${item.label}</label>
+            <input id="delivery_date" name="delivery_date" type="date" value="${item.value_date ?? ""}">
+            <div class="btn-row"><button type="submit">Save delivery date</button></div>
+            <p class="meta">This is the planned date. The delivery report records when delivery actually happened.
+              ${item.updated_at ? ` Last updated ${formatDate(item.updated_at)} by ${item.updated_by_name}.` : ""}</p>
+          </form>`
+        : html`<p>${item.value_date ? formatDate(item.value_date) : "No date selected."}</p>`}
+    </div>`)}
 
     <h2>Site address</h2>
     <div class="card">
@@ -294,6 +311,13 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
     back: { href: "/homes", label: "Homes" },
     flash: flashFrom(ctx.url),
   });
+}
+
+async function saveDeliveryDateRoute(ctx: RequestContext): Promise<Response> {
+  assertCan(ctx.actor, "home.workflow.edit");
+  const fields = await readFields(ctx.request);
+  await saveDeliveryDate(ctx.db, ctx.params.id, ctx.actor.employeeId, optionalField(fields, "delivery_date"));
+  return wantsJson(ctx) ? json({ ok: true }) : redirect(`/homes/${ctx.params.id}?ok=saved`);
 }
 
 async function renderReportForm(ctx: RequestContext): Promise<Response> {

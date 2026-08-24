@@ -28,6 +28,7 @@ export type Permission =
   // The site address and the owner of record are what a crew standing at the
   // home actually knows, so editing them is not held behind home.write.
   | "home.address.edit"
+  | "home.workflow.edit"
   | "home.report.submit"
   | "asset.read"
   | "asset.write"
@@ -61,6 +62,7 @@ const EMPLOYEE_PERMISSIONS: Permission[] = [
   "subdivision.create",
   "home.read",
   "home.address.edit",
+  "home.workflow.edit",
   "asset.read",
   "inspection.submit",
   "defect.report",
@@ -95,6 +97,7 @@ const SUPERVISOR_PERMISSIONS: Permission[] = [
 const BILLING_PERMISSIONS: Permission[] = [
   "job.read",
   "home.read",
+  "home.workflow.edit",
   "asset.read",
   "warranty.review",
   "inventory.read",

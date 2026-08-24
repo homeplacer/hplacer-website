@@ -2,6 +2,15 @@
 
 *What shipped, newest first. Companion: `ROADMAP.md`, `DECISIONS.md`, `TODO.md`.*
 
+## 2026-08-24 — Per-home workflow checklist
+
+- Every home now has a workflow checklist beginning with a planned delivery
+  date, editable with a native date picker and recorded with who last changed it.
+- The planned date remains separate from the existing delivery report and its
+  actual `delivered_on` milestone, preserving the current home reporting flow.
+- Workflow editing is an explicit permission available to every active portal
+  role; all existing home write and report permissions remain unchanged.
+
 ## 2026-08-24 — Portable John operations workflow
 
 - Employees can request a Portable John delivery or pickup and identify exactly
