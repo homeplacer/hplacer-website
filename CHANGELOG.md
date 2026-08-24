@@ -2,6 +2,18 @@
 
 *What shipped, newest first. Companion: `ROADMAP.md`, `DECISIONS.md`, `TODO.md`.*
 
+## 2026-08-24 — Complete per-home operations workflow
+
+- Expanded the home checklist into an ordered delivery-to-finish workflow with
+  estimated and actual milestones, install, permits, meter, inspection,
+  electric, sewer/septic, foundation, home inspection, HVAC, skirting, sod or
+  rock, driveway, and mailbox steps.
+- Added conditional private paperwork slots for building and septic permits,
+  sewer receipts, final inspection reports, foundation certificates, and home
+  inspections, plus shared Site map and Plat areas at the top.
+- Site map and Plat deletion now requires explicit confirmation on the server.
+  Every checklist value change has visible, append-only attribution and history.
+
 ## 2026-08-24 — Per-home workflow checklist
 
 - Every home now has a workflow checklist beginning with a planned delivery

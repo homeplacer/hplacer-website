@@ -20,8 +20,9 @@ the public marketing site.
 - **Manufactured homes**, keyed by serial number — delivery report, setup
   report, final inspection, and the full repair and bill-back history, plus an
   optional site address and owner of record that field crews can edit. Each
-  home also has an extensible workflow checklist, beginning with its planned
-  delivery date
+  home also has an ordered workflow checklist covering delivery, install,
+  permits, utilities, inspections, HVAC, skirting, and finish work. Every
+  checklist change records who made it and when
 - **Equipment**, keyed by asset tag with a serial number or VIN behind it —
   excavators, skid steers, bulldozers, trailers, dump trucks, and pickups
 - **Daily pre-use inspections** — checklist per machine type, hour or odometer
@@ -87,7 +88,7 @@ Other commands:
 npm run portal:check
 ```
 
-which runs `portal:typecheck`, `portal:test` (239 tests, `node --test`), and
+which runs `portal:typecheck`, `portal:test` (258 tests, `node --test`), and
 `eslint portal`. `npm run portal:migrate -- ./portal/.local/portal.sqlite --seed`
 builds a local database file that survives a restart; point the dev server at it
 with `PORTAL_DB_PATH`.

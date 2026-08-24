@@ -17,15 +17,15 @@ import {
 import { getJob, listJobs, listLots } from "../domain/jobs.ts";
 import { listInspections, loadTemplate } from "../domain/inspections.ts";
 import { listWarrantyRequests } from "../domain/warranty.ts";
-import { homeWorkflow, saveDeliveryDate } from "../domain/home-workflow.ts";
+import { homeWorkflow, saveHomeWorkflowItem, type HomeWorkflowItem } from "../domain/home-workflow.ts";
 import { getLink } from "../integrations/monday.ts";
 import { badRequest } from "../platform/errors.ts";
 import { numberField, optionalField, readFields, requiredField, type RequestContext } from "../api/context.ts";
 import { flashFrom, json, redirect } from "../api/responses.ts";
 import type { Router } from "../api/router.ts";
-import { html, query, raw } from "../ui/html.ts";
+import { html, query, raw, type SafeHtml } from "../ui/html.ts";
 import { badge, empty, externalLink, formatDate, kv, money, page, tabs } from "../ui/layout.ts";
-import { documentList, homeComplianceUploadForm, uploadForm } from "./documents.ts";
+import { documentList, homeComplianceUploadForm, uploadForm, workflowDocumentArea } from "./documents.ts";
 import { wantsJson } from "./equipment.ts";
 
 const REPORT_FIELDS: Record<string, { key: string; label: string }[]> = {
@@ -58,6 +58,7 @@ export function registerHomes(router: Router): void {
   router.post("/api/homes/:id/lot", assignLotRoute);
   router.post("/api/homes/:id/site-address", updateSiteAddressRoute);
   router.post("/api/homes/:id/workflow/delivery-date", saveDeliveryDateRoute);
+  router.post("/api/homes/:id/workflow/:key", saveWorkflowItemRoute);
 
   router.get("/api/homes", async (ctx) => {
     assertCan(ctx.actor, "home.read");
@@ -152,19 +153,13 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
       ])}
     </div>
 
-    <h2>Home checklist</h2>
-    ${workflow.map((item) => html`<div class="card">
-      <div class="row"><h3>${item.label}</h3>${badge(item.value_date ? "scheduled" : "not set", item.value_date ? "ok" : "warn")}</div>
-      ${can(ctx.actor, "home.workflow.edit")
-        ? html`<form method="post" action="/api/homes/${home.id}/workflow/delivery-date">
-            <label for="delivery_date">${item.label}</label>
-            <input id="delivery_date" name="delivery_date" type="date" value="${item.value_date ?? ""}">
-            <div class="btn-row"><button type="submit">Save delivery date</button></div>
-            <p class="meta">This is the planned date. The delivery report records when delivery actually happened.
-              ${item.updated_at ? ` Last updated ${formatDate(item.updated_at)} by ${item.updated_by_name}.` : ""}</p>
-          </form>`
-        : html`<p>${item.value_date ? formatDate(item.value_date) : "No date selected."}</p>`}
-    </div>`)}
+    <h2>Home workflow</h2>
+    <p class="lede">Shared plans and an ordered checklist for this home. Actual delivery, setup, and inspection dates remain in the filed reports below.</p>
+    <div class="grid">
+      ${workflowDocumentArea(ctx.actor, { homeId: home.id }, `/homes/${home.id}`, documents, "site_map", { confirmDelete: true })}
+      ${workflowDocumentArea(ctx.actor, { homeId: home.id }, `/homes/${home.id}`, documents, "plat", { confirmDelete: true })}
+    </div>
+    ${workflow.map((item) => renderWorkflowItem(ctx, home, item, documents, workflow))}
 
     <h2>Site address</h2>
     <div class="card">
@@ -316,8 +311,65 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
 async function saveDeliveryDateRoute(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "home.workflow.edit");
   const fields = await readFields(ctx.request);
-  await saveDeliveryDate(ctx.db, ctx.params.id, ctx.actor.employeeId, optionalField(fields, "delivery_date"));
+  await saveHomeWorkflowItem(ctx.db, ctx.params.id, ctx.actor.employeeId, "delivery_date", optionalField(fields, "delivery_date"));
   return wantsJson(ctx) ? json({ ok: true }) : redirect(`/homes/${ctx.params.id}?ok=saved`);
+}
+
+async function saveWorkflowItemRoute(ctx: RequestContext): Promise<Response> {
+  assertCan(ctx.actor, "home.workflow.edit");
+  const fields = await readFields(ctx.request);
+  await saveHomeWorkflowItem(ctx.db, ctx.params.id, ctx.actor.employeeId, ctx.params.key, optionalField(fields, "value"));
+  return wantsJson(ctx) ? json({ ok: true }) : redirect(`/homes/${ctx.params.id}?ok=saved`);
+}
+
+function renderWorkflowItem(
+  ctx: RequestContext,
+  home: Awaited<ReturnType<typeof requireHome>>,
+  item: HomeWorkflowItem,
+  documents: Awaited<ReturnType<typeof listDocuments>>,
+  workflow: HomeWorkflowItem[],
+): SafeHtml {
+  const byKey = (key: string) => workflow.find((candidate) => candidate.item_key === key);
+  if (item.item_key === "inspection_date" && byKey("inspection_scheduled")?.value_boolean !== 1) return raw("");
+  if (item.item_key === "electric_ordered" && byKey("final_inspection_passed")?.value_boolean !== 1) return raw("");
+  const value = item.kind === "date" ? item.value_date : item.kind === "boolean" ? (item.value_boolean === 1 ? "yes" : item.value_boolean === 0 ? "no" : null) : item.value_text;
+  const tone = value === "yes" || Boolean(item.value_date || item.value_text) ? "ok" : value === "no" ? "warn" : "";
+  const actual = item.item_key === "delivered" ? home.delivered_on
+    : item.item_key === "install_complete" ? home.setup_completed_on
+    : item.item_key === "final_inspection_passed" ? home.final_inspection_on : null;
+  const upload = workflowUploadFor(item, documents, ctx, home.id);
+  return html`<div class="card">
+    <div class="row"><h3>${item.label}</h3>${badge(value ?? "not set", tone)}</div>
+    ${actual ? html`<p class="meta">Actual report date: ${formatDate(actual)}</p>` : ""}
+    ${item.item_key === "delivery_date" ? html`<p class="meta">Estimate only; the delivery report records actual completion.</p>` : ""}
+    ${can(ctx.actor, "home.workflow.edit") ? html`<form method="post" action="/api/homes/${home.id}/workflow/${item.item_key}">
+      ${item.kind === "date" ? html`<label for="value-${item.item_key}">${item.label}</label><input id="value-${item.item_key}" name="value" type="date" value="${item.value_date ?? ""}">`
+        : item.kind === "boolean" ? html`<label for="value-${item.item_key}">${item.label}</label><select id="value-${item.item_key}" name="value" required>
+            <option value="" disabled ${raw(item.value_boolean === null ? "selected" : "")}>Choose</option>
+            <option value="yes" ${raw(item.value_boolean === 1 ? "selected" : "")}>Yes</option>
+            <option value="no" ${raw(item.value_boolean === 0 ? "selected" : "")}>No</option></select>`
+        : html`<label for="value-${item.item_key}">${item.label}</label><select id="value-${item.item_key}" name="value" required>
+            <option value="" disabled ${raw(!item.value_text ? "selected" : "")}>Choose</option>
+            <option value="septic" ${raw(item.value_text === "septic" ? "selected" : "")}>Septic</option>
+            <option value="sewer" ${raw(item.value_text === "sewer" ? "selected" : "")}>Sewer</option></select>`}
+      <div class="btn-row"><button type="submit">Save</button></div>
+    </form>` : ""}
+    ${item.updated_at ? html`<p class="meta">Last changed ${formatDate(item.updated_at)} by ${item.updated_by_name}.</p>` : html`<p class="meta">No checklist change recorded yet.</p>`}
+    ${item.history.length ? html`<details><summary>History (${item.history.length})</summary>${item.history.map((entry) => html`<p class="meta">${formatDate(entry.changed_at)} · ${entry.changed_by_name}: ${entry.old_value ?? "not set"} → ${entry.new_value ?? "cleared"}</p>`)}</details>` : ""}
+    ${upload}
+  </div>`;
+}
+
+function workflowUploadFor(item: HomeWorkflowItem, documents: Awaited<ReturnType<typeof listDocuments>>, ctx: RequestContext, homeId: string): SafeHtml {
+  const target = { homeId };
+  const redirect = `/homes/${homeId}`;
+  if (item.item_key === "permit_received" && item.value_boolean === 1) return workflowDocumentArea(ctx.actor, target, redirect, documents, "building_permit");
+  if (item.item_key === "final_inspection_passed" && item.value_boolean === 1) return workflowDocumentArea(ctx.actor, target, redirect, documents, "final_inspection_report");
+  if (item.item_key === "utility_type" && item.value_text === "septic") return workflowDocumentArea(ctx.actor, target, redirect, documents, "septic_permit");
+  if (item.item_key === "utility_type" && item.value_text === "sewer") return workflowDocumentArea(ctx.actor, target, redirect, documents, "sewer_receipt");
+  if (item.item_key === "foundation_certificate_received" && item.value_boolean === 1) return workflowDocumentArea(ctx.actor, target, redirect, documents, "foundation_certificate");
+  if (item.item_key === "home_inspection" && item.value_boolean === 1) return workflowDocumentArea(ctx.actor, target, redirect, documents, "home_inspection");
+  return raw("");
 }
 
 async function renderReportForm(ctx: RequestContext): Promise<Response> {
