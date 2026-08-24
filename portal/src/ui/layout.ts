@@ -18,7 +18,7 @@ const BOTTOM_NAV: { href: string; label: string; icon: string; permission?: Perm
   { href: "/tasks", label: "Tasks", icon: "✓" },
   { href: "/equipment", label: "Equipment", icon: "⛏" },
   { href: "/homes", label: "Homes", icon: "⌂" },
-  { href: "/repairs", label: "Repairs", icon: "⚑" },
+  { href: "/portable-john", label: "John", icon: "▤" },
 ];
 
 export function page(body: SafeHtml, options: PageOptions): Response {

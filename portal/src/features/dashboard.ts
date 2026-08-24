@@ -51,6 +51,7 @@ async function renderDashboard(ctx: RequestContext): Promise<Response> {
       <a class="btn" href="/equipment">Start a pre-use inspection</a>
       <a class="btn secondary" href="/defects/new">Report a problem</a>
       <a class="btn secondary" href="/subdivisions">Subdivisions</a>
+      <a class="btn secondary" href="/portable-john/new">Portable John</a>
       ${can(actor, "task.assign") ? html`<a class="btn secondary" href="/tasks/new">Assign a task</a>` : ""}
       ${can(actor, "warranty.review") ? html`<a class="btn secondary" href="/warranty">Warranty${warrantyToReview ? ` (${warrantyToReview})` : ""}</a>` : ""}
       ${can(actor, "repair.bill") ? html`<a class="btn secondary" href="/billing">Billing queue</a>` : ""}
@@ -163,6 +164,8 @@ function linkFor(type: string, id: string): string {
       return `/inventory/${id}`;
     case "warranty_request":
       return `/warranty/${id}`;
+    case "portable_john_request":
+      return `/portable-john/${id}`;
     case "defect":
       return `/defects`;
     case "material_request":
