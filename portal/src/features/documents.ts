@@ -43,6 +43,27 @@ function targetFromFields(fields: Fields): DocumentTarget {
   };
 }
 
+const HOME_COMPLIANCE_DOCUMENTS = {
+  manufactured_home_permit: { label: "Manufactured-home permit", type: "permit" as DocumentType },
+  county_inspection: { label: "County inspection", type: "report" as DocumentType },
+  foundation_inspection: { label: "Foundation inspection", type: "report" as DocumentType },
+  septic_or_sewer: { label: "Septic or sewer paperwork", type: "report" as DocumentType },
+  site_plan: { label: "Site plan", type: "plat" as DocumentType },
+  property_paperwork: { label: "Property paperwork", type: "other" as DocumentType },
+} as const;
+
+function documentTypeFromFields(fields: Fields): DocumentType {
+  const category = fields.home_document_category as keyof typeof HOME_COMPLIANCE_DOCUMENTS | undefined;
+  if (category && HOME_COMPLIANCE_DOCUMENTS[category]) return HOME_COMPLIANCE_DOCUMENTS[category].type;
+  return (requiredField(fields, "document_type", "Document type") as DocumentType);
+}
+
+function documentCaptionFromFields(fields: Fields): string | null {
+  const category = fields.home_document_category as keyof typeof HOME_COMPLIANCE_DOCUMENTS | undefined;
+  if (category && HOME_COMPLIANCE_DOCUMENTS[category]) return HOME_COMPLIANCE_DOCUMENTS[category].label;
+  return optionalField(fields, "caption");
+}
+
 function safeRedirect(value: string | null | undefined, fallback: string): string {
   // Only same-origin paths, so a crafted form cannot bounce a signed-in
   // employee off to another site.
@@ -53,11 +74,11 @@ async function attachDriveRoute(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "document.upload");
   const fields = await readFields(ctx.request);
   const id = await attachDriveDocument(ctx.db, ctx.actor, {
-    documentType: (requiredField(fields, "document_type", "Document type") as DocumentType),
+    documentType: documentTypeFromFields(fields),
     webViewUrl: requiredField(fields, "web_view_url", "Drive link"),
     driveFileId: optionalField(fields, "drive_file_id"),
     fileName: requiredField(fields, "file_name", "File name"),
-    caption: optionalField(fields, "caption"),
+    caption: documentCaptionFromFields(fields),
     target: targetFromFields(fields),
   });
   if (isJson(ctx)) return json({ id }, 201);
@@ -74,11 +95,11 @@ async function uploadRoute(ctx: RequestContext): Promise<Response> {
   for (const [key, value] of form.entries()) if (typeof value === "string") fields[key] = value;
 
   const id = await uploadPhoto(ctx.db, ctx.store, ctx.actor.employeeId, {
-    documentType: ((fields.document_type as DocumentType) || "photo"),
+    documentType: fields.home_document_category ? documentTypeFromFields(fields) : ((fields.document_type as DocumentType) || "photo"),
     fileName: file.name || "photo.jpg",
     contentType: file.type || "application/octet-stream",
     bytes: await file.arrayBuffer(),
-    caption: fields.caption ?? null,
+    caption: documentCaptionFromFields(fields),
     target: targetFromFields(fields),
   });
 
@@ -192,3 +213,36 @@ export function uploadForm(actor: Actor, target: DocumentTarget, redirectTo: str
     </details>`;
 }
 
+/** A focused, serial-numbered filing cabinet for required home paperwork. */
+export function homeComplianceUploadForm(actor: Actor, target: DocumentTarget, redirectTo: string): SafeHtml {
+  if (!can(actor, "document.upload")) return raw("");
+  return html`
+    <details class="card" open>
+      <summary><strong>Add home permit or inspection paperwork</strong></summary>
+      <p class="meta">Files are private to authorized portal staff and stay with this home's serial-number record.</p>
+      <form method="post" action="/api/documents/upload" enctype="multipart/form-data">
+        ${documentTargetInputs(target)}
+        <input type="hidden" name="redirect_to" value="${redirectTo}">
+        <label for="home-category-${redirectTo}">Paperwork</label>
+        <select id="home-category-${redirectTo}" name="home_document_category" required>
+          ${Object.entries(HOME_COMPLIANCE_DOCUMENTS).map(([value, item]) => html`<option value="${value}">${item.label}</option>`)}
+        </select>
+        <label for="home-file-${redirectTo}">File or PDF</label>
+        <input id="home-file-${redirectTo}" type="file" name="file" accept="image/*,application/pdf" capture="environment" required>
+        <div class="btn-row"><button type="submit">Upload paperwork</button></div>
+      </form>
+      <form method="post" action="/api/documents/drive">
+        ${documentTargetInputs(target)}
+        <input type="hidden" name="redirect_to" value="${redirectTo}">
+        <label for="home-drive-category-${redirectTo}">Paperwork</label>
+        <select id="home-drive-category-${redirectTo}" name="home_document_category" required>
+          ${Object.entries(HOME_COMPLIANCE_DOCUMENTS).map(([value, item]) => html`<option value="${value}">${item.label}</option>`)}
+        </select>
+        <label for="home-drive-${redirectTo}">Google Drive link</label>
+        <input id="home-drive-${redirectTo}" name="web_view_url" inputmode="url" placeholder="https://drive.google.com/file/d/…" required>
+        <label for="home-drive-name-${redirectTo}">File name</label>
+        <input id="home-drive-name-${redirectTo}" name="file_name" required>
+        <div class="btn-row"><button class="secondary" type="submit">Link Drive file</button></div>
+      </form>
+    </details>`;
+}

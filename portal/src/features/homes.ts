@@ -24,7 +24,7 @@ import { flashFrom, json, redirect } from "../api/responses.ts";
 import type { Router } from "../api/router.ts";
 import { html, query, raw } from "../ui/html.ts";
 import { badge, empty, externalLink, formatDate, kv, money, page, tabs } from "../ui/layout.ts";
-import { documentList, uploadForm } from "./documents.ts";
+import { documentList, homeComplianceUploadForm, uploadForm } from "./documents.ts";
 import { wantsJson } from "./equipment.ts";
 
 const REPORT_FIELDS: Record<string, { key: string; label: string }[]> = {
@@ -265,7 +265,11 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
           )}`
       : ""}
 
-    <h2>Documents</h2>
+    <h2>Home permits and inspections</h2>
+    <p class="lede">Keep the manufactured-home permit, county inspection, foundation inspection, septic or sewer paperwork, site plan, and property paperwork with this home's serial number.</p>
+    ${homeComplianceUploadForm(ctx.actor, { homeId: home.id }, `/homes/${home.id}`)}
+
+    <h2>Other documents</h2>
     ${documentList(documents)}
     ${uploadForm(ctx.actor, { homeId: home.id }, `/homes/${home.id}`)}
 
