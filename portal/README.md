@@ -19,7 +19,9 @@ the public marketing site.
   supervisors
 - **Manufactured homes**, keyed by serial number — delivery report, setup
   report, final inspection, and the full repair and bill-back history, plus an
-  optional site address and owner of record that field crews can edit
+  optional site address and owner of record that field crews can edit. Each
+  home also has an extensible workflow checklist, beginning with its planned
+  delivery date
 - **Equipment**, keyed by asset tag with a serial number or VIN behind it —
   excavators, skid steers, bulldozers, trailers, dump trucks, and pickups
 - **Daily pre-use inspections** — checklist per machine type, hour or odometer
