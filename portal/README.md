@@ -38,6 +38,9 @@ the public marketing site.
   [Warranty requests](#warranty-requests)
 - **Notification routing** — who hears about what is configuration, per
   category, editable at `/admin/notifications`
+- **Portable John requests** — any employee can request delivery or pickup,
+  tie it to a subdivision, home, or equipment location, and route it to the
+  operations queue for scheduling and completion
 - **Monday.com link registry and read-only discovery** — which serial number or
   VIN corresponds to which Monday item id. See [Monday.com](#mondaycom).
 
