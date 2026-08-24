@@ -2,6 +2,15 @@
 
 *What shipped, newest first. Companion: `ROADMAP.md`, `DECISIONS.md`, `TODO.md`.*
 
+## 2026-08-24 — Portable John operations workflow
+
+- Employees can request a Portable John delivery or pickup and identify exactly
+  one subdivision, home, or equipment location, with date, quantity, directions,
+  and notes.
+- Requests route through configurable notification routing to operations.
+  Supervisors see the full queue and can record scheduling, completion, or
+  cancellation notes; employees see their own requests.
+
 ## 2026-08-21 — Warranty intake, subdivisions, notification routing, Monday discovery
 
 Second pass on the portal (`portal/`), plus the first public-site surface that
