@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 
-export const runtime = "edge";
-
 const MAX_RESUME_BYTES = 10 * 1024 * 1024;
 const ACCEPTED_TYPES = new Set([
   "application/pdf",
@@ -34,7 +32,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Applications are not ready yet. Please call Home Placer to apply." }, { status: 503 });
   }
   const forward = new FormData();
-  for (const [key, value] of form.entries()) if (key !== "company" && (typeof value !== "string" || key !== "consent" || value === "yes")) forward.append(key, value);
+  const aliases: Record<string, string> = { location: "city_state", available_on: "available_date" };
+  for (const [key, value] of form.entries()) {
+    if (key === "company" || key === "consent") continue;
+    forward.append(aliases[key] ?? key, value);
+  }
   try {
     const response = await fetch(endpoint, { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: forward, signal: AbortSignal.timeout(12_000) });
     if (!response.ok) { console.error(`[hplacer] careers intake rejected: ${response.status}`); return NextResponse.json({ error: "We could not submit your application. Please try again." }, { status: 502 }); }
