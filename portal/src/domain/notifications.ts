@@ -26,7 +26,8 @@ export type NotificationCategory =
   | "billing_ready"
   | "daily_digest"
   | "warranty_request"
-  | "portable_john_request";
+  | "portable_john_request"
+  | "job_application";
 
 export interface NotificationInput {
   employeeId: string;

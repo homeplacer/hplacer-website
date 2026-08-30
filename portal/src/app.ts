@@ -35,7 +35,7 @@ import { registerEquipment } from "./features/equipment.ts";
 import { registerHomes } from "./features/homes.ts";
 import { registerInventory } from "./features/inventory.ts";
 import { registerPortableJohn } from "./features/portable-john.ts";
-import { handlePublicWarrantyIntake, isPublicIntakeRequest } from "./features/public-intake.ts";
+import { handlePublicJobApplicationIntake, handlePublicWarrantyIntake, isPublicIntakeRequest, PUBLIC_JOB_APPLICATION_PATH } from "./features/public-intake.ts";
 import { registerSubdivisions } from "./features/subdivisions.ts";
 import { registerRepairs } from "./features/repairs.ts";
 import { registerTasks } from "./features/tasks.ts";
@@ -79,6 +79,7 @@ export async function handleRequest(request: Request, env: PortalEnv, options: H
   // The single public route, matched by exact path before anything else so it
   // cannot be reached by a lookalike and cannot fall through to a staff route.
   if (isPublicIntakeRequest(request.method, url.pathname)) {
+    if (url.pathname === PUBLIC_JOB_APPLICATION_PATH) return handlePublicJobApplicationIntake(request, env, requestId);
     return handlePublicWarrantyIntake(request, env, requestId);
   }
 

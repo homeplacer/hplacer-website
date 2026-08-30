@@ -95,4 +95,11 @@ export interface PortalEnv {
    * Unset means the intake route is closed (503).
    */
   PORTAL_INTAKE_TOKEN?: string;
+
+  /**
+   * Separate shared bearer token for public career applications. Kept separate
+   * from warranty intake so one integration cannot be used to submit the other.
+   * This is a Worker secret, never a checked-in var.
+   */
+  PORTAL_JOB_APPLICATION_TOKEN?: string;
 }
