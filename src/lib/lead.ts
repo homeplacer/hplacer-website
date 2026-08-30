@@ -21,6 +21,16 @@ const FIELD_LABELS: Record<string, string> = {
   message: "Message",
 };
 
+function leadAnalyticsContext(type: string, data: LeadData): Record<string, string> {
+  const home = typeof data.home === "string" ? data.home.trim().slice(0, 120) : "";
+  return {
+    form_type: type,
+    submission_method: "api",
+    page_path: typeof window === "undefined" ? "" : window.location.pathname,
+    ...(home ? { model_context: home } : {}),
+  };
+}
+
 function buildMailto(type: string, data: LeadData): string {
   const subject = `${TYPE_LABELS[type] ?? "Website lead"} — hplacer.com`;
   const lines = Object.entries(data)
@@ -49,7 +59,10 @@ export async function submitLead(type: string, data: LeadData): Promise<"api" | 
       body: JSON.stringify({ type, ...data, attribution }),
     });
     if (res.ok) {
-      track("generate_lead", { form_type: type, method: "api" });
+      // A lead conversion is recorded only after the server confirms receipt.
+      // Never pass name, email, phone, address, free-text messages, or any
+      // attribution identifier to GA4.
+      track("generate_lead", leadAnalyticsContext(type, data));
       return "api";
     }
     // The SERVER rejected the input (4xx: validation / payload too large). Opening
@@ -59,7 +72,9 @@ export async function submitLead(type: string, data: LeadData): Promise<"api" | 
     if (res.status >= 400 && res.status < 500) return "error";
     throw new Error("api unavailable");
   } catch {
-    track("generate_lead", { form_type: type, method: "mailto" });
+    // This is not a confirmed lead: the visitor still has to send the email.
+    // Keep it distinct from generate_lead so conversion reporting stays honest.
+    track("lead_submission_fallback", { form_type: type, submission_method: "mailto" });
     if (typeof window !== "undefined") {
       window.location.href = buildMailto(type, { ...data, ...attribution });
     }

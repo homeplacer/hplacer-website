@@ -49,6 +49,17 @@ export function middleware(req: NextRequest) {
   const host = req.nextUrl.hostname;
   const isLocal = host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0";
 
+  // One canonical public host. Do this before the HTTPS redirect so an incoming
+  // http://www request makes a single, path-and-query-preserving hop directly
+  // to https://hplacer.com rather than a redirect chain.
+  if (host === "www.hplacer.com") {
+    const url = req.nextUrl.clone();
+    url.hostname = "hplacer.com";
+    url.protocol = "https:";
+    url.port = "";
+    return withSecurityHeaders(NextResponse.redirect(url, 301), false);
+  }
+
   if (!isLocal) {
     const xfp = req.headers.get("x-forwarded-proto");
     let scheme: string | null = xfp;
