@@ -58,6 +58,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/about",
     "/team",
     "/contact",
+    "/careers",
     "/service-request",
   ];
 

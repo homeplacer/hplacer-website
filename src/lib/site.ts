@@ -106,6 +106,7 @@ export const navLinks = [
   { href: "/warranty", label: "Warranty" },
   { href: "/about", label: "About" },
   { href: "/team", label: "Team" },
+  { href: "/careers", label: "Career Opportunities" },
   { href: "/contact", label: "Contact" },
 ] as const;
 
@@ -116,6 +117,7 @@ export const resourceLinks = [
   { href: "/faq", label: "FAQ" },
   { href: "/blog", label: "Blog" },
   { href: "/team", label: "Meet the Team" },
+  { href: "/careers", label: "Career Opportunities" },
   { href: "/glossary", label: "Glossary" },
   { href: "/manufactured-vs-site-built", label: "Manufactured vs. Site-Built" },
   { href: "/modular-vs-manufactured-homes", label: "Modular vs. Manufactured" },
