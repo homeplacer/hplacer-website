@@ -367,7 +367,7 @@ She's NOT on the public team page (not an intentional omission; Joe hasn't speci
 ### **FUB Warranty Routing (Safe by Design)**
 
 Every service request (`/api/lead` type "service") is handled carefully:
-- **NEW contact (201):** assigned to warranty owner (Brett, user id 39) + collaborators (Joe 1, Tara 35, Wade 46)
+- **NEW contact (201):** assigned to warranty owner (Brett, user id 39) + collaborators (Joe 1, Tara 35)
 - **EXISTING contact (200):** NOT reassigned (respects their current owner, usually their sales agent). Instead, a TASK is created for the warranty team so they see + follow up without stealing the contact.
 
 This is **intentional:** Joe's rule = "never reassign a lead that already has a relationship owner." A customer who bought from Agent A but calls the warranty line should NOT be reassigned to Warranty Owner B; both should collaborate.
@@ -392,7 +392,7 @@ The public file `public/e0e445eaf75d61f3faee17b699eca3b9.txt` (an empty 0-byte f
 
 ### **The Forturro Land-Search Crossover**
 
-Homepage + `/land-packages` page both link to **`search.forturro.com/land`** — a deep-link into the Forturro Group's land-only search. This keeps land-seekers in-house (they might not need a home, but HP + Forturro both benefit if they find land to develop).
+Homepage + `/land-packages` both link to the **new `forturro.com` website** with Home Placer referral UTMs. Do not reconnect this flow to Ylopo or the legacy Forturro search domain.
 
 **Why it's there:** Joe's philosophy = "we are a land + home company; if a customer only needs land, keep them in the Forturro family." It's a soft partnership between the two businesses.
 

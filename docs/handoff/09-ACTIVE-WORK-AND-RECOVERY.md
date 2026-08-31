@@ -6,7 +6,7 @@
 
 | Item | Value |
 |------|-------|
-| **Active branch** | `first-touch-attribution` |
+| **Production branch** | `main` |
 | **Last commit** | `e553c4b` (2026-07-01 session end) |
 | **Commit message** | "Session checkpoint: blog engine, search infra, listings, OG image, cross-over" |
 | **Working tree** | ✅ **Clean** — all changes committed |
@@ -124,7 +124,7 @@ cd /path/to/hplacer
 
 # Verify you're on the right branch and commit
 git rev-parse --abbrev-ref HEAD
-# Expected: first-touch-attribution
+# Expected: main (or a named task branch based on main)
 
 git log -1 --oneline
 # Expected: e553c4b Session checkpoint: ...
@@ -146,7 +146,7 @@ npm install
 
 # Verify key packages
 npm ls next react wrangler
-# Expected: next@16.2.9, react@19.2.4, @opennextjs/cloudflare@1.19.11, wrangler@4.104.0+
+# Expected: next@16.3.3, react@19.2.4, @opennextjs/cloudflare@1.19.11, wrangler@4.127.1+
 ```
 
 ### Step 3: Set Up Local Development
@@ -167,7 +167,7 @@ npm run manifests
 npm run dev
 
 # Output should be:
-#   ▲ Next.js 16.2.9
+#   ▲ Next.js 16.3.3
 #   - Local:        http://localhost:3000
 #   - Environments: .env.local, .dev.vars
 # 
@@ -230,9 +230,9 @@ wrangler secret put FUB_WARRANTY_USER_ID
 # Enter: 39
 
 # FUB_WARRANTY_COLLABORATORS = CSV of collaborator user IDs to add to service tasks.
-# Default: 1,35,46 (Joe, Tara, Wade). Only set if you want to override.
+# Default: 1,35 (Joe, Tara). Only set if you want to override.
 wrangler secret put FUB_WARRANTY_COLLABORATORS
-# Enter: 1,35,46
+# Enter: 1,35
 ```
 
 #### Resend Email API (Optional, Backup Email Delivery)
@@ -423,7 +423,7 @@ ls ~/.claude/scheduled-tasks/ | grep hplacer
 | # | Step | Command / Action | Success Indicator |
 |---|------|------------------|-------------------|
 | 1 | Clone repo | `git clone https://github.com/homeplacer/hplacer-website.git` | Directory created, `git log` shows e553c4b |
-| 2 | Install Node modules | `npm install` | `npm ls next` shows 16.2.9 |
+| 2 | Install Node modules | `npm install` | `npm ls next` shows 16.3.3 |
 | 3 | Generate manifests | `npm run manifests` | Output: "[manifests] gallery: X images; locations: Y towns" |
 | 4 | Verify local dev | `npm run dev` then open http://localhost:3000 | Homepage loads with full site (models, homes browser, blog, etc.) |
 | 5 | Auth wrangler | `wrangler auth` | `wrangler whoami` shows Home Placer account email |

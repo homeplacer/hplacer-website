@@ -448,7 +448,7 @@ cb1bc9b Add 4 Cavco Douglas/Fleetwood models from floorplan PDFs + fix Sebastian
 
 ### Branch & Deploy
 
-- **Working branch:** `first-touch-attribution` (current).
+- **Production branch:** `main`.
 - **Deploy model:** Builds from working tree, NOT git HEAD — uncommitted files are source of truth.
 - **⚠️ Migration note:** ~60 uncommitted files as of 2026-07-01. Must commit + push to ensure new clone has all site files.
 
@@ -465,7 +465,7 @@ Set via `wrangler secret put` or Cloudflare Dashboard (Settings → Variables):
 | `FUB_API_KEY` | Follow Up Boss event creation | No | None; skips FUB delivery if missing |
 | `RESEND_API_KEY` | Email lead copies | No | None; skips email if missing |
 | `FUB_WARRANTY_USER_ID` | Owner for new service leads | No | 39 (Brett) |
-| `FUB_WARRANTY_COLLABORATORS` | CSV of collaborator IDs | No | `1,35,46` (Joe, Tara, Wade) |
+| `FUB_WARRANTY_COLLABORATORS` | CSV of collaborator IDs | No | `1,35` (Joe, Tara) |
 | `LEADS_TO` | Email recipient for leads | No | `leads@hplacer.com` |
 | `LEADS_FROM` | Email sender | No | `Home Placer <leads@hplacer.com>` |
 | `WARRANTY_LEADS_TO` | Optional separate service email | No | Falls back to `LEADS_TO` |
@@ -627,7 +627,7 @@ See memory file `feedback_seo_geo_gemini.md` for the full Gemini prompt + result
 - **DEPLOY.md:** Cloudflare Workers setup, custom domains, wrangler auth.
 - **AGENTS.md:** ⚠️ Next 16 breaking changes warning.
 - **Memory (old Mac):** `~/.claude/projects/-Users-spencer/memory/project_hplacer_rebuild.md` — exhaustive build log.
-- **GitHub:** `github.com/homeplacer/hplacer-website` (branch: `first-touch-attribution`).
+- **GitHub:** `github.com/homeplacer/hplacer-website` (production branch: `main`).
 
 ---
 

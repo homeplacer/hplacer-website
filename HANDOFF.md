@@ -9,7 +9,7 @@ _Last updated: 2026-07-01. Written so a fresh Claude Code on another machine can
 ## Latest session — 2026-07-02 (Builder-Claude, HPlacer Dev Lead)
 
 **Repo:** `main` was 8 days stale (GitHub-Pages era); fast-forwarded to the real
-production code (Cloudflare Workers / OpenNext — was branch `first-touch-attribution`).
+production code (Cloudflare Workers / OpenNext — production branch `main`).
 `main` is now the source of truth again.
 
 **Merged to `main`:**
@@ -30,7 +30,7 @@ production code (Cloudflare Workers / OpenNext — was branch `first-touch-attri
   (D-021 horizontal reuse) can't proceed: the platform has **no `/api/v1` listing
   endpoint** yet, and building it is platform work, not HP's. Request + proposed
   contract: [`docs/platform-requests/2026-07-02-readonly-land-listing-api.md`](docs/platform-requests/2026-07-02-readonly-land-listing-api.md).
-  **Blocked on Spencer-Claude.** Interim: the current `search.forturro.com` deep-link
+  **Destination-side work requires the new Forturro site/team.** The current `forturro.com` handoff
   cross-over stays (non-blocking for launch).
 
 **Builder's next task (when unblocked / when Joe says go):** blog-queue refill
@@ -63,9 +63,9 @@ What travels and what doesn't when you move to a new machine:
 
 ## 2. Stack + how to run & deploy
 
-- **Next.js 16.2.9** (App Router) + **React 19** + **Tailwind v4** (brand = slate ramp; live theme currently has **pink accents**). ⚠️ `AGENTS.md` warns Next 16 has breaking changes — standard client components/metadata work fine.
+- **Next.js 16.3.3** (App Router) + **React 19** + **Tailwind v4** (brand = slate ramp; live theme currently has **pink accents**). ⚠️ `AGENTS.md` warns Next 16 has breaking changes — standard client components/metadata work fine.
 - **Cloudflare Workers via OpenNext.** Deploy: **`npm run deploy`** (`build-manifests.mjs && opennextjs-cloudflare build && opennextjs-cloudflare deploy`). Custom domains hplacer.com + www.
-- **Repo:** `github.com/homeplacer/hplacer-website` (GitHub org `homeplacer`). Working branch: `first-touch-attribution`. **Deploys build from the WORKING TREE, not a branch** — so the working files are the source of truth, not git HEAD.
+- **Repo:** `github.com/homeplacer/hplacer-website` (GitHub org `homeplacer`). Production source is `main`; deploy only a clean, tested commit.
 - **Dev preview:** `npm run dev` (or the preview tool's `hplacer` server on :3000).
 - **Data (edit these JSON directly):** `data/models.json` (93 models), `data/placed-homes.json` (73), `data/blog-posts.json` (36). ⚠️ **NEVER re-run `scripts/build-models.mjs`** — it omits floorPlans/tourUrl and would wipe hand-finalized fields. Edit models.json by hand.
 - **workerd has NO filesystem at runtime.** Anything needing a file (e.g. next/og images) must be a static import or inlined base64 — NOT `fs.readFileSync`. (See §7.)
@@ -75,7 +75,7 @@ What travels and what doesn't when you move to a new machine:
 - **Full site:** homepage, 93 model detail pages, `/homes` browser (brand/width/beds/sqft/price/**full-drywall** filters + search + sort), 73 `/recently-placed` pages + Leaflet map, 27 `/locations`, `/brands`, `/land-packages`, `/financing`, `/process`, `/warranty`, `/faq` (23 Q&As), `/gallery`, educational pages (manufactured-vs-site-built, modular-vs-manufactured, mobile-vs-manufactured, drywall-vs-wall-strips), about/team/contact/service-request.
 - **Blog: 36 posts**, date-gated **auto-publishing 2×/week (Mon & Thu)** through ~Aug 6 via the `hplacer-blog-publish` scheduled task (runs `npm run deploy` + pings IndexNow). Queue empties ~Aug 6 → needs a refill batch then (Gemini's plan = 2/wk for 90 days).
 - **Full Drywall badge** (51 drywall models), **"mobile home" SEO** on homepage+/homes+locations, **real Google reviews** section + Review JSON-LD (5.0★, 7 reviews), **OG link-preview = real home photo** (see §7 gotcha).
-- **Forturro land-search cross-over** (homepage + /land-packages + footer) → `search.forturro.com` land-only deep-link (sister-company; keeps land-seekers in-house).
+- **Forturro land-search cross-over** (homepage + /land-packages + footer) → the new `forturro.com` website with Home Placer UTMs. No Ylopo or legacy search-domain handoff is used.
 - **Search infra (all under carolina@hplacer.com):** Google Search Console verified + sitemap submitted; Bing Webmaster imported; **IndexNow live** (`public/e0e445eaf75d61f3faee17b699eca3b9.txt` + `scripts/indexnow.mjs`); robots.ts, sitemap.ts, llms.txt.
 - **Lead capture:** website forms → Follow Up Boss via `/api/lead` (FUB_API_KEY is set as a Worker secret; leads DO land in FUB). Resend email backup NOT configured (optional).
 

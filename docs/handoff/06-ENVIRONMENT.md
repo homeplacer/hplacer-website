@@ -15,7 +15,7 @@ Home Placer's deployment environment, required software, services, secrets, and 
 
 ## Node & Package Manager
 
-- **Node version:** Pinned to v26.0.0 in the current session (package.json has no explicit `engines` field, but package-lock.json v3 and next@16.2.9 require Node 18+).
+- **Node version:** Use the version supported by the current Next.js 16.3.3/OpenNext toolchain; package-lock.json v3 is authoritative for dependencies.
 - **No `.nvmrc` file** — add one if you prefer explicit node version pinning (`18.17.0` or later is safe; 26+ is current).
 - **Package manager:** npm only (no Yarn, pnpm, Bun). Always use `npm install` to restore dependencies from package-lock.json.
 - **Lock strategy:** package-lock.json v3 is committed and is the source of truth — never delete it or run npm install without it.
@@ -75,7 +75,7 @@ These are set via Wrangler or the Cloudflare dashboard (**Settings → Variables
 |----------|---------|-----------|--------------|
 | **FUB_API_KEY** | Follow Up Boss lead delivery | ✅ **YES** | Get from FUB → Admin → API Keys. Enables `/api/lead` to create events/persons in FUB and assign to warranty team. Without it, leads are logged but don't reach the CRM. |
 | **FUB_WARRANTY_USER_ID** | Default owner for new service leads | ❌ (optional) | Default: `39` (Brett). Set as Cloudflare variable in wrangler/dashboard. See `src/app/api/lead/route.ts:104–107` for defaults. |
-| **FUB_WARRANTY_COLLABORATORS** | Collaborators on new service leads (CSV) | ❌ (optional) | Default: `1,35,46` (Joe, Tara, Wade). Set as Cloudflare variable. See `src/app/api/lead/route.ts:109–113` for parsing logic. |
+| **FUB_WARRANTY_COLLABORATORS** | Collaborators on new service leads (CSV) | ❌ (optional) | Default: `1,35` (Joe, Tara). Set as a Cloudflare secret or variable. |
 | **RESEND_API_KEY** | Resend email delivery (optional team email backup) | ❌ (no) | Get from resend.com → API Keys. If set, sends each lead to `LEADS_TO` email. Currently **not configured**; FUB is the primary delivery. |
 | **LEADS_TO** | Recipient email for Resend lead copy | ❌ (no) | Default: `leads@hplacer.com`. Only used if `RESEND_API_KEY` is set. |
 | **LEADS_FROM** | Sender email for Resend (display name + address) | ❌ (no) | Default: `Home Placer <leads@hplacer.com>`. |
@@ -158,8 +158,8 @@ All scripts use Node.js (no Python runtime needed; `python3` is optional).
 | Setting | Value | Notes |
 |---------|-------|-------|
 | **Repository** | https://github.com/homeplacer/hplacer-website.git | HTTPS or SSH (use SSH key if available for passwordless pulls). |
-| **Working branch** | `first-touch-attribution` | Current active branch. Deploy builds from working tree (not HEAD), so uncommitted changes are live. |
-| **Other branches** | `main` (stable), `cloudflare` (legacy) | main is the "safe" state; first-touch-attribution has bleeding-edge features (first-touch attribution tracking). |
+| **Production branch** | `main` | Production source; deploy only a clean, tested commit. |
+| **Feature branches** | Task-specific | Merge to `main` only after tests and live-safe review. |
 | **Deploy source** | Working tree, not git HEAD | ⚠️ **Critical:** `npm run deploy` builds from uncommitted changes. Always `git status` before deploying to know what's live. |
 
 ## Local File Structure

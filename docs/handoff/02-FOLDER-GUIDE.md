@@ -94,7 +94,7 @@ hplacer/
 | `financing-form.tsx` | Financing pre-qualifier | Loan type, credit range, down payment; client-side calc. |
 | `email-capture.tsx` | Newsletter signup modal (sticky) | Email → Resend mailing list (optional). |
 | `floor-plan-section.tsx` | Display floor-plan PDFs/images | Fetches from model's `floorPlans` array. |
-| `forturro-land-search.tsx` | Cross-link widget to sister company | search.forturro.com deep-link (land-only search). |
+| `forturro-land-search.tsx` | Cross-link widget to sister company | New forturro.com handoff with Home Placer UTMs. |
 | `testimonials.tsx` | Google reviews carousel | Hard-coded 5-star + 7 reviews (5.0★ JSON-LD). |
 | `analytics.tsx` | Google Analytics 4 injection | GA4 tracking ID `G-0T71PWYQSQ` (under carolina@hplacer.com account). |
 | `analytics-events.tsx` | Event tracking (form submits, etc.) | Sends GA4 events. |

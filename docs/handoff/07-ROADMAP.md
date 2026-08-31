@@ -248,7 +248,7 @@ See HANDOFF.md §7 for full list. Highlights:
 
 - **HANDOFF.md:** §4 (paused work), §5 (open TODOs), §7 (gotchas).
 - **Memory files:** `project_hplacer_rebuild.md` (full project log), `feedback_seo_geo_gemini.md` (SEO review checklist).
-- **Stack:** Next.js 16.2.9, React 19, Tailwind v4, Cloudflare Workers (OpenNext).
+- **Stack:** Next.js 16.3.3, React 19, Tailwind v4, Cloudflare Workers (OpenNext).
 - **Deployment:** `npm run deploy` (build-manifests → opennextjs-cloudflare build → deploy).
 - **Data files:** `data/models.json` (93 models), `data/placed-homes.json` (73), `data/blog-posts.json` (36 posts).
 - **Pricing files:** `data/home-pricing.json`, `data/setup-pricing.json` (currently empty; see 9.1).

@@ -22,7 +22,7 @@ This folder is the exhaustive version of the quick-start [`../../HANDOFF.md`](..
 ## 60-second TL;DR
 
 - **What:** hplacer.com — Home Placer LLC's marketing/lead-gen site. Next.js 16 (App Router) → OpenNext → **Cloudflare Workers**. Data is static JSON (`data/*.json`). Leads → Follow Up Boss via `/api/lead`.
-- **Deploy:** `npm run deploy`. Repo: `github.com/homeplacer/hplacer-website`, branch `first-touch-attribution`. Deploys build from the **working tree**, not git HEAD.
+- **Deploy:** `npm run deploy`. Repo: `github.com/homeplacer/hplacer-website`, production branch `main`. Deploy only a clean, tested commit.
 - **Live & done:** 93 model pages, filterable browser, 73 recently-placed + map, 27 location pages, 36 blog posts auto-publishing 2×/wk, reviews, drywall badge, mobile-home SEO, real-photo OG preview, GSC + Bing + IndexNow.
 - **#1 open item:** **pricing** — all 93 models say "Call for pricing" (`data/home-pricing.json` + `data/setup-pricing.json` are empty). Filling them activates the already-built price sort/filters.
 - **Paused external work:** hplacer.com **domain registration transfer** to Cloudflare (unlock done; needs auth code + Cloudflare submit + pay). Bing Places PIN verify. Apple Business Connect (Joe's Apple ID locked).

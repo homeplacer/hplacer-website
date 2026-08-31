@@ -4,7 +4,7 @@
 
 **Home Placer** is a licensed manufactured-home and land dealer in Horry County, South Carolina, serving the Grand Strand and southeastern North Carolina (Horry & Georgetown counties, SC; Brunswick & Columbus counties, NC). The website (hplacer.com) is a Next.js 16 App Router application deployed to Cloudflare Workers via OpenNext, serving as the primary marketing and lead-capture vehicle for a business that pairs brand-new Clayton, Cavco, and Champion manufactured homes with land into single packages, priced from the low $200s.
 
-**Current stage:** Production-live with full feature set deployed. The site is SEO-optimized for "manufactured homes in [city/county]," integrates with Follow Up Boss for lead routing, publishes blog content on a fixed 2×/week cadence via automation, and includes 93 model inventory pages, 73 recently-placed home detail pages with Leaflet map integration, 36 published blog posts (queue through ~Aug 6), full drywall filter/badge, real Google reviews, OG link-preview with home photo, and cross-referral to sister company's land-search tool (Ylopo MLS integration).
+**Current stage:** Production-live with full feature set deployed. The site is SEO-optimized for "manufactured homes in [city/county]," integrates with Follow Up Boss for lead routing, and includes 93 model inventory pages, 73 recently-placed home detail pages with Leaflet map integration, 36 published blog posts, full drywall filter/badge, real Google reviews, OG link-preview with home photo, and a UTM-tagged handoff to the new Forturro website.
 
 **Major completed milestones:**
 - Full Next.js 16 SSG+SSR build on Cloudflare Workers + custom domains (hplacer.com, www)
@@ -17,7 +17,7 @@
 - Real Google Business Profile reviews (5.0★, 7 reviews) in homepage testimonials + JSON-LD
 - Drywall badge + filter (51 full-drywall models identified in series mappings)
 - OG link-preview image (real placed home photo, base64-inlined for Workers runtime)
-- Forturro cross-over (homepage + land-packages + footer links to Ylopo land search, deep-linked)
+- Forturro cross-over (homepage + land-packages + footer links to the new Forturro website; no Ylopo or legacy search-domain link)
 
 **Major unfinished work:**
 - **Pricing:** all 93 models show "Call for pricing" — `data/home-pricing.json` and `data/setup-pricing.json` are empty `{}`. When Joe provides pricing, sort/filter UI (already built) activates.
@@ -119,7 +119,7 @@ The site is built around a hierarchical route structure under `src/app` with bot
 **Other:**
 - `src/components/analytics-events.tsx` — GA4 event dispatcher (page views, form submits, outbound clicks)
 - `src/components/attribution-tracker.tsx` — Captures first-touch UTMs/referrer/gclid to localStorage; forwarded to `/api/lead`
-- `src/components/forturro-land-search.tsx` — Embeds or links to Forturro's Ylopo land search (deep-linked, Horry County land-only)
+- `src/components/forturro-land-search.tsx` — Links to the new Forturro website with Home Placer referral UTMs
 - `src/components/testimonials.tsx` — Renders real Google reviews with stars + author
 - `src/components/zoom-image-modal.tsx` — Lightbox for gallery images
 
@@ -132,7 +132,7 @@ The site is built around a hierarchical route structure under `src/app` with bot
 | **Website lead intake** (internal) | `POST /api/lead` | Captures forms (contact, financing, subscribe, service) + validates + routes to FUB & Resend | None (same-origin forms) | JSON body: name, phone, email, type, attribution |
 | **Follow Up Boss /events** | `POST https://api.followupboss.com/v1/events` | Creates/merges person + event in FUB; auto-merge by email or E.164 phone | `Basic ${base64(key:)}` | Env var: `FUB_API_KEY` (Cloudflare Worker secret) |
 | **Follow Up Boss /people/{id}** | `PUT https://api.followupboss.com/v1/people/{id}` | Assigns new service/warranty contacts to warranty owner + collaborators (safe: never reassigns existing owners) | Basic auth | Only on 201 (new person); 200 (existing) is left untouched |
-| **Follow Up Boss /tasks** | `POST https://api.followupboss.com/v1/tasks` | Creates warranty task on every service request (guarantees follow-up regardless of ownership) | Basic auth | Warranty owner: 39 (Brett, configurable); collaborators: 1,35,46 (Joe, Tara, Wade) |
+| **Follow Up Boss /tasks** | `POST https://api.followupboss.com/v1/tasks` | Creates warranty task on every service request (guarantees follow-up regardless of ownership) | Basic auth | Warranty owner: 39 (Brett, configurable); collaborators: 1,35 (Joe, Tara) |
 | **Resend email delivery** | `POST https://api.resend.com/emails` | Optional team email backup (if `RESEND_API_KEY` set) | Bearer `${key}` | Env var: `RESEND_API_KEY` (optional); sends to `leads@hplacer.com` (configurable) |
 | **IndexNow ping** | `POST https://api.indexnow.org/indexnow` | Notifies Bing/Yandex/DuckDuckGo of live URLs; runs post-deploy & on blog publish | Key file + POST body | Host: hplacer.com, key: e0e445eaf75d61f3faee17b699eca3b9 (file: `public/e0e445eaf75d61f3faee17b699eca3b9.txt`) |
 | **Google Search Console** | Web UI at search.google.com | Verified domain + submitted sitemap; owned by carolina@hplacer.com | OAuth (carolina@hplacer.com) | Tracks impressions, clicks, CTR; identifies indexing issues |
@@ -140,7 +140,7 @@ The site is built around a hierarchical route structure under `src/app` with bot
 | **Leaflet / OpenStreetMap** | Tile API via CDN | Map tiles for recently-placed homes (read-only, no auth needed) | None | Library: leaflet.js + leaflet-css; tiles: {s}.tile.openstreetmap.org |
 | **Momento360 virtual tours** | Embedded iframes | 3D walkthroughs of select models (Momento360 urls stored in models.json .tourUrl) | None (embedded) | URLs like `https://momento360.com/e/uc/[id]?...` |
 | **Google Business Profile** | Web UI + JSON-LD embed | Real reviews (5.0★, 7 reviews) + location card; CID 3461988553332431879 | Owned by carolina@hplacer.com | JSON-LD fed into opengraph-image + homepage testimonials |
-| **Forturro Ylopo search** | Deep-linked redirect | Cross-company lead funnel for land-only buyers (returns them as Ylopo captures on Forturro's side) | UTM tracking | Deep link: `search.forturro.com/search/map?s[propertyTypes][0]=land&s[locations][0][county]=Horry&s[locations][0][state]=SC` |
+| **Forturro website** | Cross-site referral | Cross-company handoff for buyers who still need land | UTM tracking | `https://forturro.com/` with Home Placer referral parameters |
 
 ---
 
@@ -182,7 +182,7 @@ All data is **static JSON**, edited by hand, compiled at build time into the ser
 | **Cloudflare** | Home Placer (account_id: 6caa351d57b30bd04cec8a08e4330ffd) | DNS, Workers (app host), R2 (reserved), Page Rules, Edge Certificates | Live | Nameservers: barbara/gabriel.ns.cloudflare.com; custom domains: hplacer.com + www |
 | **Cloudflare Registrar** | Home Placer | Domain registration (future) | PAUSED | hplacer.com registration transfer in progress (currently at Priced Right Domains / GoDaddy reseller) |
 | **Priced Right Domains** | carolina@hplacer.com | Current registrar | Live | Wild West Domains / GoDaddy reseller; portal: dcc.secureserver.net; lock OFF, ready for transfer |
-| **Follow Up Boss** | Team account | CRM + lead routing + task management | Live | FUB_API_KEY stored as Cloudflare Worker secret; warranty routing rules configured in FUB (Brett = owner 39, Joe/Tara/Wade = collaborators 1,35,46) |
+| **Follow Up Boss** | Team account | CRM + lead routing + task management | Live | FUB_API_KEY stored as Cloudflare Worker secret; warranty routing rules configured in FUB (Brett = owner 39, Joe/Tara = collaborators 1,35) |
 | **Resend** | Optional | Email delivery for lead backups | Not configured | RESEND_API_KEY not set (optional, skipped if missing); could send leads to leads@hplacer.com |
 | **Google Analytics 4** | Property G-0T71PWYQSQ | Traffic metrics, conversion tracking | Live | Account: carolina@hplacer.com; GA4 tag embedded in `src/components/analytics.tsx`; tracks page views + form submissions + outbound clicks |
 | **Google Search Console** | hplacer.com property | Indexing + SEO monitoring | Live | Domain verified; sitemap submitted; Bing clicks imported; owned by carolina@hplacer.com |
@@ -190,10 +190,10 @@ All data is **static JSON**, edited by hand, compiled at build time into the ser
 | **Bing Places for Business** | carolina@hplacer.com | Local listing card (Bing Search, Maps) | Claimed, awaiting PIN verify | Status: "Verify now" email sent; Joe to enter SMS PIN (843) 849-4663 to unlock fields |
 | **Apple Business Connect** | Not yet | Local listing (Apple Maps place card) | Parked | Needs Apple ID sign-in; Joe currently locked out; redirects to business.apple.com |
 | **Gemini (Google AI)** | joe@forturro.com | SEO/geo review pass (top engineer prompt) | Ad-hoc | Used when building new pages; Gemini session logged in browser; feedback stored in memory (feedback_seo_geo_gemini.md) |
-| **Ylopo search** | Forturro (sister company) | Land-only MLS search cross-over | Live | Deep-linked from hplacer.com (homepage, /land-packages, footer); Ylopo captures lead on Forturro's side; UTM tracking keeps attribution clean |
+| **Forturro website** | Forturro (sister company) | Land-search and listing handoff | Live | Linked from hplacer.com (homepage, /land-packages, footer) with UTMs; no Ylopo dependency |
 | **Momento360** | Embedded iframes | Virtual home tours | Live | URLs stored in models.json (.tourUrl); embedded on `/homes/[slug]` detail pages; read-only, no auth |
 | **OpenStreetMap + Leaflet.js** | Public tiles | Map rendering for placed homes | Live | Open-source, no auth needed; Leaflet library + OSM {s}.tile.openstreetmap.org tiles |
-| **GitHub** | homeplacer/hplacer-website | Source control | Live | Working branch: `first-touch-attribution`; deploys build from working tree (not git HEAD); ~60 uncommitted files as of 2026-07-01 |
+| **GitHub** | homeplacer/hplacer-website | Source control | Live | `main` is production source; deploy only a clean, tested commit |
 | **IndexNow network** | hplacer.com key | Search engine URL submissions (Bing, Yandex, DuckDuckGo, Seznam) | Live | Key: e0e445eaf75d61f3faee17b699eca3b9; ownership file: `public/e0e445eaf75d61f3faee17b699eca3b9.txt`; runs post-deploy + on blog publish via `scripts/indexnow.mjs` |
 
 ---
@@ -208,7 +208,7 @@ All data is **static JSON**, edited by hand, compiled at build time into the ser
 | **GA4 page tracking** | Browser (client-side) | Logs page view + UTM params to GA4 | Every page load | Live | `src/components/analytics.tsx` + gtag global |
 | **Attribution capture** | Browser (client-side) | Captures first-touch UTMs/referrer/gclid to localStorage; persists across session | Every landing page visit | Live | `src/lib/attribution.ts` + `src/components/attribution-tracker.tsx` |
 | **Form submissions → FUB** | User submits form (contact, financing, subscribe, service) | POST to `/api/lead`, which delivers to FUB /v1/events (person merge, tags, warranty routing) + optional Resend email | On demand | Live | `src/app/api/lead/route.ts` |
-| **Warranty task creation** | Service request form submitted | FUB POST to /v1/tasks; warranty owner (39) + collaborators (1,35,46) notified | On demand (service requests) | Live | `src/app/api/lead/route.ts` lines 218–281 |
+| **Warranty task creation** | Service request form submitted | FUB POST to /v1/tasks; warranty owner (39) + collaborators (1,35) notified | On demand (service requests) | Live | `src/app/api/lead/route.ts` |
 
 ---
 
@@ -245,7 +245,7 @@ npm run deploy           # Runs build-manifests.mjs → opennextjs-cloudflare bu
 
 | Layer | Tech | Version | Notes |
 |---|---|---|---|
-| **Framework** | Next.js | 16.2.9 | App Router (not Pages Router); breaking changes per AGENTS.md |
+| **Framework** | Next.js | 16.3.3 | App Router (not Pages Router); breaking changes per AGENTS.md |
 | **Runtime** | React | 19.2.4 | Client components default; server components for data loaders |
 | **Styling** | Tailwind CSS | v4 | Brand = slate ramp, pink accents; @tailwindcss/postcss |
 | **Deployment** | Cloudflare Workers | Current | Via @opennextjs/cloudflare v1.19.11 (no ISR/on-demand revalidation) |

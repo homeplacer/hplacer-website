@@ -58,7 +58,7 @@ Permanent, non-negotiable rules for working on hplacer.com. These are hard-won â
 | Static JSON data stores + build-time import | A runtime database (unnecessary; workerd-hostile) |
 | next/og image with base64-inlined photo | `fs.readFileSync` (500s in workerd) or a static PNG (loses code-driven tweaks) |
 | Date-gated posts + scheduled redeploy | ISR/revalidate (unreliable on OpenNext/Workers for this) |
-| Cross-linking to sister-company Ylopo search (can't iframe it) | Embedding the IDX (blocked by `X-Frame-Options: SAMEORIGIN`) |
+| Cross-linking to the new sister-company Forturro website with UTMs | Linking to Ylopo or a legacy Forturro search domain |
 | Editing `models.json` by hand | Re-running `build-models.mjs` (data loss) |
 | Real home photos in link previews | Generic text OG cards (far lower CTR) |
 

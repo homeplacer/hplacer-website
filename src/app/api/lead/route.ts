@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 //   FUB_API_KEY                → creates an event/person in Follow Up Boss
 //   RESEND_API_KEY             → emails the team (LEADS_TO, default leads@hplacer.com)
 //   FUB_WARRANTY_USER_ID       → owner for NEW service leads (default 39 = Brett)
-//   FUB_WARRANTY_COLLABORATORS → CSV of collaborator ids (default 1,35,46 = Joe,Tara,Wade)
+//   FUB_WARRANTY_COLLABORATORS → CSV of collaborator ids (default 1,35 = Joe,Tara)
 //   LEAD_FAILURE_WEBHOOK_URL   → (optional) POSTs a minimal alert to a team webhook
 //                                (Slack-compatible) if a lead can't be delivered at all
 // Always logs server-side as a fallback record. Same-origin form posts → no CORS.
@@ -131,7 +131,7 @@ const warrantyUserId = (): number => {
 };
 
 const warrantyCollaborators = (): number[] =>
-  (process.env.FUB_WARRANTY_COLLABORATORS || "1,35,46")
+  (process.env.FUB_WARRANTY_COLLABORATORS || "1,35")
     .split(",")
     .map((s) => parseInt(s.trim(), 10))
     .filter((n) => Number.isFinite(n));
