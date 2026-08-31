@@ -23,7 +23,7 @@ import { WantThisHouseForm } from "@/components/want-this-house-form";
 import { WidthSelector } from "@/components/width-selector";
 import { WidthProvider } from "@/components/width-context";
 import { FloorPlanSection } from "@/components/floor-plan-section";
-import { JsonLd, homeProductLd, breadcrumbLd } from "@/lib/jsonld";
+import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
 import {
   BedIcon,
   BathIcon,
@@ -100,7 +100,6 @@ export default async function HomeDetailPage({
 
   return (
     <WidthProvider widths={widths} lengthFt={home.lengthFt}>
-      <JsonLd data={homeProductLd(home)} />
       <JsonLd
         data={breadcrumbLd([
           { name: "Home", path: "/" },

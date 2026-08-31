@@ -1,8 +1,6 @@
 import { site, liveSocialUrls } from "@/lib/site";
 import { reviews } from "@/lib/reviews";
 import { locations as allLocations, counties as allCounties } from "@/lib/locations";
-import type { Home } from "@/lib/home-types";
-import { displayPrice } from "@/lib/home-types";
 
 const stateName = (abbr: string) => (abbr === "NC" ? "North Carolina" : "South Carolina");
 
@@ -87,74 +85,10 @@ export function localBusinessLd() {
       reviewBody: r.text,
       publisher: { "@type": "Organization", name: "Google" },
     })),
-    makesOffer: {
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Product",
-        name: "Manufactured home + land package",
-      },
-      priceCurrency: "USD",
-    },
   };
 }
-
-// Link each manufacturer brand to its real-world entity (official site +
-// Wikipedia) so search + LLMs resolve it unambiguously — strong "entity" signal.
-const BRAND_LINKS: Record<string, string[]> = {
-  Clayton: ["https://www.claytonhomes.com", "https://en.wikipedia.org/wiki/Clayton_Homes"],
-  Cavco: ["https://www.cavco.com", "https://en.wikipedia.org/wiki/Cavco_Industries"],
-  Champion: ["https://www.championhomes.com", "https://en.wikipedia.org/wiki/Skyline_Champion"],
-};
 
 const abs = (u: string) => (u.startsWith("http") ? u : `${site.url}${u}`);
-
-export function homeProductLd(home: Home) {
-  const price = displayPrice(home);
-  return {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: `${home.name} by ${home.brand}`,
-    brand: {
-      "@type": "Brand",
-      name: home.brand,
-      ...(BRAND_LINKS[home.brand] ? { sameAs: BRAND_LINKS[home.brand] } : {}),
-    },
-    category: "Manufactured Home",
-    description: home.excerpt || `${home.beds}-bed ${home.baths}-bath ${home.brand} manufactured home.`,
-    image: home.imageUrls.slice(0, 5).map(abs),
-    url: `${site.url}/homes/${home.slug}`,
-    // Machine-readable specs — helps rich results + AI answers parse the home.
-    additionalProperty: [
-      { "@type": "PropertyValue", name: "Bedrooms", value: home.beds },
-      { "@type": "PropertyValue", name: "Bathrooms", value: home.baths },
-      { "@type": "PropertyValue", name: "Square feet", value: home.sqft, unitText: "SQFT" },
-      { "@type": "PropertyValue", name: "Section width", value: home.widthFt, unitText: "FOT" },
-      { "@type": "PropertyValue", name: "Length", value: home.lengthFt, unitText: "FOT" },
-    ],
-    ...(price != null
-      ? {
-          offers: {
-            "@type": "Offer",
-            price,
-            priceCurrency: "USD",
-            availability: "https://schema.org/InStock",
-            itemCondition: "https://schema.org/NewCondition",
-            seller: { "@type": "Organization", name: site.legalName },
-            // Ties the home to the physical service area (lots in Horry County).
-            areaServed: {
-              "@type": "Place",
-              name: "Horry County, South Carolina",
-              geo: {
-                "@type": "GeoCoordinates",
-                latitude: site.geo.lat,
-                longitude: site.geo.lng,
-              },
-            },
-          },
-        }
-      : {}),
-  };
-}
 
 // Real, sold Home Placer homes (the /recently-placed showcase + its per-home
 // pages). Each card photo is geotagged to its street address — exposing that as
