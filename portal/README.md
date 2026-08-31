@@ -250,9 +250,12 @@ the seed uses and what to run after a bulk import or a change to the rules.
 
 ## Monday.com
 
-There is still **no outbound integration**: nothing in this repository writes to
-Monday, and the portal Worker makes no Monday calls at runtime. What exists is a
-link registry plus a read-only discovery tool an operator runs by hand.
+Monday discovery remains read-only. A separate guarded outbound processor is
+available, but production is deliberately configured with
+`MONDAY_WRITE_SYNC_ENABLED=false`. It can update only code-reviewed fields on
+the exact mapped boards, and only for portal records that an administrator has
+linked. It checks the expected remote value before writing, verifies the result,
+deduplicates retries, and records a redacted audit trail.
 
 ### The link registry
 
@@ -282,8 +285,9 @@ history:
 security add-generic-password -U -s homeplacer-monday-api -a homeplacer-portal -w
 ```
 
-It is never committed, never written to a file, never placed in an environment
-variable, and never printed. `src/integrations/monday-credentials.ts` returns it
+The local operator copy is never committed, written to a file, placed in an
+environment variable, or printed. Production holds a second encrypted copy as
+the `MONDAY_API_TOKEN` Cloudflare Worker secret. `src/integrations/monday-credentials.ts` returns the local copy
 as an opaque `MondayToken` whose `toString` and `toJSON` both render `***`, so an
 accidental interpolation or a `JSON.stringify` cannot leak it; every error
 message and subprocess stream is passed through `redact()` first; and nothing
@@ -327,13 +331,15 @@ flags: `--key-column <id|title>` to trust one column for the key,
 
 Recent runs are listed at `/admin/monday`.
 
-### If an outbound write is ever wanted
+### Guarded outbound processing
 
-It is deliberately not a configuration flag. It would mean: implementing
-`MondaySyncPort` against the Monday GraphQL API, constructing a client with
-`allowMutations: true` at that one call site, draining `monday_sync_queue`,
-deciding what happens on a conflict, and reviewing all of it. Nothing above
-`src/integrations/monday.ts` has to change.
+`src/integrations/monday-sync-processor.ts` is the only path that can mutate
+Monday. It is disabled unless `MONDAY_WRITE_SYNC_ENABLED` is exactly `true`,
+requires `MONDAY_API_TOKEN`, validates `MONDAY_SYNC_MAPPINGS` against the
+code-level allowlist, and refuses stale expected values or board mismatches.
+Keep the flag off while importing/reviewing links. Enable it only after the
+admin Monday screen shows the intended records and the queued payloads have
+been reviewed.
 
 ## Production bindings and recovery checklist
 

@@ -17,6 +17,10 @@
 
   "vars": {
     "PORTAL_ENVIRONMENT": "production",
+    // Guarded outbound Monday processing stays fail-closed until an
+    // administrator deliberately enables it after reviewing linked records.
+    "MONDAY_WRITE_SYNC_ENABLED": "false",
+    "MONDAY_SYNC_MAPPINGS": "{\"homes\":{\"boardId\":\"18419219855\",\"columns\":{\"status\":\"color_mm4m3fdj\",\"address\":\"text_mm4m7sxf\"}},\"equipment\":{\"boardId\":\"18009779855\",\"columns\":{\"status\":\"status\"}},\"tasks\":{\"boardId\":\"18420164197\",\"columns\":{\"status\":\"color_mm4vbm3t\",\"assignee\":\"color_mm58y3kf\",\"due_date\":\"date_mm4vvy0y\",\"title\":\"name\"}}}",
     // Filled in when the Cloudflare Access application is created. Until both
     // are set the Worker refuses every request (fail closed).
     "ACCESS_TEAM_DOMAIN": "summer-night-a430",
