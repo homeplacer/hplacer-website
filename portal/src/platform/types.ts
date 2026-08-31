@@ -102,4 +102,11 @@ export interface PortalEnv {
    * This is a Worker secret, never a checked-in var.
    */
   PORTAL_JOB_APPLICATION_TOKEN?: string;
+
+  /** Outbound Monday writes are disabled unless this is exactly "true". */
+  MONDAY_WRITE_SYNC_ENABLED?: string;
+  /** Full-access token held as a Cloudflare Worker secret, never a plain var. */
+  MONDAY_API_TOKEN?: string;
+  /** JSON board/column map; validated against the code-level field allowlist. */
+  MONDAY_SYNC_MAPPINGS?: string;
 }

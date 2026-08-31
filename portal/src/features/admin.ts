@@ -5,6 +5,7 @@ import { createEmployee, grantRole, listEmployees, revokeRole, setEmployeeActive
 import { notifyServiceDue } from "../domain/assets.ts";
 import { addRoute, listRouting, recipientsFor, removeRoute, type NotificationCategory } from "../domain/notifications.ts";
 import { pendingMondayRuns } from "../integrations/monday.ts";
+import { mondayWriteEnabled, runConfiguredMondaySync } from "../integrations/monday-sync-processor.ts";
 import { sweepLowStock } from "../domain/inventory.ts";
 import {
   MONDAY_BOARD_KEYS,
@@ -50,6 +51,7 @@ export function registerAdmin(router: Router): void {
   router.post("/api/monday/boards", upsertBoardRoute);
   router.post("/api/monday/links", linkRoute);
   router.post("/api/monday/links/:type/:id/detach", detachRoute);
+  router.post("/api/monday/sync/run", runMondaySyncRoute);
   router.post("/api/maintenance/sweeps", sweepRoute);
 
   router.get("/api/employees", async (ctx) => {
@@ -227,15 +229,20 @@ async function renderMonday(ctx: RequestContext): Promise<Response> {
   const boards = await listBoards(ctx.db);
   const links = await linkOverview(ctx.db);
   const queue = await pendingSyncQueue(ctx.db, 25);
+  const writesEnabled = mondayWriteEnabled(ctx.env);
 
   const body = html`
     <h1>Monday.com links</h1>
     ${adminTabs("monday")}
     <div class="notice">
-      This portal does not call Monday. It records which serial number, VIN, job number, or ticket number
-      corresponds to which Monday item id, and queues the changes a future sync worker would push.
-      No Monday API token is stored or required.
+      Read-only discovery does not call Monday and remains separate. Outbound queue processing is
+      ${writesEnabled ? badge("enabled", "warn") : badge("disabled", "ok")}; it only writes explicitly
+      allowlisted columns, verifies expected remote values, and stops on conflicts.
     </div>
+    <form class="card" method="post" action="/api/monday/sync/run">
+      <p class="meta">Run the same guarded processor used by the scheduled Worker. When disabled, this is a no-op.</p>
+      <div class="btn-row"><button class="secondary" type="submit">Process sync queue now</button></div>
+    </form>
 
     <h2>Boards</h2>
     ${boards.length === 0 ? empty("No boards configured.") : ""}
@@ -307,7 +314,7 @@ async function renderMonday(ctx: RequestContext): Promise<Response> {
             (item) => html`<tr>
               <td>${formatDate(item.created_at)}</td><td>${item.operation}</td>
               <td>${item.entity_type.replace(/_/g, " ")}</td><td>${item.canonical_key}</td>
-              <td>${badge(item.status, item.status === "sent" ? "ok" : item.status === "failed" ? "bad" : "warn")}</td>
+              <td>${badge(item.status, item.status === "sent" || item.status === "skipped" ? "ok" : item.status === "failed" || item.status === "conflict" ? "bad" : "warn")}</td>
             </tr>`,
           )}</tbody></table></div>`}
   `;
@@ -409,6 +416,15 @@ async function detachRoute(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "monday.manage");
   await detachEntity(ctx.db, ctx.monday, ctx.params.type as MondayEntityType, ctx.params.id);
   return wantsJson(ctx) ? json({ ok: true }) : redirect("/admin/monday?ok=unlinked");
+}
+
+async function runMondaySyncRoute(ctx: RequestContext): Promise<Response> {
+  assertCan(ctx.actor, "monday.manage");
+  const summary = await runConfiguredMondaySync(ctx.env, {
+    actor: { employeeId: ctx.actor.employeeId, email: ctx.actor.email },
+    limit: 50,
+  });
+  return wantsJson(ctx) ? json(summary) : redirect(`/admin/monday?ok=${summary.enabled ? "sync_processed" : "sync_disabled"}`);
 }
 
 async function sweepRoute(ctx: RequestContext): Promise<Response> {

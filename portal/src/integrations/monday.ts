@@ -81,10 +81,14 @@ export class QueuedMondaySyncPort implements MondaySyncPort {
   async enqueue(change: MondaySyncChange): Promise<string> {
     const link = await getLink(this.#db, change.entityType, change.entityId);
     const id = newId("msq");
+    const payload = stableJson(change.payload);
+    const idempotencyKey = await syncIdempotencyKey(change, payload);
     await this.#db
       .prepare(
-        `INSERT INTO monday_sync_queue (id, link_id, entity_type, entity_id, canonical_key, operation, payload, status, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, 'queued', ?)`,
+        `INSERT INTO monday_sync_queue
+           (id, link_id, entity_type, entity_id, canonical_key, operation, payload, idempotency_key, status, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'queued', ?)
+         ON CONFLICT (idempotency_key) DO NOTHING`,
       )
       .bind(
         id,
@@ -93,12 +97,36 @@ export class QueuedMondaySyncPort implements MondaySyncPort {
         change.entityId,
         change.canonicalKey,
         change.operation,
-        JSON.stringify(change.payload),
+        payload,
+        idempotencyKey,
         nowIso(),
       )
       .run();
-    return id;
+    const stored = await this.#db
+      .prepare("SELECT id FROM monday_sync_queue WHERE idempotency_key = ?")
+      .bind(idempotencyKey)
+      .first<{ id: string }>();
+    return stored?.id ?? id;
   }
+}
+
+function stableJson(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
+  if (value && typeof value === "object") {
+    return `{${Object.entries(value as Record<string, unknown>)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, item]) => `${JSON.stringify(key)}:${stableJson(item)}`)
+      .join(",")}}`;
+  }
+  return JSON.stringify(value) ?? "null";
+}
+
+async function syncIdempotencyKey(change: MondaySyncChange, payload: string): Promise<string> {
+  const bytes = new TextEncoder().encode(
+    `${change.entityType}\n${change.entityId}\n${change.canonicalKey}\n${change.boardKey}\n${change.operation}\n${payload}`,
+  );
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return `msq:${Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("")}`;
 }
 
 const KEY_KIND_BY_BOARD: Record<MondayBoardKey, CanonicalKeyKind[]> = {
@@ -325,6 +353,7 @@ export async function queuePush(
   entityType: MondayEntityType,
   entityId: string,
   payload: Record<string, unknown>,
+  options: { expectedRemote?: Record<string, unknown> } = {},
 ): Promise<string | null> {
   const link = await getLink(db, entityType, entityId);
   if (!link || link.sync_state === "detached") return null;
@@ -334,7 +363,7 @@ export async function queuePush(
     canonicalKey: link.canonical_key,
     boardKey: link.board_key as MondayBoardKey,
     operation: "push",
-    payload,
+    payload: { values: payload, expected_remote: options.expectedRemote ?? null },
   });
 }
 
@@ -357,6 +386,8 @@ export interface SyncQueueRow {
   operation: string;
   status: string;
   attempts: number;
+  next_attempt_at: string | null;
+  locked_at: string | null;
   last_error: string | null;
   created_at: string;
   processed_at: string | null;

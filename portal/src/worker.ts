@@ -9,6 +9,7 @@ import { handleRequest } from "./app.ts";
 import { sweepLowStock } from "./domain/inventory.ts";
 import { notifyServiceDue } from "./domain/assets.ts";
 import { sendDailyDigest } from "./domain/daily-digest.ts";
+import { runConfiguredMondaySync } from "./integrations/monday-sync-processor.ts";
 import type { PortalEnv } from "./platform/types.ts";
 
 const portal = {
@@ -28,6 +29,22 @@ const portal = {
     const serviceDue = await notifyServiceDue(env.PORTAL_DB);
     const digest = await sendDailyDigest(env.PORTAL_DB);
     console.log(`portal sweep: ${lowStock} low-stock alerts, ${serviceDue} service notices, ${digest} daily digests`);
+    try {
+      const monday = await runConfiguredMondaySync(env, { limit: 50 });
+      if (monday.enabled) {
+        console.log(JSON.stringify({
+          message: "Monday sync complete",
+          sent: monday.sent,
+          alreadyApplied: monday.alreadyApplied,
+          conflicts: monday.conflicts,
+          retries: monday.retried,
+        }));
+      }
+    } catch {
+      // Details are retained in redacted queue/audit records. Never put remote
+      // values or the token in Worker logs.
+      console.error("Monday sync configuration or processing failed; see portal audit log");
+    }
   },
 };
 

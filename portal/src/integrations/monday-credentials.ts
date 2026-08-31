@@ -133,3 +133,16 @@ export function staticTokenSource(value: string, label = "in-memory (test)"): To
     read: async () => new MondayToken(value),
   };
 }
+
+/**
+ * Wraps a Cloudflare Worker secret. This is intentionally separate from the
+ * operator Keychain path: the secret binding is available only inside the
+ * deployed Worker and its opaque wrapper retains the same logging safeguards.
+ */
+export function workerSecretTokenSource(value: string): TokenSource {
+  const token = new MondayToken(value);
+  return {
+    describe: () => "Cloudflare Worker secret",
+    read: async () => token,
+  };
+}
