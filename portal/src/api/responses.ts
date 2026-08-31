@@ -57,6 +57,7 @@ export const FLASH_MESSAGES: Record<string, string> = {
   received: "Received into stock.",
   employee_added: "Employee added.",
   swept: "Sweep complete.",
+  insurance_saved: "Insurance card saved and renewal tracking updated.",
 };
 
 export function flashFrom(url: URL): { kind: "ok"; message: string } | null {

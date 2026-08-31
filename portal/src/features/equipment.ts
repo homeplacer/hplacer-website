@@ -20,6 +20,7 @@ import {
 import { listDefects } from "../domain/defects.ts";
 import { listDocuments } from "../domain/documents.ts";
 import { listEmployees } from "../domain/employees.ts";
+import { listInsuranceCards, recordInsuranceCard } from "../domain/insurance.ts";
 import {
   getInspection,
   listInspections,
@@ -58,6 +59,7 @@ export function registerEquipment(router: Router): void {
   router.post("/api/equipment/:tag/service", recordServiceRoute);
   router.post("/api/equipment/:tag/schedules", createScheduleRoute);
   router.post("/api/equipment/:tag/source-verification", resolveSourceVerificationRoute);
+  router.post("/api/equipment/:tag/insurance", recordInsuranceRoute);
   router.post("/api/inspections", submitInspectionRoute);
 
   router.get("/api/equipment", async (ctx) => {
@@ -150,6 +152,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
   const documents = await listDocuments(ctx.db, { assetId: asset.id });
   const link = await getLink(ctx.db, "asset", asset.id);
   const sourceMetadata = await assetSourceMetadata(ctx.db, asset.id);
+  const insuranceCards = await listInsuranceCards(ctx.db, asset.id);
   const employees = sourceMetadata && can(ctx.actor, "asset.write") ? await listEmployees(ctx.db) : [];
 
   const body = html`
@@ -183,6 +186,41 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
         <a class="btn secondary" href="/repairs/new?assetId=${asset.id}">Report a repair</a>
       </div>
     </div>
+
+    <h2>Insurance cards</h2>
+    ${insuranceCards.length === 0
+      ? empty("No insurance card is on file for this vehicle.")
+      : insuranceCards.map((card) => html`<div class="card">
+          <div class="row"><h3>${card.provider}</h3>
+            ${badge(card.status, card.status === "current" ? (card.expires_on < new Date().toISOString().slice(0, 10) ? "bad" : "ok") : "")}</div>
+          ${kv([
+            ["Policy", card.policy_number],
+            ["Effective", card.effective_on],
+            ["Expires", card.expires_on],
+          ])}
+          ${card.document_id
+            ? html`<div class="btn-row"><a class="btn secondary" href="/api/documents/${card.document_id}/content">Open insurance card</a></div>`
+            : html`<p class="meta">The policy record exists, but its original file is not attached.</p>`}
+        </div>`)}
+
+    ${can(ctx.actor, "asset.write")
+      ? html`<details class="card">
+          <summary><strong>Replace insurance card</strong></summary>
+          <form method="post" action="/api/equipment/${asset.asset_tag}/insurance" enctype="multipart/form-data">
+            <label for="insurance_provider">Provider</label>
+            <input id="insurance_provider" name="provider" required placeholder="State Farm">
+            <label for="insurance_policy_number">Policy number (optional)</label>
+            <input id="insurance_policy_number" name="policy_number">
+            <label for="insurance_effective_on">Effective date (optional)</label>
+            <input id="insurance_effective_on" name="effective_on" type="date">
+            <label for="insurance_expires_on">Expiration date</label>
+            <input id="insurance_expires_on" name="expires_on" type="date" required>
+            <label for="insurance_file">Insurance card</label>
+            <input id="insurance_file" name="file" type="file" accept="application/pdf,image/jpeg,image/png,image/webp,image/heic" required>
+            <div class="btn-row"><button type="submit">Save insurance card</button></div>
+          </form>
+        </details>`
+      : ""}
 
     ${sourceMetadata
       ? html`<h2>Fleet record verification</h2>
@@ -361,6 +399,35 @@ async function resolveSourceVerificationRoute(ctx: RequestContext): Promise<Resp
     resolvedBy: ctx.actor.employeeId,
   });
   return wantsJson(ctx) ? json({ ok: true }) : redirect(`/equipment/${asset.asset_tag}?ok=source_verified`);
+}
+
+async function recordInsuranceRoute(ctx: RequestContext): Promise<Response> {
+  assertCan(ctx.actor, "asset.write");
+  const asset = await requireAsset(ctx.db, ctx.params.tag);
+  const form = await readForm(ctx.request);
+  const file = form.get("file");
+  if (!file || typeof file === "string") throw badRequest("Choose an insurance card to upload");
+  const value = (name: string): string | null => {
+    const field = form.get(name);
+    return typeof field === "string" && field.trim() ? field.trim() : null;
+  };
+  const provider = value("provider");
+  const expiresOn = value("expires_on");
+  if (!provider) throw badRequest("Insurance provider is required");
+  if (!expiresOn) throw badRequest("Expiration date is required");
+
+  const id = await recordInsuranceCard(ctx.db, ctx.store, {
+    assetId: asset.id,
+    provider,
+    policyNumber: value("policy_number"),
+    effectiveOn: value("effective_on"),
+    expiresOn,
+    fileName: file.name || "insurance-card.pdf",
+    contentType: file.type || "application/octet-stream",
+    bytes: await file.arrayBuffer(),
+    createdBy: ctx.actor.employeeId,
+  });
+  return wantsJson(ctx) ? json({ id }, 201) : redirect(`/equipment/${asset.asset_tag}?ok=insurance_saved`);
 }
 
 async function renderInspectionForm(ctx: RequestContext): Promise<Response> {

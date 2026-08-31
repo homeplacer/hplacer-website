@@ -29,10 +29,12 @@ import type { RequestContext } from "./api/context.ts";
 import { errorMessage, errorStatus, json } from "./api/responses.ts";
 import { Router } from "./api/router.ts";
 import { registerAdmin } from "./features/admin.ts";
+import { registerCareersReview } from "./features/careers.ts";
 import { registerDashboard } from "./features/dashboard.ts";
 import { registerDocuments } from "./features/documents.ts";
 import { registerEquipment } from "./features/equipment.ts";
 import { registerHomes } from "./features/homes.ts";
+import { registerHealth } from "./features/health.ts";
 import { registerInventory } from "./features/inventory.ts";
 import { registerPortableJohn } from "./features/portable-john.ts";
 import { handlePublicJobApplicationIntake, handlePublicWarrantyIntake, isPublicIntakeRequest, PUBLIC_JOB_APPLICATION_PATH } from "./features/public-intake.ts";
@@ -47,6 +49,7 @@ export function buildRouter(): Router {
   registerDashboard(router);
   registerSubdivisions(router);
   registerHomes(router);
+  registerHealth(router);
   registerEquipment(router);
   registerTasks(router);
   registerRepairs(router);
@@ -55,6 +58,7 @@ export function buildRouter(): Router {
   registerPortableJohn(router);
   registerDocuments(router);
   registerAdmin(router);
+  registerCareersReview(router);
   return router;
 }
 

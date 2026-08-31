@@ -119,4 +119,56 @@ describe("public job application intake", () => {
     const read = await harness.request(PATH, { method: "GET" });
     assert.equal(read.status, 405);
   });
+
+  it("lets only an administrator review an application and download its private resume", async () => {
+    const application = new FormData();
+    application.set("position", "Diesel technician");
+    application.set("name", "Morgan Reyes");
+    application.set("email", "morgan@example.com");
+    application.set("phone", "8435550133");
+    application.set("experience", "Heavy equipment field service.");
+    application.set("resume", new File(["private resume"], "Morgan Resume.pdf", { type: "application/pdf" }));
+    assert.equal((await submit(application)).status, 201);
+
+    const row = await harness.db.prepare("SELECT id FROM job_applications WHERE email = 'morgan@example.com'").first<{ id: string }>();
+    assert.ok(row);
+
+    assert.equal((await harness.request("/admin/applications", { as: "dale@hplacer.com" })).status, 403);
+    assert.equal((await harness.request("/admin/applications", { as: "greg@hplacer.com" })).status, 403);
+    const list = await harness.request("/admin/applications", { as: "ops@hplacer.com" });
+    assert.equal(list.status, 200);
+    assert.match(await list.text(), /Morgan Reyes/);
+
+    const detail = await harness.request(`/admin/applications/${row.id}`, { as: "ops@hplacer.com" });
+    assert.equal(detail.status, 200);
+    assert.match(await detail.text(), /Heavy equipment field service/);
+
+    assert.equal((await harness.request(`/api/job-applications/${row.id}/resume`, { as: "dale@hplacer.com" })).status, 403);
+    const resume = await harness.request(`/api/job-applications/${row.id}/resume`, { as: "ops@hplacer.com" });
+    assert.equal(resume.status, 200);
+    assert.equal(resume.headers.get("Content-Disposition"), 'attachment; filename="Morgan-Resume.pdf"');
+    assert.equal(await resume.text(), "private resume");
+
+    const saved = await harness.request(`/api/job-applications/${row.id}/status`, {
+      as: "ops@hplacer.com",
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ status: "reviewing", review_notes: "Call after 3 PM." }),
+    });
+    assert.equal(saved.status, 303);
+    const reviewed = await harness.db.prepare(
+      "SELECT status, review_notes, reviewed_by, reviewed_at FROM job_applications WHERE id = ?",
+    ).bind(row.id).first<{ status: string; review_notes: string; reviewed_by: string; reviewed_at: string }>();
+    assert.deepEqual({
+      status: reviewed?.status,
+      review_notes: reviewed?.review_notes,
+      reviewed_by: reviewed?.reviewed_by,
+      hasReviewedAt: Boolean(reviewed?.reviewed_at),
+    }, {
+      status: "reviewing",
+      review_notes: "Call after 3 PM.",
+      reviewed_by: "emp_admin",
+      hasReviewedAt: true,
+    });
+  });
 });

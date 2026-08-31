@@ -54,6 +54,7 @@ export type Permission =
   | "monday.manage"
   | "monday.import"
   | "warranty.review"
+  | "career.review"
   | "notification.route.manage"
   | "audit.read";
 
@@ -117,6 +118,7 @@ const ADMIN_PERMISSIONS: Permission[] = [
   "employee.manage",
   "monday.manage",
   "monday.import",
+  "career.review",
   "notification.route.manage",
   "audit.read",
 ];

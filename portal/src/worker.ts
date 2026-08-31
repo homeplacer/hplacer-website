@@ -9,6 +9,7 @@ import { handleRequest } from "./app.ts";
 import { sweepLowStock } from "./domain/inventory.ts";
 import { notifyServiceDue } from "./domain/assets.ts";
 import { sendDailyDigest } from "./domain/daily-digest.ts";
+import { notifyInsuranceExpirations } from "./domain/insurance.ts";
 import { runConfiguredMondaySync } from "./integrations/monday-sync-processor.ts";
 import type { PortalEnv } from "./platform/types.ts";
 
@@ -27,8 +28,15 @@ const portal = {
     if (!env.PORTAL_DB) return;
     const lowStock = await sweepLowStock(env.PORTAL_DB);
     const serviceDue = await notifyServiceDue(env.PORTAL_DB);
+    const insuranceExpiring = await notifyInsuranceExpirations(env.PORTAL_DB);
     const digest = await sendDailyDigest(env.PORTAL_DB);
-    console.log(`portal sweep: ${lowStock} low-stock alerts, ${serviceDue} service notices, ${digest} daily digests`);
+    console.log(JSON.stringify({
+      message: "portal maintenance sweep complete",
+      lowStock,
+      serviceDue,
+      insuranceExpiring,
+      dailyDigests: digest,
+    }));
     try {
       const monday = await runConfiguredMondaySync(env, { limit: 50 });
       if (monday.enabled) {

@@ -7,6 +7,7 @@ import { addRoute, listRouting, recipientsFor, removeRoute, type NotificationCat
 import { pendingMondayRuns } from "../integrations/monday.ts";
 import { mondayWriteEnabled, runConfiguredMondaySync } from "../integrations/monday-sync-processor.ts";
 import { sweepLowStock } from "../domain/inventory.ts";
+import { notifyInsuranceExpirations } from "../domain/insurance.ts";
 import {
   MONDAY_BOARD_KEYS,
   MONDAY_ENTITY_TYPES,
@@ -64,9 +65,10 @@ export function registerAdmin(router: Router): void {
   });
 }
 
-function adminTabs(current: string) {
+export function adminTabs(current: string) {
   return tabs([
     { href: "/admin", label: "Staff", current: current === "staff" },
+    { href: "/admin/applications", label: "Careers", current: current === "applications" },
     { href: "/admin/notifications", label: "Notifications", current: current === "notifications" },
     { href: "/admin/monday", label: "Monday", current: current === "monday" },
     { href: "/admin/audit", label: "Audit log", current: current === "audit" },
@@ -431,7 +433,8 @@ async function sweepRoute(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "employee.manage");
   const lowStock = await sweepLowStock(ctx.db);
   const serviceDue = await notifyServiceDue(ctx.db);
-  return wantsJson(ctx) ? json({ lowStock, serviceDue }) : redirect("/admin?ok=swept");
+  const insuranceExpiring = await notifyInsuranceExpirations(ctx.db);
+  return wantsJson(ctx) ? json({ lowStock, serviceDue, insuranceExpiring }) : redirect("/admin?ok=swept");
 }
 
 async function mondayRunsTable(ctx: RequestContext) {

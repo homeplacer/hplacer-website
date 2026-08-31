@@ -27,7 +27,8 @@ export type NotificationCategory =
   | "daily_digest"
   | "warranty_request"
   | "portable_john_request"
-  | "job_application";
+  | "job_application"
+  | "insurance_expiring";
 
 export interface NotificationInput {
   employeeId: string;

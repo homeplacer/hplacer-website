@@ -140,6 +140,8 @@ permission checks.
 | Field photos, receipts, inspection evidence | R2 (`PORTAL_PHOTOS`), private | Metadata in D1; bytes streamed back through an authorized route, never a stored URL |
 | Plats, permits, factory paperwork | Google Drive | File id and `webViewLink` only — nothing is copied, and Drive keeps enforcing its own sharing |
 | Homeowner photos from the warranty form | R2 (`PORTAL_PHOTOS`), private | Same bucket, same authorized route; `uploaded_by` is NULL because a homeowner is not an employee |
+| Applicant resumes | R2 (`PORTAL_PHOTOS`), private | Available only from the admin Careers review screen; never receives a public URL |
+| Vehicle insurance cards | R2 (`PORTAL_PHOTOS`), private | Linked to the exact asset with provider/effective/expiration metadata and streamed only after employee authorization |
 
 ## Security model
 
@@ -446,13 +448,15 @@ token is operator tooling and is never needed by the deployed Worker.
 ### 6. Optional, once it is live
 
 - Keep the cron trigger in `wrangler.jsonc` (`0 11 * * *`, 07:00 Eastern in
-  summer) for the low-stock and service-due sweep; the same sweep can be run by
+  summer) for low-stock, service-due, and insurance-expiration alerts; the same sweep can be run by
   hand from `/admin`.
 - Point notifications at email or SMS. `notifications.delivered_at` is the hook —
   the table already carries a severity and a dedupe key.
 - Turn on Access logging retention, and mirror it against the portal's own audit
   log at `/admin/audit`.
-- Set an R2 lifecycle rule if field photos need to age out.
+- Follow [`ops/R2-RETENTION.md`](ops/R2-RETENTION.md) before changing bucket
+  lifecycle. No deletion period is assumed: the bucket mixes warranty evidence,
+  bill-back records, resumes, and insurance cards.
 
 ### 7. Known gaps
 
@@ -471,8 +475,8 @@ token is operator tooling and is never needed by the deployed Worker.
   `CREATE TRIGGER … BEGIN … END;` correctly on current versions; confirm the
   trigger `trg_inventory_movement_applies_to_stock` exists after the first apply,
   since `parts.quantity_on_hand` depends on it.
-- **Warranty and Careers intake are the only unauthenticated routes**; there is
-  still no health check. If uptime
+- **Warranty and Careers intake are the only unauthenticated routes**. Portal
+  readiness is available at authenticated `GET /api/health/ready`. If uptime
   monitoring is wanted, add an Access bypass policy for one path and a matching
   route rather than loosening the Worker.
 - Photo uploads are a single request (up to 15 MB). Larger media would want
@@ -494,6 +498,7 @@ token is operator tooling and is never needed by the deployed Worker.
 | Assign tasks, approve repairs, manage equipment | — | ✅ | — | ✅ |
 | Review the warranty queue | — | ✅ | ✅ | ✅ |
 | Bill-back queue, purchasing, stock management | — | — | ✅ | ✅ |
+| Review Careers applications and resumes | — | — | — | ✅ |
 | Staff, roles, notification routing, Monday links, audit log | — | — | — | ✅ |
 
 ### Migrations
@@ -512,6 +517,7 @@ token is operator tooling and is never needed by the deployed Worker.
 | `0009_job_applications.sql` | Private Careers application records and resume metadata |
 | `0010_expand_home_workflow.sql` | Expanded permit, utility, inspection, and finish-work steps |
 | `0011_provisional_homes_and_equipment_cleanup.sql` | Provisional home identity and fleet cleanup fields |
+| `0012_careers_insurance_readiness.sql` | Careers review metadata, structured private insurance cards, and expiration alert routing |
 
 `seed/dev-seed.sql` is demonstration data for local work only. No employee names,
 credentials, vendor accounts, photos, or customer data are checked into source
