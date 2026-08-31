@@ -3,10 +3,10 @@
  *
  * Order matters and is the same for every route, HTML or JSON:
  *
- *   0. One exception, checked first and by path: the public warranty intake at
- *      `POST /api/public/warranty-requests`, which hplacer.com calls with a
- *      shared bearer token. It writes a warranty request and returns a
- *      reference; it reads nothing. See features/public-intake.ts.
+ *   0. Two exceptions, checked first and by exact path: warranty intake and job
+ *      application intake, each called by hplacer.com with a separate bearer
+ *      token. They write one record and return a reference; they read nothing.
+ *      See features/public-intake.ts.
  *   1. Verify the Cloudflare Access assertion (or the loopback dev identity).
  *   2. Resolve it to an active employee record — Access proves identity, the
  *      employee row grants access.
@@ -14,7 +14,7 @@
  *   4. Run the handler, which re-checks permission for the specific action.
  *   5. Record the outcome in the audit log, allowed or denied.
  *
- * Apart from that one intake route, nothing is reachable without an employee
+ * Apart from those two intake routes, nothing is reachable without an employee
  * identity. A request that fails step 1 or 2 never reaches a query.
  */
 import { resolveAccessIdentity, type AccessConfig, type AccessIdentity } from "./auth/access.ts";
@@ -76,8 +76,8 @@ export async function handleRequest(request: Request, env: PortalEnv, options: H
     return respondError(new PortalError(503, "no_database", "The portal database is not bound to this Worker"), wantsJson);
   }
 
-  // The single public route, matched by exact path before anything else so it
-  // cannot be reached by a lookalike and cannot fall through to a staff route.
+  // The two public write-only routes are matched by exact path before anything
+  // else, so lookalikes cannot reach them or fall through to a staff route.
   if (isPublicIntakeRequest(request.method, url.pathname)) {
     if (url.pathname === PUBLIC_JOB_APPLICATION_PATH) return handlePublicJobApplicationIntake(request, env, requestId);
     return handlePublicWarrantyIntake(request, env, requestId);

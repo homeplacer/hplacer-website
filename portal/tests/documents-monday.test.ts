@@ -52,6 +52,8 @@ describe("Google Drive references", () => {
     assert.equal(driveFileIdFromUrl("https://drive.google.com/file/d/1AbCdEfGhIjKlMnOp/view"), "1AbCdEfGhIjKlMnOp");
     assert.equal(driveFileIdFromUrl("https://drive.google.com/folders/1FolderIdaaaaaaaa"), "1FolderIdaaaaaaaa");
     assert.equal(driveFileIdFromUrl("https://drive.google.com/open?id=1QueryIdaaaaaaaaa"), "1QueryIdaaaaaaaaa");
+    assert.equal(driveFileIdFromUrl("https://docs.google.com/document/d/1DocumentIdaaaaaaa/edit"), "1DocumentIdaaaaaaa");
+    assert.equal(driveFileIdFromUrl("https://docs.google.com/spreadsheets/d/1SpreadsheetIdaaaa/edit"), "1SpreadsheetIdaaaa");
     assert.equal(driveFileIdFromUrl("https://drive.google.com/"), null);
   });
 
@@ -61,6 +63,18 @@ describe("Google Drive references", () => {
         documentType: "plat",
         webViewUrl: "https://drive.evil.example/file/d/1AbCdEfGhIjKlMnOp/view",
         fileName: "x.pdf",
+        target: { jobId: "job_2601" },
+      }),
+      /not a Google Drive link/,
+    );
+  });
+
+  it("refuses a hostname that merely ends with google.com", async () => {
+    await assert.rejects(
+      attachDriveDocument(harness.db, brandon, {
+        documentType: "plat",
+        webViewUrl: "https://notreallygoogle.com/file/d/1AbCdEfGhIjKlMnOp/view",
+        fileName: "spoof.pdf",
         target: { jobId: "job_2601" },
       }),
       /not a Google Drive link/,

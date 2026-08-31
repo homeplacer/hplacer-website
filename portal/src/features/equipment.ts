@@ -40,7 +40,7 @@ import {
   requiredField,
   type RequestContext,
 } from "../api/context.ts";
-import { flashFrom, json, redirect } from "../api/responses.ts";
+import { flashFrom, json, redirect, safeRedirectPath } from "../api/responses.ts";
 import type { Router } from "../api/router.ts";
 import { html, query, raw } from "../ui/html.ts";
 import { badge, empty, formatDate, kv, money, page, tabs } from "../ui/layout.ts";
@@ -651,7 +651,7 @@ async function submitInspectionRoute(ctx: RequestContext): Promise<Response> {
   });
 
   if (wantsJson(ctx)) return json(result, 201);
-  const target = redirectTo && redirectTo.startsWith("/") ? redirectTo : `/inspections/${result.inspectionId}`;
+  const target = safeRedirectPath(redirectTo, `/inspections/${result.inspectionId}`);
   return redirect(`${target}?ok=${result.status === "passed" ? "inspection_passed" : "inspection_defects"}`);
 }
 

@@ -14,7 +14,7 @@ import {
   type REQUEST_STATUSES,
 } from "../domain/inventory.ts";
 import { centsField, numberField, optionalField, readFields, requiredField, type RequestContext } from "../api/context.ts";
-import { flashFrom, json, redirect } from "../api/responses.ts";
+import { flashFrom, json, redirect, safeRedirectPath } from "../api/responses.ts";
 import type { Router } from "../api/router.ts";
 import { html, raw } from "../ui/html.ts";
 import { badge, empty, externalLink, formatDate, kv, money, page, tabs } from "../ui/layout.ts";
@@ -338,7 +338,7 @@ async function createRequestRoute(ctx: RequestContext): Promise<Response> {
     estimatedUnitCostCents: centsField(fields, "unit_cost", "Unit cost"),
   });
   if (wantsJson(ctx)) return json({ id }, 201);
-  const target = fields.redirect_to?.startsWith("/") ? fields.redirect_to : "/inventory/requests";
+  const target = safeRedirectPath(fields.redirect_to, "/inventory/requests");
   return redirect(`${target}?ok=requested`);
 }
 

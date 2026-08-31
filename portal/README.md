@@ -167,14 +167,15 @@ Cloudflare Access is the outer gate, and the Worker does not trust it alone.
 6. **Audit log.** Every write and every refusal is recorded with actor, action,
    record, and outcome.
 
-**One route is public**, and only one: `POST /api/public/warranty-requests`,
-which hplacer.com's server calls when a homeowner submits the warranty form. It
-is matched by exact path before any identity is resolved, needs a shared bearer
-token compared in constant time (unset ⇒ 503, fail closed), only ever *writes* a
-warranty request, and answers with a reference number and nothing else — so it
-cannot be used to find out whether a serial number, an address, or a phone
-number is one of ours. Every call is audited. In production it should also sit
-behind an Access service-token policy; the token check does not depend on that.
+**Two routes are public and write-only**:
+`POST /api/public/warranty-requests` and
+`POST /api/public/job-applications`. The hplacer.com server calls them with
+separate bearer tokens, compared in constant time; either route fails closed
+with 503 when its token is unset. They return a reference and never expose
+portal records. Warranty intake cannot reveal whether a serial, address, or
+phone matches; job intake stores an optional resume in private R2. Every call is
+audited. In production they can also sit behind an Access service-token policy;
+the application-level token checks do not depend on that.
 
 The development identity path is guarded twice — it requires a non-production
 `PORTAL_ENVIRONMENT` *and* a loopback request URL — so a config slip alone
@@ -332,16 +333,19 @@ It is deliberately not a configuration flag. It would mean: implementing
 deciding what happens on a conflict, and reviewing all of it. Nothing above
 `src/integrations/monday.ts` has to change.
 
-## Provisioning: what still has to be created
+## Production bindings and recovery checklist
 
-None of the following exists yet. Each is a deliberate act for an account owner —
-nothing in this repository creates, requests, or stores any of it.
+The production Worker, Access application, D1 database, R2 bucket, and custom
+domain are represented by the live bindings in `wrangler.jsonc`. The commands
+below are retained as a recovery/provisioning reference. Do not recreate an
+existing resource or re-run bootstrap SQL against the established production
+database; inspect current state first.
 
 ### 1. Cloudflare resources
 
 | Resource | Command | Then |
 | --- | --- | --- |
-| D1 database | `npx wrangler d1 create hplacer-portal` | Put the returned id in `database_id` in `portal/wrangler.jsonc` (it is currently `REPLACE_WITH_D1_DATABASE_ID`) |
+| D1 database | `npx wrangler d1 create hplacer-portal` | Recovery/new-environment command only; the production database id is already bound in `portal/wrangler.jsonc` |
 | R2 bucket | `npx wrangler r2 bucket create hplacer-portal-photos` | Leave public access **off**. Do not attach a custom domain or an `r2.dev` URL — the portal streams objects itself |
 | Worker | `npx wrangler deploy` from `portal/` | Creates the `hplacer-portal` script |
 | Custom domain | Cloudflare dashboard → Workers → hplacer-portal → Domains | `portal.hplacer.com`, which also creates the DNS record |
@@ -368,18 +372,18 @@ Then set the two values the Worker verifies against:
 - `ACCESS_AUD` — the application's **Application Audience (AUD) tag**, copied
   from the Access application's overview page
 
-Both are plain settings, not secrets; they go in the `vars` block of
-`portal/wrangler.jsonc`, which currently ships them empty so the Worker fails
-closed.
+Both are plain settings, not secrets; the production values are already in the
+`vars` block of `portal/wrangler.jsonc`. A new environment must supply its own,
+and the Worker fails closed when either is absent.
 
 Add a **service-token policy** only if an automated client ever needs in. There
 is no such client today.
 
 ### 3. The first employee record
 
-Access authenticates; the employee row authorizes. Neither exists yet, and the
-portal deliberately will not create one for whoever signs in first. Insert the
-first administrator by hand, once:
+Access authenticates; the employee row authorizes. The portal deliberately will
+not create an administrator for whoever signs in first. For a brand-new or
+recovered database only, insert the first administrator by hand once:
 
 ```bash
 npx wrangler d1 execute hplacer-portal --remote --command \
@@ -388,12 +392,13 @@ npx wrangler d1 execute hplacer-portal --remote --command \
 ```
 
 `access_subject` is a placeholder — the real Access subject binds to the row on
-that person's first sign-in. Everyone else is added from `/admin` in the portal.
+that person's first sign-in. On an established database, employees are managed
+from `/admin`; the bootstrap command is only for a new or recovered database.
 
 Supervisors to create: **Brandon, Joe, Tara, Greg, Brett** (Tara also needs the
 `billing` role, from the same screen).
 
-### 4. The warranty intake token
+### 4. Public intake tokens
 
 The public warranty form needs one shared secret, set identically on **both**
 Workers:
@@ -419,19 +424,24 @@ scoped to `/api/public/warranty-requests`, and give the marketing Worker
 `PORTAL_ACCESS_CLIENT_ID` and `PORTAL_ACCESS_CLIENT_SECRET`. That is a second,
 independent gate; the bearer-token check does not depend on it.
 
+Careers uses a separate secret: `PORTAL_JOB_APPLICATION_TOKEN` on the portal
+Worker and `CAREERS_INTAKE_TOKEN` on the public Worker. The public endpoint is
+`/api/public/job-applications`; do not reuse the warranty token.
+
 ### 5. Credentials summary
 
 | Secret | Needed? | Notes |
 | --- | --- | --- |
 | Cloudflare API token | For deploying only | An account-scoped token with Workers Scripts, D1, and R2 edit permissions, used by whoever runs `wrangler deploy`. Never stored in this repo |
 | `PORTAL_INTAKE_TOKEN` | For the warranty form | A shared secret, set on both Workers. Generated by whoever provisions; never in this repo |
+| `PORTAL_JOB_APPLICATION_TOKEN` / `CAREERS_INTAKE_TOKEN` | For Careers applications | A different shared secret on the portal and public Worker; never reuse the warranty token |
 | Monday API token | For discovery only | Full-access, in the operator's macOS Keychain, read at runtime by `portal/ops/monday-discover.ts` and never by the Worker. Not required to run the portal. A least-privilege, board-scoped token would be better if Monday ever offers one |
 | Google Drive credentials | **No** | The portal stores links, not files, and never calls the Drive API. Drive's own sharing controls who can open a plat or permit |
 | Follow Up Boss, Resend, or any marketing-site key | **No** | The portal reads none of them. The marketing site's `/api/warranty-request` uses its own existing lead pipeline only as a fallback |
 
-So the portal runs with **one** application secret — the warranty intake token —
-plus the deploy-time Cloudflare token. The Monday token is operator tooling and
-is never needed by the deployed Worker.
+So the portal runs with **two narrowly scoped application secrets** — warranty
+intake and Careers intake — plus the deploy-time Cloudflare token. The Monday
+token is operator tooling and is never needed by the deployed Worker.
 
 ### 6. Optional, once it is live
 
@@ -447,9 +457,9 @@ is never needed by the deployed Worker.
 ### 7. Known gaps
 
 - **Migrations 0002 and 0004 recreate tables** earlier migrations created,
-  because SQLite cannot amend a table CHECK constraint. That is safe only
-  because no database has been provisioned yet. Once these have been applied
-  somewhere real, do not reorder or edit them — add `0005`. Migration 0004 swaps
+  because SQLite cannot amend a table CHECK constraint. These migrations have
+  history and must remain immutable: do not reorder or edit any applied file;
+  add a new, higher-numbered migration instead. Migration 0004 swaps
   the `notifications.category` CHECK for a foreign key into
   `notification_categories`, so adding a category is an INSERT from now on
   rather than another rebuild.
@@ -461,8 +471,8 @@ is never needed by the deployed Worker.
   `CREATE TRIGGER … BEGIN … END;` correctly on current versions; confirm the
   trigger `trg_inventory_movement_applies_to_stock` exists after the first apply,
   since `parts.quantity_on_hand` depends on it.
-- **The warranty intake is the only unauthenticated route**; there is still no
-  health check. If uptime
+- **Warranty and Careers intake are the only unauthenticated routes**; there is
+  still no health check. If uptime
   monitoring is wanted, add an Access bypass policy for one path and a matching
   route rather than loosening the Worker.
 - Photo uploads are a single request (up to 15 MB). Larger media would want
@@ -494,6 +504,14 @@ is never needed by the deployed Worker.
 | `0002_portal_operations.sql` | Role grants, lots, checklist templates, defects, service tracking, meter readings, repair labor/materials/history, Monday registry, audit log; recreates `documents`, `notifications`, `part_compatibility` |
 | `0003_checklist_reference_data.sql` | The inspection checklists themselves — Home Placer's own procedures, not employee or customer data |
 | `0004_warranty_and_routing.sql` | Home site address and owner of record, address matching keys, warranty requests, notification categories and routing, Monday discovery runs; recreates `documents` and `notifications` |
+| `0005_asset_source_metadata.sql` | Imported fleet source metadata and verification flags |
+| `0006_asset_source_verification_review.sql` | Fleet source-review state |
+| `0007_monday_equipment_mixed_identifier.sql` | VIN-or-serial matching mode for the fleet board |
+| `0008_portable_john_requests.sql` | Portable John delivery and pickup queue |
+| `0009_home_workflow_checklist.sql` | Ordered per-home workflow state |
+| `0009_job_applications.sql` | Private Careers application records and resume metadata |
+| `0010_expand_home_workflow.sql` | Expanded permit, utility, inspection, and finish-work steps |
+| `0011_provisional_homes_and_equipment_cleanup.sql` | Provisional home identity and fleet cleanup fields |
 
 `seed/dev-seed.sql` is demonstration data for local work only. No employee names,
 credentials, vendor accounts, photos, or customer data are checked into source

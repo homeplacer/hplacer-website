@@ -16,7 +16,7 @@ import {
 } from "../domain/documents.ts";
 import { badRequest } from "../platform/errors.ts";
 import { optionalField, readFields, readForm, requiredField, type Fields, type RequestContext } from "../api/context.ts";
-import { json, redirect } from "../api/responses.ts";
+import { json, redirect, safeRedirectPath } from "../api/responses.ts";
 import type { Router } from "../api/router.ts";
 import { securityHeaders } from "../ui/layout.ts";
 import { html, raw, type SafeHtml } from "../ui/html.ts";
@@ -74,12 +74,6 @@ function documentCaptionFromFields(fields: Fields): string | null {
   return optionalField(fields, "caption");
 }
 
-function safeRedirect(value: string | null | undefined, fallback: string): string {
-  // Only same-origin paths, so a crafted form cannot bounce a signed-in
-  // employee off to another site.
-  return value && value.startsWith("/") && !value.startsWith("//") ? value : fallback;
-}
-
 async function attachDriveRoute(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "document.upload");
   const fields = await readFields(ctx.request);
@@ -92,14 +86,14 @@ async function attachDriveRoute(ctx: RequestContext): Promise<Response> {
     target: targetFromFields(fields),
   });
   if (isJson(ctx)) return json({ id }, 201);
-  return redirect(`${safeRedirect(fields.redirect_to, "/")}?ok=uploaded`);
+  return redirect(`${safeRedirectPath(fields.redirect_to, "/")}?ok=uploaded`);
 }
 
 async function uploadRoute(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "document.upload");
   const form = await readForm(ctx.request);
   const file = form.get("file");
-  if (!file || typeof file === "string") throw badRequest("Choose a photo to upload");
+  if (!file || typeof file === "string") throw badRequest("Choose a file to upload");
 
   const fields: Fields = {};
   for (const [key, value] of form.entries()) if (typeof value === "string") fields[key] = value;
@@ -114,7 +108,7 @@ async function uploadRoute(ctx: RequestContext): Promise<Response> {
   });
 
   if (isJson(ctx)) return json({ id }, 201);
-  return redirect(`${safeRedirect(fields.redirect_to, "/")}?ok=uploaded`);
+  return redirect(`${safeRedirectPath(fields.redirect_to, "/")}?ok=uploaded`);
 }
 
 /**
@@ -142,7 +136,7 @@ async function deleteRoute(ctx: RequestContext): Promise<Response> {
   }
   await softDeleteDocument(ctx.db, ctx.actor, ctx.params.id);
   if (isJson(ctx) || ctx.request.method === "DELETE") return json({ ok: true });
-  return redirect(`${safeRedirect(fields.redirect_to, "/")}?ok=saved`);
+  return redirect(`${safeRedirectPath(fields.redirect_to, "/")}?ok=saved`);
 }
 
 function isJson(ctx: RequestContext): boolean {

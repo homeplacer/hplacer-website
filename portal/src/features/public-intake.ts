@@ -1,13 +1,14 @@
 /**
- * The one route on the portal that is not behind an employee identity.
+ * The two write-only routes that are not behind an employee identity.
  *
  * hplacer.com's server calls it when a homeowner submits the warranty form. It
  * is deliberately narrow:
  *
- *  - one path, one method: `POST /api/public/warranty-requests`;
+ *  - exact paths and one method: `POST /api/public/warranty-requests` and
+ *    `POST /api/public/job-applications`;
  *  - a shared bearer token, compared in constant time, that must be configured
  *    or the route returns 503 (fail closed, same as Access);
- *  - it only ever *writes* a warranty request — no route here reads portal data;
+ *  - each route only ever writes its own record — neither reads portal data;
  *  - the response carries a reference number and nothing else, so an
  *    unauthenticated caller cannot use it to find out whether a serial number,
  *    an address, or a phone number is one of ours;

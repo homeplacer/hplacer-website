@@ -161,8 +161,8 @@ export async function attachDriveDocument(db: Db, actor: Actor, input: DriveDocu
   if (!input.fileName.trim()) throw badRequest("Name the document");
   const url = normalizeUrl(input.webViewUrl);
   if (!url) throw badRequest("Paste the Google Drive link");
-  const host = new URL(url).hostname;
-  if (!host.endsWith("google.com") && !host.endsWith("googleusercontent.com")) {
+  const host = new URL(url).hostname.toLowerCase();
+  if (host !== "drive.google.com" && host !== "docs.google.com") {
     throw badRequest("That is not a Google Drive link");
   }
 
@@ -189,7 +189,7 @@ export async function attachDriveDocument(db: Db, actor: Actor, input: DriveDocu
 }
 
 export function driveFileIdFromUrl(url: string): string | null {
-  const byPath = /\/(?:file|folders)\/(?:d\/)?([A-Za-z0-9_-]{10,})/.exec(url);
+  const byPath = /\/(?:file\/d|folders|(?:document|spreadsheets|presentation|drawings|forms)\/d)\/([A-Za-z0-9_-]{10,})/.exec(url);
   if (byPath) return byPath[1];
   const byQuery = new URL(url).searchParams.get("id");
   return byQuery && /^[A-Za-z0-9_-]{10,}$/.test(byQuery) ? byQuery : null;

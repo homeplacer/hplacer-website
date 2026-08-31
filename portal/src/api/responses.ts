@@ -13,6 +13,26 @@ export function redirect(location: string): Response {
   return new Response(null, { status: 303, headers: securityHeaders({ Location: location }) });
 }
 
+/**
+ * Accept a same-origin path supplied by one of the portal's forms.
+ * Browsers treat backslashes like forward slashes in URLs, so a leading slash
+ * check alone does not prevent `/\\evil.example` from leaving the portal.
+ */
+export function safeRedirectPath(value: string | null | undefined, fallback: string): string {
+  const candidate = value?.trim();
+  if (!candidate || !candidate.startsWith("/") || candidate.startsWith("//") || candidate.includes("\\")) {
+    return fallback;
+  }
+  try {
+    const base = new URL("https://portal.hplacer.com");
+    const resolved = new URL(candidate, base);
+    if (resolved.origin !== base.origin) return fallback;
+    return `${resolved.pathname}${resolved.search}${resolved.hash}`;
+  } catch {
+    return fallback;
+  }
+}
+
 export function noContent(): Response {
   return new Response(null, { status: 204, headers: securityHeaders() });
 }

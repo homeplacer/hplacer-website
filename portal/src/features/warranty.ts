@@ -35,7 +35,6 @@ export function registerWarranty(router: Router): void {
     });
   });
 }
-
 async function renderQueue(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "warranty.review");
   const status = ctx.url.searchParams.get("status") ?? undefined;
@@ -207,4 +206,3 @@ async function closeRoute(ctx: RequestContext): Promise<Response> {
   await closeWarrantyRequest(ctx.db, ctx.actor, ctx.params.id, status, requiredField(fields, "note", "Reason"));
   return wantsJson(ctx) ? json({ ok: true }) : redirect(`/warranty/${ctx.params.id}?ok=saved`);
 }
-

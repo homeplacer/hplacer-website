@@ -332,6 +332,18 @@ describe("field workflow over HTTP", () => {
     body.set("file", new File([new Uint8Array([1, 2, 3])], "x.png", { type: "image/png" }));
     const response = await harness.request("/api/documents/upload", { as: "wes@hplacer.com", method: "POST", body });
     assert.equal(response.headers.get("Location"), "/?ok=uploaded");
+
+    const backslash = new FormData();
+    backslash.set("home_id", "hom_a1");
+    backslash.set("document_type", "photo");
+    backslash.set("redirect_to", "/\\evil.example/steal");
+    backslash.set("file", new File([new Uint8Array([4, 5, 6])], "y.png", { type: "image/png" }));
+    const backslashResponse = await harness.request("/api/documents/upload", {
+      as: "wes@hplacer.com",
+      method: "POST",
+      body: backslash,
+    });
+    assert.equal(backslashResponse.headers.get("Location"), "/?ok=uploaded");
   });
 
   it("only accepts a known confirmation code in the flash slot", async () => {
