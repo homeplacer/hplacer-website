@@ -50,3 +50,8 @@ next-env.d.ts
 
 # Home Placer GBP photo bank (marketing asset, not the website)
 /gbp-bank/
+
+# portal local development database
+/portal/.local/
+*.sqlite
+*.sqlite-journal
