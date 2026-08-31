@@ -3,8 +3,8 @@ import { ArrowIcon, PinIcon } from "@/components/icons";
 
 // Cross-over to Home Placer's sister real estate company (The Forturro Group).
 // A buyer who needs to find land — or wants to browse existing homes — gets sent
-// to Forturro's live MLS search instead of leaving for Zillow. Keeps the lead
-// in-house: Forturro's search captures it, and we tie the home to the land.
+// to the new Forturro website instead of leaving for Zillow. UTMs preserve the
+// Home Placer referral; no legacy search-provider domain is used.
 export function ForturroLandSearch({
   variant = "section",
 }: {

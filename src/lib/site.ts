@@ -44,18 +44,16 @@ export const site = {
   },
   sameAs: ["https://maps.google.com/?cid=3461988553332431879"],
 
-  // Sister company — Joe's Grand Strand real estate team (KW). We send buyers who
-  // need to find LAND (or any existing home) to their live MLS search so we keep
-  // them in-house instead of losing them to Zillow. The Ylopo search captures the
-  // lead on the other side; UTMs tag the referral so attribution is clean.
+  // Sister company — Home Placer hands buyers who still need land to the new
+  // Forturro website. Keep this to the primary Forturro domain: no legacy
+  // search-domain handoff is used anywhere on the public site.
   forturro: {
     name: "The Forturro Group",
     url: "https://forturro.com",
     searchUrl:
-      "https://search.forturro.com/?utm_source=hplacer&utm_medium=referral&utm_campaign=cross-site",
-    // Deep-linked, land-only, Horry County (Ylopo property-type = land).
+      "https://forturro.com/?utm_source=hplacer&utm_medium=referral&utm_campaign=cross-site",
     landSearchUrl:
-      "https://search.forturro.com/search/map?s[orderBy]=sourceCreationDate%2Cdesc&s[page]=1&s[locations][0][county]=Horry&s[locations][0][state]=SC&s[propertyTypes][0]=land&utm_source=hplacer&utm_medium=referral&utm_campaign=land-search",
+      "https://forturro.com/?utm_source=hplacer&utm_medium=referral&utm_campaign=land-search",
   },
 
   // Cities where Home Placer places homes on land.
