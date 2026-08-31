@@ -1,23 +1,25 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { catalogImageOrigins, virtualTourOrigins } from "@/lib/media-policy";
 
-// Content-Security-Policy allowlist for our known third parties: GA
-// (googletagmanager / google-analytics), Leaflet (unpkg), and image/iframe
-// sources — manufacturer photo CDNs, OSM map tiles, and virtual-tour embeds —
-// via `https:`. Ships as REPORT-ONLY first so it can never break the live site;
-// promote to enforcing (`Content-Security-Policy`) after observing real-traffic
-// reports. (See TODO.md.)
+// Content-Security-Policy allowlist for our known third parties: GA, the exact
+// manufacturer image CDNs present in the catalog, OSM map tiles, and the two
+// virtual-tour providers present in catalog data. Leaflet itself is bundled
+// locally, so no third-party script/style origin is required. This remains
+// REPORT-ONLY until production reports have been reviewed.
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com",
-  "style-src 'self' 'unsafe-inline' https://unpkg.com",
-  "img-src 'self' data: https:",
+  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
+  "style-src 'self' 'unsafe-inline'",
+  `img-src 'self' data: ${catalogImageOrigins.join(" ")} https://*.tile.openstreetmap.org`,
   "font-src 'self' data:",
   "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com",
-  "frame-src 'self' https:",
+  `frame-src 'self' ${virtualTourOrigins.join(" ")}`,
   "object-src 'none'",
   "base-uri 'self'",
+  "form-action 'self'",
   "frame-ancestors 'none'",
+  "upgrade-insecure-requests",
 ].join("; ");
 
 // Apply security response headers to every page/route this middleware runs on.

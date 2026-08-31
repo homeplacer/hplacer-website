@@ -24,6 +24,7 @@ import { WidthSelector } from "@/components/width-selector";
 import { WidthProvider } from "@/components/width-context";
 import { FloorPlanSection } from "@/components/floor-plan-section";
 import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
+import { trustedVirtualTourUrl } from "@/lib/media-policy";
 import {
   BedIcon,
   BathIcon,
@@ -64,6 +65,7 @@ export default async function HomeDetailPage({
   if (!home) notFound();
 
   const price = displayPrice(home);
+  const tourUrl = trustedVirtualTourUrl(home.tourUrl);
   const widths = availableWidths(home);
   const multiWidth = isMultiWidth(home);
   const xl = hasXlBedrooms(home);
@@ -338,7 +340,7 @@ export default async function HomeDetailPage({
       )}
 
       {/* 3D virtual tour */}
-      {home.tourUrl && (
+      {tourUrl && (
         <section className="container-x py-10" id="tour">
           <h2 className="font-display text-2xl font-semibold text-stone-ink">3D virtual tour</h2>
           <p className="mt-1 text-sm text-stone-muted">
@@ -346,7 +348,7 @@ export default async function HomeDetailPage({
           </p>
           <div className="mt-5 aspect-video overflow-hidden rounded-card border border-stone-line bg-stone-sunken">
             <iframe
-              src={home.tourUrl}
+              src={tourUrl}
               title={`${home.name} 3D virtual tour`}
               allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer"
               allowFullScreen

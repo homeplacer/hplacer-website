@@ -28,7 +28,12 @@ export function HomeCard({ home }: { home: Home }) {
           <FallbackImage
             src={photo}
             alt={`${home.name} by ${home.brand}`}
+            width={800}
+            height={600}
             loading="lazy"
+            decoding="async"
+            responsiveWidths={[320, 480, 640, 800]}
+            sizes="(max-width: 639px) calc(100vw - 2.5rem), (max-width: 1023px) 50vw, 33vw"
             className="size-full object-cover transition duration-300 group-hover:scale-[1.03]"
             fallback={
               <div className="absolute inset-0 grid place-items-center text-brand-300/70">

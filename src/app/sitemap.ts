@@ -93,6 +93,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: siteUpdated,
     changeFrequency: "weekly",
     priority: 0.6,
+    ...(h.imageUrls.length ? {
+      images: h.imageUrls.map((image) => image.startsWith("http") ? image : `${base}${image}`),
+    } : {}),
   }));
 
   const postEntries: MetadataRoute.Sitemap = posts.map((p) => ({

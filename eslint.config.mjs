@@ -11,6 +11,9 @@ const eslintConfig = defineConfig([
     ".next/**",
     // OpenNext output is generated Worker/runtime code, not project source.
     ".open-next/**",
+    // Nested Claude worktrees are independent checkouts with their own lint
+    // commands and generated output; never traverse them from this project.
+    ".claude/worktrees/**",
     "out/**",
     "build/**",
     "next-env.d.ts",

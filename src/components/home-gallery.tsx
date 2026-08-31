@@ -130,6 +130,12 @@ export function HomeGallery({
               key={images[active]}
               src={images[active]}
               alt={`${name} — photo ${active + 1}`}
+              width={1200}
+              height={900}
+              fetchPriority="high"
+              decoding="async"
+              responsiveWidths={[640, 960, 1200, 1600]}
+              sizes="(max-width: 1023px) calc(100vw - 2.5rem), 55vw"
               className="size-full object-cover transition duration-300 group-hover:scale-[1.02]"
               fallback={HERO_FALLBACK}
             />
@@ -167,7 +173,12 @@ export function HomeGallery({
               <FallbackImage
                 src={src}
                 alt={`${name} thumbnail ${i + 1}`}
+                width={240}
+                height={240}
                 loading="lazy"
+                decoding="async"
+                responsiveWidths={[96, 160, 240]}
+                sizes="(max-width: 639px) 25vw, 160px"
                 className="size-full object-cover"
                 fallback={TILE_FALLBACK}
               />
@@ -188,7 +199,12 @@ export function HomeGallery({
               <FallbackImage
                 src={images[MAX_THUMBS - 1]}
                 alt=""
+                width={240}
+                height={240}
                 loading="lazy"
+                decoding="async"
+                responsiveWidths={[96, 160, 240]}
+                sizes="(max-width: 639px) 25vw, 160px"
                 className="size-full object-cover"
                 fallback={TILE_FALLBACK}
               />
@@ -250,7 +266,11 @@ export function HomeGallery({
                 key={images[active]}
                 src={images[active]}
                 alt={`${name} — photo ${active + 1}`}
+                width={1600}
+                height={1200}
                 decoding="async"
+                responsiveWidths={[960, 1280, 1600, 1920]}
+                sizes="100vw"
                 className="max-h-full max-w-full select-none rounded-lg object-contain shadow-2xl"
                 draggable={false}
                 fallback={STAGE_FALLBACK}
@@ -289,7 +309,18 @@ export function HomeGallery({
                       (i === active ? "ring-2 ring-white" : "opacity-50 hover:opacity-90")
                     }
                   >
-                    <FallbackImage src={src} alt="" loading="lazy" className="size-full object-cover" fallback={TILE_FALLBACK} />
+                    <FallbackImage
+                      src={src}
+                      alt=""
+                      width={112}
+                      height={112}
+                      loading="lazy"
+                      decoding="async"
+                      responsiveWidths={[56, 112]}
+                      sizes="56px"
+                      className="size-full object-cover"
+                      fallback={TILE_FALLBACK}
+                    />
                   </button>
                 ))}
               </div>
