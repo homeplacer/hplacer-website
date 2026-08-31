@@ -109,7 +109,7 @@ export function SiteFooter() {
               <a
                 href={site.forturro.landSearchUrl}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener"
                 className="text-stone-100/80 hover:text-white"
               >
                 Search Land for Sale ↗
