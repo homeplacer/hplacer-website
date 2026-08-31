@@ -30,7 +30,7 @@ export function ForturroLandSearch({
           <a
             href={site.forturro.landSearchUrl}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener"
             className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-800"
           >
             Search land for sale <ArrowIcon className="size-4" />
@@ -38,7 +38,7 @@ export function ForturroLandSearch({
           <a
             href={site.forturro.searchUrl}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener"
             className="inline-flex items-center gap-2 rounded-full border border-stone-line bg-stone-bg px-6 py-3 text-base font-semibold text-stone-ink transition hover:border-brand-300"
           >
             Browse all listings
