@@ -251,8 +251,8 @@ the seed uses and what to run after a bulk import or a change to the rules.
 ## Monday.com
 
 Monday discovery remains read-only. A separate guarded outbound processor is
-available, but production is deliberately configured with
-`MONDAY_WRITE_SYNC_ENABLED=false`. It can update only code-reviewed fields on
+available, and production enables it only after the linked records have been
+reviewed. It can update only code-reviewed fields on
 the exact mapped boards, and only for portal records that an administrator has
 linked. It checks the expected remote value before writing, verifies the result,
 deduplicates retries, and records a redacted audit trail.
