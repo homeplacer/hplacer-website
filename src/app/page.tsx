@@ -1,4 +1,6 @@
+import { pageMetadata } from "@/lib/metadata";
 import Link from "next/link";
+import { SoldExamples } from "@/components/sold-examples";
 import { site } from "@/lib/site";
 import { bestSellerHomes, BRANDS } from "@/lib/homes";
 import { galleryByCategory } from "@/lib/gallery";
@@ -15,12 +17,12 @@ import {
   HomeMark,
 } from "@/components/icons";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Manufactured & Mobile Home Dealer in Horry County, SC — New Homes on Land",
   description:
     "Home Placer is a licensed manufactured & mobile home + land dealer serving Horry & Georgetown County, SC and Brunswick & Columbus County, NC. New Clayton, Cavco & Champion homes on land — one package, from the low $200s, no HOA.",
   alternates: { canonical: "/" },
-};
+});
 
 export default function HomePage() {
   const homes = bestSellerHomes().slice(0, 8); // all best-sellers incl. Pegasus + Atmos
@@ -65,7 +67,7 @@ export default function HomePage() {
               </a>
             </div>
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-stone-100/75">
-              {["No HOA", "Land + home bundled", "1-year warranty", "Licensed in SC & NC"].map((t) => (
+              {["No HOA", "Land + home bundled", "Builder + 2–10 warranties", "Licensed in SC & NC"].map((t) => (
                 <li key={t} className="inline-flex items-center gap-2">
                   <CheckIcon className="size-4 text-accent-300" /> {t}
                 </li>
@@ -79,6 +81,7 @@ export default function HomePage() {
             <img
               src={asset("/models/ultra-flex-28-52/01.jpg")}
               alt="A new Home Placer manufactured home on its land in Horry County, SC"
+              width={1200} height={900} loading="eager" fetchPriority="high"
               className="aspect-[4/3] w-full rounded-2xl object-cover shadow-2xl ring-1 ring-white/15"
             />
             <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-accent-500 px-3 py-1 text-xs font-bold text-white shadow">
@@ -228,7 +231,7 @@ export default function HomePage() {
             { n: "01", t: "Pick your home", d: "Browse our floor plans or tell us what you need. We match you to a model and a budget." },
             { n: "02", t: "Pick your land", d: "Use our lots or bring your own. We handle the package — home plus land, one price." },
             { n: "03", t: "We do the setup", d: "Permits, delivery, foundation, tie-downs, and utility hookups — all coordinated by us." },
-            { n: "04", t: "Move in", d: "Walk through your new home, get your keys, and enjoy a 30-day check-in and 1-year warranty." },
+            { n: "04", t: "Move in", d: "Walk through your new home, get your keys, and enjoy a 30-day check-in. Home Placer provides a one-year defect warranty; the 2–10 company separately provides two-year mechanical and ten-year structural coverage." },
           ].map((s) => (
             <div key={s.n} className="rounded-card border border-stone-line bg-stone-bg p-6">
               <span className="font-display text-3xl font-semibold text-accent-400">{s.n}</span>
@@ -317,6 +320,7 @@ export default function HomePage() {
       )}
 
       {/* ──────────────────── Reviews ──────────────────── */}
+      <SoldExamples />
       <Testimonials />
 
       {/* ──────────────────── Final CTA ──────────────────── */}

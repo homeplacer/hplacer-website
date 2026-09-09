@@ -1,5 +1,4 @@
 import { site, liveSocialUrls } from "@/lib/site";
-import { reviews } from "@/lib/reviews";
 import { locations as allLocations, counties as allCounties } from "@/lib/locations";
 
 const stateName = (abbr: string) => (abbr === "NC" ? "North Carolina" : "South Carolina");
@@ -64,27 +63,9 @@ export function localBusinessLd() {
         name: `${l.name}, ${allCounties[l.countyKey]?.stateAbbr ?? "SC"}`,
       })),
     ],
-    openingHoursSpecification: {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      opens: "09:00",
-      closes: "18:00",
-    },
     priceRange: "$$ — homes from the low $200s",
     description: site.blurb,
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: site.gbp.rating,
-      reviewCount: site.gbp.reviewCount,
-      bestRating: 5,
-    },
-    review: reviews.map((r) => ({
-      "@type": "Review",
-      author: { "@type": "Person", name: r.author },
-      reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5 },
-      reviewBody: r.text,
-      publisher: { "@type": "Organization", name: "Google" },
-    })),
+
   };
 }
 

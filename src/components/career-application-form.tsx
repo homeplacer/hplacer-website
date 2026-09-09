@@ -21,7 +21,7 @@ export function CareerApplicationForm() {
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Please try again."); setState("error"); }
   }
   if (state === "sent") return <div className="rounded-card border border-brand-200 bg-brand-50 p-8 text-center"><div className="mx-auto grid size-12 place-items-center rounded-full bg-brand-600 text-white"><CheckIcon className="size-6" strokeWidth={2.5} /></div><h2 className="mt-4 font-display text-2xl font-semibold text-brand-900">Application received.</h2><p className="mt-2 text-sm text-stone-muted">Thank you. Our team will review it and contact you if there is a fit.</p></div>;
-  return <form onSubmit={submit} encType="multipart/form-data" className="space-y-5"><Honeypot />
+  return <form data-form-type="careers" onSubmit={submit} encType="multipart/form-data" className="space-y-5"><Honeypot />
     {state === "error" && <p className="rounded-lg border border-red-300 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">{error}</p>}
     <div className="grid gap-4 sm:grid-cols-2"><Input label="Full name" name="name" autoComplete="name" required /><Input label="Phone" name="phone" type="tel" autoComplete="tel" required /><Input label="Email" name="email" type="email" autoComplete="email" required /><Input label="City and state" name="location" required /></div>
     <div className="grid gap-4 sm:grid-cols-2"><label className="text-sm font-medium text-stone-ink">Position<select name="position" required defaultValue="" className={field}><option value="" disabled>Select a position</option>{roles.map((role) => <option key={role}>{role}</option>)}</select></label><Input label="When can you start?" name="available_on" type="date" /></div>

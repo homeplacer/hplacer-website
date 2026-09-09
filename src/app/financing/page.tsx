@@ -1,15 +1,16 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { FinancingForm } from "@/components/financing-form";
 import { CheckIcon, PhoneIcon } from "@/components/icons";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Financing",
   description:
     "USDA, FHA, VA, and conventional financing for new manufactured homes on land in South Carolina. $0-down options and help for every credit situation.",
   alternates: { canonical: "/financing" },
-};
+});
 
 const programs = [
   {

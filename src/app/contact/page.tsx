@@ -1,14 +1,15 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact-form";
 import { site } from "@/lib/site";
 import { PhoneIcon, PinIcon, CheckIcon } from "@/components/icons";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Contact",
   description:
     "Talk to Home Placer about new manufactured homes on land in Horry County, SC. Call (843) 849-HOME or send a message.",
   alternates: { canonical: "/contact" },
-};
+});
 
 export default function ContactPage() {
   return (

@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
@@ -7,12 +8,12 @@ import { ArrowIcon, PhoneIcon } from "@/components/icons";
 
 // SEO/geo per the standing rule — built from a Gemini "top Google engineer"
 // consult (2026-06-29).
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Drywall vs. Wall Strips in Manufactured Homes",
   description:
     "Confused by wall strips vs. real drywall in manufactured homes? The difference in look, quality, and value — and why we highlight our full-drywall homes.",
   alternates: { canonical: "/manufactured-home-drywall-vs-wall-strips" },
-};
+});
 
 const rows = [
   { label: "What it is", strips: "Pre-finished gypsum panels (a wallpaper-like coating) with batten strips over the seams", dry: "Standard drywall, taped, mudded, sanded & textured" },

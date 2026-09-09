@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
@@ -6,12 +7,12 @@ import { PinIcon, ArrowIcon } from "@/components/icons";
 
 const stateName = (abbr: string) => (abbr === "NC" ? "North Carolina" : "South Carolina");
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Manufactured Homes on Land — Horry, Georgetown, Brunswick & Columbus Counties",
   description:
     "Home Placer places new manufactured homes on land across four counties: Horry & Georgetown in SC and Brunswick & Columbus in NC — 27 towns from Myrtle Beach and Conway to Leland, Shallotte, and Whiteville.",
   alternates: { canonical: "/locations" },
-};
+});
 
 export default function LocationsPage() {
   const groups = Object.values(counties).map((county) => ({

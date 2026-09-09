@@ -1,5 +1,5 @@
 import { site } from "./site";
-import { track } from "./analytics";
+import { track, modelSlugFromPath } from "./analytics";
 import { getAttribution } from "./attribution";
 
 type LeadData = Record<string, FormDataEntryValue | string | undefined>;
@@ -21,14 +21,9 @@ const FIELD_LABELS: Record<string, string> = {
   message: "Message",
 };
 
-function leadAnalyticsContext(type: string, data: LeadData): Record<string, string> {
-  const home = typeof data.home === "string" ? data.home.trim().slice(0, 120) : "";
-  return {
-    form_type: type,
-    submission_method: "api",
-    page_path: typeof window === "undefined" ? "" : window.location.pathname,
-    ...(home ? { model_context: home } : {}),
-  };
+function leadAnalyticsContext(type: string): Record<string, string> {
+  const model = typeof window === "undefined" ? null : modelSlugFromPath(window.location.pathname);
+  return { form_type: type, submission_method: "api", ...(model ? { model_context: model } : {}) };
 }
 
 function buildMailto(type: string, data: LeadData): string {
@@ -62,7 +57,7 @@ export async function submitLead(type: string, data: LeadData): Promise<"api" | 
       // A lead conversion is recorded only after the server confirms receipt.
       // Never pass name, email, phone, address, free-text messages, or any
       // attribution identifier to GA4.
-      track("generate_lead", leadAnalyticsContext(type, data));
+      track("generate_lead", leadAnalyticsContext(type));
       return "api";
     }
     // The SERVER rejected the input (4xx: validation / payload too large). Opening

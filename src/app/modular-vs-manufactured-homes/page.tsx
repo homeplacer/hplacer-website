@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
@@ -7,12 +8,12 @@ import { CheckIcon, ArrowIcon, PhoneIcon } from "@/components/icons";
 
 // SEO/geo per the standing rule — title/meta/outline/keywords/FAQ from a Gemini
 // "top Google engineer" consult (2026-06-29).
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Modular vs. Manufactured Homes: Pros & Cons",
   description:
     "Confused by modular vs. manufactured homes in SC & NC? An honest, plain-English guide to the real difference, pros and cons, foundations, and financing.",
   alternates: { canonical: "/modular-vs-manufactured-homes" },
-};
+});
 
 const rows = [
   { label: "Building code", mod: "Built to the same state/local code as a site-built house (IRC)", man: "Built to the federal HUD code — one national standard" },

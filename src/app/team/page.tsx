@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
@@ -6,12 +7,12 @@ import { site } from "@/lib/site";
 import { asset } from "@/lib/asset";
 import { PhoneIcon, ArrowIcon } from "@/components/icons";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Meet the Team",
   description:
     "Meet the Home Placer team — your local, licensed manufactured-home dealer in Horry County, SC. Real people, start to finish.",
   alternates: { canonical: "/team" },
-};
+});
 
 export default function TeamPage() {
   return (

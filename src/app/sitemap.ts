@@ -42,6 +42,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/homes",
     "/brands",
     "/land-packages",
+    "/find-land",
     "/gallery",
     "/recently-placed",
     "/financing",

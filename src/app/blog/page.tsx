@@ -1,15 +1,16 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { getAllPosts, formatDate } from "@/lib/blog";
 import { ArrowIcon } from "@/components/icons";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Blog — Buying a Manufactured Home in SC",
   description:
     "Straight talk on buying a new manufactured home on land in Horry County, SC — pricing, financing, brands, and the land-home package process.",
   alternates: { canonical: "/blog" },
-};
+});
 
 export default function BlogPage() {
   const posts = getAllPosts();

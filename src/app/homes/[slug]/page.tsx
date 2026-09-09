@@ -1,3 +1,5 @@
+import { getAllPlacedHomes } from "@/lib/placed-homes";
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -47,12 +49,12 @@ export async function generateMetadata({
   const { slug } = await params;
   const home = getHome(slug);
   if (!home) return { title: "Home not found" };
-  return {
+  return pageMetadata({
     title: `${home.name} — ${home.brand} ${home.series} (${home.beds} bd / ${home.baths} ba)`,
-    description: home.excerpt,
+    description: `${home.name} by ${home.brand}: ${home.beds} bedrooms, ${home.baths} bathrooms, ${home.widthFt} × ${home.lengthFt} ft. Explore this floor plan and request pricing for your home and lot.`,
     alternates: { canonical: `/homes/${home.slug}` },
     openGraph: home.imageUrls[0] ? { images: [home.imageUrls[0]] } : undefined,
-  };
+  });
 }
 
 export default async function HomeDetailPage({
@@ -65,6 +67,8 @@ export default async function HomeDetailPage({
   if (!home) notFound();
 
   const price = displayPrice(home);
+  const sold = getAllPlacedHomes().filter(h => h.modelSlug === home.slug && h.price > 0 && h.closeDate);
+  const soldPrices = sold.map(h => h.price);
   const tourUrl = trustedVirtualTourUrl(home.tourUrl);
   const widths = availableWidths(home);
   const multiWidth = isMultiWidth(home);
@@ -268,6 +272,8 @@ export default async function HomeDetailPage({
           </ul>
         </div>
       </section>
+
+      {sold.length > 0 && <section className="container-x py-8"><div className="rounded-card border border-stone-line bg-stone-surface p-6"><h2 className="font-display text-2xl font-semibold">Past {home.name} projects</h2><p className="mt-3 text-stone-muted">Our {sold.length} recorded completed {sold.length === 1 ? "sale" : "sales"} with this model sold for {formatPrice(Math.min(...soldPrices))}{Math.max(...soldPrices) !== Math.min(...soldPrices) ? `–${formatPrice(Math.max(...soldPrices))}` : ""}, including each specific home and property. These are historical sale prices, not current quotes. Land, site work, options, and market conditions differ.</p><ul className="mt-3 flex flex-wrap gap-4">{sold.slice(0, 3).map(h => <li key={h.slug}><Link className="font-semibold text-brand-700 underline" href={`/recently-placed/${h.slug}`}>{h.town} · {h.closeDate} · {formatPrice(h.price)}</Link></li>)}</ul></div></section>}
 
       {/* Get this home's price — the lead-capture moment when pricing isn't posted */}
       {price == null && (

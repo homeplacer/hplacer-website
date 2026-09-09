@@ -1,37 +1,38 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { site } from "@/lib/site";
 import { CheckIcon, PhoneIcon, ArrowIcon } from "@/components/icons";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Warranty",
   description:
-    "Every Home Placer home is covered: a full 1-year warranty on the home itself, plus a 2-10 Home Buyers Warranty backing your systems for 2 years and structure for 10.",
+    "Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company.",
   alternates: { canonical: "/warranty" },
-};
+});
 
 const tiers = [
   {
     years: "1",
     unit: "Year",
-    title: "The whole home",
+    title: "Home Placer builder warranty",
     body:
-      "From the day you move in, the home itself is under warranty for a full year — workmanship, fixtures, and the things that make it home. If something isn't right, we make it right.",
+      "Home Placer, your builder, provides a one-year warranty for defects.",
   },
   {
     years: "2",
     unit: "Years",
-    title: "Your systems",
+    title: "2–10 mechanical coverage",
     body:
-      "Your plumbing, electrical, and heating & cooling distribution systems are covered for two years through the 2-10 Home Buyers Warranty.",
+      "The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage through the 2–10 company.",
   },
   {
     years: "10",
     unit: "Years",
-    title: "The structure",
+    title: "2–10 structural coverage",
     body:
-      "Major structural components are protected for a full ten years under the 2-10 Home Buyers Warranty — the same structural coverage trusted on site-built homes.",
+      "The separate 2–10 Home Buyers Warranty provides ten years of structural coverage through the 2–10 company.",
   },
 ];
 
@@ -39,9 +40,7 @@ export default function WarrantyPage() {
   return (
     <>
       <PageHero eyebrow="Warranty" title="Your home is covered — for years, not days.">
-        Buying from Home Placer means real protection: a full <strong className="font-semibold text-stone-ink">1-year warranty</strong> on
-        the home itself, plus a <strong className="font-semibold text-stone-ink">2-10 Home Buyers Warranty</strong> that stands behind your
-        systems and structure for up to a decade.
+        Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company.
       </PageHero>
 
       {/* 1 / 2 / 10 tiers */}
@@ -66,21 +65,20 @@ export default function WarrantyPage() {
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">What is the 2-10 warranty?</p>
             <h2 className="mt-2 font-display text-3xl font-semibold text-stone-ink">
-              The same protection site-built homes get
+              Two warranties, clearly explained
             </h2>
             <p className="mt-4 text-stone-muted">
-              The 2-10 Home Buyers Warranty is a nationally recognized new-home warranty — the industry
-              standard builders use to back their homes. It covers your home&apos;s <strong className="font-semibold text-stone-ink">systems
-              for 2 years</strong> and its <strong className="font-semibold text-stone-ink">major structure for 10</strong>, as
-              independent third-party protection on top of our own 1-year coverage. It&apos;s peace of mind in
-              writing — for you and for whoever you sell to down the road.
+              Home Placer is the builder and provides the one-year defect warranty.
+              Mechanical coverage for two years and structural coverage for ten years
+              are provided separately through the 2–10 company under the 2–10 Home Buyers Warranty.
+              Contact our service team for help with a warranty request and your coverage documents.
             </p>
           </div>
           <ul className="space-y-3">
             {[
-              "Full 1-year warranty on the home itself",
-              "2 years of systems coverage (plumbing, electrical, HVAC)",
-              "10 years of major structural coverage",
+              "Home Placer: one-year builder warranty for defects",
+              "2–10 company: two years of mechanical coverage",
+              "2–10 company: ten years of structural coverage",
               "30-day walk-through after you move in",
               "Local service team — real people, not a call center",
             ].map((item) => (
@@ -99,8 +97,7 @@ export default function WarrantyPage() {
           <div>
             <h2 className="font-display text-2xl font-semibold text-stone-ink">Something not right? We&apos;re on it.</h2>
             <p className="mt-3 text-stone-muted">
-              Submit a warranty request with photos, or call our service line — our team handles
-              warranty work start to finish.
+              Submit a warranty request with photos, or call our service line — our team can help you with the next steps for the applicable warranty.
             </p>
           </div>
           <div className="flex flex-col gap-3">

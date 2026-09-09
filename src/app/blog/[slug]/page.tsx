@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -18,7 +19,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) return { title: "Post not found" };
-  return {
+  return pageMetadata({
     title: post.title,
     description: post.description,
     alternates: { canonical: `/blog/${slug}` },
@@ -28,7 +29,7 @@ export async function generateMetadata({
       title: post.title,
       description: post.description,
     },
-  };
+  });
 }
 
 export default async function BlogPostPage({

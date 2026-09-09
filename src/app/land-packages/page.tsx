@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
@@ -10,12 +11,12 @@ import { faqs, type Faq } from "@/lib/faqs";
 import { JsonLd, faqLd } from "@/lib/jsonld";
 import { CheckIcon, PinIcon, ArrowIcon, PhoneIcon } from "@/components/icons";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Land Packages",
   description:
     "One package, one price: a brand-new home plus the land it sits on. See what's included, what drives the price, and how Home Placer handles permits, delivery, foundation, and utilities across Horry & Georgetown counties, SC.",
   alternates: { canonical: "/land-packages" },
-};
+});
 
 const included = [
   "The land — a clear lot, ready to build on",

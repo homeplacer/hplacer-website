@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
@@ -5,12 +6,12 @@ import { HomeCard } from "@/components/home-card";
 import { BRANDS, getHomesByBrand } from "@/lib/homes";
 import { ArrowIcon } from "@/components/icons";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Brands — Clayton, Cavco & Champion",
   description:
     "Home Placer carries new Clayton, Cavco, and Champion manufactured homes — hand-picked floor plans placed on land across Horry County, SC.",
   alternates: { canonical: "/brands" },
-};
+});
 
 export default function BrandsPage() {
   return (

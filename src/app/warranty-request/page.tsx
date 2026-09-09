@@ -1,14 +1,15 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import { WarrantyRequestForm } from "@/components/warranty-request-form";
 import { site } from "@/lib/site";
 import { PhoneIcon, CheckIcon } from "@/components/icons";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Submit a Warranty Request",
   description:
     "Home Placer homeowners: submit a warranty request with photos. Tell us your serial number or your address and our service team will follow up.",
   alternates: { canonical: "/warranty-request" },
-};
+});
 
 export default function WarrantyRequestPage() {
   return (

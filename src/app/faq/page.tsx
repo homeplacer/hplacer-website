@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
@@ -6,12 +7,12 @@ import { JsonLd, faqLd } from "@/lib/jsonld";
 import { site } from "@/lib/site";
 import { PhoneIcon, ArrowIcon } from "@/components/icons";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "FAQ — Buying a Manufactured Home on Land",
   description:
     "Answers to common questions about buying a new manufactured home on land in Horry County, SC — packages, financing, HOAs, brands, and the process.",
   alternates: { canonical: "/faq" },
-};
+});
 
 export default function FaqPage() {
   return (

@@ -51,7 +51,7 @@ export function FinancingForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form data-form-type="financing" onSubmit={handleSubmit} className="space-y-4">
       <Honeypot />
       {status === "error" && (
         <p className="rounded-lg border border-red-300 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">

@@ -1,15 +1,16 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { site } from "@/lib/site";
 import { ArrowIcon, PhoneIcon } from "@/components/icons";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "How It Works — From First Call to Front-Door Key",
   description:
     "The Home Placer process for buying a new manufactured home on land in Horry County, SC — pick a home, pick land, we handle setup, you move in.",
   alternates: { canonical: "/process" },
-};
+});
 
 const steps = [
   {
@@ -40,7 +41,7 @@ const steps = [
   {
     n: "06",
     t: "Move in — and we follow up",
-    d: "Walk through your finished home, get your keys, and settle in. A 30-day walk-through and a one-year limited warranty mean anything that needs attention gets handled after you're in.",
+    d: "Walk through your finished home, get your keys, and settle in. We provide a 30-day walk-through. Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company.",
   },
 ];
 

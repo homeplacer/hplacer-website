@@ -1,10 +1,11 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import { CareerApplicationForm } from "@/components/career-application-form";
 import { PageHero } from "@/components/page-hero";
 import { JsonLd } from "@/lib/jsonld";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Careers & Job Opportunities", description: "Apply for construction, manufactured-home, CDL driver, carpenter, equipment operator, laborer, and diesel technician careers with Home Placer in the Myrtle Beach area.", alternates: { canonical: "/careers" } };
+export const metadata: Metadata = pageMetadata({ title: "Careers & Job Opportunities", description: "Apply for construction, manufactured-home, CDL driver, carpenter, equipment operator, laborer, and diesel technician careers with Home Placer in the Myrtle Beach area.", alternates: { canonical: "/careers" } });
 const openings = [
   ["Site Work & Equipment Operator", "$20–$28 per hour, depending on experience", "Help prepare home sites and operate the equipment that keeps our land-and-home projects moving."],
   ["Laborer", "$16–$21 per hour, depending on experience", "Support deliveries, setup, site work, repairs, and the hands-on work behind every completed home."],

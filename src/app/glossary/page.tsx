@@ -1,15 +1,16 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { glossary } from "@/lib/glossary";
 import { JsonLd } from "@/lib/jsonld";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Manufactured Home Glossary",
   description:
     "Plain-English definitions of manufactured-home terms — HUD code, single-wide, double-wide, chattel, land-home package, and more.",
   alternates: { canonical: "/glossary" },
-};
+});
 
 export default function GlossaryPage() {
   const ld = {

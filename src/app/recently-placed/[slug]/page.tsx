@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -35,12 +36,12 @@ export async function generateMetadata({
   const h = getPlacedHome(slug);
   if (!h) return { title: "Home not found" };
   const lot = h.lotAcres ? `${h.lotAcres} acres` : "its own land";
-  return {
+  return pageMetadata({
     title: `${h.address}, ${h.town}, SC — ${h.beds} bd / ${h.baths} ba manufactured home`,
     description: `A ${h.beds}-bed ${h.baths}-bath ${h.style.toLowerCase()} manufactured home Home Placer placed and sold on ${lot} at ${h.address}, ${h.town}, SC.${h.modelName ? ` This is the ${h.modelName} — see every photo and the floor plan.` : " See every photo."}`,
     alternates: { canonical: `/recently-placed/${h.slug}` },
     openGraph: { images: [asset(h.photo)] },
-  };
+  });
 }
 
 function LotIcon({ className }: { className?: string }) {

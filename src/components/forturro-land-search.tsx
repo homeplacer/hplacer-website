@@ -20,16 +20,13 @@ export function ForturroLandSearch({
           Find your land. We&apos;ll place the home.
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-stone-ink/85">
-          No lot? No problem. Our sister company, <strong className="font-semibold text-stone-ink">{site.forturro.name}</strong>,
-          is a Grand Strand real estate team with the{" "}
-          <strong className="font-semibold text-stone-ink">full MLS</strong>{" "}at your fingertips — every lot and acre
-          for sale from Conway to the coast. Find the right piece of land, and we&apos;ll handle the rest: the home, the
-          setup, and the package.
+          Explore land with {site.forturro.name}, a separate real estate team.
+          We&apos;ll explain the handoff before you leave Home Placer and help you review
+          a lot for the home, installation, and utilities you need.
         </p>
         <div className="mt-7 flex flex-wrap justify-center gap-3">
           <a
             href={site.forturro.landSearchUrl}
-            target="_blank"
             rel="noopener"
             className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-800"
           >
@@ -37,7 +34,6 @@ export function ForturroLandSearch({
           </a>
           <a
             href={site.forturro.searchUrl}
-            target="_blank"
             rel="noopener"
             className="inline-flex items-center gap-2 rounded-full border border-stone-line bg-stone-bg px-6 py-3 text-base font-semibold text-stone-ink transition hover:border-brand-300"
           >

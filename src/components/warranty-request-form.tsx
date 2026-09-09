@@ -73,7 +73,7 @@ export function WarrantyRequestForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
+    <form data-form-type="warranty" onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
       <Honeypot />
       {status === "error" && message && (
         <p className="rounded-lg border border-red-300 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">

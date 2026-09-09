@@ -49,7 +49,7 @@ export function EmailCapture() {
             {via === "mailto" ? "Check your mail app — hit send to subscribe!" : "You're subscribed — thanks!"}
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="w-full max-w-md shrink-0">
+          <form data-form-type="subscribe" onSubmit={handleSubmit} className="w-full max-w-md shrink-0">
             <Honeypot />
             <div className="grid gap-2 sm:grid-cols-2">
               <input

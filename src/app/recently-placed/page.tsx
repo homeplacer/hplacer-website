@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
@@ -10,12 +11,12 @@ import { getAllPlacedHomes } from "@/lib/placed-homes";
 import { JsonLd, placedHomesGalleryLd } from "@/lib/jsonld";
 import placementsData from "../../../data/placements.json";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Recently Placed Homes Across the Grand Strand",
   description:
     "Browse real photo galleries of manufactured homes Home Placer has placed and sold on their own land across Conway, Loris, Aynor, Longs, and Myrtle Beach, SC.",
   alternates: { canonical: "/recently-placed" },
-};
+});
 
 const fmtK = (n: number) => "$" + Math.round(n / 1000) + "K";
 

@@ -46,7 +46,7 @@ export const faqs: Faq[] = [
   },
   {
     q: "What warranty comes with the home?",
-    a: "A limited one-year warranty, plus a 30-day walk-through after you move in so anything that needs attention gets handled.",
+    a: "Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company. We also provide a 30-day walk-through after move-in.",
   },
   {
     q: "How long does the whole process take?",

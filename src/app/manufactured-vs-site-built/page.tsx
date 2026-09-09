@@ -1,15 +1,16 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { site } from "@/lib/site";
 import { CheckIcon, ArrowIcon, PhoneIcon } from "@/components/icons";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Manufactured vs Site-Built Homes — An Honest Comparison",
   description:
     "How a new manufactured home on land compares to a site-built house on cost, speed, quality, financing, and value — straight from a licensed SC dealer.",
   alternates: { canonical: "/manufactured-vs-site-built" },
-};
+});
 
 const rows = [
   { label: "Typical price", mfg: "From the low $200s, all-in with land", site: "Often $350k+ in the same area" },

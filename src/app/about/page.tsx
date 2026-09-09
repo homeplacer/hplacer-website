@@ -1,15 +1,16 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { site } from "@/lib/site";
 import { CheckIcon, ArrowIcon, PhoneIcon } from "@/components/icons";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "About",
   description:
     "Home Placer is a licensed manufactured-home dealer in Horry County, SC, pairing new homes with land at honest prices.",
   alternates: { canonical: "/about" },
-};
+});
 
 export default function AboutPage() {
   return (
@@ -33,15 +34,17 @@ export default function AboutPage() {
             your own. We put it into one package, one price, and one team you can call.
           </p>
           <p>
-            And we keep it honest. Homes from the low $200s, no HOA, a one-year limited
-            warranty, and a 30-day walk-through after you move in. If a deal isn&apos;t right
+            And we keep it honest. Homes from the low $200s, no HOA, a one-year builder
+            warranty for defects, and a 30-day walk-through after you move in. The separate
+            2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years
+            of structural coverage through the 2–10 company. If a deal isn&apos;t right
             for you, we&apos;ll tell you.
           </p>
 
           <div className="grid gap-4 pt-4 sm:grid-cols-2">
             {[
               { stat: "Low $200s", label: "Starting package price" },
-              { stat: "5 cities", label: "Across Horry County" },
+              { stat: "4 counties", label: "Horry · Georgetown · Brunswick · Columbus" },
               { stat: "3 brands", label: "Clayton · Cavco · Champion" },
               { stat: "$0 HOA", label: "You own your land" },
             ].map((s) => (

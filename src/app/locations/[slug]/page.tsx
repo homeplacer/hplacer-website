@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import locationsManifest from "../../../../data/locations-manifest.json";
 import Link from "next/link";
@@ -25,7 +26,7 @@ export async function generateMetadata({
   const g = cityGeo[loc.slug];
   const st = getCounty(loc.countyKey)?.stateAbbr ?? "SC";
   const stateName = st === "NC" ? "North Carolina" : "South Carolina";
-  return {
+  return pageMetadata({
     // Title tag captures the high-volume "mobile home(s) in {city}" search while
     // keeping the accurate "manufactured" term primary; the on-page H1 stays loc.headline.
     title: `Manufactured & Mobile Homes in ${loc.name}, ${st}`,
@@ -39,7 +40,7 @@ export async function generateMetadata({
           ICBM: `${g.lat}, ${g.lng}`,
         }
       : {},
-  };
+  });
 }
 
 export default async function LocationPage({

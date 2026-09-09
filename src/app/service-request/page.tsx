@@ -1,14 +1,15 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import { ServiceRequestForm } from "@/components/service-request-form";
 import { site } from "@/lib/site";
 import { PhoneIcon, CheckIcon } from "@/components/icons";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Request Service",
   description:
     "Home Placer homeowners: request warranty or service help. Submit a service request or call our service line at (843) 484-9844.",
   alternates: { canonical: "/service-request" },
-};
+});
 
 export default function ServiceRequestPage() {
   return (

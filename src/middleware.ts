@@ -1,3 +1,4 @@
+import { legacyRedirects } from "@/lib/legacy-redirects";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { catalogImageOrigins, virtualTourOrigins } from "@/lib/media-policy";
@@ -50,6 +51,13 @@ export function middleware(req: NextRequest) {
   // production Always-HTTPS on hplacer.com is unaffected.
   const host = req.nextUrl.hostname;
   const isLocal = host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0";
+
+  const legacy = legacyRedirects[req.nextUrl.pathname.replace(/\/$/, "")];
+  if (legacy) {
+    const url = req.nextUrl.clone(); url.pathname = legacy;
+    if (!isLocal) { url.hostname = "hplacer.com"; url.protocol = "https:"; url.port = ""; }
+    return withSecurityHeaders(NextResponse.redirect(url, 301), isLocal);
+  }
 
   // One canonical public host. Do this before the HTTPS redirect so an incoming
   // http://www request makes a single, path-and-query-preserving hop directly

@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
@@ -5,12 +6,12 @@ import { galleryByCategory } from "@/lib/gallery";
 import { site } from "@/lib/site";
 import { CheckIcon, ArrowIcon, PhoneIcon } from "@/components/icons";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Our Work — Homes & Land Development",
   description:
     "Real manufactured homes Home Placer has placed on land across Horry County, SC, plus our site and land development work — from raw lots to finished communities.",
   alternates: { canonical: "/gallery" },
-};
+});
 
 function Masonry({ items }: { items: { src: string; alt: string }[] }) {
   return (

@@ -51,9 +51,9 @@ export const site = {
     name: "The Forturro Group",
     url: "https://forturro.com",
     searchUrl:
-      "https://forturro.com/?utm_source=hplacer&utm_medium=referral&utm_campaign=cross-site",
+      "/find-land",
     landSearchUrl:
-      "https://forturro.com/?utm_source=hplacer&utm_medium=referral&utm_campaign=land-search",
+      "/find-land",
   },
 
   // Cities where Home Placer places homes on land.
@@ -85,8 +85,8 @@ export const site = {
       body: "One package, one price, one closing — the home and the lot it sits on.",
     },
     {
-      title: "1-year warranty",
-      body: "A limited one-year warranty plus a 30-day walk-through after you move in.",
+      title: "Builder + 2–10 warranties",
+      body: "Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company. A 30-day walk-through is also provided.",
     },
     {
       title: "Licensed SC dealer",

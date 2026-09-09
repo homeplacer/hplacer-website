@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
@@ -8,12 +9,12 @@ import { CheckIcon, ArrowIcon, PhoneIcon } from "@/components/icons";
 // SEO/geo per the standing rule — built from a Gemini "top Google engineer"
 // consult (2026-06-29). Deliberately captures the high-volume "mobile home"
 // search and pivots it to the accurate "manufactured home" story.
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Mobile vs. Manufactured Home: What's the Difference?",
   description:
     "Is there a difference between a mobile home and a manufactured home? The structural, legal, and financing differences — plain English, for SC & NC land buyers.",
   alternates: { canonical: "/mobile-home-vs-manufactured-home" },
-};
+});
 
 const faqs = [
   {

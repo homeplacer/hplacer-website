@@ -1,3 +1,4 @@
+import Script from "next/script";
 import type { Metadata } from "next";
 import { Geist, Fraunces } from "next/font/google";
 import "./globals.css";
@@ -64,6 +65,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-stone-bg text-stone-ink">
+      <Script id="ga4-init" strategy="beforeInteractive">
+        {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${site.gaId}',{send_page_view:false,page_location:'https://hplacer.com/',page_referrer:'',page_title:'Home Placer',allow_google_signals:false,allow_ad_personalization_signals:false});`}
+      </Script>
         <GoogleAnalytics />
         <AnalyticsEvents />
         <JsonLd data={localBusinessLd()} />
