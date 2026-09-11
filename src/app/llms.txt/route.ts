@@ -59,6 +59,9 @@ ${Object.entries(byBrand)
 Browse: ${site.url}/homes
 
 ## Key pages
+- Official county and buyer resources: ${site.url}/buyer-resources
+- Land-search handoff: ${site.url}/find-land
+- Warranty: ${site.url}/warranty
 - Homes: ${site.url}/homes
 - Brands: ${site.url}/brands
 - Land packages: ${site.url}/land-packages

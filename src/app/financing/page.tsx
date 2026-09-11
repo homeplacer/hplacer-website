@@ -1,4 +1,5 @@
 import { pageMetadata } from "@/lib/metadata";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { FinancingForm } from "@/components/financing-form";
@@ -44,6 +45,7 @@ export default function FinancingPage() {
         we&apos;ll help no matter where your credit stands today.
       </PageHero>
 
+      <div className="container-x pt-8"><Link href="/buyer-resources#financing" className="font-semibold text-brand-700 underline">Official program information and questions for your lender</Link></div>
       <section className="container-x py-16">
         <div className="mx-auto mb-10 max-w-3xl rounded-card border border-brand-200 bg-brand-50/60 p-6 text-center">
           <p className="leading-relaxed text-stone-ink/90">

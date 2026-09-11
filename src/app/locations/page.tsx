@@ -28,6 +28,7 @@ export default function LocationsPage() {
         boxed into a subdivision, and never with an HOA.
       </PageHero>
 
+      <div className="container-x pt-8"><Link href="/buyer-resources#counties" className="font-semibold text-brand-700 underline">Find official county offices and forms</Link></div>
       {groups.map(({ county, cities }) => (
         <section key={county.key} className="container-x py-10">
           <h2 className="font-display text-2xl font-semibold text-stone-ink sm:text-3xl">

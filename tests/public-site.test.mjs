@@ -37,3 +37,11 @@ test('only documented legacy paths map to real current models',async()=> {
   assert.equal(legacyRedirects['/product-page/conway-land-package'],'/homes/stayin-alive');
   assert.equal(legacyRedirects['/product-page/unknown'],undefined);
 });
+test('analytics rejects private text under otherwise valid parameter names and unknown events', () => {
+  const calls=[];
+  globalThis.window={location:{pathname:'/contact'},gtag:(...x)=>calls.push(x)};
+  analytics.track('form_start',{form_type:'private@example.com',placement:'555-123-4567',destination:'https://example.com/?secret=private',submission_method:'private text'});
+  assert.doesNotMatch(JSON.stringify(calls),/private|555-123/);
+  analytics.track('private@example.com',{form_type:'contact'});
+  assert.equal(calls.length,1);
+});

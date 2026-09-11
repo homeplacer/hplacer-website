@@ -109,6 +109,7 @@ export const navLinks = [
 ] as const;
 
 export const resourceLinks = [
+  { href: "/buyer-resources", label: "Official Buyer Resources" },
   { href: "/gallery", label: "Photo Gallery" },
   { href: "/process", label: "How It Works" },
   { href: "/warranty", label: "Warranty" },

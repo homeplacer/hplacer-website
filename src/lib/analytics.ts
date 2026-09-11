@@ -9,18 +9,25 @@ export function analyticsPath(pathname: string): string {
   const model = modelSlugFromPath(pathname);
   if (model) return `/homes/${model}`;
   const section = pathname.split("/")[1];
-  return ["homes","brands","land-packages","recently-placed","financing","process","warranty","faq","glossary","locations","blog","about","team","contact","careers","service-request","warranty-request","gallery","find-land","permits","manufactured-vs-site-built","modular-vs-manufactured-homes","mobile-home-vs-manufactured-home","manufactured-home-drywall-vs-wall-strips"].includes(section) ? `/${section}` : "/";
+  return ["homes","brands","land-packages","recently-placed","financing","process","warranty","faq","glossary","locations","blog","about","team","contact","careers","service-request","warranty-request","gallery","find-land","buyer-resources","permits","manufactured-vs-site-built","modular-vs-manufactured-homes","mobile-home-vs-manufactured-home","manufactured-home-drywall-vs-wall-strips"].includes(section) ? `/${section}` : "/";
 }
-const allowedKeys = new Set(["form_type", "submission_method", "model_context", "placement", "destination", "page_path"]);
+const allowedEvents = new Set(["page_view", "view_model", "view_financing", "form_start", "phone_call", "select_model", "pricing_inquiry", "financing_click", "land_search_click", "land_handoff", "generate_lead", "lead_submission_fallback"]);
+const allowedValues: Record<string, readonly string[]> = {
+  form_type: ["contact", "model_pricing", "financing", "subscribe", "service", "warranty", "careers", "inquiry"],
+  submission_method: ["api", "mailto"],
+  placement: ["header", "footer", "main_content", "navigation", "other"],
+  destination: ["forturro.com"],
+};
 export function track(event: string, params: Record<string, unknown> = {}): void {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" || !allowedEvents.has(event)) return;
   window.dataLayer ||= [];
   window.gtag ||= function(...args: unknown[]) { window.dataLayer!.push(args); };
   const safe: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(params)) {
-    if (!allowedKeys.has(key) || typeof value !== "string") continue;
-    if (key === "model_context" && !modelSlugs.has(value)) continue;
-    safe[key] = key === "page_path" ? analyticsPath(value) : value;
+    if (typeof value !== "string") continue;
+    if (key === "model_context" && modelSlugs.has(value)) safe[key] = value;
+    else if (key === "page_path") safe[key] = analyticsPath(value);
+    else if (allowedValues[key]?.includes(value)) safe[key] = value;
   }
   const path = analyticsPath(window.location.pathname);
   window.gtag("event", event, { ...safe, page_location: `https://hplacer.com${path}`, page_referrer: "", page_title: `Home Placer ${path}` });

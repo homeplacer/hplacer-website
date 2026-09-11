@@ -52,3 +52,13 @@ The September 9 fetched `forturro.com` homepage is a current application and con
 - FHA Title I: https://www.hud.gov/program_offices/housing/sfh/title/repair
 - USDA guaranteed program: https://www.rd.usda.gov/programs-services/single-family-housing-programs/single-family-housing-guaranteed-loan-program
 - CFPB mortgage/chattel research: https://www.consumerfinance.gov/data-research/research-reports/manufactured-housing-finance-new-insights-hmda/
+
+## September 11 completion pass
+
+The owner authorized all safe evidence-backed follow-up work. Added `/buyer-resources`, a single directory of official Horry, Georgetown, Brunswick, Columbus, HUD, and USDA resources, with questions buyers can bring to the responsible office or lender. All six official destinations were rechecked on September 11. Linked it from the footer, locations, financing, land handoff, sitemap, and llms summary. This completes factual resource navigation; substantive eligibility, legal, licensing, consent, and permitting claims still need approved business facts/wording. The approved warranty remains unchanged.
+
+Analytics now allowlists event names and categorical parameter values as well as parameter keys and model slugs. A regression test confirms that private text passed under otherwise valid keys is discarded and unknown events are ignored.
+
+Validation: production build, TypeScript, ESLint, five regression tests, all 255 rendered pages' unique titles/descriptions and matching canonical/Open Graph URLs, and all rendered internal navigation targets passed. Browser visual review of the resource directory passed. No production lead was submitted.
+
+Remaining dependencies: approved financing/real-property and privacy/SMS wording and workflow; exact license credentials and NC facts; approved substantive county guidance; GTM account/container access or owner acceptance of account terms; owner decision on Cloudflare training-crawler policy; authoritative additional legacy URL mappings; verified manufacturer/profile access and entity facts; action-time authorization for any domain purchase. None is represented as completed.
