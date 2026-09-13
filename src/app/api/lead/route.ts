@@ -68,6 +68,47 @@ interface LeadBody {
   pagePath?: string;
 }
 
+// A durable, non-personal acquisition bucket for outcome reporting.  The raw
+// first-touch values remain available to the sales team in the FUB timeline,
+// but this value is what operators should use for aggregate lead → close
+// reporting. Only a small allowlist of well-known referrer hostnames is used
+// for classification; the full URL is never parsed into report dimensions.
+type SourceChannel =
+  | "paid_search"
+  | "paid_social"
+  | "email"
+  | "organic_search"
+  | "organic_social"
+  | "referral"
+  | "direct"
+  | "campaign_other";
+
+function sourceChannel(a: Attribution): SourceChannel {
+  const source = a.utm_source?.toLowerCase() || "";
+  const medium = a.utm_medium?.toLowerCase() || "";
+  if (a.gclid) return "paid_search";
+  if (a.fbclid) return "paid_social";
+  if (medium === "email" || source.includes("email")) return "email";
+  if (medium === "cpc" || medium === "ppc" || medium === "paidsearch")
+    return "paid_search";
+  if (medium === "paid_social" || medium === "paidsocial") return "paid_social";
+  if (medium === "organic" && /google|bing|duckduckgo|yahoo|brave/.test(source))
+    return "organic_search";
+  if (medium === "social" || medium === "organic_social") return "organic_social";
+  try {
+    const host = a.referrer ? new URL(a.referrer).hostname.toLowerCase() : "";
+    if (/(^|\.)google\.|(^|\.)bing\.com$|(^|\.)duckduckgo\.com$|(^|\.)search\.yahoo\.com$|(^|\.)brave\.com$/.test(host))
+      return "organic_search";
+    if (/(^|\.)(facebook|instagram|linkedin|pinterest|tiktok|x)\.(com|us)$/.test(host))
+      return "organic_social";
+  } catch {
+    // A malformed, browser-supplied referrer has no classification value.
+  }
+  if (a.referrer) return "referral";
+  if (source || medium || a.utm_campaign) return "campaign_other";
+  return "direct";
+}
+
 // Trim, drop empties, and cap length so an oversized field can't flood logs or
 // the FUB/Resend payload. Default cap suits short fields; message overrides it.
 const clean = (v?: string, max = 500) => {
@@ -231,6 +272,7 @@ async function isValidFubUser(
 
 async function deliverToFub(lead: {
   leadId: string;
+  sourceChannel: SourceChannel;
   pagePath: string;
   modelSlug?: string;
   packageId?: string;
@@ -263,6 +305,7 @@ async function deliverToFub(lead: {
 
   const messageParts = [
     `Website lead reference: ${lead.leadId}`,
+    `Acquisition channel: ${lead.sourceChannel}`,
     `Submission page: https://hplacer.com${lead.pagePath}`,
     lead.packageId
       ? `Package: ${lead.packageId} (${lead.packageStatus}); market: ${lead.market}`
@@ -674,6 +717,7 @@ export async function POST(req: Request) {
     address: clean(body.address),
     message: clean(body.message, 5000),
     attribution,
+    sourceChannel: sourceChannel(attribution),
   };
 
   if (type === "subscribe") {
@@ -699,6 +743,7 @@ export async function POST(req: Request) {
   // expects a flat string map, not the nested attribution object).
   const emailLead: Record<string, string | null> = {
     leadId: lead.leadId,
+    sourceChannel: lead.sourceChannel,
     pagePath: lead.pagePath,
     modelSlug: lead.modelSlug || null,
     packageId: packageContext.packageId || null,

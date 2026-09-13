@@ -182,6 +182,7 @@ test("successful intake adds one server reference and validated package context 
     assert.equal(res.status, 200);
     const body = await res.json();
     assert.ok(sent[0].message.includes(body.leadId));
+    assert.match(sent[0].message, /Acquisition channel: direct/);
     assert.match(
       sent[0].message,
       /Package: historical-001 \(sold\); market: Conway, SC/,
@@ -193,5 +194,29 @@ test("successful intake adds one server reference and validated package context 
     else process.env.FUB_API_KEY = oldKey;
     if (oldResend === undefined) delete process.env.RESEND_API_KEY;
     else process.env.RESEND_API_KEY = oldResend;
+  }
+});
+test("lead acquisition bucket uses click IDs before a known search referrer", async () => {
+  const oldFetch = globalThis.fetch;
+  const oldKey = process.env.FUB_API_KEY;
+  process.env.FUB_API_KEY = "LOCAL_TEST_ONLY";
+  const sent = [];
+  globalThis.fetch = async (url, init) => {
+    assert.equal(url, "https://api.followupboss.com/v1/events");
+    sent.push(JSON.parse(init.body));
+    return Response.json({ id: 456 }, { status: 200 });
+  };
+  try {
+    const res = await route.POST(req({
+      name: "Local fixture",
+      phone: "2025550100",
+      attribution: { gclid: "local-test", referrer: "https://www.google.com/search?q=test" },
+    }));
+    assert.equal(res.status, 200);
+    assert.match(sent[0].message, /Acquisition channel: paid_search/);
+  } finally {
+    globalThis.fetch = oldFetch;
+    if (oldKey === undefined) delete process.env.FUB_API_KEY;
+    else process.env.FUB_API_KEY = oldKey;
   }
 });
