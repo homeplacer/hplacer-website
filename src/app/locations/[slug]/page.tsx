@@ -1,3 +1,4 @@
+import { locationEvidence } from "@/lib/location-evidence";
 import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import locationsManifest from "../../../../data/locations-manifest.json";
@@ -32,6 +33,7 @@ export async function generateMetadata({
     title: `Manufactured & Mobile Homes in ${loc.name}, ${st}`,
     description: loc.intro,
     alternates: { canonical: `/locations/${loc.slug}` },
+    robots: { index: Boolean(locationEvidence(loc.slug)), follow: true },
     other: g
       ? {
           "geo.region": `US-${st}`,
@@ -56,7 +58,9 @@ export default async function LocationPage({
 
   // Real Home Placer homes photographed in this town (geo-tagged from Joe's
   // photos), listed in data/locations-manifest.json. Empty if none for this town.
-  const townPhotos: string[] = ((locationsManifest as Record<string, string[]>)[slug] ?? [])
+  const townPhotos: string[] = (
+    (locationsManifest as Record<string, string[]>)[slug] ?? []
+  )
     .slice()
     .sort()
     .map((f) => asset(`/locations/${slug}/${f}`));
@@ -75,12 +79,15 @@ export default async function LocationPage({
         <div className="topo absolute inset-0" aria-hidden />
         <div className="container-x relative py-16">
           <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-accent-300 ring-1 ring-white/15">
-            <PinIcon className="size-3.5" /> {loc.county}, {county?.stateAbbr ?? "SC"}
+            <PinIcon className="size-3.5" /> {loc.county},{" "}
+            {county?.stateAbbr ?? "SC"}
           </p>
           <h1 className="mt-5 max-w-3xl font-display text-4xl font-semibold leading-tight sm:text-5xl">
             {loc.headline}
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-stone-100/80">{loc.intro}</p>
+          <p className="mt-5 max-w-2xl text-lg text-stone-100/80">
+            {loc.intro}
+          </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
               href="/homes"
@@ -119,8 +126,8 @@ export default async function LocationPage({
             Placing homes in {loc.name}
           </h2>
           <p className="mt-3 text-sm text-stone-muted">
-            Tell us about your lot — or use ours. We handle permits, delivery, foundation, and
-            utilities, and hand you the keys.
+            Tell us about your lot — or use ours. We handle permits, delivery,
+            foundation, and utilities, and hand you the keys.
           </p>
           <Link
             href={`/contact?home=${encodeURIComponent(loc.name + " area")}`}
@@ -145,14 +152,25 @@ export default async function LocationPage({
               {[
                 { t: "Wind standard", d: county.windText },
                 { t: "Utilities", d: county.utilitiesText },
-                { t: "Financing", d: `FHA, VA, and conventional land-home loans — and ${county.usdaText}.` },
+                {
+                  t: "Financing",
+                  d: `FHA, VA, and conventional land-home loans — and ${county.usdaText}.`,
+                },
                 { t: "Permitting", d: county.permittingText },
-                { t: "What's included", d: "The home, a quarter-acre lot, delivery, a permanent foundation, and utility hookups — one package, one closing, no HOA." },
-                { t: "Timeline", d: "Usually a few months from choosing your home to move-in, depending on land readiness and permits." },
+                {
+                  t: "What's included",
+                  d: "The home, a quarter-acre lot, delivery, a permanent foundation, and utility hookups — one package, one closing, no HOA.",
+                },
+                {
+                  t: "Timeline",
+                  d: "Usually a few months from choosing your home to move-in, depending on land readiness and permits.",
+                },
               ].map((f) => (
                 <div key={f.t}>
                   <dt className="font-semibold text-stone-ink">{f.t}</dt>
-                  <dd className="mt-1 text-sm leading-relaxed text-stone-muted">{f.d}</dd>
+                  <dd className="mt-1 text-sm leading-relaxed text-stone-muted">
+                    {f.d}
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -163,7 +181,9 @@ export default async function LocationPage({
       {townPhotos.length > 0 && (
         <section className="bg-stone-surface py-14">
           <div className="container-x">
-            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">Real Home Placer homes</p>
+            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">
+              Real Home Placer homes
+            </p>
             <h2 className="mt-2 font-display text-2xl font-semibold text-stone-ink">
               Recently placed around {loc.name}
             </h2>
@@ -188,7 +208,10 @@ export default async function LocationPage({
           <h2 className="font-display text-2xl font-semibold text-stone-ink">
             Homes you can place near {loc.name}
           </h2>
-          <Link href="/homes" className="text-sm font-semibold text-brand-700 hover:text-brand-900">
+          <Link
+            href="/homes"
+            className="text-sm font-semibold text-brand-700 hover:text-brand-900"
+          >
             View all
           </Link>
         </div>
@@ -198,6 +221,28 @@ export default async function LocationPage({
           ))}
         </div>
       </section>
+      {locationEvidence(loc.slug) && (
+        <section className="container-x py-10">
+          <h2 className="font-display text-2xl font-semibold">
+            Recorded project experience
+          </h2>
+          <p className="mt-3">
+            Our existing archive includes{" "}
+            {locationEvidence(loc.slug).publicProjectCount} sold homes in{" "}
+            {loc.name}. Past projects do not establish approval or availability
+            for another lot.
+          </p>
+          <p className="mt-4">
+            <Link href="/stories" className="underline">
+              Explore the project archive
+            </Link>{" "}
+            ·{" "}
+            <Link href="/guides/land-readiness-checklist" className="underline">
+              Prepare for a parcel review
+            </Link>
+          </p>
+        </section>
+      )}
     </>
   );
 }

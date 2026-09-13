@@ -1,0 +1,13 @@
+{
+  "contentId": "",
+  "proposedUrl": "",
+  "responsibleStaffReviewer": null,
+  "reviewedAt": null,
+  "decision": "pending",
+  "claimEvidence": [{"exactClaim":"","officialSource":"","sourceCheckedAt":null,"parcelSpecificLimit":""}],
+  "projectEvidence": [{"internalProjectId":"","approvedPublicFields":[],"constraintsEvidence":null,"scopeEvidence":null,"durationEvidence":null}],
+  "mediaPermissionReference": null,
+  "customerQuotePermissionReference": null,
+  "requiredLegalOrProviderReview": [],
+  "nextReviewDue": null
+}

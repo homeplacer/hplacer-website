@@ -1,32 +1,28 @@
+import identity from "../../data/business-identity.json";
 // Single source of truth for business facts. Pulled from the real
 // Home Placer profile (Zillow builder feed + Google Business Profile).
 
 export const site = {
-  name: "Home Placer",
-  legalName: "Home Placer LLC",
+  name: identity.publicName,
+  legalName: identity.legalName,
   domain: "hplacer.com",
-  url: "https://hplacer.com",
+  url: identity.url,
   tagline: "New homes, on land, from the low $200s.",
   blurb:
     "Horry County's licensed land + home dealer. We pair brand-new Clayton, Cavco, and Champion manufactured homes with land across the Grand Strand — one package, one team, no HOA.",
 
   phoneDisplay: "(843) 849-HOME",
-  phoneDial: "+18438494663",
+  phoneDial: identity.phone,
   phoneSpoken: "843-849-4663",
-  email: "Carolina@hplacer.com",
+  email: identity.email,
 
   // Existing homeowners — warranty / service line (separate from sales).
   warrantyPhoneDisplay: "(843) 484-9844",
   warrantyPhoneDial: "+18434849844",
 
-  address: {
-    street: "1801 N Oak St",
-    city: "Myrtle Beach",
-    state: "SC",
-    zip: "29577",
-  },
-  geo: { lat: 33.702366, lng: -78.877032 },
-  hours: "By appointment",
+  address: identity.address,
+  geo: identity.geo,
+  hours: identity.hoursLabel,
 
   // Google Analytics 4 Measurement ID (GA4 property under carolina@hplacer.com).
   gaId: "G-0T71PWYQSQ",
@@ -38,11 +34,11 @@ export const site = {
 
   // Real Google Business Profile (CID 3461988553332431879).
   gbp: {
-    url: "https://maps.google.com/?cid=3461988553332431879",
+    url: identity.profiles.google,
     rating: 5.0,
     reviewCount: 7,
   },
-  sameAs: ["https://maps.google.com/?cid=3461988553332431879"],
+  sameAs: [identity.profiles.google],
 
   // Sister company — Home Placer hands buyers who still need land to the new
   // Forturro website. Keep this to the primary Forturro domain: no legacy
@@ -50,10 +46,8 @@ export const site = {
   forturro: {
     name: "The Forturro Group",
     url: "https://forturro.com",
-    searchUrl:
-      "/find-land",
-    landSearchUrl:
-      "/find-land",
+    searchUrl: "/find-land",
+    landSearchUrl: "/find-land",
   },
 
   // Cities where Home Placer places homes on land.
@@ -109,6 +103,9 @@ export const navLinks = [
 ] as const;
 
 export const resourceLinks = [
+  { href: "/packages", label: "Package Records" },
+  { href: "/guides", label: "Land-readiness Checklists" },
+  { href: "/stories", label: "Project Experience" },
   { href: "/buyer-resources", label: "Official Buyer Resources" },
   { href: "/gallery", label: "Photo Gallery" },
   { href: "/process", label: "How It Works" },
@@ -120,8 +117,14 @@ export const resourceLinks = [
   { href: "/glossary", label: "Glossary" },
   { href: "/manufactured-vs-site-built", label: "Manufactured vs. Site-Built" },
   { href: "/modular-vs-manufactured-homes", label: "Modular vs. Manufactured" },
-  { href: "/mobile-home-vs-manufactured-home", label: "Mobile vs. Manufactured" },
-  { href: "/manufactured-home-drywall-vs-wall-strips", label: "Drywall vs. Wall Strips" },
+  {
+    href: "/mobile-home-vs-manufactured-home",
+    label: "Mobile vs. Manufactured",
+  },
+  {
+    href: "/manufactured-home-drywall-vs-wall-strips",
+    label: "Drywall vs. Wall Strips",
+  },
   { href: "/locations", label: "Where We Build" },
 ] as const;
 
@@ -138,7 +141,7 @@ export const socialLinks = [
     key: "instagram",
     label: "Instagram",
     handle: "@homeplacer",
-    url: "https://www.instagram.com/homeplacer",
+    url: identity.profiles.instagram,
     live: true,
   },
   {
@@ -158,4 +161,6 @@ export const socialLinks = [
 ] as const;
 
 // Live social URLs, for JSON-LD sameAs (search engines verifying the brand).
-export const liveSocialUrls = socialLinks.filter((s) => s.live).map((s) => s.url);
+export const liveSocialUrls = socialLinks
+  .filter((s) => s.live)
+  .map((s) => s.url);

@@ -59,6 +59,9 @@ ${Object.entries(byBrand)
 Browse: ${site.url}/homes
 
 ## Key pages
+- /packages — Status-labeled package records; sold examples are historical, not current offers.
+- /guides — Source-linked land-readiness planning checklists.
+- /stories — Existing project experience by town.
 - Official county and buyer resources: ${site.url}/buyer-resources
 - Land-search handoff: ${site.url}/find-land
 - Warranty: ${site.url}/warranty

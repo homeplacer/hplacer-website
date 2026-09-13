@@ -1,3 +1,4 @@
+import { ProjectEvidence } from "@/components/project-evidence";
 import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -10,7 +11,12 @@ import {
 import { getHome, formatPrice } from "@/lib/homes";
 import { HomeGallery } from "@/components/home-gallery";
 import { WantThisHouseForm } from "@/components/want-this-house-form";
-import { JsonLd, breadcrumbLd, placedHomeLd, placedHomeResidenceLd } from "@/lib/jsonld";
+import {
+  JsonLd,
+  breadcrumbLd,
+  placedHomeLd,
+  placedHomeResidenceLd,
+} from "@/lib/jsonld";
 import { asset } from "@/lib/asset";
 import { site } from "@/lib/site";
 import {
@@ -46,7 +52,16 @@ export async function generateMetadata({
 
 function LotIcon({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
       <path d="M3 7l9-4 9 4-9 4-9-4z" />
       <path d="M3 7v10l9 4 9-4V7" />
     </svg>
@@ -72,21 +87,31 @@ export default async function PlacedHomeDetail({
     { label: "Bedrooms", value: String(h.beds) },
     { label: "Bathrooms", value: String(h.baths) },
     { label: "Home style", value: h.style },
-    h.sqftHeated ? { label: "Heated sq ft", value: h.sqftHeated.toLocaleString() } : null,
+    h.sqftHeated
+      ? { label: "Heated sq ft", value: h.sqftHeated.toLocaleString() }
+      : null,
     h.lotAcres ? { label: "Lot size", value: `${h.lotAcres} acres` } : null,
     { label: "Sold for", value: formatPrice(h.price) },
     h.modelName
-      ? { label: "Model", value: model?.name ?? h.modelName, href: model ? `/homes/${model.slug}` : undefined }
+      ? {
+          label: "Model",
+          value: model?.name ?? h.modelName,
+          href: model ? `/homes/${model.slug}` : undefined,
+        }
       : null,
   ].filter(Boolean) as { label: string; value: string; href?: string }[];
 
   return (
     <>
-      <JsonLd data={placedHomeLd(h, model ? { name: model.name } : undefined)} />
+      <JsonLd
+        data={placedHomeLd(h, model ? { name: model.name } : undefined)}
+      />
       <JsonLd
         data={placedHomeResidenceLd(
           h,
-          model ? { name: model.name, brand: model.brand, sqft: model.sqft } : undefined,
+          model
+            ? { name: model.name, brand: model.brand, sqft: model.sqft }
+            : undefined,
         )}
       />
       <JsonLd
@@ -105,14 +130,22 @@ export default async function PlacedHomeDetail({
 
       {/* Gallery + summary */}
       <section className="container-x grid gap-10 py-8 lg:grid-cols-2 lg:items-start">
-        <HomeGallery images={images} name={`${h.address}, ${h.town}, SC`} brand="Sold" />
+        <HomeGallery
+          images={images}
+          name={`${h.address}, ${h.town}, SC`}
+          brand="Sold"
+        />
 
         <div>
           <div className="flex items-center gap-2 text-brand-600">
             <PinIcon className="size-5" />
-            <span className="text-sm font-semibold uppercase tracking-wider">{h.town}, SC</span>
+            <span className="text-sm font-semibold uppercase tracking-wider">
+              {h.town}, SC
+            </span>
           </div>
-          <h1 className="mt-2 font-display text-4xl font-semibold text-stone-ink">{h.address}</h1>
+          <h1 className="mt-2 font-display text-4xl font-semibold text-stone-ink">
+            {h.address}
+          </h1>
           <p className="mt-1 text-stone-muted">
             {h.beds} bd · {h.baths} ba · {h.style}
             {h.withLand ? " · on its own land" : ""}
@@ -121,7 +154,9 @@ export default async function PlacedHomeDetail({
           <div className="mt-5">
             <p className="font-display text-4xl font-semibold text-brand-700">
               {formatPrice(h.price)}
-              <span className="ml-2 align-middle text-base font-normal text-stone-muted">sold</span>
+              <span className="ml-2 align-middle text-base font-normal text-stone-muted">
+                sold
+              </span>
             </p>
             <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-stone-muted">
               Closed sale · Coastal Carolinas MLS
@@ -137,7 +172,8 @@ export default async function PlacedHomeDetail({
             </span>
             {h.sqftHeated && (
               <span className="inline-flex items-center gap-2">
-                <RulerIcon className="size-5 text-brand-600" /> {h.sqftHeated.toLocaleString()} sqft
+                <RulerIcon className="size-5 text-brand-600" />{" "}
+                {h.sqftHeated.toLocaleString()} sqft
               </span>
             )}
             {h.lotAcres && (
@@ -164,11 +200,17 @@ export default async function PlacedHomeDetail({
 
           <dl className="mt-8 divide-y divide-stone-line rounded-card border border-stone-line bg-stone-surface px-5">
             {specs.map((s) => (
-              <div key={s.label} className="flex items-center justify-between gap-4 py-2.5 text-sm">
+              <div
+                key={s.label}
+                className="flex items-center justify-between gap-4 py-2.5 text-sm"
+              >
                 <dt className="text-stone-muted">{s.label}</dt>
                 <dd className="text-right font-medium text-stone-ink">
                   {s.href ? (
-                    <Link href={s.href} className="text-brand-700 underline-offset-2 hover:underline">
+                    <Link
+                      href={s.href}
+                      className="text-brand-700 underline-offset-2 hover:underline"
+                    >
                       {s.value}
                     </Link>
                   ) : (
@@ -180,7 +222,11 @@ export default async function PlacedHomeDetail({
           </dl>
 
           <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-stone-muted">
-            {["Land + home, one closing", "New, warrantied home", "We deliver, set & connect"].map((t) => (
+            {[
+              "Land + home, one closing",
+              "New, warrantied home",
+              "We deliver, set & connect",
+            ].map((t) => (
               <li key={t} className="inline-flex items-center gap-1.5">
                 <CheckIcon className="size-4 text-brand-600" /> {t}
               </li>
@@ -205,7 +251,9 @@ export default async function PlacedHomeDetail({
             </p>
 
             {(fp || heroImg) && (
-              <div className={`mt-5 grid gap-5${fp && heroImg ? " sm:grid-cols-2" : ""}`}>
+              <div
+                className={`mt-5 grid gap-5${fp && heroImg ? " sm:grid-cols-2" : ""}`}
+              >
                 {fp && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -252,14 +300,16 @@ export default async function PlacedHomeDetail({
       {!model && h.modelName && (
         <section className="container-x py-8">
           <div className="rounded-card border border-stone-line bg-stone-surface p-6 sm:p-8">
-            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">The model</p>
+            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">
+              The model
+            </p>
             <h2 className="mt-1 font-display text-2xl font-semibold text-stone-ink">
               This home is the {h.modelName}
             </h2>
             <p className="mt-2 max-w-2xl text-stone-muted">
-              The {h.modelName}{" "}isn&apos;t in our current lineup, but we place homes just like it
-              all the time. Browse what&apos;s available now — or tell us what you&apos;re after and
-              we&apos;ll track one down.
+              The {h.modelName} isn&apos;t in our current lineup, but we place
+              homes just like it all the time. Browse what&apos;s available now
+              — or tell us what you&apos;re after and we&apos;ll track one down.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
               <Link
@@ -283,10 +333,13 @@ export default async function PlacedHomeDetail({
       <section className="container-x py-10" id="want-this-house">
         <div className="grid gap-8 rounded-card border border-brand-200 bg-brand-50/60 p-6 sm:p-10 lg:grid-cols-2 lg:items-center">
           <div>
-            <h2 className="font-display text-3xl font-semibold text-stone-ink">Want this same house?</h2>
+            <h2 className="font-display text-3xl font-semibold text-stone-ink">
+              Want this same house?
+            </h2>
             <p className="mt-3 text-stone-muted">
-              We can place {model ? `the ${model.name}` : "a home like this"} on your land — or on a
-              ¼-acre lot we provide. Tell us a little and we&apos;ll get you a real price.
+              We can place {model ? `the ${model.name}` : "a home like this"} on
+              your land — or on a ¼-acre lot we provide. Tell us a little and
+              we&apos;ll get you a real price.
             </p>
             <ul className="mt-5 space-y-2 text-sm text-stone-ink">
               {[
@@ -301,7 +354,10 @@ export default async function PlacedHomeDetail({
             </ul>
           </div>
           <div className="rounded-card border border-stone-line bg-stone-bg p-5 sm:p-6">
-            <WantThisHouseForm address={h.address} model={model?.name ?? h.modelName ?? undefined} />
+            <WantThisHouseForm
+              address={h.address}
+              model={model?.name ?? h.modelName ?? undefined}
+            />
           </div>
         </div>
       </section>
@@ -314,8 +370,14 @@ export default async function PlacedHomeDetail({
           </h2>
           <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((r) => (
-              <li key={r.slug} className="overflow-hidden rounded-card border border-stone-line bg-stone-surface">
-                <Link href={`/recently-placed/${r.slug}`} className="group block">
+              <li
+                key={r.slug}
+                className="overflow-hidden rounded-card border border-stone-line bg-stone-surface"
+              >
+                <Link
+                  href={`/recently-placed/${r.slug}`}
+                  className="group block"
+                >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={asset(r.photo)}
@@ -330,7 +392,9 @@ export default async function PlacedHomeDetail({
                     <p className="mt-1 text-sm text-stone-muted">
                       {r.beds} bd · {r.baths} ba · {r.style}
                     </p>
-                    <p className="mt-2 font-display text-lg font-semibold text-brand-700">{formatPrice(r.price)}</p>
+                    <p className="mt-2 font-display text-lg font-semibold text-brand-700">
+                      {formatPrice(r.price)}
+                    </p>
                   </div>
                 </Link>
               </li>
@@ -338,6 +402,7 @@ export default async function PlacedHomeDetail({
           </ul>
         </section>
       )}
+      <ProjectEvidence home={h} />
     </>
   );
 }

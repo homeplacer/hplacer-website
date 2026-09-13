@@ -1,7 +1,10 @@
+import { locationEvidence } from "@/lib/location-evidence";
+import { getPackages } from "@/lib/packages";
+import { guides } from "@/lib/guides";
 import type { MetadataRoute } from "next";
 import { site } from "@/lib/site";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 import { getAllHomes } from "@/lib/homes";
 import { getAllPosts } from "@/lib/blog";
 import { locations } from "@/lib/locations";
@@ -32,7 +35,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...posts.map((p) => isoDate(p.date)),
     ...placedHomes.map((h) => isoDate(h.closeDate)),
   ].filter((d): d is Date => d != null);
-  const siteUpdated = new Date(Math.max(...contentDates.map((d) => d.getTime())));
+  const siteUpdated = new Date(
+    Math.max(...contentDates.map((d) => d.getTime())),
+  );
 
   // The /recently-placed index shows one card photo per home.
   const placedCardImages = placedHomes.map((h) => `${base}${h.photo}`);
@@ -44,6 +49,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/land-packages",
     "/find-land",
     "/buyer-resources",
+    "/packages",
+    "/guides",
+    "/stories",
     "/gallery",
     "/recently-placed",
     "/financing",
@@ -84,21 +92,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...(h.photos.length ? { images: h.photos.map((p) => `${base}${p}`) } : {}),
   }));
 
-  const locationEntries: MetadataRoute.Sitemap = locations.map((l) => ({
-    url: `${base}/locations/${l.slug}`,
-    lastModified: siteUpdated,
-    changeFrequency: "monthly",
-    priority: 0.7,
-  }));
+  const locationEntries: MetadataRoute.Sitemap = locations
+    .filter((l) => Boolean(locationEvidence(l.slug)))
+    .map((l) => ({
+      url: `${base}/locations/${l.slug}`,
+      lastModified: siteUpdated,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    }));
 
   const homeEntries: MetadataRoute.Sitemap = homes.map((h) => ({
     url: `${base}/homes/${h.slug}`,
     lastModified: siteUpdated,
     changeFrequency: "weekly",
     priority: 0.6,
-    ...(h.imageUrls.length ? {
-      images: h.imageUrls.map((image) => image.startsWith("http") ? image : `${base}${image}`),
-    } : {}),
+    ...(h.imageUrls.length
+      ? {
+          images: h.imageUrls.map((image) =>
+            image.startsWith("http") ? image : `${base}${image}`,
+          ),
+        }
+      : {}),
   }));
 
   const postEntries: MetadataRoute.Sitemap = posts.map((p) => ({
@@ -108,5 +122,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }));
 
-  return [...staticEntries, ...placedHomeEntries, ...locationEntries, ...homeEntries, ...postEntries];
+  return [
+    ...getPackages().map((p) => ({
+      url: `${base}/packages/${p.id}`,
+      lastModified: p.lastVerifiedAt,
+    })),
+    ...guides.map((g) => ({
+      url: `${base}/guides/${g.slug}`,
+      lastModified: g.sourceCheckedAt,
+    })),
+    ...staticEntries,
+    ...placedHomeEntries,
+    ...locationEntries,
+    ...homeEntries,
+    ...postEntries,
+  ];
 }

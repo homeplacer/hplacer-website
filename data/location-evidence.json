@@ -1,0 +1,37 @@
+{
+  "conway": {
+    "market": "Conway",
+    "publicProjectCount": 42,
+    "source": "data/placed-homes.json",
+    "sourceCheckedAt": "2026-09-13",
+    "guide": "/guides/land-readiness-checklist"
+  },
+  "loris": {
+    "market": "Loris",
+    "publicProjectCount": 10,
+    "source": "data/placed-homes.json",
+    "sourceCheckedAt": "2026-09-13",
+    "guide": "/guides/land-readiness-checklist"
+  },
+  "aynor": {
+    "market": "Aynor",
+    "publicProjectCount": 16,
+    "source": "data/placed-homes.json",
+    "sourceCheckedAt": "2026-09-13",
+    "guide": "/guides/land-readiness-checklist"
+  },
+  "longs": {
+    "market": "Longs",
+    "publicProjectCount": 4,
+    "source": "data/placed-homes.json",
+    "sourceCheckedAt": "2026-09-13",
+    "guide": "/guides/land-readiness-checklist"
+  },
+  "myrtle-beach": {
+    "market": "Myrtle Beach",
+    "publicProjectCount": 1,
+    "source": "data/placed-homes.json",
+    "sourceCheckedAt": "2026-09-13",
+    "guide": "/guides/land-readiness-checklist"
+  }
+}

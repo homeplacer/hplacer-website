@@ -1,3 +1,5 @@
+import { packageLeadContext } from "@/lib/packages";
+import { modelSlugFromPath, analyticsPath } from "@/lib/analytics";
 import { NextResponse } from "next/server";
 
 // Unified lead intake for every form on the site (contact, financing apply,
@@ -62,18 +64,26 @@ interface LeadBody {
   // Honeypot decoy (see src/components/honeypot.tsx). Real users never fill it;
   // a non-empty value means a bot, and the submission is dropped.
   company?: string;
+  packageId?: string;
+  pagePath?: string;
 }
 
 // Trim, drop empties, and cap length so an oversized field can't flood logs or
 // the FUB/Resend payload. Default cap suits short fields; message overrides it.
 const clean = (v?: string, max = 500) => {
-  const t = v?.trim();
+  const t = typeof v === "string" ? v.trim() : "";
   return t ? t.slice(0, max) : null;
 };
 
 // Escape user input before interpolating it into the notification email's HTML.
 const escapeHtml = (s: string) =>
-  s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+  s.replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ]!,
+  );
 
 // Human-readable order for the attribution block appended to the FUB message.
 const ATTR_LABELS: [keyof Attribution, string][] = [
@@ -163,11 +173,16 @@ async function fetchWithRetry(
       if (res.ok || !RETRYABLE_STATUS.has(res.status) || i === attempts - 1) {
         return res;
       }
-      console.warn(`[hplacer] ${label} ${res.status} — retry ${i + 1}/${attempts - 1}`);
+      console.warn(
+        `[hplacer] ${label} ${res.status} — retry ${i + 1}/${attempts - 1}`,
+      );
     } catch (e) {
       lastErr = e;
       if (i === attempts - 1) throw e;
-      console.warn(`[hplacer] ${label} network error — retry ${i + 1}/${attempts - 1}:`, e);
+      console.warn(
+        `[hplacer] ${label} network error — retry ${i + 1}/${attempts - 1}:`,
+        e,
+      );
     }
     await sleep(250 * 2 ** i + Math.floor(Math.random() * 100));
   }
@@ -181,7 +196,10 @@ async function fetchWithRetry(
 const USER_VALID_TTL_MS = 10 * 60 * 1000;
 const userValidCache = new Map<number, { ok: boolean; at: number }>();
 
-async function isValidFubUser(id: number, authHeader: string): Promise<boolean> {
+async function isValidFubUser(
+  id: number,
+  authHeader: string,
+): Promise<boolean> {
   const now = Date.now();
   const cached = userValidCache.get(id);
   if (cached && now - cached.at < USER_VALID_TTL_MS) return cached.ok;
@@ -203,12 +221,21 @@ async function isValidFubUser(id: number, authHeader: string): Promise<boolean> 
   } catch (e) {
     // Couldn't reach FUB to validate — don't block routing on the validator.
     // Assume valid and let the actual assign/task call log if it then fails.
-    console.warn(`[hplacer] could not validate FUB user ${id} (assuming ok):`, e);
+    console.warn(
+      `[hplacer] could not validate FUB user ${id} (assuming ok):`,
+      e,
+    );
     return true;
   }
 }
 
 async function deliverToFub(lead: {
+  leadId: string;
+  pagePath: string;
+  modelSlug?: string;
+  packageId?: string;
+  market?: string;
+  packageStatus?: string;
   type: LeadType;
   name: string | null;
   phone: string | null; // already normalized
@@ -235,6 +262,12 @@ async function deliverToFub(lead: {
           : "General Inquiry";
 
   const messageParts = [
+    `Website lead reference: ${lead.leadId}`,
+    `Submission page: https://hplacer.com${lead.pagePath}`,
+    lead.packageId
+      ? `Package: ${lead.packageId} (${lead.packageStatus}); market: ${lead.market}`
+      : null,
+    lead.modelSlug ? `Model reference: ${lead.modelSlug}` : null,
     lead.message,
     lead.home ? `Interested in: ${lead.home}` : null,
     lead.hasLand ? `Has land: ${lead.hasLand}` : null,
@@ -253,7 +286,8 @@ async function deliverToFub(lead: {
   // person's timeline) AND set the native FUB event fields where they map, so
   // Joe can see where the lead came from straight on the record.
   const a = lead.attribution;
-  const baseMessage = messageParts.join(" · ") || `${typeLabel} from hplacer.com`;
+  const baseMessage =
+    messageParts.join(" · ") || `${typeLabel} from hplacer.com`;
   const message = baseMessage + formatAttributionBlock(a);
 
   const eventBody: Record<string, unknown> = {
@@ -284,7 +318,10 @@ async function deliverToFub(lead: {
     "https://api.followupboss.com/v1/events",
     {
       method: "POST",
-      headers: { Authorization: authHeader, "Content-Type": "application/json" },
+      headers: {
+        Authorization: authHeader,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(eventBody),
     },
     `FUB /events ${lead.type}`,
@@ -340,7 +377,10 @@ async function deliverToFub(lead: {
             `https://api.followupboss.com/v1/people/${personId}`,
             {
               method: "PUT",
-              headers: { Authorization: authHeader, "Content-Type": "application/json" },
+              headers: {
+                Authorization: authHeader,
+                "Content-Type": "application/json",
+              },
               body: JSON.stringify({
                 assignedUserId: ownerId,
                 collaborators: validCollaborators.map((id) => ({ id })),
@@ -382,7 +422,10 @@ async function deliverToFub(lead: {
           "https://api.followupboss.com/v1/tasks",
           {
             method: "POST",
-            headers: { Authorization: authHeader, "Content-Type": "application/json" },
+            headers: {
+              Authorization: authHeader,
+              "Content-Type": "application/json",
+            },
             body: JSON.stringify(taskBody),
           },
           `FUB warranty task person ${personId}`,
@@ -441,7 +484,10 @@ async function deliverByEmail(
     "https://api.resend.com/emails",
     {
       method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         from,
         to,
@@ -453,14 +499,22 @@ async function deliverByEmail(
   );
   if (!res.ok) {
     const errBody = await res.text().catch(() => "<unreadable>");
-    console.error(`[hplacer] Resend ${res.status} for ${type} lead:`, errBody.slice(0, 500));
+    console.error(
+      `[hplacer] Resend ${res.status} for ${type} lead:`,
+      errBody.slice(0, 500),
+    );
     return { ok: false, status: res.status };
   }
   return { ok: true, status: res.status };
 }
 
 // Delivery result shape shared by deliverToFub / deliverByEmail (via toResult).
-type DeliveryResult = { ok: boolean; skipped?: string; status?: number; error?: string };
+type DeliveryResult = {
+  ok: boolean;
+  skipped?: string;
+  status?: number;
+  error?: string;
+};
 
 // Optional ops alert: when a lead can't be delivered by ANY channel (both FUB and
 // the email backup failed), ping a team webhook so the failure isn't just an
@@ -488,7 +542,13 @@ async function sendLeadFailureAlert(info: {
 
   const last4 = info.phone ? info.phone.replace(/\D/g, "").slice(-4) : null;
   const reason = (r: DeliveryResult) =>
-    r.skipped ? `skipped (${r.skipped})` : r.error ? `error (${r.error})` : r.status ? `status ${r.status}` : "failed";
+    r.skipped
+      ? `skipped (${r.skipped})`
+      : r.error
+        ? `error (${r.error})`
+        : r.status
+          ? `status ${r.status}`
+          : "failed";
 
   const text =
     `🚨 Home Placer: a lead was NOT delivered — both FUB and the email backup failed.\n` +
@@ -533,7 +593,29 @@ export async function POST(req: Request) {
 
   let body: LeadBody;
   try {
-    body = await req.json();
+    const reader = req.body?.getReader();
+    const decoder = new TextDecoder();
+    let raw = "";
+    let bytes = 0;
+    if (reader) {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        bytes += value.byteLength;
+        if (bytes > 32_768) {
+          await reader.cancel();
+          return NextResponse.json(
+            { error: "Payload too large" },
+            { status: 413 },
+          );
+        }
+        raw += decoder.decode(value, { stream: true });
+      }
+      raw += decoder.decode();
+    }
+    body = JSON.parse(raw);
+    if (!body || typeof body !== "object" || Array.isArray(body))
+      return NextResponse.json({ error: "Invalid lead" }, { status: 400 });
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
@@ -547,20 +629,42 @@ export async function POST(req: Request) {
   }
 
   const type: LeadType = body.type ?? "contact";
+  if (!["contact", "financing", "subscribe", "service"].includes(type))
+    return NextResponse.json({ error: "Invalid lead type" }, { status: 422 });
+  const packageContext = packageLeadContext(body.packageId);
+  const rawPath = typeof body.pagePath === "string" ? body.pagePath : "/";
+  const pagePath = packageContext.packageId
+    ? `/packages/${packageContext.packageId}`
+    : analyticsPath(rawPath);
+  const modelSlug =
+    packageContext.modelSlug || modelSlugFromPath(rawPath) || undefined;
 
   // Sanitize forwarded attribution: known keys only, trimmed, length-capped.
   const rawAttr = body.attribution ?? {};
   const ATTR_KEYS: (keyof Attribution)[] = [
-    "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term",
-    "gclid", "fbclid", "referrer", "landing_page", "captured_at",
+    "utm_source",
+    "utm_medium",
+    "utm_campaign",
+    "utm_content",
+    "utm_term",
+    "gclid",
+    "fbclid",
+    "referrer",
+    "landing_page",
+    "captured_at",
   ];
   const attribution: Attribution = {};
   for (const k of ATTR_KEYS) {
     const v = rawAttr[k];
-    if (typeof v === "string" && v.trim()) attribution[k] = v.trim().slice(0, 500);
+    if (typeof v === "string" && v.trim())
+      attribution[k] = v.trim().slice(0, 500);
   }
 
   const lead = {
+    leadId: crypto.randomUUID(),
+    pagePath,
+    modelSlug,
+    ...packageContext,
     type,
     name: clean(body.name),
     phone: normalizePhone(clean(body.phone)),
@@ -574,17 +678,32 @@ export async function POST(req: Request) {
 
   if (type === "subscribe") {
     if (!lead.name || !lead.phone || !lead.email) {
-      return NextResponse.json({ error: "Name, phone, and email are required" }, { status: 422 });
+      return NextResponse.json(
+        { error: "Name, phone, and email are required" },
+        { status: 422 },
+      );
     }
   } else if (!lead.name || !lead.phone) {
-    return NextResponse.json({ error: "Name and a valid phone number are required" }, { status: 422 });
+    return NextResponse.json(
+      { error: "Name and a valid phone number are required" },
+      { status: 422 },
+    );
   }
 
-  console.log(`[hplacer] lead (${type}):`, { ...lead, at: new Date().toISOString() });
+  console.log(`[hplacer] lead (${type}):`, {
+    ...lead,
+    at: new Date().toISOString(),
+  });
 
   // Email gets the scalar fields plus flattened attribution (its row renderer
   // expects a flat string map, not the nested attribution object).
   const emailLead: Record<string, string | null> = {
+    leadId: lead.leadId,
+    pagePath: lead.pagePath,
+    modelSlug: lead.modelSlug || null,
+    packageId: packageContext.packageId || null,
+    market: packageContext.market || null,
+    packageStatus: packageContext.packageStatus || null,
     name: lead.name,
     phone: lead.phone,
     email: lead.email,
@@ -610,8 +729,10 @@ export async function POST(req: Request) {
   const fub = toResult(fubSettled);
   const email = toResult(emailSettled);
 
-  if (!fub.ok && !fub.skipped) console.error(`[hplacer] FUB delivery non-ok:`, fub);
-  if (!email.ok && !email.skipped) console.error(`[hplacer] email delivery non-ok:`, email);
+  if (!fub.ok && !fub.skipped)
+    console.error(`[hplacer] FUB delivery non-ok:`, fub);
+  if (!email.ok && !email.skipped)
+    console.error(`[hplacer] email delivery non-ok:`, email);
 
   // Guaranteed no-silent-loss (R6): if NEITHER channel durably captured the lead,
   // emit ONE greppable, alert-ready marker carrying the full payload so it can be
@@ -628,8 +749,19 @@ export async function POST(req: Request) {
     // Wake a human so this isn't just an unwatched log line. No-op unless
     // LEAD_FAILURE_WEBHOOK_URL is set; internally timeout-bounded and never throws,
     // so it can't hang or fail the form response below.
-    await sendLeadFailureAlert({ type, name: lead.name, phone: lead.phone, fub, email, at });
+    await sendLeadFailureAlert({
+      type,
+      name: lead.name,
+      phone: lead.phone,
+      fub,
+      email,
+      at,
+    });
+    return NextResponse.json(
+      { error: "Delivery unavailable", leadId: lead.leadId },
+      { status: 503 },
+    );
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, leadId: lead.leadId });
 }

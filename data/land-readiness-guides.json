@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 1,
+  "guides": [
+    {
+      "slug": "horry-county-lot-review",
+      "title": "Can a manufactured home go on my Horry County lot?",
+      "description": "Start with the parcel and the responsible office before choosing a home.",
+      "contentType": "source-linked-planning-checklist",
+      "sourceCheckedAt": "2026-09-13",
+      "staffReviewer": null,
+      "staffReviewStatus": "pending",
+      "sources": [
+        {
+          "title": "Horry County mobile-home permit packet",
+          "url": "https://www.horrycountysc.gov/media/xvdisloy/mobile-home-requirements.pdf"
+        }
+      ],
+      "sections": [
+        {
+          "title": "Identify the property",
+          "body": "Bring the parcel identifier, an address if assigned, a sketch or survey you already have, and the proposed home dimensions. Ask which planning and permitting office has jurisdiction; a mailing town alone does not answer that question."
+        },
+        {
+          "title": "Ask for the current checklist",
+          "body": "The county packet identifies address verification, a site plan, and sewer or septic documentation among its setup materials. Use it to prepare questions, then ask the responsible office to confirm the current requirements for this parcel."
+        },
+        {
+          "title": "Keep a written decision log",
+          "body": "Record who answered, when, which parcel they reviewed, and which documents remain outstanding. Ask separately about allowed home type, setbacks, access, flood information, utilities, and any private restrictions. A nearby completed home is useful context, but does not establish approval for your lot."
+        }
+      ],
+      "projectMarkets": [
+        "conway",
+        "loris",
+        "longs",
+        "aynor"
+      ]
+    },
+    {
+      "slug": "land-readiness-checklist",
+      "title": "Land-readiness checklist for a home and lot",
+      "description": "Organize the unknowns before requesting an itemized project scope.",
+      "contentType": "source-linked-planning-checklist",
+      "sourceCheckedAt": "2026-09-13",
+      "staffReviewer": null,
+      "staffReviewStatus": "pending",
+      "sources": [
+        {
+          "title": "Horry County mobile-home permit packet",
+          "url": "https://www.horrycountysc.gov/media/xvdisloy/mobile-home-requirements.pdf"
+        },
+        {
+          "title": "Georgetown County manufactured-home permit application",
+          "url": "https://gtcounty.org/DocumentCenter/View/154/Mobile-Home-Permit-Application-PDF"
+        }
+      ],
+      "sections": [
+        {
+          "title": "Property and access",
+          "body": "List the parcel, ownership or authority to apply, available survey, road access, and proposed delivery route. Ask the responsible professionals which access rights and delivery clearances need verification."
+        },
+        {
+          "title": "Space and services",
+          "body": "Bring the model dimensions and a proposed location. Ask about setbacks, flood information, grading, drainage, water supply, wastewater, and power. Identify which office or provider will confirm each item and whether a written response or site visit is needed."
+        },
+        {
+          "title": "Scope and records",
+          "body": "Keep separate columns for confirmed, pending, and not yet priced. Request a written list of included work, allowances, exclusions, and the party responsible for each item. A checklist organizes the review; it does not certify a lot as buildable."
+        }
+      ],
+      "projectMarkets": [
+        "conway",
+        "loris",
+        "longs",
+        "aynor"
+      ]
+    },
+    {
+      "slug": "horry-towns-jurisdiction",
+      "title": "Conway, Loris, Longs and Aynor: verify the parcel first",
+      "description": "Use town-level project experience while checking the correct jurisdiction.",
+      "contentType": "source-linked-planning-checklist",
+      "sourceCheckedAt": "2026-09-13",
+      "staffReviewer": null,
+      "staffReviewStatus": "pending",
+      "sources": [
+        {
+          "title": "Horry County mobile-home permit packet",
+          "url": "https://www.horrycountysc.gov/media/xvdisloy/mobile-home-requirements.pdf"
+        }
+      ],
+      "sections": [
+        {
+          "title": "Start with the exact parcel",
+          "body": "A search for a home in Conway, Loris, Longs, or Aynor begins with the same question: which authority reviews this specific property? Give the parcel identifier to the county and ask whether a municipal office also needs to be involved."
+        },
+        {
+          "title": "Compare questions, not assumed approvals",
+          "body": "Ask whether the address, proposed home location, utility arrangement, access, and flood information are sufficient for the current review. Do not copy a permit checklist or approval from a different property without checking applicability."
+        },
+        {
+          "title": "Use completed projects responsibly",
+          "body": "Home Placer\u2019s existing archive contains sold projects in these towns. Compare the recorded model and lot context to frame a conversation. Historical projects do not establish present inventory, current price, or permission to place the same home on another parcel."
+        }
+      ],
+      "projectMarkets": [
+        "conway",
+        "loris",
+        "longs",
+        "aynor"
+      ]
+    },
+    {
+      "slug": "water-septic-sewer-questions",
+      "title": "Septic, sewer and water: questions before pricing",
+      "description": "Identify the service arrangement and the evidence needed for your lot.",
+      "contentType": "source-linked-planning-checklist",
+      "sourceCheckedAt": "2026-09-13",
+      "staffReviewer": null,
+      "staffReviewStatus": "pending",
+      "sources": [
+        {
+          "title": "Georgetown County manufactured-home permit application",
+          "url": "https://gtcounty.org/DocumentCenter/View/154/Mobile-Home-Permit-Application-PDF"
+        },
+        {
+          "title": "Horry County mobile-home permit packet",
+          "url": "https://www.horrycountysc.gov/media/xvdisloy/mobile-home-requirements.pdf"
+        }
+      ],
+      "sections": [
+        {
+          "title": "Separate water from wastewater",
+          "body": "Georgetown\u2019s application asks separately about public water or a well, and public sewer or septic. Make the same distinction in your notes. Ask the relevant office or provider who confirms service, capacity, connection location, and the documents needed."
+        },
+        {
+          "title": "Existing does not mean confirmed",
+          "body": "If a lot already has a well, septic system, or connection, gather existing records and ask what current review is needed for the proposed home. Do not assume a visible pipe or a seller\u2019s description establishes suitability."
+        },
+        {
+          "title": "Ask what the estimate covers",
+          "body": "Request separate written treatment of connections, taps, trenching, repairs, testing, and work still awaiting review. Ask who is responsible for each unresolved item and how changes will be documented before work proceeds."
+        }
+      ],
+      "projectMarkets": [
+        "conway",
+        "loris",
+        "longs",
+        "aynor"
+      ]
+    },
+    {
+      "slug": "project-sequence",
+      "title": "From land review to move-in: plan the dependencies",
+      "description": "A planning sequence with questions for the team, without a promised completion date.",
+      "contentType": "source-linked-planning-checklist",
+      "sourceCheckedAt": "2026-09-13",
+      "staffReviewer": null,
+      "staffReviewStatus": "pending",
+      "sources": [
+        {
+          "title": "Horry County mobile-home permit packet",
+          "url": "https://www.horrycountysc.gov/media/xvdisloy/mobile-home-requirements.pdf"
+        },
+        {
+          "title": "Georgetown County manufactured-home permit application",
+          "url": "https://gtcounty.org/DocumentCenter/View/154/Mobile-Home-Permit-Application-PDF"
+        }
+      ],
+      "sections": [
+        {
+          "title": "Before committing to a schedule",
+          "body": "Ask the team to identify open feasibility questions, required documents, the home selection, and the proposed scope. Record the dependency that must be resolved before each next step."
+        },
+        {
+          "title": "Before delivery",
+          "body": "Ask who tracks permits, foundation and site readiness, utility coordination, transport, and inspections. Request a schedule tied to actual milestones and named responsibilities, with an explanation of what remains uncertain."
+        },
+        {
+          "title": "Before move-in",
+          "body": "Ask which final approvals, utility steps, handoff documents, and service contacts are still needed. Confirm the applicable completion requirements with the responsible authority. Keep the approved warranty information with your home records; planning milestones do not change warranty coverage."
+        }
+      ],
+      "projectMarkets": [
+        "conway",
+        "loris",
+        "longs",
+        "aynor"
+      ]
+    },
+    {
+      "slug": "home-land-scope",
+      "title": "Home, land and setup: compare the written scope",
+      "description": "Build a useful comparison before a financing conversation.",
+      "contentType": "source-linked-planning-checklist",
+      "sourceCheckedAt": "2026-09-13",
+      "staffReviewer": null,
+      "staffReviewStatus": "pending",
+      "sources": [
+        {
+          "title": "Georgetown County manufactured-home permit application",
+          "url": "https://gtcounty.org/DocumentCenter/View/154/Mobile-Home-Permit-Application-PDF"
+        },
+        {
+          "title": "Horry County mobile-home permit packet",
+          "url": "https://www.horrycountysc.gov/media/xvdisloy/mobile-home-requirements.pdf"
+        }
+      ],
+      "sections": [
+        {
+          "title": "Separate the decisions",
+          "body": "A model page describes a home design. A package combines a particular home, lot, scope, and status. Compare those elements in writing before treating two prices as equivalent."
+        },
+        {
+          "title": "Make unknown costs visible",
+          "body": "Ask for separate lines covering the home, land, transport, foundation, site preparation, utility work, permits, allowances, and exclusions. Mark unresolved items as pending instead of assuming they are included."
+        },
+        {
+          "title": "Bring the same scope to the lender",
+          "body": "Give your chosen lender the proposed property and written project scope. Ask which costs and documents their actual product addresses and request their written disclosures. No program eligibility, rate, payment, or approval is established by this checklist."
+        }
+      ],
+      "projectMarkets": [
+        "conway",
+        "loris",
+        "longs",
+        "aynor"
+      ]
+    }
+  ]
+}

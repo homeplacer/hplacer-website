@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "legalName": "Home Placer LLC",
+  "publicName": "Home Placer",
+  "url": "https://hplacer.com",
+  "phone": "+18438494663",
+  "email": "Carolina@hplacer.com",
+  "address": {
+    "street": "1801 N Oak St",
+    "city": "Myrtle Beach",
+    "state": "SC",
+    "zip": "29577"
+  },
+  "geo": {
+    "lat": 33.702366,
+    "lng": -78.877032
+  },
+  "hoursLabel": "By appointment",
+  "verifiedOpeningHours": [],
+  "buyerFacingAddressVerified": false,
+  "licenseRecords": [],
+  "profiles": {
+    "google": "https://maps.google.com/?cid=3461988553332431879",
+    "instagram": "https://www.instagram.com/homeplacer"
+  },
+  "sourceBasis": "Existing public site facts preserved; no fresh credential or office verification claimed.",
+  "reviewedAt": null
+}

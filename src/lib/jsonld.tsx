@@ -1,7 +1,11 @@
 import { site, liveSocialUrls } from "@/lib/site";
-import { locations as allLocations, counties as allCounties } from "@/lib/locations";
+import {
+  locations as allLocations,
+  counties as allCounties,
+} from "@/lib/locations";
 
-const stateName = (abbr: string) => (abbr === "NC" ? "North Carolina" : "South Carolina");
+const stateName = (abbr: string) =>
+  abbr === "NC" ? "North Carolina" : "South Carolina";
 
 // Renders a JSON-LD <script>. Data comes only from our own content; we still
 // escape `<` (→ <) so a stray "</script>" in any value can't break out of
@@ -10,7 +14,9 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }}
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(data).replace(/</g, "\\u003c"),
+      }}
     />
   );
 }
@@ -23,7 +29,7 @@ export function localBusinessLd() {
     name: site.legalName,
     alternateName: site.name,
     image: `${site.url}/opengraph-image`,
-    logo: `${site.url}/icon.png`,
+    logo: { "@type": "ImageObject", url: `${site.url}/icon.png` },
     url: site.url,
     telephone: site.phoneDial,
     email: site.email,
@@ -42,7 +48,6 @@ export function localBusinessLd() {
     },
     hasMap: site.gbp.url,
     sameAs: [...site.sameAs, ...liveSocialUrls],
-    slogan: site.tagline,
     knowsAbout: [
       "Manufactured homes",
       "Modular homes",
@@ -63,9 +68,7 @@ export function localBusinessLd() {
         name: `${l.name}, ${allCounties[l.countyKey]?.stateAbbr ?? "SC"}`,
       })),
     ],
-    priceRange: "$$ — homes from the low $200s",
     description: site.blurb,
-
   };
 }
 
@@ -108,13 +111,19 @@ export function placedHomesGalleryLd(homes: PlacedHomeLD[]) {
         contentUrl: abs(h.photo as string),
         name: `${h.address}, ${h.town}, SC`,
         caption: `${h.beds}-bed ${h.baths}-bath ${h.style} manufactured home placed on its own land by Home Placer in ${h.town}, SC`,
-        ...(h.slug ? { mainEntityOfPage: `${site.url}/recently-placed/${h.slug}` } : {}),
+        ...(h.slug
+          ? { mainEntityOfPage: `${site.url}/recently-placed/${h.slug}` }
+          : {}),
         ...(typeof h.lat === "number" && typeof h.lon === "number"
           ? {
               contentLocation: {
                 "@type": "Place",
                 name: `${h.town}, SC`,
-                geo: { "@type": "GeoCoordinates", latitude: h.lat, longitude: h.lon },
+                geo: {
+                  "@type": "GeoCoordinates",
+                  latitude: h.lat,
+                  longitude: h.lon,
+                },
               },
             }
           : {}),
@@ -125,7 +134,8 @@ export function placedHomesGalleryLd(homes: PlacedHomeLD[]) {
 // One placed home's own page: an ImageGallery of all its real photos, geotagged.
 export function placedHomeLd(h: PlacedHomeLD, model?: { name: string }) {
   const lot = h.lotAcres ? `${h.lotAcres} acres` : "its own land";
-  const photos = h.photos && h.photos.length ? h.photos : h.photo ? [h.photo] : [];
+  const photos =
+    h.photos && h.photos.length ? h.photos : h.photo ? [h.photo] : [];
   return {
     "@context": "https://schema.org",
     "@type": "ImageGallery",
@@ -139,7 +149,11 @@ export function placedHomeLd(h: PlacedHomeLD, model?: { name: string }) {
           contentLocation: {
             "@type": "Place",
             name: `${h.town}, SC`,
-            geo: { "@type": "GeoCoordinates", latitude: h.lat, longitude: h.lon },
+            geo: {
+              "@type": "GeoCoordinates",
+              latitude: h.lat,
+              longitude: h.lon,
+            },
           },
         }
       : {}),
@@ -154,7 +168,11 @@ export function placedHomeLd(h: PlacedHomeLD, model?: { name: string }) {
             contentLocation: {
               "@type": "Place",
               name: `${h.town}, SC`,
-              geo: { "@type": "GeoCoordinates", latitude: h.lat, longitude: h.lon },
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: h.lat,
+                longitude: h.lon,
+              },
             },
           }
         : {}),
@@ -178,10 +196,22 @@ export function placedHomeResidenceLd(
     numberOfBedrooms: h.beds,
     numberOfBathroomsTotal: h.baths,
     ...(h.sqftHeated
-      ? { floorSize: { "@type": "QuantitativeValue", value: h.sqftHeated, unitCode: "FTK" } }
+      ? {
+          floorSize: {
+            "@type": "QuantitativeValue",
+            value: h.sqftHeated,
+            unitCode: "FTK",
+          },
+        }
       : {}),
     ...(h.lotAcres
-      ? { lotSize: { "@type": "QuantitativeValue", value: h.lotAcres, unitText: "acres" } }
+      ? {
+          lotSize: {
+            "@type": "QuantitativeValue",
+            value: h.lotAcres,
+            unitText: "acres",
+          },
+        }
       : {}),
     address: {
       "@type": "PostalAddress",
@@ -191,7 +221,9 @@ export function placedHomeResidenceLd(
       addressCountry: "US",
     },
     ...(typeof h.lat === "number" && typeof h.lon === "number"
-      ? { geo: { "@type": "GeoCoordinates", latitude: h.lat, longitude: h.lon } }
+      ? {
+          geo: { "@type": "GeoCoordinates", latitude: h.lat, longitude: h.lon },
+        }
       : {}),
   };
 }
@@ -211,7 +243,9 @@ export function faqLd(faqs: { q: string; a: string }[]) {
 // ItemList for the /homes catalog — tells search engines the set of homes shown
 // on the page, each linking to its own detail page (where the full Product schema
 // lives). Names + URLs only; mirrors the visible list, no invented data.
-export function homesItemListLd(homes: { slug: string; name: string; brand: string }[]) {
+export function homesItemListLd(
+  homes: { slug: string; name: string; brand: string }[],
+) {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -239,7 +273,12 @@ export function breadcrumbLd(items: { name: string; path: string }[]) {
   };
 }
 
-export function articleLd(post: { title: string; description: string; slug: string; date: string }) {
+export function articleLd(post: {
+  title: string;
+  description: string;
+  slug: string;
+  date: string;
+}) {
   const url = `${site.url}/blog/${post.slug}`;
   return {
     "@context": "https://schema.org",

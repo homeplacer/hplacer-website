@@ -1,0 +1,346 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-09-13T00:00:00Z",
+  "packages": [
+    {
+      "id": "historical-001",
+      "status": "sold",
+      "market": "Conway, SC",
+      "county": "Horry County, SC",
+      "modelSlug": "stayin-alive",
+      "title": "Conway \u00b7 Staying Alive \u00b7 example 1",
+      "packagePrice": null,
+      "pricePolicy": "not-published",
+      "priceDisclosure": "Historical project example. No current asking price or availability is represented.",
+      "lotAcres": 0.39,
+      "included": [
+        "Home and land recorded together in the existing project archive"
+      ],
+      "excludedOrVariable": [
+        "Original itemized scope is not recorded here. Ask for a written scope for any new project."
+      ],
+      "sourceRecord": "placed-homes:2407324",
+      "sourceBasis": "existing-public-project-summary",
+      "lastVerifiedAt": "2026-09-13T00:00:00Z",
+      "lastVerifiedBy": "repository-source-check",
+      "owner": null,
+      "publicAddressPolicy": "town-only",
+      "publicPhotos": [],
+      "mediaPermission": null,
+      "publication": "historical-summary",
+      "history": [
+        {
+          "status": "sold",
+          "at": "2026-09-13T00:00:00Z",
+          "reason": "Imported as historical; existing placed-home source records sold status. This is not a new availability check."
+        }
+      ]
+    },
+    {
+      "id": "historical-002",
+      "status": "sold",
+      "market": "Loris, SC",
+      "county": "Horry County, SC",
+      "modelSlug": "ultra-flex-28-68",
+      "title": "Loris \u00b7 ultra 68 \u00b7 example 2",
+      "packagePrice": null,
+      "pricePolicy": "not-published",
+      "priceDisclosure": "Historical project example. No current asking price or availability is represented.",
+      "lotAcres": 3.65,
+      "included": [
+        "Home and land recorded together in the existing project archive"
+      ],
+      "excludedOrVariable": [
+        "Original itemized scope is not recorded here. Ask for a written scope for any new project."
+      ],
+      "sourceRecord": "placed-homes:2403208",
+      "sourceBasis": "existing-public-project-summary",
+      "lastVerifiedAt": "2026-09-13T00:00:00Z",
+      "lastVerifiedBy": "repository-source-check",
+      "owner": null,
+      "publicAddressPolicy": "town-only",
+      "publicPhotos": [],
+      "mediaPermission": null,
+      "publication": "historical-summary",
+      "history": [
+        {
+          "status": "sold",
+          "at": "2026-09-13T00:00:00Z",
+          "reason": "Imported as historical; existing placed-home source records sold status. This is not a new availability check."
+        }
+      ]
+    },
+    {
+      "id": "historical-003",
+      "status": "sold",
+      "market": "Aynor, SC",
+      "county": "Horry County, SC",
+      "modelSlug": "hey-jude",
+      "title": "Aynor \u00b7 hey jude \u00b7 example 3",
+      "packagePrice": null,
+      "pricePolicy": "not-published",
+      "priceDisclosure": "Historical project example. No current asking price or availability is represented.",
+      "lotAcres": 1.86,
+      "included": [
+        "Home and land recorded together in the existing project archive"
+      ],
+      "excludedOrVariable": [
+        "Original itemized scope is not recorded here. Ask for a written scope for any new project."
+      ],
+      "sourceRecord": "placed-homes:2404733",
+      "sourceBasis": "existing-public-project-summary",
+      "lastVerifiedAt": "2026-09-13T00:00:00Z",
+      "lastVerifiedBy": "repository-source-check",
+      "owner": null,
+      "publicAddressPolicy": "town-only",
+      "publicPhotos": [],
+      "mediaPermission": null,
+      "publication": "historical-summary",
+      "history": [
+        {
+          "status": "sold",
+          "at": "2026-09-13T00:00:00Z",
+          "reason": "Imported as historical; existing placed-home source records sold status. This is not a new availability check."
+        }
+      ]
+    },
+    {
+      "id": "historical-004",
+      "status": "sold",
+      "market": "Longs, SC",
+      "county": "Horry County, SC",
+      "modelSlug": "sebastian",
+      "title": "Longs \u00b7 Sebestian \u00b7 example 4",
+      "packagePrice": null,
+      "pricePolicy": "not-published",
+      "priceDisclosure": "Historical project example. No current asking price or availability is represented.",
+      "lotAcres": 1.0,
+      "included": [
+        "Home and land recorded together in the existing project archive"
+      ],
+      "excludedOrVariable": [
+        "Original itemized scope is not recorded here. Ask for a written scope for any new project."
+      ],
+      "sourceRecord": "placed-homes:2603433",
+      "sourceBasis": "existing-public-project-summary",
+      "lastVerifiedAt": "2026-09-13T00:00:00Z",
+      "lastVerifiedBy": "repository-source-check",
+      "owner": null,
+      "publicAddressPolicy": "town-only",
+      "publicPhotos": [],
+      "mediaPermission": null,
+      "publication": "historical-summary",
+      "history": [
+        {
+          "status": "sold",
+          "at": "2026-09-13T00:00:00Z",
+          "reason": "Imported as historical; existing placed-home source records sold status. This is not a new availability check."
+        }
+      ]
+    },
+    {
+      "id": "historical-005",
+      "status": "sold",
+      "market": "Conway, SC",
+      "county": "Horry County, SC",
+      "modelSlug": "stayin-alive",
+      "title": "Conway \u00b7 stayin alive \u00b7 example 5",
+      "packagePrice": null,
+      "pricePolicy": "not-published",
+      "priceDisclosure": "Historical project example. No current asking price or availability is represented.",
+      "lotAcres": 0.63,
+      "included": [
+        "Home and land recorded together in the existing project archive"
+      ],
+      "excludedOrVariable": [
+        "Original itemized scope is not recorded here. Ask for a written scope for any new project."
+      ],
+      "sourceRecord": "placed-homes:2406093",
+      "sourceBasis": "existing-public-project-summary",
+      "lastVerifiedAt": "2026-09-13T00:00:00Z",
+      "lastVerifiedBy": "repository-source-check",
+      "owner": null,
+      "publicAddressPolicy": "town-only",
+      "publicPhotos": [],
+      "mediaPermission": null,
+      "publication": "historical-summary",
+      "history": [
+        {
+          "status": "sold",
+          "at": "2026-09-13T00:00:00Z",
+          "reason": "Imported as historical; existing placed-home source records sold status. This is not a new availability check."
+        }
+      ]
+    },
+    {
+      "id": "historical-006",
+      "status": "sold",
+      "market": "Loris, SC",
+      "county": "Horry County, SC",
+      "modelSlug": "ultra-flex-28-52",
+      "title": "Loris \u00b7 52 breeze \u00b7 example 6",
+      "packagePrice": null,
+      "pricePolicy": "not-published",
+      "priceDisclosure": "Historical project example. No current asking price or availability is represented.",
+      "lotAcres": 1.82,
+      "included": [
+        "Home and land recorded together in the existing project archive"
+      ],
+      "excludedOrVariable": [
+        "Original itemized scope is not recorded here. Ask for a written scope for any new project."
+      ],
+      "sourceRecord": "placed-homes:2402266",
+      "sourceBasis": "existing-public-project-summary",
+      "lastVerifiedAt": "2026-09-13T00:00:00Z",
+      "lastVerifiedBy": "repository-source-check",
+      "owner": null,
+      "publicAddressPolicy": "town-only",
+      "publicPhotos": [],
+      "mediaPermission": null,
+      "publication": "historical-summary",
+      "history": [
+        {
+          "status": "sold",
+          "at": "2026-09-13T00:00:00Z",
+          "reason": "Imported as historical; existing placed-home source records sold status. This is not a new availability check."
+        }
+      ]
+    },
+    {
+      "id": "historical-007",
+      "status": "sold",
+      "market": "Aynor, SC",
+      "county": "Horry County, SC",
+      "modelSlug": "birdie",
+      "title": "Aynor \u00b7 Birdie \u00b7 example 7",
+      "packagePrice": null,
+      "pricePolicy": "not-published",
+      "priceDisclosure": "Historical project example. No current asking price or availability is represented.",
+      "lotAcres": 1.0,
+      "included": [
+        "Home and land recorded together in the existing project archive"
+      ],
+      "excludedOrVariable": [
+        "Original itemized scope is not recorded here. Ask for a written scope for any new project."
+      ],
+      "sourceRecord": "placed-homes:2510565",
+      "sourceBasis": "existing-public-project-summary",
+      "lastVerifiedAt": "2026-09-13T00:00:00Z",
+      "lastVerifiedBy": "repository-source-check",
+      "owner": null,
+      "publicAddressPolicy": "town-only",
+      "publicPhotos": [],
+      "mediaPermission": null,
+      "publication": "historical-summary",
+      "history": [
+        {
+          "status": "sold",
+          "at": "2026-09-13T00:00:00Z",
+          "reason": "Imported as historical; existing placed-home source records sold status. This is not a new availability check."
+        }
+      ]
+    },
+    {
+      "id": "historical-008",
+      "status": "sold",
+      "market": "Longs, SC",
+      "county": "Horry County, SC",
+      "modelSlug": "pinehurst",
+      "title": "Longs \u00b7 Pinehurst \u00b7 example 8",
+      "packagePrice": null,
+      "pricePolicy": "not-published",
+      "priceDisclosure": "Historical project example. No current asking price or availability is represented.",
+      "lotAcres": 0.24,
+      "included": [
+        "Home and land recorded together in the existing project archive"
+      ],
+      "excludedOrVariable": [
+        "Original itemized scope is not recorded here. Ask for a written scope for any new project."
+      ],
+      "sourceRecord": "placed-homes:2530174",
+      "sourceBasis": "existing-public-project-summary",
+      "lastVerifiedAt": "2026-09-13T00:00:00Z",
+      "lastVerifiedBy": "repository-source-check",
+      "owner": null,
+      "publicAddressPolicy": "town-only",
+      "publicPhotos": [],
+      "mediaPermission": null,
+      "publication": "historical-summary",
+      "history": [
+        {
+          "status": "sold",
+          "at": "2026-09-13T00:00:00Z",
+          "reason": "Imported as historical; existing placed-home source records sold status. This is not a new availability check."
+        }
+      ]
+    },
+    {
+      "id": "historical-009",
+      "status": "sold",
+      "market": "Conway, SC",
+      "county": "Horry County, SC",
+      "modelSlug": "tanglewood",
+      "title": "Conway \u00b7 Tangle Wood \u00b7 example 9",
+      "packagePrice": null,
+      "pricePolicy": "not-published",
+      "priceDisclosure": "Historical project example. No current asking price or availability is represented.",
+      "lotAcres": 0.33,
+      "included": [
+        "Home and land recorded together in the existing project archive"
+      ],
+      "excludedOrVariable": [
+        "Original itemized scope is not recorded here. Ask for a written scope for any new project."
+      ],
+      "sourceRecord": "placed-homes:2420437",
+      "sourceBasis": "existing-public-project-summary",
+      "lastVerifiedAt": "2026-09-13T00:00:00Z",
+      "lastVerifiedBy": "repository-source-check",
+      "owner": null,
+      "publicAddressPolicy": "town-only",
+      "publicPhotos": [],
+      "mediaPermission": null,
+      "publication": "historical-summary",
+      "history": [
+        {
+          "status": "sold",
+          "at": "2026-09-13T00:00:00Z",
+          "reason": "Imported as historical; existing placed-home source records sold status. This is not a new availability check."
+        }
+      ]
+    },
+    {
+      "id": "historical-010",
+      "status": "sold",
+      "market": "Loris, SC",
+      "county": "Horry County, SC",
+      "modelSlug": "stayin-alive",
+      "title": "Loris \u00b7 Staying Alive \u00b7 example 10",
+      "packagePrice": null,
+      "pricePolicy": "not-published",
+      "priceDisclosure": "Historical project example. No current asking price or availability is represented.",
+      "lotAcres": 1.47,
+      "included": [
+        "Home and land recorded together in the existing project archive"
+      ],
+      "excludedOrVariable": [
+        "Original itemized scope is not recorded here. Ask for a written scope for any new project."
+      ],
+      "sourceRecord": "placed-homes:2428862",
+      "sourceBasis": "existing-public-project-summary",
+      "lastVerifiedAt": "2026-09-13T00:00:00Z",
+      "lastVerifiedBy": "repository-source-check",
+      "owner": null,
+      "publicAddressPolicy": "town-only",
+      "publicPhotos": [],
+      "mediaPermission": null,
+      "publication": "historical-summary",
+      "history": [
+        {
+          "status": "sold",
+          "at": "2026-09-13T00:00:00Z",
+          "reason": "Imported as historical; existing placed-home source records sold status. This is not a new availability check."
+        }
+      ]
+    }
+  ]
+}

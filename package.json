@@ -5,19 +5,20 @@
   "scripts": {
     "manifests": "node scripts/build-manifests.mjs",
     "predev": "node scripts/build-manifests.mjs",
-    "prebuild": "node scripts/build-manifests.mjs",
+    "prebuild": "node scripts/validate-public-data.mjs && node scripts/build-manifests.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "preview": "node scripts/build-manifests.mjs && opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "node scripts/build-manifests.mjs && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "deploy": "node scripts/validate-public-data.mjs && node scripts/build-manifests.mjs && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "portal:dev": "node portal/dev/server.ts",
     "portal:migrate": "node portal/dev/migrate.ts",
     "portal:typecheck": "tsc -p portal/tsconfig.json",
     "portal:test": "node --test portal/tests/*.test.ts",
-    "portal:check": "npm run portal:typecheck && npm run portal:test && eslint portal"
+    "portal:check": "npm run portal:typecheck && npm run portal:test && eslint portal",
+    "validate:public": "node scripts/validate-public-data.mjs"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.19.11",

@@ -22,8 +22,15 @@ const FIELD_LABELS: Record<string, string> = {
 };
 
 function leadAnalyticsContext(type: string): Record<string, string> {
-  const model = typeof window === "undefined" ? null : modelSlugFromPath(window.location.pathname);
-  return { form_type: type, submission_method: "api", ...(model ? { model_context: model } : {}) };
+  const model =
+    typeof window === "undefined"
+      ? null
+      : modelSlugFromPath(window.location.pathname);
+  return {
+    form_type: type,
+    submission_method: "api",
+    ...(model ? { model_context: model } : {}),
+  };
 }
 
 function buildMailto(type: string, data: LeadData): string {
@@ -42,7 +49,10 @@ function buildMailto(type: string, data: LeadData): string {
  * silently lost; a 4xx (validation) surfaces as an error so the user can fix it.
  * Returns how it went out so the form can show the right confirmation. Never throws.
  */
-export async function submitLead(type: string, data: LeadData): Promise<"api" | "mailto" | "error"> {
+export async function submitLead(
+  type: string,
+  data: LeadData,
+): Promise<"api" | "mailto" | "error"> {
   // First-touch attribution (utm_*, gclid, fbclid, referrer, landing page),
   // captured on the visitor's first page load. Additive — never affects the
   // user-visible form fields.
@@ -51,7 +61,13 @@ export async function submitLead(type: string, data: LeadData): Promise<"api" | 
     const res = await fetch("/api/lead", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type, ...data, attribution }),
+      body: JSON.stringify({
+        type,
+        ...data,
+        attribution,
+        pagePath:
+          typeof window === "undefined" ? "/" : window.location.pathname,
+      }),
     });
     if (res.ok) {
       // A lead conversion is recorded only after the server confirms receipt.
@@ -69,7 +85,10 @@ export async function submitLead(type: string, data: LeadData): Promise<"api" | 
   } catch {
     // This is not a confirmed lead: the visitor still has to send the email.
     // Keep it distinct from generate_lead so conversion reporting stays honest.
-    track("lead_submission_fallback", { form_type: type, submission_method: "mailto" });
+    track("lead_submission_fallback", {
+      form_type: type,
+      submission_method: "mailto",
+    });
     if (typeof window !== "undefined") {
       window.location.href = buildMailto(type, { ...data, ...attribution });
     }

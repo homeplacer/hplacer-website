@@ -9,8 +9,16 @@ import { Honeypot } from "@/components/honeypot";
 const fieldClass =
   "w-full rounded-lg border border-stone-line bg-stone-bg px-3.5 py-2.5 text-sm text-stone-ink outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
 
-export function ContactForm({ defaultHome = "" }: { defaultHome?: string }) {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+export function ContactForm({
+  defaultHome = "",
+  packageId,
+}: {
+  defaultHome?: string;
+  packageId?: string;
+}) {
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
+    "idle",
+  );
   const [via, setVia] = useState<"api" | "mailto">("api");
   const [home, setHome] = useState(defaultHome);
 
@@ -46,7 +54,9 @@ export function ContactForm({ defaultHome = "" }: { defaultHome?: string }) {
         <div className="mx-auto grid size-12 place-items-center rounded-full bg-brand-600 text-white">
           <CheckIcon className="size-6" strokeWidth={2.5} />
         </div>
-        <h3 className="mt-4 font-display text-xl font-semibold text-brand-900">Thanks — we&apos;ve got it.</h3>
+        <h3 className="mt-4 font-display text-xl font-semibold text-brand-900">
+          {via === "mailto" ? "Finish sending your inquiry" : "Thanks — we’ve got it."}
+        </h3>
         <p className="mt-2 text-sm text-stone-muted">
           {via === "mailto"
             ? "We've opened a pre-filled email in your mail app — just hit send and we'll be in touch. Didn't open? Call or text (843) 849-HOME."
@@ -57,42 +67,96 @@ export function ContactForm({ defaultHome = "" }: { defaultHome?: string }) {
   }
 
   return (
-    <form data-form-type="contact" onSubmit={handleSubmit} className="space-y-4">
+    <form
+      data-form-type="contact"
+      onSubmit={handleSubmit}
+      className="space-y-4"
+    >
       <Honeypot />
+      {packageId && <input type="hidden" name="packageId" value={packageId} />}
       {status === "error" && (
         <p className="rounded-lg border border-red-300 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">
-          Something didn&apos;t look right — please check your name and phone, then try again. Or call{" "}
-          <a href={`tel:${site.phoneDial}`} className="font-semibold underline">{site.phoneDisplay}</a>.
+          Something didn&apos;t look right — please check your name and phone,
+          then try again. Or call{" "}
+          <a href={`tel:${site.phoneDial}`} className="font-semibold underline">
+            {site.phoneDisplay}
+          </a>
+          .
         </p>
       )}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-stone-ink">
+          <label
+            htmlFor="name"
+            className="mb-1.5 block text-sm font-medium text-stone-ink"
+          >
             Name
           </label>
-          <input id="name" name="name" required autoComplete="name" className={fieldClass} />
+          <input
+            id="name"
+            name="name"
+            required
+            autoComplete="name"
+            className={fieldClass}
+          />
         </div>
         <div>
-          <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-stone-ink">
+          <label
+            htmlFor="phone"
+            className="mb-1.5 block text-sm font-medium text-stone-ink"
+          >
             Phone
           </label>
-          <input id="phone" name="phone" type="tel" inputMode="tel" pattern="[0-9()+.\s-]{7,}" title="Please enter a valid phone number." required autoComplete="tel" className={fieldClass} />
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            pattern="[0-9()+.\s-]{7,}"
+            title="Please enter a valid phone number."
+            required
+            autoComplete="tel"
+            className={fieldClass}
+          />
         </div>
       </div>
       <div>
-        <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-stone-ink">
+        <label
+          htmlFor="email"
+          className="mb-1.5 block text-sm font-medium text-stone-ink"
+        >
           Email
         </label>
-        <input id="email" name="email" type="email" autoComplete="email" className={fieldClass} />
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          className={fieldClass}
+        />
       </div>
       <div>
-        <label htmlFor="home" className="mb-1.5 block text-sm font-medium text-stone-ink">
-          Home you&apos;re interested in <span className="text-stone-muted">(optional)</span>
+        <label
+          htmlFor="home"
+          className="mb-1.5 block text-sm font-medium text-stone-ink"
+        >
+          Home you&apos;re interested in{" "}
+          <span className="text-stone-muted">(optional)</span>
         </label>
-        <input id="home" name="home" value={home} onChange={(e) => setHome(e.target.value)} placeholder="Any model or “not sure yet”" className={fieldClass} />
+        <input
+          id="home"
+          name="home"
+          value={home}
+          onChange={(e) => setHome(e.target.value)}
+          placeholder="Any model or “not sure yet”"
+          className={fieldClass}
+        />
       </div>
       <div>
-        <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-stone-ink">
+        <label
+          htmlFor="message"
+          className="mb-1.5 block text-sm font-medium text-stone-ink"
+        >
           What are you looking for?
         </label>
         <textarea
@@ -109,10 +173,12 @@ export function ContactForm({ defaultHome = "" }: { defaultHome?: string }) {
         disabled={status === "sending"}
         className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-800 disabled:opacity-60"
       >
-        {status === "sending" ? "Sending…" : "Send"} <ArrowIcon className="size-4" />
+        {status === "sending" ? "Sending…" : "Send"}{" "}
+        <ArrowIcon className="size-4" />
       </button>
       <p className="text-xs text-stone-muted">
-        By submitting, you agree to be contacted by Home Placer about your inquiry.
+        By submitting, you agree to be contacted by Home Placer about your
+        inquiry.
       </p>
     </form>
   );
