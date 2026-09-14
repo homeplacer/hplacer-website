@@ -37,9 +37,15 @@ export function SiteFooter() {
             <a href={`mailto:${site.email}`} className="text-stone-100/80 hover:text-accent-300">
               {site.email}
             </a>
-            <span className="inline-flex items-center gap-2 text-stone-100/70">
+            <a
+              href={site.gbp.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View Home Placer's office on Google Maps"
+              className="inline-flex items-center gap-2 text-stone-100/70 hover:text-accent-300"
+            >
               <PinIcon className="size-4" /> {site.address.street}, {site.address.city}, {site.address.state} {site.address.zip}
-            </span>
+            </a>
             <a
               href={site.gbp.url}
               target="_blank"
