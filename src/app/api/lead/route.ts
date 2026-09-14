@@ -176,6 +176,30 @@ function normalizePhone(raw: string | null): string | null {
   return null;
 }
 
+// Client-side `type="email"` is only a convenience; all lead sources must be
+// checked again here before a value reaches FUB or Resend. This deliberately
+// accepts normal internationalized local parts as text while rejecting spaces,
+// control characters, and addresses without a usable domain.
+function normalizeEmail(raw: string | null): string | null {
+  if (!raw || raw.length > 254) return null;
+  const at = raw.lastIndexOf("@");
+  if (at <= 0 || at !== raw.indexOf("@")) return null;
+  const local = raw.slice(0, at);
+  const domain = raw.slice(at + 1);
+  if (
+    local.length > 64 ||
+    !domain ||
+    domain.length > 253 ||
+    /[\s\u0000-\u001F\u007F]/.test(raw) ||
+    domain.startsWith(".") ||
+    domain.endsWith(".") ||
+    !domain.includes(".")
+  ) {
+    return null;
+  }
+  return raw;
+}
+
 const warrantyUserId = (): number => {
   const v = parseInt(process.env.FUB_WARRANTY_USER_ID || "39", 10);
   return Number.isFinite(v) ? v : 39;
@@ -711,7 +735,7 @@ export async function POST(req: Request) {
     type,
     name: clean(body.name),
     phone: normalizePhone(clean(body.phone)),
-    email: clean(body.email),
+    email: normalizeEmail(clean(body.email, 254)),
     home: clean(body.home),
     hasLand: clean(body.hasLand),
     address: clean(body.address),
@@ -720,6 +744,21 @@ export async function POST(req: Request) {
     sourceChannel: sourceChannel(attribution),
   };
 
+  const suppliedPhone = typeof body.phone === "string" && Boolean(body.phone.trim());
+  const suppliedEmail = typeof body.email === "string" && Boolean(body.email.trim());
+  if (suppliedPhone && !lead.phone) {
+    return NextResponse.json(
+      { error: "Please enter a valid phone number" },
+      { status: 422 },
+    );
+  }
+  if (suppliedEmail && !lead.email) {
+    return NextResponse.json(
+      { error: "Please enter a valid email address" },
+      { status: 422 },
+    );
+  }
+
   if (type === "subscribe") {
     if (!lead.name || !lead.phone || !lead.email) {
       return NextResponse.json(
@@ -727,9 +766,9 @@ export async function POST(req: Request) {
         { status: 422 },
       );
     }
-  } else if (!lead.name || !lead.phone) {
+  } else if (!lead.name || (!lead.phone && !lead.email)) {
     return NextResponse.json(
-      { error: "Name and a valid phone number are required" },
+      { error: "Name and a valid phone number or email address are required" },
       { status: 422 },
     );
   }

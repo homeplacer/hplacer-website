@@ -196,6 +196,41 @@ test("successful intake adds one server reference and validated package context 
     else process.env.RESEND_API_KEY = oldResend;
   }
 });
+test("contact intake accepts an email-only inquiry and forwards it to Follow Up Boss", async () => {
+  const oldFetch = globalThis.fetch;
+  const oldKey = process.env.FUB_API_KEY;
+  process.env.FUB_API_KEY = "LOCAL_TEST_ONLY";
+  const sent = [];
+  globalThis.fetch = async (url, init) => {
+    assert.equal(url, "https://api.followupboss.com/v1/events");
+    sent.push(JSON.parse(init.body));
+    return Response.json({ id: 789 }, { status: 200 });
+  };
+  try {
+    const res = await route.POST(req({
+      name: "Email only",
+      email: "email.only@example.com",
+    }));
+    assert.equal(res.status, 200);
+    assert.deepEqual(sent[0].person.emails, [{ value: "email.only@example.com" }]);
+    assert.deepEqual(sent[0].person.phones, []);
+  } finally {
+    globalThis.fetch = oldFetch;
+    if (oldKey === undefined) delete process.env.FUB_API_KEY;
+    else process.env.FUB_API_KEY = oldKey;
+  }
+});
+test("contact intake requires one valid reply channel", async () => {
+  const saved = globalThis.fetch;
+  globalThis.fetch = () => { throw Error("unexpected network"); };
+  try {
+    assert.equal((await route.POST(req({ name: "No reply channel" }))).status, 422);
+    assert.equal((await route.POST(req({ name: "Bad email", email: "not-an-email" }))).status, 422);
+    assert.equal((await route.POST(req({ name: "Bad phone", phone: "12", email: "valid@example.com" }))).status, 422);
+  } finally {
+    globalThis.fetch = saved;
+  }
+});
 test("lead acquisition bucket uses click IDs before a known search referrer", async () => {
   const oldFetch = globalThis.fetch;
   const oldKey = process.env.FUB_API_KEY;

@@ -15,8 +15,10 @@ import {
   HomeMark,
   CheckIcon,
   ArrowIcon,
+  PhoneIcon,
 } from "@/components/icons";
 import { FallbackImage } from "@/components/fallback-image";
+import { site } from "@/lib/site";
 
 export function HomeCard({ home }: { home: Home }) {
   const price = displayPrice(home);
@@ -28,10 +30,11 @@ export function HomeCard({ home }: { home: Home }) {
     : `${home.sqft.toLocaleString()} sqft`;
 
   return (
-    <div className="flex h-full flex-col">
+    <article className="group flex h-full flex-col overflow-hidden rounded-card border border-stone-line bg-stone-bg shadow-sm transition duration-300 hover:-translate-y-1 hover:border-brand-300 hover:shadow-xl hover:shadow-brand-900/10">
       <Link
         href={`/homes/${home.slug}`}
-        className="group flex flex-1 flex-col overflow-hidden rounded-card border border-stone-line bg-stone-bg shadow-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md"
+        aria-label={`View ${home.name} details and request pricing`}
+        className="flex flex-1 flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-600"
       >
         <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-brand-100 via-stone-surface to-accent-100">
           {photo ? (
@@ -56,7 +59,7 @@ export function HomeCard({ home }: { home: Home }) {
               <HomeMark className="size-14" strokeWidth={1.25} />
             </div>
           )}
-          <span className="absolute left-3 top-3 rounded-full bg-stone-bg/90 px-2.5 py-1 text-xs font-semibold text-brand-800 shadow-sm">
+          <span className="absolute left-3 top-3 rounded-full bg-stone-bg/95 px-2.5 py-1 text-xs font-semibold tracking-wide text-brand-800 shadow-sm backdrop-blur">
             {home.brand}
           </span>
           {home.bestSeller && (
@@ -76,27 +79,29 @@ export function HomeCard({ home }: { home: Home }) {
           )}
         </div>
 
-        <div className="flex flex-1 flex-col p-4">
+        <div className="flex flex-1 flex-col p-5">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h3 className="truncate font-display text-lg font-semibold text-stone-ink group-hover:text-brand-800">
+              <h3 className="truncate font-display text-xl font-semibold leading-tight text-stone-ink transition-colors group-hover:text-brand-800">
                 {home.name}
               </h3>
-              <p className="truncate text-xs text-stone-muted">{home.series}</p>
+              <p className="mt-1 truncate text-xs font-medium tracking-wide text-stone-muted">
+                {home.series}
+              </p>
             </div>
             {price != null && (
-              <span className="shrink-0 text-right leading-none">
-                <span className="block font-display text-lg font-semibold text-brand-700">
+              <span className="shrink-0 rounded-lg bg-brand-50 px-2.5 py-2 text-right leading-none">
+                <span className="block font-display text-lg font-semibold text-brand-800">
                   {formatPrice(price)}
                 </span>
-                <span className="mt-0.5 block text-[10px] font-semibold uppercase tracking-wide text-stone-muted">
+                <span className="mt-1 block text-[10px] font-semibold uppercase tracking-wider text-stone-muted">
                   {home.setupPrice ? "full setup" : "starting"}
                 </span>
               </span>
             )}
           </div>
 
-          <div className="mt-4 flex items-center gap-4 border-t border-stone-line pt-3 text-sm text-stone-ink/80">
+          <div className="mt-5 flex items-center gap-x-4 gap-y-2 border-t border-stone-line pt-3.5 text-sm text-stone-ink/80">
             <span className="inline-flex items-center gap-1.5">
               <BedIcon className="size-4 text-brand-600" /> {home.beds} bd
             </span>
@@ -108,22 +113,27 @@ export function HomeCard({ home }: { home: Home }) {
             </span>
           </div>
 
-          {/* When there's no price yet, the card's job is to capture the lead — a
-            clear CTA that carries to the detail page's "Get this home's price"
-            form (whole card is the link). Priced cards let the price speak. */}
-          {price == null && (
-            <span className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-lg border border-brand-200 bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700 transition group-hover:border-brand-300 group-hover:bg-brand-100">
-              Get this home&rsquo;s price <ArrowIcon className="size-4" />
-            </span>
-          )}
+          <span className="mt-auto pt-5 text-sm font-semibold text-brand-700">
+            {price == null ? "Get this home’s price" : "See details & request pricing"}
+            <ArrowIcon className="ml-1 inline size-4 transition-transform group-hover:translate-x-0.5" />
+          </span>
         </div>
       </Link>
-      <Link
-        href={`/packages?model=${home.slug}`}
-        className="mt-2 text-center text-sm font-semibold text-brand-700 underline"
-      >
-        View package records
-      </Link>
-    </div>
+      <div className="grid grid-cols-2 gap-2 border-t border-stone-line bg-stone-surface/70 p-3">
+        <a
+          href={`tel:${site.phoneDial}`}
+          aria-label={`Call Home Placer about ${home.name}`}
+          className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-brand-200 bg-white px-3 py-2.5 text-sm font-semibold text-brand-800 transition hover:border-brand-400 hover:bg-brand-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
+        >
+          <PhoneIcon className="size-4" /> Call
+        </a>
+        <Link
+          href={`/contact?home=${encodeURIComponent(home.name)}`}
+          className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-700 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+        >
+          Ask about this home <ArrowIcon className="size-4" />
+        </Link>
+      </div>
+    </article>
   );
 }

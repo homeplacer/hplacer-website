@@ -35,8 +35,14 @@ export function ContactForm({
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (status === "sending") return; // guard against double-submit while in flight
-    setStatus("sending");
     const form = e.currentTarget;
+    const phone = form.elements.namedItem("phone") as HTMLInputElement;
+    const email = form.elements.namedItem("email") as HTMLInputElement;
+    if (!phone.value.trim() && !email.value.trim()) {
+      setStatus("error");
+      return;
+    }
+    setStatus("sending");
     const data = Object.fromEntries(new FormData(form).entries());
     const result = await submitLead("contact", data);
     if (result === "error") {
@@ -76,8 +82,8 @@ export function ContactForm({
       {packageId && <input type="hidden" name="packageId" value={packageId} />}
       {status === "error" && (
         <p className="rounded-lg border border-red-300 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">
-          Something didn&apos;t look right — please check your name and phone,
-          then try again. Or call{" "}
+          Please enter your name and a valid phone number or email address, then
+          try again. Or call{" "}
           <a href={`tel:${site.phoneDial}`} className="font-semibold underline">
             {site.phoneDisplay}
           </a>
@@ -105,7 +111,7 @@ export function ContactForm({
             htmlFor="phone"
             className="mb-1.5 block text-sm font-medium text-stone-ink"
           >
-            Phone
+            Phone <span className="text-stone-muted">(or email)</span>
           </label>
           <input
             id="phone"
@@ -114,7 +120,6 @@ export function ContactForm({
             inputMode="tel"
             pattern="[0-9()+.\s-]{7,}"
             title="Please enter a valid phone number."
-            required
             autoComplete="tel"
             className={fieldClass}
           />
@@ -125,7 +130,7 @@ export function ContactForm({
           htmlFor="email"
           className="mb-1.5 block text-sm font-medium text-stone-ink"
         >
-          Email
+          Email <span className="text-stone-muted">(or phone)</span>
         </label>
         <input
           id="email"
@@ -178,7 +183,7 @@ export function ContactForm({
       </button>
       <p className="text-xs text-stone-muted">
         By submitting, you agree to be contacted by Home Placer about your
-        inquiry.
+        inquiry. Please include a phone number or email address so we can reply.
       </p>
     </form>
   );

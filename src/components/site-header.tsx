@@ -14,7 +14,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-stone-line/80 bg-stone-bg/85 backdrop-blur-md">
       {/* Invisible: records first-touch attribution on initial page load. */}
       <AttributionTracker />
-      <div className="container-x flex h-16 items-center justify-between gap-4">
+      <div className="container-x flex h-16 items-center justify-between gap-2 sm:gap-4">
         <Link href="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setOpen(false)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={asset("/logo.png")} alt="Home Placer LLC" className="h-11 w-auto" />
@@ -26,7 +26,7 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-1 xl:flex">
           {navLinks.map((l) => (
             <Link
               key={l.href}
@@ -38,20 +38,45 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* On smaller screens, keep the two fastest ways to reach a person
+              visible without requiring a visitor to open the menu. */}
+          <div className="flex items-center gap-1.5 xl:hidden">
+            <a
+              href={`tel:${site.phoneDial}`}
+              aria-label={`Call Home Placer at ${site.phoneDisplay}`}
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-brand-700 px-3 text-xs font-semibold text-white shadow-sm transition hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+            >
+              <PhoneIcon className="size-3.5" />
+              <span>Call</span>
+            </a>
+            <a
+              href={`mailto:${site.email}`}
+              aria-label="Email Home Placer"
+              className="inline-flex min-h-10 items-center rounded-full border border-brand-200 bg-white px-3 text-xs font-semibold text-brand-800 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+            >
+              Email
+            </a>
+          </div>
           <a
             href={`tel:${site.phoneDial}`}
-            className="hidden items-center gap-2 rounded-full bg-brand-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 sm:inline-flex"
+            className="hidden items-center gap-2 rounded-full bg-brand-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 xl:inline-flex"
           >
             <PhoneIcon className="size-4" />
             {site.phoneDisplay}
+          </a>
+          <a
+            href={`mailto:${site.email}`}
+            className="hidden items-center rounded-full border border-brand-200 bg-white px-4 py-2 text-sm font-semibold text-brand-800 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 xl:inline-flex"
+          >
+            Email us
           </a>
           <button
             type="button"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="grid size-11 place-items-center rounded-md text-stone-ink hover:bg-stone-sunken lg:hidden"
+            className="grid size-11 place-items-center rounded-md text-stone-ink hover:bg-stone-sunken xl:hidden"
           >
             {open ? <CloseIcon /> : <MenuIcon />}
           </button>
@@ -59,7 +84,7 @@ export function SiteHeader() {
       </div>
 
       {open && (
-        <nav className="border-t border-stone-line bg-stone-bg lg:hidden">
+        <nav className="border-t border-stone-line bg-stone-bg xl:hidden">
           <div className="container-x flex flex-col py-2">
             {navLinks.map((l) => (
               <Link
@@ -76,7 +101,13 @@ export function SiteHeader() {
               className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-brand-700 px-4 py-3 text-base font-semibold text-white"
             >
               <PhoneIcon className="size-4" />
-              {site.phoneDisplay}
+              Call {site.phoneDisplay}
+            </a>
+            <a
+              href={`mailto:${site.email}`}
+              className="mt-2 inline-flex items-center justify-center rounded-full border border-brand-200 bg-white px-4 py-3 text-base font-semibold text-brand-800"
+            >
+              Email us
             </a>
           </div>
         </nav>
