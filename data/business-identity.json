@@ -6,23 +6,23 @@
   "phone": "+18438494663",
   "email": "Carolina@hplacer.com",
   "address": {
-    "street": "1801 N Oak St",
+    "street": "601 21st Ave N",
     "city": "Myrtle Beach",
     "state": "SC",
     "zip": "29577"
   },
   "geo": {
-    "lat": 33.702366,
-    "lng": -78.877032
+    "lat": 33.703082,
+    "lng": -78.873097
   },
   "hoursLabel": "By appointment",
   "verifiedOpeningHours": [],
-  "buyerFacingAddressVerified": false,
+  "buyerFacingAddressVerified": true,
   "licenseRecords": [],
   "profiles": {
     "google": "https://maps.google.com/?cid=3461988553332431879",
     "instagram": "https://www.instagram.com/homeplacer"
   },
-  "sourceBasis": "Existing public site facts preserved; no fresh credential or office verification claimed.",
-  "reviewedAt": null
+  "sourceBasis": "Office address confirmed by Home Placer on 2026-09-13; coordinates resolved from the office address.",
+  "reviewedAt": "2026-09-13"
 }
