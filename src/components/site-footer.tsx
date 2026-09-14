@@ -16,6 +16,9 @@ const SOCIAL_ICONS = {
   facebook: FacebookIcon,
 } as const;
 
+const FOOTER_EXPLORE = navLinks.slice(0, 6);
+const FOOTER_RESOURCES = resourceLinks.slice(0, 8);
+
 export function SiteFooter() {
   const year = 2026;
   return (
@@ -89,13 +92,18 @@ export function SiteFooter() {
             Explore
           </h4>
           <ul className="mt-4 space-y-2.5 text-sm">
-            {navLinks.map((l) => (
+            {FOOTER_EXPLORE.map((l) => (
               <li key={l.href}>
                 <Link href={l.href} className="text-stone-100/80 hover:text-white">
                   {l.label}
                 </Link>
               </li>
             ))}
+            <li>
+              <Link href="/contact" className="font-semibold text-white hover:text-accent-300">
+                Contact Home Placer
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -104,7 +112,7 @@ export function SiteFooter() {
             Resources
           </h4>
           <ul className="mt-4 space-y-2.5 text-sm">
-            {resourceLinks.map((l) => (
+            {FOOTER_RESOURCES.map((l) => (
               <li key={l.href}>
                 <Link href={l.href} className="text-stone-100/80 hover:text-white">
                   {l.label}

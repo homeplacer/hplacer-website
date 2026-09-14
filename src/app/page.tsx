@@ -186,33 +186,36 @@ export default function HomePage() {
       </section>
 
       {/* ──────────────────── Brands ──────────────────── */}
-      <section className="bg-stone-surface py-20">
+      <section className="bg-stone-surface py-16 sm:py-20">
         <div className="container-x">
-          <div className="max-w-2xl">
+          <div className="flex flex-wrap items-end justify-between gap-5">
+            <div className="max-w-2xl">
             <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">The builders we carry</p>
             <h2 className="mt-2 font-display text-3xl font-semibold text-stone-ink sm:text-4xl">
-              Three trusted brands. One honest price.
+              Three trusted builders. One local team.
             </h2>
             <p className="mt-3 text-stone-muted">
-              We hand-pick floor plans from America&apos;s most dependable manufacturers — then
-              put them on land near you.
+              We match the right floor plan to the right piece of land and manage the package from there.
             </p>
+            </div>
+            <Link href="/brands" className="inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-900">
+              Compare builders <ArrowIcon className="size-4" />
+            </Link>
           </div>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
+          <div className="mt-8 grid overflow-hidden rounded-2xl border border-stone-line bg-stone-bg md:grid-cols-3 md:divide-x md:divide-stone-line">
             {BRANDS.map((b) => (
-              <div key={b.brand} className="rounded-card border border-stone-line bg-stone-bg p-6">
+              <div key={b.brand} className="p-6 sm:p-7">
                 <div className="flex items-center gap-3">
                   <span className="grid size-10 place-items-center rounded-lg bg-brand-700 text-white">
                     <HomeMark className="size-5" />
                   </span>
                   <h3 className="font-display text-xl font-semibold text-stone-ink">{b.brand}</h3>
                 </div>
-                <p className="mt-4 text-sm leading-relaxed text-stone-muted">{b.blurb}</p>
                 <Link
                   href="/brands"
-                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:text-brand-900"
+                  className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:text-brand-900"
                 >
-                  See {b.brand} homes <ArrowIcon className="size-3.5" />
+                  Explore {b.brand} homes <ArrowIcon className="size-3.5" />
                 </Link>
               </div>
             ))}
