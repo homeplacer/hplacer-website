@@ -19,6 +19,7 @@ import {
 } from "@/components/icons";
 import { FallbackImage } from "@/components/fallback-image";
 import { site } from "@/lib/site";
+import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 
 export function HomeCard({ home }: { home: Home }) {
   const price = displayPrice(home);
@@ -127,12 +128,7 @@ export function HomeCard({ home }: { home: Home }) {
         >
           <PhoneIcon className="size-4" /> Call
         </a>
-        <Link
-          href={`/contact?home=${encodeURIComponent(home.name)}`}
-          className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-700 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
-        >
-          Ask about this home <ArrowIcon className="size-4" />
-        </Link>
+        <HomeInquiryDialog homeName={home.name} />
       </div>
     </article>
   );

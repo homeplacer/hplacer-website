@@ -19,7 +19,7 @@ const SOCIAL_ICONS = {
 export function SiteFooter() {
   const year = 2026;
   return (
-    <footer className="border-t border-white/10 bg-brand-950 text-stone-100">
+    <footer className="border-t border-white/10 bg-brand-950 pb-20 text-stone-100">
       <div className="container-x grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
         <div>
           {/* eslint-disable-next-line @next/next/no-img-element */}

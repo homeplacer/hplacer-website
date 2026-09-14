@@ -73,7 +73,7 @@ export default function RootLayout({
         <AnalyticsEvents />
         <JsonLd data={localBusinessLd()} />
         <SiteHeader />
-        <main className="flex-1 pb-16">{children}</main>
+        <main className="flex-1 pb-20">{children}</main>
         <EmailCapture />
         <SiteFooter />
         <ContactBar />
