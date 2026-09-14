@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { track, modelSlugFromPath } from "@/lib/analytics";
 function linkPlacement(link: Element) {
+  if (link.closest("[data-contact-bar]")) return "contact_bar";
   if (link.closest("header")) return "header";
   if (link.closest("footer")) return "footer";
   return "main_content";
@@ -39,6 +40,14 @@ export function AnalyticsEvents() {
       const placement = linkPlacement(link);
       if (href.startsWith("tel:")) {
         track("phone_call", { placement });
+        return;
+      }
+      if (href.startsWith("sms:")) {
+        track("text_message", { placement });
+        return;
+      }
+      if (href.startsWith("mailto:")) {
+        track("email_click", { placement });
         return;
       }
       try {

@@ -149,6 +149,8 @@ const allowedEvents = new Set([
   "view_financing",
   "form_start",
   "phone_call",
+  "text_message",
+  "email_click",
   "select_model",
   "pricing_inquiry",
   "financing_click",
@@ -172,7 +174,7 @@ const allowedValues: Record<string, readonly string[]> = {
     "inquiry",
   ],
   submission_method: ["api", "mailto"],
-  placement: ["header", "footer", "main_content", "navigation", "other"],
+  placement: ["header", "footer", "main_content", "navigation", "contact_bar", "other"],
   destination: ["forturro.com"],
 };
 export function track(
