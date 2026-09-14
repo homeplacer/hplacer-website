@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { PhoneIcon } from "@/components/icons";
 import { site } from "@/lib/site";
 
@@ -7,14 +10,30 @@ import { site } from "@/lib/site";
  * for a form or returning to the homepage.
  */
 export function ContactBar() {
+  const [hiddenForForm, setHiddenForForm] = useState(false);
   const textMessage = encodeURIComponent(
     "Hi Home Placer, I’m interested in a manufactured home and land package.",
   );
+
+  useEffect(() => {
+    const forms = [...document.querySelectorAll("form")];
+    if (!forms.length) return;
+    const visible = new Set<Element>();
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) visible.add(entry.target);
+        else visible.delete(entry.target);
+      }
+      setHiddenForForm(visible.size > 0);
+    }, { threshold: 0.2 });
+    forms.forEach((form) => observer.observe(form));
+    return () => observer.disconnect();
+  }, []);
   return (
     <aside
       data-contact-bar
       aria-label="Contact Home Placer"
-      className="fixed inset-x-3 bottom-3 z-[60] mx-auto max-w-md rounded-2xl border border-brand-800/15 bg-brand-950/95 p-1.5 shadow-2xl backdrop-blur-lg"
+      className={`fixed inset-x-3 bottom-3 z-[60] mx-auto max-w-md rounded-2xl border border-brand-800/15 bg-brand-950/95 p-1.5 shadow-2xl backdrop-blur-lg transition duration-200 ${hiddenForForm ? "pointer-events-none translate-y-24 opacity-0" : "translate-y-0 opacity-100"}`}
     >
       <div className="flex items-center gap-1.5">
         <a

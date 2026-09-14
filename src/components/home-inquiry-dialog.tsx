@@ -18,13 +18,16 @@ export function HomeInquiryDialog({ homeName }: { homeName: string }) {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
+      <a
+        href={`/contact?home=${encodeURIComponent(homeName)}`}
+        onClick={(event) => {
+          event.preventDefault();
+          setOpen(true);
+        }}
         className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-700 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
       >
         Ask about this home <ArrowIcon className="size-4" />
-      </button>
+      </a>
       {open && (
         <div
           className="fixed inset-0 z-[80] flex items-end bg-brand-950/55 p-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6"

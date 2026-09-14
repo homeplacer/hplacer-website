@@ -49,21 +49,22 @@ export default function HomePage() {
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <a
-                href={`mailto:${site.email}?subject=${encodeURIComponent("Home Placer land-home package inquiry")}`}
-                className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-accent-600"
-              >
-                Email us <ArrowIcon className="size-4" />
-              </a>
-              <a
                 href={`tel:${site.phoneDial}`}
-                className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-base font-semibold text-white ring-1 ring-white/20 transition hover:bg-white/15"
+                className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-accent-600"
               >
                 <PhoneIcon className="size-4" /> Call {site.phoneDisplay}
               </a>
+              <a
+                href={`sms:${site.phoneDial}?body=${encodeURIComponent("Hi Home Placer, I’m interested in a manufactured home and land package.")}`}
+                className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-base font-semibold text-white ring-1 ring-white/20 transition hover:bg-white/15"
+              >
+                Text us
+              </a>
             </div>
-            <Link href="/homes" className="mt-5 inline-flex text-sm font-semibold text-stone-100/75 underline-offset-4 hover:text-white hover:underline">
-              Or browse available home models
-            </Link>
+            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-stone-100/75">
+              <a href={`mailto:${site.email}`} className="underline-offset-4 hover:text-white hover:underline">Email us</a>
+              <Link href="/homes" className="underline-offset-4 hover:text-white hover:underline">Browse available home models</Link>
+            </div>
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-stone-100/75">
               {["No HOA", "Land + home bundled", "Builder + 2–10 warranties", "Licensed in SC & NC"].map((t) => (
                 <li key={t} className="inline-flex items-center gap-2">
@@ -139,6 +140,8 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      <SoldExamples />
 
       {/* ──────────────── Get your price (inline lead capture) ──────────────── */}
       <section id="get-price" className="relative scroll-mt-24 overflow-hidden bg-brand-950 text-white">
@@ -333,7 +336,6 @@ export default function HomePage() {
       )}
 
       {/* ──────────────────── Reviews ──────────────────── */}
-      <SoldExamples />
       <Testimonials />
 
       {/* ──────────────────── Final CTA ──────────────────── */}
