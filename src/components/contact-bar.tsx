@@ -7,6 +7,9 @@ import { site } from "@/lib/site";
  * for a form or returning to the homepage.
  */
 export function ContactBar() {
+  const textMessage = encodeURIComponent(
+    "Hi Home Placer, I’m interested in a manufactured home and land package.",
+  );
   return (
     <aside
       data-contact-bar
@@ -22,7 +25,7 @@ export function ContactBar() {
           <PhoneIcon className="size-4" /> Call us
         </a>
         <a
-          href={`sms:${site.phoneDial}`}
+          href={`sms:${site.phoneDial}?body=${textMessage}`}
           aria-label={`Text Home Placer at ${site.phoneDisplay}`}
           className="inline-flex min-h-10 flex-1 items-center justify-center rounded-xl bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-brand-950"
         >
