@@ -25,7 +25,7 @@ export const metadata = pageMetadata({
 });
 
 export default function HomePage() {
-  const homes = bestSellerHomes().slice(0, 8); // all best-sellers incl. Pegasus + Atmos
+  const homes = bestSellerHomes().slice(0, 6);
   const work = [...galleryByCategory("homes").slice(0, 4), ...galleryByCategory("development").slice(0, 2)];
 
   return (
@@ -33,39 +33,37 @@ export default function HomePage() {
       {/* ───────────────────────── Hero ───────────────────────── */}
       <section className="relative overflow-hidden bg-brand-950 text-white">
         <div className="topo absolute inset-0" aria-hidden />
-        <div className="container-x relative grid gap-12 py-20 md:py-28 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+        <div className="container-x relative grid gap-10 py-14 md:py-20 lg:min-h-[650px] lg:grid-cols-[1.04fr_0.96fr] lg:items-center lg:py-20">
           <div>
             <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-accent-300 ring-1 ring-white/15">
               Manufactured home + land dealer · Horry County, SC
             </p>
-            <h1 className="mt-5 max-w-2xl font-display text-4xl font-semibold leading-[1.05] sm:text-5xl lg:text-6xl">
-              A brand-new home — and the land it sits on — from the low&nbsp;$200s.
+            <h1 className="mt-5 max-w-2xl font-display text-4xl font-semibold leading-[1.02] sm:text-5xl lg:text-[4.25rem]">
+              Your land. Your new home. One team to put it all together.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-stone-100/80">
               Home Placer pairs new Clayton, Cavco, and Champion manufactured homes
               with land across Horry and Georgetown counties in SC and Brunswick and
-              Columbus counties in NC. One package, one team, no HOA.
+              Columbus counties in NC. Real land-home packages from the low $200s —
+              with one local team coordinating the details.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
-                href="#get-price"
+              <a
+                href={`mailto:${site.email}?subject=${encodeURIComponent("Home Placer land-home package inquiry")}`}
                 className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-accent-600"
               >
-                Get your price <ArrowIcon className="size-4" />
-              </Link>
-              <Link
-                href="/homes"
-                className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-base font-semibold text-white ring-1 ring-white/20 transition hover:bg-white/15"
-              >
-                Browse homes
-              </Link>
+                Email us <ArrowIcon className="size-4" />
+              </a>
               <a
                 href={`tel:${site.phoneDial}`}
-                className="inline-flex items-center gap-2 rounded-full px-3 py-3 text-base font-semibold text-white/90 transition hover:text-white"
+                className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-base font-semibold text-white ring-1 ring-white/20 transition hover:bg-white/15"
               >
-                <PhoneIcon className="size-4" /> {site.phoneDisplay}
+                <PhoneIcon className="size-4" /> Call {site.phoneDisplay}
               </a>
             </div>
+            <Link href="/homes" className="mt-5 inline-flex text-sm font-semibold text-stone-100/75 underline-offset-4 hover:text-white hover:underline">
+              Or browse available home models
+            </Link>
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-stone-100/75">
               {["No HOA", "Land + home bundled", "Builder + 2–10 warranties", "Licensed in SC & NC"].map((t) => (
                 <li key={t} className="inline-flex items-center gap-2">
@@ -76,20 +74,25 @@ export default function HomePage() {
           </div>
 
           {/* Hero photo — real #1 best-seller home */}
-          <div className="relative">
+          <div className="relative lg:pl-8">
+            <div className="absolute -inset-4 -z-10 rounded-[2rem] bg-accent-500/15 blur-3xl" aria-hidden />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={asset("/models/ultra-flex-28-52/01.jpg")}
               alt="A new Home Placer manufactured home on its land in Horry County, SC"
               width={1200} height={900} loading="eager" fetchPriority="high"
-              className="aspect-[4/3] w-full rounded-2xl object-cover shadow-2xl ring-1 ring-white/15"
+              className="aspect-[4/3] w-full rounded-[1.75rem] object-cover shadow-2xl ring-1 ring-white/15"
             />
-            <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-accent-500 px-3 py-1 text-xs font-bold text-white shadow">
-              ★ Best Seller · The 52 Breeze
+            <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-stone-bg/95 px-3 py-1.5 text-xs font-bold text-brand-800 shadow">
+              Home Placer project · Horry County
             </span>
-            <div className="absolute bottom-4 left-4 rounded-xl bg-brand-950/80 px-4 py-2.5 backdrop-blur">
+            <div className="absolute bottom-4 left-4 rounded-2xl bg-brand-950/85 px-4 py-3 backdrop-blur-md ring-1 ring-white/10">
               <span className="block text-xs font-medium text-stone-100/70">Packages from</span>
               <span className="font-display text-2xl font-semibold text-white">the low $200s</span>
+            </div>
+            <div className="absolute -bottom-5 right-4 hidden rounded-2xl bg-white px-4 py-3 text-brand-950 shadow-xl sm:block">
+              <span className="block text-xs font-semibold uppercase tracking-wider text-stone-muted">Built for the Carolinas</span>
+              <span className="mt-1 block font-display text-lg font-semibold">Land · home · setup</span>
             </div>
           </div>
         </div>
@@ -97,10 +100,10 @@ export default function HomePage() {
 
       {/* ──────────────────── Value props ──────────────────── */}
       <section className="border-b border-stone-line bg-stone-surface">
-        <div className="container-x grid gap-px py-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="container-x grid gap-px py-3 sm:grid-cols-2 lg:grid-cols-4">
           {site.valueProps.map((v) => (
-            <div key={v.title} className="p-6">
-              <div className="grid size-10 place-items-center rounded-lg bg-brand-100 text-brand-700">
+            <div key={v.title} className="p-5 lg:px-6 lg:py-7">
+              <div className="grid size-10 place-items-center rounded-xl bg-brand-100 text-brand-700">
                 <CheckIcon className="size-5" strokeWidth={2.5} />
               </div>
               <h3 className="mt-4 font-display text-lg font-semibold text-stone-ink">{v.title}</h3>
@@ -111,12 +114,12 @@ export default function HomePage() {
       </section>
 
       {/* ──────────────────── Best sellers ──────────────────── */}
-      <section className="container-x py-20">
+      <section className="container-x py-24">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">Our most-placed homes</p>
+            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">Start with a home you love</p>
             <h2 className="mt-2 font-display text-3xl font-semibold text-stone-ink sm:text-4xl">
-              Best sellers
+              Six plans worth seeing first
             </h2>
           </div>
           <Link
@@ -127,6 +130,9 @@ export default function HomePage() {
           </Link>
         </div>
 
+        <p className="mt-3 max-w-2xl text-stone-muted">
+          Explore the models our buyers ask for most, then we&apos;ll pair the right one with a real lot and a complete package price.
+        </p>
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {homes.map((h) => (
             <HomeCard key={h.id} home={h} />
@@ -140,14 +146,14 @@ export default function HomePage() {
         <div className="container-x relative grid gap-10 py-20 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-accent-300">
-              No guessing games
+              Talk to a local person
             </p>
             <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-              See your price &amp; monthly payment
+              Email us your wish list. We&apos;ll do the legwork.
             </h2>
             <p className="mt-4 max-w-md text-stone-100/80">
               Every package is a home plus land, so the price depends on the model and the
-              lot. Tell us what you&apos;re after and we&apos;ll send real numbers — home,
+              lot. Send the basics and we&apos;ll respond with real numbers — home,
               land, setup, and an estimated payment. No pressure, no runaround.
             </p>
             <ul className="mt-7 space-y-3 text-sm text-stone-100/85">
@@ -162,9 +168,13 @@ export default function HomePage() {
               ))}
             </ul>
             <p className="mt-7 text-sm text-stone-100/70">
-              Prefer to talk?{" "}
+              Prefer to skip the form?{" "}
               <a href={`tel:${site.phoneDial}`} className="font-semibold text-white underline-offset-4 hover:underline">
-                Call or text {site.phoneDisplay}
+                Call {site.phoneDisplay}
+              </a>
+              {" "}or{" "}
+              <a href={`mailto:${site.email}`} className="font-semibold text-white underline-offset-4 hover:underline">
+                email {site.email}
               </a>
             </p>
           </div>
@@ -335,12 +345,12 @@ export default function HomePage() {
               monthly payment that works — no pressure, no runaround.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <Link
-                href="#get-price"
+              <a
+                href={`mailto:${site.email}?subject=${encodeURIComponent("Home Placer land-home package inquiry")}`}
                 className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-6 py-3 text-base font-semibold text-white transition hover:bg-accent-600"
               >
-                Get started <ArrowIcon className="size-4" />
-              </Link>
+                Email us <ArrowIcon className="size-4" />
+              </a>
               <a
                 href={`tel:${site.phoneDial}`}
                 className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-base font-semibold text-white ring-1 ring-white/20 transition hover:bg-white/15"
