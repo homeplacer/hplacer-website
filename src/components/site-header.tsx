@@ -9,6 +9,9 @@ import { AttributionTracker } from "@/components/attribution-tracker";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  // Careers remains available in the footer, but it should not compete with
+  // a buyer's path to homes, land packages, or a conversation with sales.
+  const buyerNavLinks = navLinks.filter((link) => link.href !== "/careers");
 
   return (
     <header className="sticky top-0 z-50 border-b border-stone-line/80 bg-stone-bg/85 backdrop-blur-md">
@@ -27,7 +30,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-1 xl:flex">
-          {navLinks.map((l) => (
+          {buyerNavLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
@@ -86,7 +89,7 @@ export function SiteHeader() {
       {open && (
         <nav className="border-t border-stone-line bg-stone-bg xl:hidden">
           <div className="container-x flex flex-col py-2">
-            {navLinks.map((l) => (
+            {buyerNavLinks.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}

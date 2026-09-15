@@ -76,6 +76,30 @@ export default function GalleryPage() {
         </section>
       )}
 
+      <section className="border-y border-stone-line bg-stone-surface py-14">
+        <div className="container-x grid items-center gap-8 lg:grid-cols-[1.1fr_.9fr]">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand-700">
+              See the finished potential
+            </p>
+            <h2 className="mt-3 font-display text-3xl font-semibold text-stone-ink">
+              From set day to a home that feels established
+            </h2>
+            <p className="mt-3 max-w-xl text-stone-muted">
+              A real Home Placer home, shown with an illustrative completed landscape so buyers
+              can picture the final presentation. The home and setting are real; landscaping is a
+              visualization and varies by lot and buyer selections.
+            </p>
+          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/gallery/visualizations/home-01-landscaping-visualization.png"
+            alt="A Home Placer home with an illustrative finished lawn and landscaping"
+            className="w-full rounded-card border border-stone-line object-cover shadow-sm"
+          />
+        </div>
+      </section>
+
       {dev.length > 0 && (
         <section className="bg-stone-surface py-14">
           <div className="container-x">
