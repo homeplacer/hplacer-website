@@ -66,6 +66,16 @@ protection. A handful of single requests is enough:
    **405** (POST-only) with **no** `x-nextjs-cache` header. Do **not** POST a test
    lead — it would create a real Follow Up Boss record.
 
+### When a rendered public page still shows the prior release
+
+OpenNext's prerendered HTML can remain at the Cloudflare edge after a Worker
+release. If a live fetch still returns the pre-deploy title, description, or page
+content, use **Cloudflare Dashboard → hplacer.com → Caching → Configuration →
+Purge Everything**, then fetch the changed URL again to verify the new response.
+This is appropriate after a public-content deploy; it temporarily reduces cache
+performance while the edge refills. Do not change cache rules just to force a
+single release through.
+
 Then watch **Cloudflare → Workers analytics** over a few hours (CPU P90, cache
 rate, `1102`/`5xx`). No traffic generation needed.
 
