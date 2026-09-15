@@ -151,7 +151,10 @@ export function SiteFooter() {
       <div className="border-t border-white/10">
         <div className="container-x flex flex-col gap-2 py-6 text-xs text-stone-100/60 sm:flex-row sm:items-center sm:justify-between">
           <p>© {year} {site.legalName}. Licensed manufactured-home dealer, Horry County, SC.</p>
-          <p>Homes shown are representative. Pricing and availability subject to change.</p>
+          <p className="flex flex-wrap gap-x-3 gap-y-1">
+            <span>Homes shown are representative. Pricing and availability subject to change.</span>
+            <Link href="/privacy" className="text-stone-100/80 underline hover:text-white">Privacy</Link>
+          </p>
         </div>
       </div>
     </footer>
