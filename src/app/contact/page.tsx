@@ -60,7 +60,7 @@ export default function ContactPage() {
               <PinIcon className="size-5" />
             </span>
             <span>
-              <span className="block text-xs font-semibold uppercase tracking-wider text-stone-muted">Visit by appointment</span>
+              <span className="block text-xs font-semibold uppercase tracking-wider text-stone-muted">Visit our office</span>
               <span className="block font-medium text-stone-ink">
                 {site.address.street}, {site.address.city}, {site.address.state} {site.address.zip}
               </span>
