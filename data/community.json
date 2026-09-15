@@ -2,27 +2,28 @@
   "id": 548433,
   "name": "Home Placer Horry County",
   "status": "active",
-  "price_range": {"min": 219000, "max": 299999},
+  "price_range": {"min": 184999, "max": 299999},
   "address": {
-    "street": "1329 Rabbit Ln",
-    "city": "Conway",
+    "street": "601 21st Ave N",
+    "city": "Myrtle Beach",
     "state": "SC",
-    "zip": "29526",
-    "lat": 33.93608651,
-    "lng": -78.91258438
+    "zip": "29577",
+    "lat": 33.703082,
+    "lng": -78.873097
   },
   "sales_office_location": {
-    "city": "Conway",
+    "street": "601 21st Ave N",
+    "city": "Myrtle Beach",
     "state": "SC",
-    "zip": "29526",
-    "lat": 33.702366350071,
-    "lng": -78.877032750000
+    "zip": "29577",
+    "lat": 33.703082,
+    "lng": -78.873097
   },
   "marketing_status": "Active",
   "hoa_monthly_fee": 0,
-  "description": "Come visit one of our homes and see that an brand new affordable home with land are alive and well in Horry County, SC.\n\nNote: The community dot reflects the city or town in which there are scattered lots. The homes are not confined to a specific community location.",
+  "description": "New manufactured homes with land packages across Horry County, South Carolina. Home Placer helps buyers choose a home, match it with available land, and coordinate the path from planning through move-in. Current land-home packages from $184,999. Scattered homesites vary by availability; contact us for current options.",
   "website_url": "https://hplacer.com",
-  "sales_office_hours": "By Appointment",
+  "sales_office_hours": "Monday-Friday, 9:00 AM-6:00 PM",
   "image_ids": [
     "community_68410075",
     "community_59402307",
