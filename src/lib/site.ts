@@ -36,7 +36,7 @@ export const site = {
   gbp: {
     url: identity.profiles.google,
     rating: 5.0,
-    reviewCount: 7,
+    reviewCount: 8,
   },
   sameAs: [identity.profiles.google],
 

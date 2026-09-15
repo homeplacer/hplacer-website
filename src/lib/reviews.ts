@@ -1,5 +1,5 @@
 // Real Google reviews for Home Placer (Google Business Profile, CID
-// 3461988553332431879 — 5.0★, 7 reviews). Verbatim text, attributed.
+// 3461988553332431879 — 5.0★, 8 reviews). Verbatim text, attributed.
 // These are surfaced on the homepage and fed into the LocalBusiness JSON-LD.
 // Only add reviews that are genuinely on the GBP — never invent testimonials.
 
