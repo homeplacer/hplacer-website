@@ -10,6 +10,9 @@ export function HomeInquiryDialog({ homeName }: { homeName: string }) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLAnchorElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const textMessage = encodeURIComponent(
+    `Hi Home Placer, I’m interested in the ${homeName}.`,
+  );
   const closeDialog = useCallback(() => {
     setOpen(false);
     triggerRef.current?.focus();
@@ -87,7 +90,7 @@ export function HomeInquiryDialog({ homeName }: { homeName: string }) {
                 Call {site.phoneDisplay}
               </a>
               <a
-                href={`sms:${site.phoneDial}`}
+                href={`sms:${site.phoneDial}?body=${textMessage}`}
                 className="rounded-full border border-brand-200 px-4 py-2 text-brand-800 transition hover:border-brand-400 hover:bg-brand-50"
               >
                 Text us
