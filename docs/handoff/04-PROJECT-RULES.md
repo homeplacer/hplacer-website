@@ -10,7 +10,7 @@ Permanent, non-negotiable rules for working on hplacer.com. These are hard-won â
 2. **Run a Gemini SEO/geo pass on every new page.** Standing rule: for any page buildout, drive gemini.google.com (logged in as joe@forturro.com in the session Chrome), prompt as "a top Google search engineer," get SEO + geo (local search) recommendations, then apply. Memory: `feedback_seo_geo_gemini.md`.
 3. **Edit `data/models.json` DIRECTLY, by hand.** It is the source of truth for the 93-model catalog.
 4. **Run `node scripts/build-manifests.mjs` as part of deploy** (it's baked into `npm run deploy`). Never hand-edit generated manifests.
-5. **Keep the website's NAP consistent** with the canonical business facts in `src/lib/site.ts` (single source of truth): "Home Placer", (843) 849-HOME sales / (843) 484-9844 warranty, 1801 N Oak St Myrtle Beach SC 29577.
+5. **Keep the website's NAP consistent** with the canonical business facts in `src/lib/site.ts` (single source of truth): "Home Placer", (843) 849-HOME sales / (843) 484-9844 warranty, 601 21st Ave N Myrtle Beach SC 29577.
 6. **Verify a deploy after shipping** with real `curl` checks against https://hplacer.com (status codes, meta tags, presence of expected content) â€” don't assume.
 7. **Commit messages end with** `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`. Commit/push only when Joe asks.
 

@@ -15,7 +15,7 @@ export interface TeamGroup {
   members: TeamMember[];
 }
 
-// Whole-crew shot outside the office (1801 N Oak St).
+// Whole-crew shot outside the former office location.
 export const groupPhoto = "/team/team-group.jpg";
 
 export const teamGroups: TeamGroup[] = [

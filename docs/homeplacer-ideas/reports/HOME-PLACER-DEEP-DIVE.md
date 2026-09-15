@@ -245,7 +245,7 @@ source of truth. Assumptions are labeled inline.*
   price, no HOA." Tagline: *"New homes, on land, from the low $200s."* (`site.ts:9`)
 - **Sales line:** (843) 849-HOME → `+18438494663` (`site.ts:13-15`).
 - **Warranty/service line:** (843) 484-9844 → `+18434849844` (`site.ts:18-20`) — separate from sales.
-- **Email:** Carolina@hplacer.com (`site.ts:16`). Address 1801 N Oak St, Myrtle Beach SC 29577 (`site.ts:22-27`).
+- **Email:** Carolina@hplacer.com (`site.ts:16`). Address 601 21st Ave N, Myrtle Beach SC 29577 (`site.ts:22-27`).
 - **GA4:** `G-0T71PWYQSQ` (`site.ts:32`). **GBP:** CID 3461988553332431879, 5.0★, 7 reviews (`site.ts:40-44`).
 - **Social:** Instagram @homeplacer (live); TikTok + Facebook configured but `live:false` (`site.ts:135-157`).
 - **Sister company:** The Forturro Group (KW real-estate team) — cross-over land search (`site.ts:51-59`).

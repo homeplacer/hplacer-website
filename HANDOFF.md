@@ -58,7 +58,7 @@ What travels and what doesn't when you move to a new machine:
 ## 1. Who / what
 
 - **User:** Joe Scaturro — owns **Home Placer LLC** (SC manufactured-home + land dealer, Horry County / Grand Strand, licensed SC & NC) and leads **The Forturro Group** (KW real-estate team). This session is almost entirely **Home Placer**.
-- **hplacer.com** = Home Placer's marketing + lead-gen website. Tagline: "New homes, on land, from the low $200s." Phone (843) 849-HOME. Warranty line (843) 484-9844. Address 1801 N Oak St, Myrtle Beach SC 29577.
+- **hplacer.com** = Home Placer's marketing + lead-gen website. Tagline: "New homes, on land, from the low $200s." Phone (843) 849-HOME. Warranty line (843) 484-9844. Address 601 21st Ave N, Myrtle Beach SC 29577.
 - **Voice:** honest, plain-spoken, local, never hypey. Objection-led. Speaks to a nervous first-time buyer.
 
 ## 2. Stack + how to run & deploy
