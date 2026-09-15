@@ -92,18 +92,34 @@ export default function GalleryPage() {
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/gallery/visualizations/home-01-landscaping-visualization.png"
-              alt="A Home Placer home with an illustrative finished lawn and landscaping"
-              className="w-full rounded-card border border-stone-line object-cover shadow-sm"
-            />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/gallery/visualizations/home-04-landscaping-visualization.png"
-              alt="A Home Placer home with an illustrative finished lawn, planting beds, and driveway"
-              className="w-full rounded-card border border-stone-line object-cover shadow-sm"
-            />
+            <picture>
+              <source
+                type="image/webp"
+                srcSet="/gallery/visualizations/home-01-landscaping-visualization.webp"
+              />
+              <img
+                src="/gallery/visualizations/home-01-landscaping-visualization.png"
+                alt="A Home Placer home with an illustrative finished lawn and landscaping"
+                width={1448}
+                height={1086}
+                loading="lazy"
+                className="w-full rounded-card border border-stone-line object-cover shadow-sm"
+              />
+            </picture>
+            <picture>
+              <source
+                type="image/webp"
+                srcSet="/gallery/visualizations/home-04-landscaping-visualization.webp"
+              />
+              <img
+                src="/gallery/visualizations/home-04-landscaping-visualization.png"
+                alt="A Home Placer home with an illustrative finished lawn, planting beds, and driveway"
+                width={1448}
+                height={1086}
+                loading="lazy"
+                className="w-full rounded-card border border-stone-line object-cover shadow-sm"
+              />
+            </picture>
           </div>
         </div>
       </section>
