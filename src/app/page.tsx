@@ -20,7 +20,7 @@ import {
 export const metadata = pageMetadata({
   title: "Manufactured & Mobile Home Dealer in Horry County, SC — New Homes on Land",
   description:
-    "Home Placer is a licensed manufactured & mobile home + land dealer serving Horry & Georgetown County, SC and Brunswick & Columbus County, NC. New Clayton, Cavco & Champion homes on land — one package, from the low $200s, no HOA.",
+    "Home Placer is a licensed manufactured & mobile home + land dealer serving Horry & Georgetown County, SC and Brunswick & Columbus County, NC. New Clayton, Cavco & Champion homes on land — one package, from $184,999, no HOA.",
   alternates: { canonical: "/" },
 });
 
@@ -44,7 +44,7 @@ export default function HomePage() {
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-stone-100/80">
               Home Placer pairs new Clayton, Cavco, and Champion manufactured homes
               with land across Horry and Georgetown counties in SC and Brunswick and
-              Columbus counties in NC. Real land-home packages from the low $200s —
+              Columbus counties in NC. Current land-home packages from $184,999 —
               with one local team coordinating the details.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -94,8 +94,8 @@ export default function HomePage() {
               Home Placer project · Horry County
             </span>
             <div className="absolute bottom-4 left-4 rounded-2xl bg-brand-950/85 px-4 py-3 backdrop-blur-md ring-1 ring-white/10">
-              <span className="block text-xs font-medium text-stone-100/70">Packages from</span>
-              <span className="font-display text-2xl font-semibold text-white">the low $200s</span>
+              <span className="block text-xs font-medium text-stone-100/70">Current packages from</span>
+              <span className="font-display text-2xl font-semibold text-white">$184,999</span>
             </div>
             <div className="absolute -bottom-5 right-4 hidden rounded-2xl bg-white px-4 py-3 text-brand-950 shadow-xl sm:block">
               <span className="block text-xs font-semibold uppercase tracking-wider text-stone-muted">Built for the Carolinas</span>
@@ -168,7 +168,7 @@ export default function HomePage() {
             </p>
             <ul className="mt-7 space-y-3 text-sm text-stone-100/85">
               {[
-                "Packages from the low $200s — home + land, one price",
+                "Current packages from $184,999 — home + land, one price",
                 "No HOA, and financing help for FHA / VA / USDA buyers",
                 "A licensed SC & NC dealer — a real person, not a call center",
               ].map((t) => (

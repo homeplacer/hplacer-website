@@ -8,7 +8,7 @@ import { JsonLd, homesItemListLd } from "@/lib/jsonld";
 export const metadata: Metadata = pageMetadata({
   title: "Manufactured & Mobile Homes for Sale",
   description:
-    "Browse new Clayton, Cavco, and Champion manufactured homes — what many buyers still call mobile homes — available with land across Horry County, SC, from the low $200s.",
+    "Browse new Clayton, Cavco, and Champion manufactured homes — what many buyers still call mobile homes — available with land across Horry County, SC, with current packages from $184,999.",
   alternates: { canonical: "/homes" },
 });
 
