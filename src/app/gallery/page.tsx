@@ -13,7 +13,7 @@ export const metadata: Metadata = pageMetadata({
   alternates: { canonical: "/gallery" },
 });
 
-function Masonry({ items }: { items: { src: string; alt: string }[] }) {
+function Masonry({ items }: { items: { src: string; alt: string; width: number; height: number }[] }) {
   return (
     <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 [&>*]:mb-4">
       {items.map((img) => (
@@ -22,6 +22,8 @@ function Masonry({ items }: { items: { src: string; alt: string }[] }) {
           key={img.src}
           src={img.src}
           alt={img.alt}
+          width={img.width}
+          height={img.height}
           loading="lazy"
           className="w-full rounded-card border border-stone-line object-cover shadow-sm"
         />
