@@ -38,9 +38,6 @@ export function HomeCard({ home }: { home: Home }) {
   const sizeLabel = multiWidth
     ? footprintLabel(home)
     : `${home.sqft.toLocaleString()} sqft`;
-  const textMessage = encodeURIComponent(
-    `Hi Home Placer, I’m interested in the ${home.name}.`,
-  );
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-card border border-stone-line bg-stone-bg shadow-sm transition duration-300 hover:-translate-y-1 hover:border-brand-300 hover:shadow-xl hover:shadow-brand-900/10">
@@ -141,14 +138,18 @@ export function HomeCard({ home }: { home: Home }) {
         >
           <PhoneIcon className="size-4" /> Call
         </a>
-        <a
-          href={`sms:${site.phoneDial}?body=${textMessage}`}
-          aria-label={`Text Home Placer about ${home.name}`}
+        <HomeInquiryDialog
+          homeName={home.name}
+          label="Message"
+          showArrow={false}
           className="inline-flex items-center justify-center rounded-lg border border-brand-200 bg-white px-3 py-2.5 text-sm font-semibold text-brand-800 transition hover:border-brand-400 hover:bg-brand-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
+        />
+        <Link
+          href={`/homes/${home.slug}`}
+          className="inline-flex items-center justify-center rounded-lg bg-brand-700 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
         >
-          Text
-        </a>
-        <HomeInquiryDialog homeName={home.name} />
+          See home
+        </Link>
       </div>
     </article>
   );

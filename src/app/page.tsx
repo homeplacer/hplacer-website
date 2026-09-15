@@ -9,6 +9,7 @@ import { HomeCard } from "@/components/home-card";
 import { Testimonials } from "@/components/testimonials";
 import { ContactForm } from "@/components/contact-form";
 import { ForturroLandSearch } from "@/components/forturro-land-search";
+import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 import {
   ArrowIcon,
   CheckIcon,
@@ -54,12 +55,12 @@ export default function HomePage() {
               >
                 <PhoneIcon className="size-4" /> Call {site.phoneDisplay}
               </a>
-              <a
-                href={`sms:${site.phoneDial}?body=${encodeURIComponent("Hi Home Placer, I’m interested in a manufactured home and land package.")}`}
+              <HomeInquiryDialog
+                homeName="a Home Placer land-home package"
+                label="Message us"
+                showArrow={false}
                 className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-base font-semibold text-white ring-1 ring-white/20 transition hover:bg-white/15"
-              >
-                Text us
-              </a>
+              />
             </div>
             <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-stone-100/75">
               <a href={`mailto:${site.email}`} className="underline-offset-4 hover:text-white hover:underline">Email us</a>
@@ -105,24 +106,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ──────────────────── Value props ──────────────────── */}
-      <section className="border-b border-stone-line bg-stone-surface">
-        <h2 className="sr-only">Why buyers choose Home Placer</h2>
-        <div className="container-x grid gap-px py-3 sm:grid-cols-2 lg:grid-cols-4">
-          {site.valueProps.map((v) => (
-            <div key={v.title} className="p-5 lg:px-6 lg:py-7">
-              <div className="grid size-10 place-items-center rounded-xl bg-brand-100 text-brand-700">
-                <CheckIcon className="size-5" strokeWidth={2.5} />
-              </div>
-              <h3 className="mt-4 font-display text-lg font-semibold text-stone-ink">{v.title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-stone-muted">{v.body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* ──────────────────── Best sellers ──────────────────── */}
-      <section className="container-x py-24">
+      <section className="container-x py-14 sm:py-16">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">Start with a home you love</p>

@@ -10,10 +10,12 @@ export function HomeInquiryDialog({
   homeName,
   label = "Ask about this home",
   className,
+  showArrow = true,
 }: {
   homeName: string;
   label?: string;
   className?: string;
+  showArrow?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLAnchorElement>(null);
@@ -52,7 +54,7 @@ export function HomeInquiryDialog({
         }}
         className={className ?? "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-700 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"}
       >
-        {label} <ArrowIcon className="size-4" />
+        {label} {showArrow && <ArrowIcon className="size-4" />}
       </a>
       {open && (
         <div

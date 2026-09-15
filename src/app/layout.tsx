@@ -4,7 +4,6 @@ import { Geist, Fraunces } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { ContactBar } from "@/components/contact-bar";
 import { GoogleAnalytics } from "@/components/analytics";
 import { AnalyticsEvents } from "@/components/analytics-events";
 import { JsonLd, localBusinessLd } from "@/lib/jsonld";
@@ -72,9 +71,8 @@ export default function RootLayout({
         <AnalyticsEvents />
         <JsonLd data={localBusinessLd()} />
         <SiteHeader />
-        <main className="flex-1 pb-[calc(5.75rem+env(safe-area-inset-bottom))]">{children}</main>
+        <main className="flex-1">{children}</main>
         <SiteFooter />
-        <ContactBar />
       </body>
     </html>
   );
