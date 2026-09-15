@@ -20,7 +20,7 @@ const rows = [
   { label: "Foundation", mod: "Set on a permanent foundation (crawlspace, basement, or slab)", man: "Permanent foundation on your land, or a pier-and-beam set" },
   { label: "Financing", mod: "Conventional, FHA, VA, USDA — just like a stick-built home", man: "Sold with land, every one qualifies: conventional, FHA, VA & USDA" },
   { label: "Value over time", mod: "Appraised and appreciates like a site-built home", man: "Builds equity when tied to deeded land — strongest on a permanent foundation" },
-  { label: "Typical cost", man: "Most affordable — new homes from the low $200s, all-in with land", mod: "More than manufactured, well under most site-built" },
+  { label: "Typical cost", man: "Most affordable — current packages from $184,999, all-in with land", mod: "More than manufactured, well under most site-built" },
   { label: "Time to move in", mod: "Weeks (a bit longer for foundation + permits)", man: "Weeks — built indoors, no weather delays" },
   { label: "Customization", mod: "Floor plans + finishes, with more design freedom", man: "Choose floor plan, finishes, and decor packages" },
   { label: "When it's finished", mod: "Looks and lives like any other house on the street", man: "Looks and lives like any other house on the street" },

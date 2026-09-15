@@ -13,7 +13,7 @@ export const metadata: Metadata = pageMetadata({
 });
 
 const rows = [
-  { label: "Typical price", mfg: "From the low $200s, all-in with land", site: "Often $350k+ in the same area" },
+  { label: "Typical price", mfg: "Current packages from $184,999, all-in with land", site: "Often $350k+ in the same area" },
   { label: "Time to move in", mfg: "Weeks", site: "Many months to over a year" },
   { label: "Construction", mfg: "Built indoors to the federal HUD code — no weather delays or damage", site: "Built on-site, exposed to weather during construction" },
   { label: "Financing", mfg: "FHA, VA, conventional (as real property on land)", site: "FHA, VA, conventional" },

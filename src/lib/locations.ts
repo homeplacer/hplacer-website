@@ -86,7 +86,7 @@ export function getCounty(key: string): CountyInfo | undefined {
   return counties[key];
 }
 
-export const locations: LocationInfo[] = [
+const rawLocations: LocationInfo[] = [
   {
     slug: "myrtle-beach",
     name: "Myrtle Beach",
@@ -383,6 +383,25 @@ export const locations: LocationInfo[] = [
     highlights: ["USDA $0-down eligible", "One price, one closing", "Packages from the low $200s"],
   },
 ];
+
+// Keep older town copy aligned with the verified current package floor. These
+// pages are rendered from local content rather than a CMS, so normalize once at
+// the public-data boundary instead of letting an obsolete editorial estimate
+// survive on less frequently visited town pages.
+function normalizeCurrentPackagePrice(text: string): string {
+  return text
+    .replaceAll("from the low $200s", "from $184,999")
+    .replaceAll("in the low $200s", "at $184,999")
+    .replaceAll("low-to-mid $200s", "$184,999 and up")
+    .replaceAll("low $200s", "$184,999");
+}
+
+export const locations: LocationInfo[] = rawLocations.map((location) => ({
+  ...location,
+  intro: normalizeCurrentPackagePrice(location.intro),
+  paragraphs: location.paragraphs.map(normalizeCurrentPackagePrice),
+  highlights: location.highlights.map(normalizeCurrentPackagePrice),
+}));
 
 export const cityGeo: Record<string, { lat: number; lng: number }> = {
   "myrtle-beach": { lat: 33.6891, lng: -78.8867 },
