@@ -20,7 +20,13 @@ export function SiteHeader() {
       <div className="container-x flex h-16 items-center justify-between gap-2 sm:gap-4">
         <Link href="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setOpen(false)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={asset("/logo.png")} alt="Home Placer LLC" className="h-11 w-auto" />
+          <img
+            src={asset("/logo.png")}
+            alt="Home Placer LLC"
+            width={640}
+            height={565}
+            className="h-11 w-auto"
+          />
           <span className="hidden flex-col leading-none sm:flex">
             <span className="font-display text-lg font-semibold text-brand-800">Home Placer</span>
             <span className="text-[11px] font-medium uppercase tracking-wider text-stone-muted">

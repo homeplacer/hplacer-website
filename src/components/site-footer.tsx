@@ -26,7 +26,13 @@ export function SiteFooter() {
       <div className="container-x grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
         <div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={asset("/logo.png")} alt="Home Placer LLC" className="h-14 w-auto brightness-0 invert" />
+          <img
+            src={asset("/logo.png")}
+            alt="Home Placer LLC"
+            width={640}
+            height={565}
+            className="h-14 w-auto brightness-0 invert"
+          />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-stone-100/70">
             {site.blurb}
           </p>
