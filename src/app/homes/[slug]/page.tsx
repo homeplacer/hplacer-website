@@ -21,6 +21,7 @@ import {
 } from "@/lib/home-types";
 import { HomeCard } from "@/components/home-card";
 import { HomeGallery } from "@/components/home-gallery";
+import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 import { WantThisHouseForm } from "@/components/want-this-house-form";
 import { WidthSelector } from "@/components/width-selector";
 import { WidthProvider } from "@/components/width-context";
@@ -276,12 +277,11 @@ export default async function HomeDetailPage({
 
           <div className="mt-8 flex flex-wrap gap-3">
             {price != null ? (
-              <Link
-                href={`/contact?home=${encodeURIComponent(home.name)}`}
-                className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-800"
-              >
-                Request this home <ArrowIcon className="size-4" />
-              </Link>
+              <HomeInquiryDialog
+                homeName={home.name}
+                label="Request this home"
+                className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+              />
             ) : (
               <Link
                 href="#get-price"

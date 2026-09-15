@@ -6,7 +6,15 @@ import { ContactForm } from "@/components/contact-form";
 import { site } from "@/lib/site";
 import { track } from "@/lib/analytics";
 
-export function HomeInquiryDialog({ homeName }: { homeName: string }) {
+export function HomeInquiryDialog({
+  homeName,
+  label = "Ask about this home",
+  className,
+}: {
+  homeName: string;
+  label?: string;
+  className?: string;
+}) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLAnchorElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -42,9 +50,9 @@ export function HomeInquiryDialog({ homeName }: { homeName: string }) {
           track("pricing_inquiry", { placement: "main_content" });
           setOpen(true);
         }}
-        className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-700 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+        className={className ?? "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-700 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"}
       >
-        Ask about this home <ArrowIcon className="size-4" />
+        {label} <ArrowIcon className="size-4" />
       </a>
       {open && (
         <div
