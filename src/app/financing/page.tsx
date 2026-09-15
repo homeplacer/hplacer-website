@@ -47,6 +47,18 @@ export default function FinancingPage() {
 
       <div className="container-x pt-8"><Link href="/buyer-resources#financing" className="font-semibold text-brand-700 underline">Official program information and questions for your lender</Link></div>
       <section className="container-x py-16">
+        <div className="mx-auto mb-8 max-w-4xl rounded-card border border-brand-200 bg-brand-50/60 p-6">
+          <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">Current buyer offer</p>
+          <h2 className="mt-1 font-display text-2xl font-semibold text-stone-ink">
+            $5,000 toward closing costs or a 2.65% promotional rate
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-stone-muted">
+            Available on qualifying Home Placer land-home packages through January 27, 2027.
+            Offers are subject to home and land availability, lender approval, credit and program
+            eligibility, and final loan terms. Offers may not be combined and may change or end
+            without notice. Contact Home Placer for the current details on a specific home.
+          </p>
+        </div>
         <div className="mx-auto mb-10 max-w-3xl rounded-card border border-brand-200 bg-brand-50/60 p-6 text-center">
           <p className="leading-relaxed text-stone-ink/90">
             <strong className="font-semibold text-stone-ink">
