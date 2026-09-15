@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckIcon, ArrowIcon } from "@/components/icons";
+import { CheckIcon, ArrowIcon, PhoneIcon } from "@/components/icons";
 import { submitLead } from "@/lib/lead";
 import { site } from "@/lib/site";
 import { Honeypot } from "@/components/honeypot";
@@ -68,6 +68,26 @@ export function ContactForm({
             ? "We've opened a pre-filled email in your mail app — just hit send and we'll be in touch. Didn't open? Call or text (843) 849-HOME."
             : "A Home Placer team member will reach out shortly. Need us sooner? Just call."}
         </p>
+        <div className="mt-5 flex flex-wrap justify-center gap-2 text-sm font-semibold">
+          <a
+            href={`tel:${site.phoneDial}`}
+            className="inline-flex items-center gap-1.5 rounded-full bg-brand-700 px-4 py-2 text-white transition hover:bg-brand-800"
+          >
+            <PhoneIcon className="size-4" /> Call now
+          </a>
+          <a
+            href={`sms:${site.phoneDial}`}
+            className="rounded-full border border-brand-300 px-4 py-2 text-brand-800 transition hover:bg-white"
+          >
+            Text us
+          </a>
+          <a
+            href={`mailto:${site.email}`}
+            className="rounded-full border border-brand-300 px-4 py-2 text-brand-800 transition hover:bg-white"
+          >
+            Email us
+          </a>
+        </div>
       </div>
     );
   }

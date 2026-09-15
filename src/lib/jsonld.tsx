@@ -33,6 +33,16 @@ export function localBusinessLd() {
     url: site.url,
     telephone: site.phoneDial,
     email: site.email,
+    // Keep the primary inquiry route explicit for search engines and assistants.
+    // These are the same public sales contacts rendered in the site header,
+    // footer, contact page, and conversion forms.
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "sales",
+      telephone: site.phoneDial,
+      email: site.email,
+      url: `${site.url}/contact`,
+    },
     address: {
       "@type": "PostalAddress",
       streetAddress: site.address.street,

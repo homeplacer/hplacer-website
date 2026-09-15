@@ -120,13 +120,20 @@ export function HomeCard({ home }: { home: Home }) {
           </span>
         </div>
       </Link>
-      <div className="grid grid-cols-2 gap-2 border-t border-stone-line bg-stone-surface/70 p-3">
+      <div className="grid grid-cols-3 gap-2 border-t border-stone-line bg-stone-surface/70 p-3">
         <a
           href={`tel:${site.phoneDial}`}
           aria-label={`Call Home Placer about ${home.name}`}
           className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-brand-200 bg-white px-3 py-2.5 text-sm font-semibold text-brand-800 transition hover:border-brand-400 hover:bg-brand-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
         >
           <PhoneIcon className="size-4" /> Call
+        </a>
+        <a
+          href={`sms:${site.phoneDial}`}
+          aria-label={`Text Home Placer about ${home.name}`}
+          className="inline-flex items-center justify-center rounded-lg border border-brand-200 bg-white px-3 py-2.5 text-sm font-semibold text-brand-800 transition hover:border-brand-400 hover:bg-brand-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
+        >
+          Text
         </a>
         <HomeInquiryDialog homeName={home.name} />
       </div>
