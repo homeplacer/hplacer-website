@@ -18,11 +18,11 @@ export function GET() {
 
 > ${site.blurb}
 
-- Website: ${site.url}
+- Website: [Home Placer](${site.url})
 - Phone: ${site.phoneDisplay}
 - Email: ${site.email}
 - Location: ${site.address.street}, ${site.address.city}, ${site.address.state} ${site.address.zip}
-- Google Business Profile: ${site.gbp.rating.toFixed(1)}★ (${site.gbp.reviewCount} reviews) — ${site.gbp.url}
+- Google Business Profile: ${site.gbp.rating.toFixed(1)}★ (${site.gbp.reviewCount} reviews) — [View on Google Maps](${site.gbp.url})
 - Counties served: Horry County, SC; Georgetown County, SC; Brunswick County, NC; Columbus County, NC
 - Towns served: ${locations.map((l) => `${l.name}, ${counties[l.countyKey]?.stateAbbr ?? "SC"}`).join("; ")}
 - Pricing: land-home packages from the low $200s. No HOA. Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company.
@@ -48,7 +48,7 @@ ${bestSellerHomes()
   .slice(0, 8)
   .map(
     (h) =>
-      `- **${h.name}** (${h.brand}) — ${h.beds} bed / ${h.baths} bath, ${h.sqft.toLocaleString()} sq ft (${h.widthFt}×${h.lengthFt}): ${site.url}/homes/${h.slug}`,
+      `- [**${h.name}** (${h.brand})](${site.url}/homes/${h.slug}) — ${h.beds} bed / ${h.baths} bath, ${h.sqft.toLocaleString()} sq ft (${h.widthFt}×${h.lengthFt})`,
   )
   .join("\n")}
 
@@ -56,29 +56,29 @@ ${bestSellerHomes()
 ${Object.entries(byBrand)
   .map(([b, n]) => `- ${b}: ${n} models`)
   .join("\n")}
-Browse: ${site.url}/homes
+Browse: [all current home models](${site.url}/homes)
 
 ## Key pages
-- /packages — Status-labeled package records; sold examples are historical, not current offers.
-- /guides — Source-linked land-readiness planning checklists.
-- /stories — Existing project experience by town.
-- Official county and buyer resources: ${site.url}/buyer-resources
-- Land-search handoff: ${site.url}/find-land
-- Warranty: ${site.url}/warranty
-- Homes: ${site.url}/homes
-- Brands: ${site.url}/brands
-- Land packages: ${site.url}/land-packages
-- Financing: ${site.url}/financing
-- How it works: ${site.url}/process
-- FAQ: ${site.url}/faq
-- Locations: ${site.url}/locations
-- Blog: ${site.url}/blog
-- Contact: ${site.url}/contact
+- [Package records](${site.url}/packages) — Status-labeled package records; sold examples are historical, not current offers.
+- [Land-readiness planning checklists](${site.url}/guides)
+- [Project experience by town](${site.url}/stories)
+- [Official county and buyer resources](${site.url}/buyer-resources)
+- [Land-search handoff](${site.url}/find-land)
+- [Warranty](${site.url}/warranty)
+- [Homes](${site.url}/homes)
+- [Brands](${site.url}/brands)
+- [Land packages](${site.url}/land-packages)
+- [Financing](${site.url}/financing)
+- [How it works](${site.url}/process)
+- [FAQ](${site.url}/faq)
+- [Locations](${site.url}/locations)
+- [Blog](${site.url}/blog)
+- [Contact](${site.url}/contact)
 
 ## Recent articles
 ${getAllPosts()
   .slice(0, 6)
-  .map((p) => `- ${p.title}: ${site.url}/blog/${p.slug}`)
+  .map((p) => `- [${p.title}](${site.url}/blog/${p.slug})`)
   .join("\n")}
 `;
 
