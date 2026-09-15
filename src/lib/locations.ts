@@ -390,10 +390,10 @@ const rawLocations: LocationInfo[] = [
 // survive on less frequently visited town pages.
 function normalizeCurrentPackagePrice(text: string): string {
   return text
-    .replaceAll("from the low $200s", "from $184,999")
-    .replaceAll("in the low $200s", "at $184,999")
-    .replaceAll("low-to-mid $200s", "$184,999 and up")
-    .replaceAll("low $200s", "$184,999");
+    .replaceAll("from the low $200s", "from $179,999")
+    .replaceAll("in the low $200s", "at $179,999")
+    .replaceAll("low-to-mid $200s", "$179,999 and up")
+    .replaceAll("low $200s", "$179,999");
 }
 
 export const locations: LocationInfo[] = rawLocations.map((location) => ({

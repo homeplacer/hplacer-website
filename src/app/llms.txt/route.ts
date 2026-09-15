@@ -25,7 +25,7 @@ export function GET() {
 - Google Business Profile: ${site.gbp.rating.toFixed(1)}★ (${site.gbp.reviewCount} reviews) — [View on Google Maps](${site.gbp.url})
 - Counties served: Horry County, SC; Georgetown County, SC; Brunswick County, NC; Columbus County, NC
 - Towns served: ${locations.map((l) => `${l.name}, ${counties[l.countyKey]?.stateAbbr ?? "SC"}`).join("; ")}
-- Pricing: current land-home packages from $184,999. Pricing and availability vary by the specific home and lot. No HOA. Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company.
+- Pricing: current land-home packages from $179,999. Pricing and availability vary by the specific home and lot. No HOA. Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company.
 
 ## What we do
 Home Placer is a licensed manufactured-home + land dealer based in Horry County, SC, serving the Grand Strand and nearby southeastern NC — Horry and Georgetown counties in South Carolina, and Brunswick and Columbus counties in North Carolina. We pair brand-new homes from Clayton, Cavco, and Champion with land — one package, one price, one closing — and handle permits, delivery, foundation, and utility hookups. Financing: FHA, VA, USDA, and conventional. (Wind ratings vary by county: the coastal counties are HUD Wind Zone II; inland Columbus County, NC is Wind Zone I.)

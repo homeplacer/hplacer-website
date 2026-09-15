@@ -18,7 +18,7 @@ export const faqs: Faq[] = [
   },
   {
     q: "How much does a new manufactured home on land cost?",
-    a: "Current land-home packages start at $184,999 and vary by model, size, and lot. Because every site is different, we give you an exact all-in number for the home and land together — just ask.",
+    a: "Current land-home packages start at $179,999 and vary by model, size, and lot. Because every site is different, we give you an exact all-in number for the home and land together — just ask.",
   },
   {
     q: "Is there an HOA?",

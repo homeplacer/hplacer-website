@@ -10,6 +10,8 @@ import { Testimonials } from "@/components/testimonials";
 import { ContactForm } from "@/components/contact-form";
 import { ForturroLandSearch } from "@/components/forturro-land-search";
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
+import { LivePackageListings } from "@/components/live-package-listings";
+import { getLivePackageListings } from "@/lib/forturro-package-feed";
 import {
   ArrowIcon,
   CheckIcon,
@@ -21,13 +23,14 @@ import {
 export const metadata = pageMetadata({
   title: "Manufactured Homes on Land in Horry County, SC",
   description:
-    "New Clayton, Cavco, and Champion manufactured homes with land in Horry County and the Grand Strand. Current land-home packages from $184,999.",
+    "New Clayton, Cavco, and Champion manufactured homes with land in Horry County and the Grand Strand. Current land-home packages from $179,999.",
   alternates: { canonical: "/" },
 });
 
-export default function HomePage() {
+export default async function HomePage() {
   const homes = bestSellerHomes().slice(0, 6);
   const work = [...galleryByCategory("homes").slice(0, 4), ...galleryByCategory("development").slice(0, 2)];
+  const livePackages = await getLivePackageListings();
 
   return (
     <>
@@ -45,7 +48,7 @@ export default function HomePage() {
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-stone-100/80">
               Home Placer pairs new Clayton, Cavco, and Champion manufactured homes
               with land across Horry and Georgetown counties in SC and Brunswick and
-              Columbus counties in NC. Current land-home packages from $184,999 —
+              Columbus counties in NC. Current land-home packages from $179,999 —
               with one local team coordinating the details.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -96,7 +99,7 @@ export default function HomePage() {
             </span>
             <div className="absolute bottom-4 left-4 rounded-2xl bg-brand-950/85 px-4 py-3 backdrop-blur-md ring-1 ring-white/10">
               <span className="block text-xs font-medium text-stone-100/70">Current packages from</span>
-              <span className="font-display text-2xl font-semibold text-white">$184,999</span>
+              <span className="font-display text-2xl font-semibold text-white">$179,999</span>
             </div>
             <div className="absolute -bottom-5 right-4 hidden rounded-2xl bg-white px-4 py-3 text-brand-950 shadow-xl sm:block">
               <span className="block text-xs font-semibold uppercase tracking-wider text-stone-muted">Built for the Carolinas</span>
@@ -104,6 +107,24 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="container-x py-14 sm:py-16">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">Available now</p>
+            <h2 className="mt-2 font-display text-3xl font-semibold text-stone-ink sm:text-4xl">
+              Current land-home packages
+            </h2>
+          </div>
+          <Link href="/land-packages" className="inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-900">
+            See all current packages <ArrowIcon className="size-4" />
+          </Link>
+        </div>
+        <p className="mt-3 max-w-2xl text-stone-muted">
+          Live MLS availability and pricing from Forturro. Message Home Placer for the complete home-and-land scope.
+        </p>
+        <div className="mt-8"><LivePackageListings listings={livePackages} limit={3} /></div>
       </section>
 
       {/* ──────────────────── Best sellers ──────────────────── */}
@@ -153,7 +174,7 @@ export default function HomePage() {
             </p>
             <ul className="mt-7 space-y-3 text-sm text-stone-100/85">
               {[
-                "Current packages from $184,999 — home + land, one price",
+                "Current packages from $179,999 — home + land, one price",
                 "No HOA, and financing help for FHA / VA / USDA buyers",
                 "A licensed SC & NC dealer — a real person, not a call center",
               ].map((t) => (

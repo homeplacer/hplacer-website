@@ -2,7 +2,7 @@
   "id": 548433,
   "name": "Home Placer Horry County",
   "status": "active",
-  "price_range": {"min": 184999, "max": 299999},
+  "price_range": {"min": 179999, "max": 299999},
   "address": {
     "street": "601 21st Ave N",
     "city": "Myrtle Beach",
@@ -21,7 +21,7 @@
   },
   "marketing_status": "Active",
   "hoa_monthly_fee": 0,
-  "description": "New manufactured homes with land packages across Horry County, South Carolina. Home Placer helps buyers choose a home, match it with available land, and coordinate the path from planning through move-in. Current land-home packages from $184,999. Scattered homesites vary by availability; contact us for current options.",
+  "description": "New manufactured homes with land packages across Horry County, South Carolina. Home Placer helps buyers choose a home, match it with available land, and coordinate the path from planning through move-in. Current land-home packages from $179,999. Scattered homesites vary by availability; contact us for current options.",
   "website_url": "https://hplacer.com",
   "sales_office_hours": "Monday-Friday, 9:00 AM-6:00 PM",
   "image_ids": [

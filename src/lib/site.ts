@@ -7,7 +7,7 @@ export const site = {
   legalName: identity.legalName,
   domain: "hplacer.com",
   url: identity.url,
-  tagline: "New homes, on land, from $184,999.",
+  tagline: "New homes, on land, from $179,999.",
   blurb:
     "Horry County's licensed land + home dealer. We pair brand-new Clayton, Cavco, and Champion manufactured homes with land across the Grand Strand — one package, one team, no HOA.",
 
@@ -70,7 +70,7 @@ export const site = {
 
   // Current all-in land-home package floor: 105 Pepe Court, Conway, SC.
   // Listing availability and the final scope remain subject to confirmation.
-  priceFrom: 184999,
+  priceFrom: 179999,
 
   valueProps: [
     {

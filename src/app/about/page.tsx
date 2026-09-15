@@ -34,7 +34,7 @@ export default function AboutPage() {
             your own. We put it into one package, one price, and one team you can call.
           </p>
           <p>
-            And we keep it honest. Current packages from $184,999, no HOA, a one-year builder
+            And we keep it honest. Current packages from $179,999, no HOA, a one-year builder
             warranty for defects, and a 30-day walk-through after you move in. The separate
             2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years
             of structural coverage through the 2–10 company. If a deal isn&apos;t right
@@ -43,7 +43,7 @@ export default function AboutPage() {
 
           <div className="grid gap-4 pt-4 sm:grid-cols-2">
             {[
-              { stat: "$184,999", label: "Current package floor" },
+              { stat: "$179,999", label: "Current package floor" },
               { stat: "4 counties", label: "Horry · Georgetown · Brunswick · Columbus" },
               { stat: "3 brands", label: "Clayton · Cavco · Champion" },
               { stat: "$0 HOA", label: "You own your land" },
