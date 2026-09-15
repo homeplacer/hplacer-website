@@ -55,6 +55,7 @@ export function SiteFooter() {
             >
               <PinIcon className="size-4" /> {site.address.street}, {site.address.city}, {site.address.state} {site.address.zip}
             </a>
+            <p className="text-stone-100/60">Office hours: {site.hours}</p>
             <a
               href={site.gbp.url}
               target="_blank"
