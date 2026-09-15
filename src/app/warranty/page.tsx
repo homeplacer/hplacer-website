@@ -6,9 +6,9 @@ import { site } from "@/lib/site";
 import { CheckIcon, PhoneIcon, ArrowIcon } from "@/components/icons";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Warranty",
+  title: "New Home Warranty Coverage",
   description:
-    "Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company.",
+    "Home Placer provides a one-year builder warranty for defects, plus separate 2–10 mechanical and structural coverage.",
   alternates: { canonical: "/warranty" },
 });
 

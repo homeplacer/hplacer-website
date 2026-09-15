@@ -8,9 +8,9 @@ import { PinIcon, ArrowIcon } from "@/components/icons";
 const stateName = (abbr: string) => (abbr === "NC" ? "North Carolina" : "South Carolina");
 
 export const metadata: Metadata = pageMetadata({
-  title: "Manufactured Homes on Land — Horry, Georgetown, Brunswick & Columbus Counties",
+  title: "Manufactured Homes on Land in SC & NC",
   description:
-    "Home Placer places new manufactured homes on land across four counties: Horry & Georgetown in SC and Brunswick & Columbus in NC — 27 towns from Myrtle Beach and Conway to Leland, Shallotte, and Whiteville.",
+    "New manufactured homes on land across Horry and Georgetown, SC, plus Brunswick and Columbus, NC. Explore the towns Home Placer serves.",
   alternates: { canonical: "/locations" },
 });
 

@@ -6,7 +6,7 @@ import { site } from "@/lib/site";
 import { CheckIcon, ArrowIcon, PhoneIcon } from "@/components/icons";
 
 export const metadata: Metadata = pageMetadata({
-  title: "About",
+  title: "About Our Horry County Home Team",
   description:
     "Home Placer is a licensed manufactured-home dealer in Horry County, SC, pairing new homes with land at honest prices.",
   alternates: { canonical: "/about" },

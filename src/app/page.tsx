@@ -18,9 +18,9 @@ import {
 } from "@/components/icons";
 
 export const metadata = pageMetadata({
-  title: "Manufactured & Mobile Home Dealer in Horry County, SC — New Homes on Land",
+  title: "Manufactured Homes on Land in Horry County, SC",
   description:
-    "Home Placer is a licensed manufactured & mobile home + land dealer serving Horry & Georgetown County, SC and Brunswick & Columbus County, NC. New Clayton, Cavco & Champion homes on land — one package, from $184,999, no HOA.",
+    "New Clayton, Cavco, and Champion manufactured homes with land in Horry County and the Grand Strand. Current land-home packages from $184,999.",
   alternates: { canonical: "/" },
 });
 
