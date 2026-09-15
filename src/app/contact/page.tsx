@@ -12,6 +12,10 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default function ContactPage() {
+  const textMessage = encodeURIComponent(
+    "Hi Home Placer, I’m interested in a manufactured home and land package.",
+  );
+
   return (
     <section className="container-x grid gap-12 py-16 lg:grid-cols-[1fr_1.1fr]">
       <div>
@@ -43,7 +47,7 @@ export default function ContactPage() {
                 Call now
               </a>
               <a
-                href={`sms:${site.phoneDial}`}
+                href={`sms:${site.phoneDial}?body=${textMessage}`}
                 className="inline-flex min-h-11 items-center justify-center rounded-lg border border-brand-200 px-3 text-sm font-semibold text-brand-800 transition hover:bg-brand-50"
               >
                 Text us
