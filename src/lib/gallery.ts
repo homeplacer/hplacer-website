@@ -3,6 +3,7 @@ import manifest from "../../data/gallery-manifest.json";
 
 export interface GalleryItem {
   src: string;
+  webpSrc: string;
   category: "homes" | "development";
   alt: string;
   width: number;
@@ -43,6 +44,7 @@ export function getGallery(): GalleryItem[] {
     const [width, height] = galleryDimensions[f] ?? [1600, 1200];
     return {
       src: asset(`/gallery/${f}`),
+      webpSrc: asset(`/gallery/${f.replace(/\.jpe?g$/i, ".webp")}`),
       category: isHome ? "homes" : "development",
       width,
       height,
