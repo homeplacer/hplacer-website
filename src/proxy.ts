@@ -45,7 +45,7 @@ function withSecurityHeaders(res: NextResponse, isLocal: boolean): NextResponse 
 // through untouched, so a redirected request — which arrives as https — is never
 // redirected again. Cloudflare exposes the visitor scheme via the CF-Visitor
 // header ({"scheme":"https"}) and X-Forwarded-Proto.
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   // Never force HTTPS for local development — `next dev` has no TLS, so a
   // redirect to https://localhost just dead-ends. Host-based (not NODE_ENV) so
   // production Always-HTTPS on hplacer.com is unaffected.
