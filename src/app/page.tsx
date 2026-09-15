@@ -107,6 +107,7 @@ export default function HomePage() {
 
       {/* ──────────────────── Value props ──────────────────── */}
       <section className="border-b border-stone-line bg-stone-surface">
+        <h2 className="sr-only">Why buyers choose Home Placer</h2>
         <div className="container-x grid gap-px py-3 sm:grid-cols-2 lg:grid-cols-4">
           {site.valueProps.map((v) => (
             <div key={v.title} className="p-5 lg:px-6 lg:py-7">

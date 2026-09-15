@@ -67,9 +67,9 @@ export function SiteFooter() {
           </div>
 
           <div className="mt-6">
-            <h4 className="font-display text-xs font-semibold uppercase tracking-wider text-accent-300">
+            <h2 className="font-display text-xs font-semibold uppercase tracking-wider text-accent-300">
               Follow Home Placer
-            </h4>
+            </h2>
             <div className="mt-3 flex items-center gap-3">
               {socialLinks
                 .filter((s) => s.live)
@@ -94,9 +94,9 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <h4 className="font-display text-sm font-semibold uppercase tracking-wider text-accent-300">
+          <h2 className="font-display text-sm font-semibold uppercase tracking-wider text-accent-300">
             Explore
-          </h4>
+          </h2>
           <ul className="mt-4 space-y-2.5 text-sm">
             {FOOTER_EXPLORE.map((l) => (
               <li key={l.href}>
@@ -114,9 +114,9 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <h4 className="font-display text-sm font-semibold uppercase tracking-wider text-accent-300">
+          <h2 className="font-display text-sm font-semibold uppercase tracking-wider text-accent-300">
             Resources
-          </h4>
+          </h2>
           <ul className="mt-4 space-y-2.5 text-sm">
             {FOOTER_RESOURCES.map((l) => (
               <li key={l.href}>
@@ -139,9 +139,9 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <h4 className="font-display text-sm font-semibold uppercase tracking-wider text-accent-300">
+          <h2 className="font-display text-sm font-semibold uppercase tracking-wider text-accent-300">
             Where we build
-          </h4>
+          </h2>
           <ul className="mt-4 space-y-2.5 text-sm">
             {site.locations.map((l) => (
               <li key={l.slug}>

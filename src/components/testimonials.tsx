@@ -4,7 +4,7 @@ import { ArrowIcon } from "@/components/icons";
 
 function Stars({ n }: { n: number }) {
   return (
-    <div className="flex gap-0.5 text-amber-500" aria-label={`${n} out of 5 stars`}>
+    <div className="flex gap-0.5 text-amber-500" role="img" aria-label={`${n} out of 5 stars`}>
       {Array.from({ length: 5 }).map((_, i) => (
         <span key={i} aria-hidden className="text-lg leading-none">
           {i < n ? "★" : "☆"}
