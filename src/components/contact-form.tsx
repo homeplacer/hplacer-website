@@ -21,6 +21,14 @@ export function ContactForm({
   );
   const [via, setVia] = useState<"api" | "mailto">("api");
   const [home, setHome] = useState(defaultHome);
+  const textMessage = encodeURIComponent(
+    home
+      ? `Hi Home Placer, I’m interested in the ${home}.`
+      : "Hi Home Placer, I’m interested in a manufactured home and land package.",
+  );
+  const emailSubject = encodeURIComponent(
+    home ? `Question about ${home}` : "Home Placer inquiry",
+  );
 
   // Prefill from ?home= client-side (keeps the page statically exportable).
   // URL params aren't available during SSR, so this must be an effect; setting
@@ -76,13 +84,13 @@ export function ContactForm({
             <PhoneIcon className="size-4" /> Call now
           </a>
           <a
-            href={`sms:${site.phoneDial}`}
+            href={`sms:${site.phoneDial}?body=${textMessage}`}
             className="rounded-full border border-brand-300 px-4 py-2 text-brand-800 transition hover:bg-white"
           >
             Text us
           </a>
           <a
-            href={`mailto:${site.email}`}
+            href={`mailto:${site.email}?subject=${emailSubject}`}
             className="rounded-full border border-brand-300 px-4 py-2 text-brand-800 transition hover:bg-white"
           >
             Email us
