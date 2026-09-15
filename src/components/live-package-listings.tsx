@@ -55,16 +55,10 @@ export function LivePackageListings({
             <div className="mt-6 grid grid-cols-2 gap-3">
               <HomeInquiryDialog
                 homeName={`${listing.address}, ${listing.city}`}
-                label="Message"
+                label="Ask about this home"
                 showArrow={false}
-                className="inline-flex items-center justify-center rounded-lg border border-brand-200 bg-white px-3 py-2.5 text-sm font-semibold text-brand-800 transition hover:border-brand-400 hover:bg-brand-50"
+                className="col-span-2 inline-flex items-center justify-center rounded-lg bg-brand-700 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800"
               />
-              <a
-                href={listing.listingUrl}
-                className="inline-flex items-center justify-center rounded-lg bg-brand-700 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800"
-              >
-                See home
-              </a>
             </div>
           </div>
         </article>

@@ -17,7 +17,6 @@ type ForturroSearchItem = {
 };
 
 export type LivePackageListing = ForturroSearchItem & {
-  listingUrl: string;
   photoUrl?: string;
 };
 
@@ -45,10 +44,7 @@ async function fetchRegisteredListing(expected: RegistryItem) {
     const body = (await response.json()) as { items?: ForturroSearchItem[] };
     const match = body.items?.find((item) => isExactMatch(item, expected));
     if (!match) return null;
-    const result: LivePackageListing = {
-      ...match,
-      listingUrl: `https://forturro.com/listings/${match.listingKey}`,
-    };
+    const result: LivePackageListing = { ...match };
     if (match.photo) result.photoUrl = `https://forturro.com${match.photo}`;
     return result;
   } catch {
