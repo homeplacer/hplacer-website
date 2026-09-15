@@ -50,7 +50,7 @@ export default function FinancingPage() {
         <div className="mx-auto mb-8 max-w-4xl rounded-card border border-brand-200 bg-brand-50/60 p-6">
           <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">Current buyer offer</p>
           <h2 className="mt-1 font-display text-2xl font-semibold text-stone-ink">
-            $5,000 toward closing costs or a 2.65% promotional rate
+            $5,000 toward closing costs or a 6.5% promotional rate
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-stone-muted">
             Available on qualifying Home Placer land-home packages through January 27, 2027.
