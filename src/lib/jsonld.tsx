@@ -1,4 +1,5 @@
 import { site, liveSocialUrls } from "@/lib/site";
+import type { Home } from "@/lib/home-types";
 import {
   locations as allLocations,
   counties as allCounties,
@@ -277,6 +278,35 @@ export function homesItemListLd(
       url: `${site.url}/homes/${h.slug}`,
       name: `${h.name} by ${h.brand}`,
     })),
+  };
+}
+
+// Individual model pages are product-reference pages, not listings for a
+// specific on-the-ground home. Keep the schema equally precise: publish the
+// verified model, maker, images and dimensions, but never claim a price or
+// availability when the page itself says to call for a current quote.
+export function homeProductLd(home: Home) {
+  const url = `${site.url}/homes/${home.slug}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": `${url}#product`,
+    name: home.name,
+    description: home.excerpt || home.description,
+    url,
+    ...(home.imageUrls.length ? { image: home.imageUrls.map(abs) } : {}),
+    brand: { "@type": "Brand", name: home.brand },
+    ...(home.modelCode ? { model: home.modelCode, sku: home.modelCode } : {}),
+    category: "Manufactured home floor plan",
+    additionalProperty: [
+      { "@type": "PropertyValue", name: "Bedrooms", value: home.beds },
+      { "@type": "PropertyValue", name: "Bathrooms", value: home.baths },
+      { "@type": "PropertyValue", name: "Square feet", value: home.sqft, unitCode: "FTK" },
+      { "@type": "PropertyValue", name: "Width", value: home.widthFt, unitCode: "FOT" },
+      { "@type": "PropertyValue", name: "Length", value: home.lengthFt, unitCode: "FOT" },
+      { "@type": "PropertyValue", name: "Series", value: home.series },
+    ],
+    isRelatedTo: { "@id": `${site.url}/#business` },
   };
 }
 
