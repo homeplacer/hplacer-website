@@ -23,6 +23,7 @@ export const site = {
   address: identity.address,
   geo: identity.geo,
   hours: identity.hoursLabel,
+  openingHours: identity.verifiedOpeningHours,
 
   // Google Analytics 4 Measurement ID (GA4 property under carolina@hplacer.com).
   gaId: "G-0T71PWYQSQ",

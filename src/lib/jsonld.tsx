@@ -56,6 +56,16 @@ export function localBusinessLd() {
       latitude: site.geo.lat,
       longitude: site.geo.lng,
     },
+    ...(site.openingHours.length
+      ? {
+          openingHoursSpecification: site.openingHours.map((hours) => ({
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: hours.dayOfWeek,
+            opens: hours.opens,
+            closes: hours.closes,
+          })),
+        }
+      : {}),
     hasMap: site.gbp.url,
     sameAs: [...site.sameAs, ...liveSocialUrls],
     knowsAbout: [

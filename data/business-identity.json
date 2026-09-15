@@ -15,14 +15,20 @@
     "lat": 33.703082,
     "lng": -78.873097
   },
-  "hoursLabel": "By appointment",
-  "verifiedOpeningHours": [],
+  "hoursLabel": "Monday–Friday, 9:00 AM–4:00 PM",
+  "verifiedOpeningHours": [
+    { "dayOfWeek": "Monday", "opens": "09:00", "closes": "16:00" },
+    { "dayOfWeek": "Tuesday", "opens": "09:00", "closes": "16:00" },
+    { "dayOfWeek": "Wednesday", "opens": "09:00", "closes": "16:00" },
+    { "dayOfWeek": "Thursday", "opens": "09:00", "closes": "16:00" },
+    { "dayOfWeek": "Friday", "opens": "09:00", "closes": "16:00" }
+  ],
   "buyerFacingAddressVerified": true,
   "licenseRecords": [],
   "profiles": {
     "google": "https://maps.google.com/?cid=3461988553332431879",
     "instagram": "https://www.instagram.com/homeplacer"
   },
-  "sourceBasis": "Office address confirmed by Home Placer on 2026-09-13; coordinates resolved from the office address.",
-  "reviewedAt": "2026-09-13"
+  "sourceBasis": "Office address confirmed by Home Placer on 2026-09-13; coordinates resolved from the office address. Opening hours confirmed from the verified Home Placer Google Business Profile on 2026-09-14.",
+  "reviewedAt": "2026-09-14"
 }
