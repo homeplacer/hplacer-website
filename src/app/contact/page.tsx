@@ -25,18 +25,31 @@ export default function ContactPage() {
         </p>
 
         <div className="mt-8 space-y-4">
-          <a
-            href={`tel:${site.phoneDial}`}
-            className="flex items-center gap-4 rounded-card border border-stone-line bg-stone-surface p-5 transition hover:border-brand-300"
-          >
+          <div className="rounded-card border border-stone-line bg-stone-surface p-5">
+            <div className="flex items-center gap-4">
             <span className="grid size-11 place-items-center rounded-lg bg-brand-700 text-white">
               <PhoneIcon className="size-5" />
             </span>
             <span>
-              <span className="block text-xs font-semibold uppercase tracking-wider text-stone-muted">Call or text</span>
+              <span className="block text-xs font-semibold uppercase tracking-wider text-stone-muted">Talk with our sales team</span>
               <span className="block font-display text-lg font-semibold text-stone-ink">{site.phoneDisplay}</span>
             </span>
-          </a>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <a
+                href={`tel:${site.phoneDial}`}
+                className="inline-flex min-h-11 items-center justify-center rounded-lg bg-brand-700 px-3 text-sm font-semibold text-white transition hover:bg-brand-800"
+              >
+                Call now
+              </a>
+              <a
+                href={`sms:${site.phoneDial}`}
+                className="inline-flex min-h-11 items-center justify-center rounded-lg border border-brand-200 px-3 text-sm font-semibold text-brand-800 transition hover:bg-brand-50"
+              >
+                Text us
+              </a>
+            </div>
+          </div>
 
           <div className="flex items-center gap-4 rounded-card border border-stone-line bg-stone-surface p-5">
             <span className="grid size-11 place-items-center rounded-lg bg-brand-700 text-white">
@@ -47,6 +60,7 @@ export default function ContactPage() {
               <span className="block font-medium text-stone-ink">
                 {site.address.street}, {site.address.city}, {site.address.state} {site.address.zip}
               </span>
+              <span className="mt-1 block text-sm text-stone-muted">Office hours: {site.hours}</span>
             </span>
           </div>
 
