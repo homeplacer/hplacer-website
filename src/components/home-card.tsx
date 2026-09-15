@@ -21,6 +21,15 @@ import { FallbackImage } from "@/components/fallback-image";
 import { site } from "@/lib/site";
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 
+// Locally hosted catalog covers get a compact WebP srcset. The originals remain
+// the fallback and source of record; these derivatives only avoid downloading a
+// 1,200px JPEG into a roughly 350–450px card on a phone.
+function cardImageSrcSet(src: string | undefined): string | undefined {
+  if (!src || !/^\/models\/[^/]+\/01\.jpg$/.test(src)) return undefined;
+  const stem = src.slice(0, -4);
+  return `${stem}-480.webp 480w, ${stem}-640.webp 640w`;
+}
+
 export function HomeCard({ home }: { home: Home }) {
   const price = displayPrice(home);
   const photo = home.imageUrls[0];
@@ -46,6 +55,7 @@ export function HomeCard({ home }: { home: Home }) {
               height={600}
               loading="lazy"
               decoding="async"
+              srcSet={cardImageSrcSet(photo)}
               responsiveWidths={[320, 480, 640, 800]}
               sizes="(max-width: 639px) calc(100vw - 2.5rem), (max-width: 1023px) 50vw, 33vw"
               className="size-full object-cover transition duration-300 group-hover:scale-[1.03]"

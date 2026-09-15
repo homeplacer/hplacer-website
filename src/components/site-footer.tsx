@@ -27,10 +27,10 @@ export function SiteFooter() {
         <div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={asset("/logo.png")}
+            src={asset("/logo-128.webp")}
             alt="Home Placer LLC"
-            width={640}
-            height={565}
+            width={128}
+            height={113}
             className="h-14 w-auto brightness-0 invert"
           />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-stone-100/70">

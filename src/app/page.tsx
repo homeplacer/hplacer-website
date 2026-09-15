@@ -77,13 +77,19 @@ export default function HomePage() {
           {/* Hero photo — real #1 best-seller home */}
           <div className="relative lg:pl-8">
             <div className="absolute -inset-4 -z-10 rounded-[2rem] bg-accent-500/15 blur-3xl" aria-hidden />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={asset("/models/ultra-flex-28-52/01.jpg")}
-              alt="A new Home Placer manufactured home on its land in Horry County, SC"
-              width={1200} height={900} loading="eager" fetchPriority="high"
-              className="aspect-[4/3] w-full rounded-[1.75rem] object-cover shadow-2xl ring-1 ring-white/15"
-            />
+            <picture>
+              <source
+                type="image/webp"
+                srcSet={`${asset("/models/ultra-flex-28-52/01-hero-640.webp")} 640w, ${asset("/models/ultra-flex-28-52/01-hero-1200.webp")} 1200w`}
+                sizes="(max-width: 1023px) calc(100vw - 2.5rem), 50vw"
+              />
+              <img
+                src={asset("/models/ultra-flex-28-52/01.jpg")}
+                alt="A new Home Placer manufactured home on its land in Horry County, SC"
+                width={1200} height={900} loading="eager" fetchPriority="high"
+                className="aspect-[4/3] w-full rounded-[1.75rem] object-cover shadow-2xl ring-1 ring-white/15"
+              />
+            </picture>
             <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-stone-bg/95 px-3 py-1.5 text-xs font-bold text-brand-800 shadow">
               Home Placer project · Horry County
             </span>

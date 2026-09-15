@@ -21,10 +21,10 @@ export function SiteHeader() {
         <Link href="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setOpen(false)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={asset("/logo.png")}
+            src={asset("/logo-128.webp")}
             alt="Home Placer LLC"
-            width={640}
-            height={565}
+            width={128}
+            height={113}
             className="h-11 w-auto"
           />
           <span className="hidden flex-col leading-none sm:flex">
