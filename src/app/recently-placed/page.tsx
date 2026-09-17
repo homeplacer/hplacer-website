@@ -1,12 +1,12 @@
 import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import data from "../../../data/sold-homes.json";
 import { site } from "@/lib/site";
-import { ArrowIcon, PhoneIcon, PinIcon } from "@/components/icons";
+import { PhoneIcon, PinIcon } from "@/components/icons";
 import { PlacementsMap, type Placement } from "@/components/placements-map";
 import { PlacedHomes } from "@/components/placed-homes";
+import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 import { getAllPlacedHomes } from "@/lib/placed-homes";
 import { getNewClosedHomePlacerSales } from "@/lib/forturro-closed-feed";
 import { JsonLd, placedHomesGalleryLd } from "@/lib/jsonld";
@@ -154,12 +154,12 @@ export default async function RecentlyPlacedPage() {
             handle the whole thing: one package, one closing.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link
-              href="/homes"
+            <HomeInquiryDialog
+              homeName="a Home Placer land-home package"
+              label="Message us"
+              showArrow={false}
               className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-800"
-            >
-              Browse homes <ArrowIcon className="size-4" />
-            </Link>
+            />
             <a
               href={`tel:${site.phoneDial}`}
               className="inline-flex items-center gap-2 rounded-full border border-stone-line bg-stone-bg px-6 py-3 text-base font-semibold text-stone-ink transition hover:border-brand-300"

@@ -5,6 +5,9 @@ import { getHome } from "@/lib/homes";
 import { pageMetadata } from "@/lib/metadata";
 import { PageHero } from "@/components/page-hero";
 import { ContactForm } from "@/components/contact-form";
+import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
+import { PhoneIcon } from "@/components/icons";
+import { site } from "@/lib/site";
 import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
 // Availability is evaluated on every request; a static cache must never keep an expired offer live.
 export const dynamic = "force-dynamic";
@@ -117,17 +120,32 @@ export default async function PackagePage({
             </Link>
           </p>
         </div>
-        <div
+        <aside
           id="package-inquiry"
-          className="rounded-card border border-stone-line p-6"
+          className="rounded-card border border-stone-line bg-stone-surface p-6 lg:sticky lg:top-24 lg:self-start"
         >
+          <p className="text-sm font-semibold uppercase tracking-wider text-brand-700">Interested in this package?</p>
           <h2 className="mb-4 font-display text-2xl font-semibold">
             {p.status === "sold"
               ? "Ask about a similar project"
               : "Ask about this package"}
           </h2>
+          <div className="mb-5 flex flex-wrap gap-2">
+            <HomeInquiryDialog
+              homeName={p.title}
+              label="Message us"
+              showArrow={false}
+              className="inline-flex items-center justify-center rounded-full bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800"
+            />
+            <a
+              href={`tel:${site.phoneDial}`}
+              className="inline-flex items-center gap-2 rounded-full border border-stone-line bg-stone-bg px-4 py-2.5 text-sm font-semibold text-stone-ink transition hover:border-brand-300"
+            >
+              <PhoneIcon className="size-4" /> Call us
+            </a>
+          </div>
           <ContactForm defaultHome={home?.name} packageId={p.id} />
-        </div>
+        </aside>
       </section>
       <JsonLd
         data={breadcrumbLd([
