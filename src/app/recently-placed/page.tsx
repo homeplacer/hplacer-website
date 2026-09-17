@@ -91,7 +91,7 @@ export default async function RecentlyPlacedPage() {
           Grand Strand. Click any dot for the address, model, and sale price.
         </p>
         <div className="mt-5">
-          <PlacementsMap points={points} />
+          <PlacementsMap points={points} apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY} />
         </div>
       </section>
 
