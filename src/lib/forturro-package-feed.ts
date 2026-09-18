@@ -21,6 +21,7 @@ export type LivePackageListing = ForturroSearchItem & {
 };
 
 const FORTURRO_SEARCH = "https://forturro.com/api/db/search";
+const FORTURRO_HOME_PLACER_ACTIVE = "https://forturro.com/api/hplacer/active";
 
 function normalizeAddress(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -59,6 +60,29 @@ async function fetchRegisteredListing(expected: RegistryItem) {
  * surface other dealers' listings. Forturro is the live status and price source.
  */
 export async function getLivePackageListings(): Promise<LivePackageListing[]> {
+  // Forturro's Home Placer feed filters from verified builder attribution and
+  // current MLS status. This is the primary path: it prevents new packages such
+  // as 104 Pepe Court from being invisible just because an older address list
+  // was not updated. It is Home Placer-only and never sends buyers to Forturro.
+  try {
+    const response = await fetch(FORTURRO_HOME_PLACER_ACTIVE, { next: { revalidate: 300 } });
+    if (response.ok) {
+      const body = (await response.json()) as { items?: ForturroSearchItem[] };
+      const items = body.items?.filter((item) => item.listingKey && item.address && item.city && item.listPrice) ?? [];
+      if (items.length > 0) {
+        return items.map((item) => ({
+          ...item,
+          photoUrl: item.photo ? `https://forturro.com${item.photo}` : undefined,
+        }));
+      }
+    }
+  } catch {
+    // Keep the legacy verified-address fallback below for a temporary upstream
+    // outage. It is never used to remove a live package from the page.
+  }
+
+  // Temporary resilience fallback while the MLS source is unavailable. The
+  // active endpoint above is the source of truth for all current packages.
   const registered = registry.listings as RegistryItem[];
   const results = await Promise.all(registered.map(fetchRegisteredListing));
   return results.filter((result): result is LivePackageListing => result !== null);
