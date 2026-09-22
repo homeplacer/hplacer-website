@@ -54,6 +54,16 @@ export function middleware(req: NextRequest) {
   const host = req.nextUrl.hostname;
   const isLocal = host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0";
 
+  // Legacy Wix model URLs are still present in old search results and backlinks.
+  // A model catalog is the truthful current destination; do not leave buyers on
+  // a dead 404 or falsely redirect them to a specific, possibly sold home.
+  if (req.nextUrl.pathname.startsWith("/product-page/")) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/homes";
+    if (!isLocal) { url.hostname = "hplacer.com"; url.protocol = "https:"; url.port = ""; }
+    return withSecurityHeaders(NextResponse.redirect(url, 301), isLocal);
+  }
+
   const legacy = legacyRedirects[req.nextUrl.pathname.replace(/\/$/, "")];
   if (legacy) {
     const url = req.nextUrl.clone(); url.pathname = legacy;
