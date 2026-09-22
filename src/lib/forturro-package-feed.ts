@@ -20,6 +20,19 @@ export type LivePackageListing = ForturroSearchItem & {
   photoUrl?: string;
 };
 
+/** A stable, human-readable route key derived from the MLS address. */
+export function packageSlug(listing: Pick<LivePackageListing, "address" | "city">) {
+  return `${listing.address}-${listing.city}`
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export async function getLivePackageBySlug(slug: string) {
+  const listings = await getLivePackageListings();
+  return listings.find((listing) => packageSlug(listing) === slug) ?? null;
+}
+
 const FORTURRO_SEARCH = "https://forturro.com/api/db/search";
 const FORTURRO_HOME_PLACER_ACTIVE = "https://forturro.com/api/hplacer/active";
 

@@ -101,7 +101,7 @@ export function PlacementsMap({ points, apiKey }: { points: Placement[]; apiKey?
   useEffect(() => {
     let map: LeafletMap | null = null;
     let googleMap: GoogleMap | null = null;
-    let markers: GoogleMarker[] = [];
+    const markers: GoogleMarker[] = [];
     let cancelled = false;
 
     const fitCoreBounds = (bounds: [number, number][]) => {

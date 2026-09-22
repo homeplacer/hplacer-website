@@ -1,6 +1,7 @@
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 import { BathIcon, BedIcon, RulerIcon } from "@/components/icons";
-import type { LivePackageListing } from "@/lib/forturro-package-feed";
+import Link from "next/link";
+import { packageSlug, type LivePackageListing } from "@/lib/forturro-package-feed";
 
 export function LivePackageListings({
   listings,
@@ -34,6 +35,7 @@ export function LivePackageListings({
               alt={`${listing.address}, ${listing.city}`}
               className="aspect-[3/2] w-full object-cover"
               loading="lazy"
+              decoding="async"
             />
           )}
           <div className="p-5">
@@ -59,12 +61,18 @@ export function LivePackageListings({
                 </span>
               )}
             </p>
-            <div className="mt-5">
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <Link
+                href={`/land-packages/${packageSlug(listing)}`}
+                className="inline-flex items-center justify-center rounded-lg border border-brand-700 px-3 py-2.5 text-sm font-semibold text-brand-800 transition hover:bg-brand-50"
+              >
+                View package
+              </Link>
               <HomeInquiryDialog
                 homeName={`${listing.address}, ${listing.city}`}
                 label="Ask about this home"
                 showArrow={false}
-                className="col-span-2 inline-flex items-center justify-center rounded-lg bg-brand-700 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800"
+                className="inline-flex items-center justify-center rounded-lg bg-brand-700 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800"
               />
             </div>
           </div>
