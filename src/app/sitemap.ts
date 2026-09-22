@@ -9,13 +9,18 @@ import { getAllHomes } from "@/lib/homes";
 import { getAllPosts } from "@/lib/blog";
 import { locations } from "@/lib/locations";
 import { getAllPlacedHomes } from "@/lib/placed-homes";
+import { getLivePackageListings, packageSlug } from "@/lib/forturro-package-feed";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = site.url;
 
   const placedHomes = getAllPlacedHomes();
   const posts = getAllPosts();
   const homes = getAllHomes();
+  // The MLS feed is the availability source for live packages. Giving every
+  // active package a sitemap URL lets search engines discover the canonical
+  // Home Placer detail page instead of only a changing card on the index.
+  const livePackages = await getLivePackageListings();
 
   // Parse an ISO yyyy-mm-dd to a Date (UTC midnight); null/blank/invalid → null.
   const isoDate = (s?: string | null): Date | null => {
@@ -123,6 +128,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }));
 
+  const livePackageEntries: MetadataRoute.Sitemap = livePackages.map((listing) => ({
+    url: `${base}/land-packages/${packageSlug(listing)}`,
+    lastModified: siteUpdated,
+    changeFrequency: "daily",
+    priority: 0.8,
+    ...(listing.photoUrl ? { images: [listing.photoUrl] } : {}),
+  }));
+
   return [
     ...getPackages().map((p) => ({
       url: `${base}/packages/${p.id}`,
@@ -137,5 +150,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...locationEntries,
     ...homeEntries,
     ...postEntries,
+    ...livePackageEntries,
   ];
 }

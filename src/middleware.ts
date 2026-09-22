@@ -12,7 +12,9 @@ const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
   "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' data: ${catalogImageOrigins.join(" ")} https://*.tile.openstreetmap.org`,
+  // Active Home Placer land-home cards use Forturro's read-only MLS image proxy.
+  // Allow that single origin; do not open the policy to arbitrary image hosts.
+  `img-src 'self' data: ${catalogImageOrigins.join(" ")} https://forturro.com https://*.tile.openstreetmap.org`,
   "font-src 'self' data:",
   "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com",
   `frame-src 'self' ${virtualTourOrigins.join(" ")}`,
