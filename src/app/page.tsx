@@ -23,7 +23,7 @@ import {
 export const metadata = pageMetadata({
   title: "Manufactured Homes on Land in Horry County, SC",
   description:
-    "New Clayton, Cavco, and Champion manufactured homes with land in Horry County and the Grand Strand. Current land-home packages from $179,999.",
+    "New Clayton, Cavco, and Champion manufactured homes with land in Horry County and the Grand Strand. See current land-home packages and request a complete price from Home Placer.",
   alternates: { canonical: "/" },
 });
 
@@ -31,6 +31,16 @@ export default async function HomePage() {
   const homes = bestSellerHomes().slice(0, 6);
   const work = [...galleryByCategory("homes").slice(0, 4), ...galleryByCategory("development").slice(0, 2)];
   const livePackages = await getLivePackageListings();
+  // MLS is the source of truth for live package pricing. Never let a marketing
+  // sentence silently drift away from the active feed.
+  const currentPackageFloor = livePackages.length
+    ? Math.min(...livePackages.map((listing) => listing.listPrice))
+    : site.priceFrom;
+  const currentPackageFloorLabel = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(currentPackageFloor);
 
   return (
     <>
@@ -48,7 +58,7 @@ export default async function HomePage() {
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-stone-100/80">
               Home Placer pairs new Clayton, Cavco, and Champion manufactured homes
               with land across Horry and Georgetown counties in SC and Brunswick and
-              Columbus counties in NC. Current land-home packages from $179,999 —
+              Columbus counties in NC. Current land-home packages from {currentPackageFloorLabel} —
               with one local team coordinating the details.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -99,7 +109,7 @@ export default async function HomePage() {
             </span>
             <div className="absolute bottom-4 left-4 rounded-2xl bg-brand-950/85 px-4 py-3 backdrop-blur-md ring-1 ring-white/10">
               <span className="block text-xs font-medium text-stone-100/70">Current packages from</span>
-              <span className="font-display text-2xl font-semibold text-white">$179,999</span>
+              <span className="font-display text-2xl font-semibold text-white">{currentPackageFloorLabel}</span>
             </div>
             <div className="absolute -bottom-5 right-4 hidden rounded-2xl bg-white px-4 py-3 text-brand-950 shadow-xl sm:block">
               <span className="block text-xs font-semibold uppercase tracking-wider text-stone-muted">Built for the Carolinas</span>
@@ -174,7 +184,7 @@ export default async function HomePage() {
             </p>
             <ul className="mt-7 space-y-3 text-sm text-stone-100/85">
               {[
-                "Current packages from $179,999 — home + land, one price",
+                `Current packages from ${currentPackageFloorLabel} — home + land, one price`,
                 "No HOA, and financing help for FHA / VA / USDA buyers",
                 "A licensed SC & NC dealer — a real person, not a call center",
               ].map((t) => (
