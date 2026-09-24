@@ -232,20 +232,21 @@ export async function completeTask(db: Db, actor: Actor, input: CompleteTaskInpu
 
   if (task.requires_photo === 1) {
     const evidence = await db
-      .prepare("SELECT count(*) AS n FROM documents WHERE work_task_id = ? AND upload_status = 'stored'")
+      .prepare("SELECT count(*) AS n FROM documents WHERE work_task_id = ? AND upload_status = 'stored' AND document_type = 'photo'")
       .bind(task.id)
       .first<{ n: number }>();
     if ((evidence?.n ?? 0) === 0) throw badRequest("This task needs a photo before it can be closed");
   }
 
   const timestamp = nowIso();
-  await db
+  const result = await db
     .prepare(
       `UPDATE work_tasks SET status = 'complete', completed_at = ?, completed_by = ?, completion_notes = ?, updated_at = ?
-        WHERE id = ?`,
+        WHERE id = ? AND status IN ('open', 'in_progress', 'blocked') AND assigned_to IS ?`,
     )
-    .bind(timestamp, actor.employeeId, input.notes.trim(), timestamp, task.id)
+    .bind(timestamp, actor.employeeId, input.notes.trim(), timestamp, task.id, task.assigned_to)
     .run();
+  if (result.meta.changes !== 1) throw badRequest("This task changed. Refresh before completing it.");
 
   if (task.created_by !== actor.employeeId) {
     await notify(db, {

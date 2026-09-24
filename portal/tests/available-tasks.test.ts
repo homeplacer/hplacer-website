@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it } from "node:test";
-import { createTask, requireTask, setTaskStatus } from "../src/domain/tasks.ts";
+import { completeTask, createTask, requireTask, setTaskStatus } from "../src/domain/tasks.ts";
 import { createHarness, jsonBody, type Harness } from "./harness.ts";
 
 describe("available job tasks", () => {
@@ -54,6 +54,34 @@ describe("available job tasks", () => {
       assert.equal(result.status, 400);
       assert.equal((await requireTask(h.db, id)).status, "open");
     }
+  });
+
+  it("requires a stored photo rather than a non-photo attachment", async () => {
+    const id = await task({ requiresPhoto: true });
+    const actor = await h.actor("marcus@hplacer.com");
+    await h.db.prepare(`INSERT INTO documents
+      (id, document_type, storage_provider, storage_key, file_name, upload_status, work_task_id, uploaded_by, created_at)
+      VALUES ('task_attachment', 'permit', 'r2', 'permit.pdf', 'permit.pdf', 'stored', ?, ?, CURRENT_TIMESTAMP)`)
+      .bind(id, actor.employeeId).run();
+    const finish = () => h.request(`/api/tasks/${id}/complete`, {
+      as: actor.email, ...jsonBody({ notes: "Work finished" }),
+    });
+    assert.equal((await finish()).status, 400);
+    await h.db.prepare("UPDATE documents SET document_type = 'photo', file_name = 'work.jpg' WHERE id = 'task_attachment'").run();
+    assert.ok((await finish()).status < 400);
+  });
+
+  it("records only one completion when two employees finish together", async () => {
+    const id = await task();
+    const marcus = await h.actor("marcus@hplacer.com");
+    const nina = await h.actor("nina@hplacer.com");
+    const results = await Promise.allSettled([
+      completeTask(h.db, marcus, { taskId: id, notes: "Marcus finished" }),
+      completeTask(h.db, nina, { taskId: id, notes: "Nina finished" }),
+    ]);
+    assert.equal(results.filter(r => r.status === "fulfilled").length, 1);
+    const winner = results[0].status === "fulfilled" ? marcus : nina;
+    assert.equal((await requireTask(h.db, id)).completed_by, winner.employeeId);
   });
 
   it("hides cancelled work and shows available work on the job page", async () => {
