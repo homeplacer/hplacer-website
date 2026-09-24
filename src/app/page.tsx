@@ -119,6 +119,31 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="border-b border-brand-200 bg-brand-50">
+        <div className="container-x py-5 sm:py-6">
+          <div className="flex flex-col gap-4 rounded-card border border-brand-200 bg-stone-bg p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wider text-brand-700">
+                Down-payment assistance
+              </p>
+              <p className="mt-1 font-display text-xl font-semibold text-stone-ink sm:text-2xl">
+                Qualifying buyers may have $5,000–$50,000 available.
+              </p>
+              <p className="mt-1 max-w-2xl text-sm leading-relaxed text-stone-muted">
+                Ask us to help you explore assistance options for a Home Placer land-home package.
+                Restrictions and lender approval apply.
+              </p>
+            </div>
+            <Link
+              href="/down-payment-assistance"
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-brand-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-800"
+            >
+              Explore assistance <ArrowIcon className="size-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="container-x py-14 sm:py-16">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
