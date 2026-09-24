@@ -530,7 +530,7 @@ tooling and is never needed by the deployed Worker.
 | `0011_provisional_homes_and_equipment_cleanup.sql` | Provisional home identity and fleet cleanup fields |
 | `0012_careers_insurance_readiness.sql` | Careers review metadata, structured private insurance cards, and expiration alert routing |
 | `0013_guarded_monday_sync.sql` | Durable queue and audit records for reviewed Monday writes |
-| `0014_vendor_email_parts_tracking.sql` | Vendor email review queue, staged private attachments, and material-request tracking fields |
+| `0016_vendor_email_parts_tracking.sql` | Vendor email review queue, staged private attachments, and material-request tracking fields |
 
 `seed/dev-seed.sql` is demonstration data for local work only. No employee names,
 credentials, vendor accounts, photos, or customer data are checked into source

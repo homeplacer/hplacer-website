@@ -41,7 +41,7 @@ const portal = {
         }
       } catch {
         // Do not log remote response bodies, OAuth data, headers, or email content.
-        console.error("vendor email poll failed; see the portal review queue and integration health");
+        console.error("vendor email poll failed; check Gmail configuration and retry; no mailbox contents are logged");
       }
       return;
     }

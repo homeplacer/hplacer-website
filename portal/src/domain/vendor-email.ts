@@ -3,7 +3,6 @@ import { assertCan, type Actor } from "../auth/authz.ts";
 import { conflict, notFound } from "../platform/errors.ts";
 import { newId, nowIso } from "../platform/ids.ts";
 import type { Db, ObjectStore } from "../platform/types.ts";
-import { notify } from "./notifications.ts";
 import { canonicalTrackingUrl, type CarrierName } from "../integrations/gmail-parsing.ts";
 
 export interface VendorEmailEventRow {
@@ -91,8 +90,10 @@ export async function reviewVendorEmailEvent(
   const statements = [
     db.prepare(
       `UPDATE vendor_email_events SET status = 'processing', match_reason = ?, updated_at = ?
-        WHERE id = ? AND status = 'needs_review'`,
-    ).bind(`review-claim:${claim}`, timestamp, event.id),
+        WHERE id = ? AND status = 'needs_review'
+          AND EXISTS (SELECT 1 FROM material_requests WHERE id = ? AND status = ?
+                      AND status NOT IN ('received', 'cancelled'))`,
+    ).bind(`review-claim:${claim}`, timestamp, event.id, request.id, request.status),
     db.prepare(
       `UPDATE material_requests
           SET status = ?,
@@ -132,6 +133,22 @@ export async function reviewVendorEmailEvent(
           AND EXISTS (SELECT 1 FROM vendor_email_events WHERE id = ? AND status = 'processing' AND match_reason = ?)`,
     ).bind(documentId, attachment.id, event.id, `review-claim:${claim}`));
   }
+  // Keep notifications in the same transaction as the link: a failed insert
+  // must leave the email reviewable, rather than silently losing the alert.
+  const recipients = [...new Set([request.requested_by, request.ticket_assignee].filter((id): id is string => Boolean(id)))];
+  for (const employeeId of recipients) {
+    statements.push(db.prepare(
+      `INSERT INTO notifications
+         (id, employee_id, category, severity, title, body, related_type, related_id, dedupe_key, created_at)
+       SELECT ?, ?, 'parts_tracking', 'info', ?, ?, 'material_request', ?, ?, ?
+        WHERE EXISTS (SELECT 1 FROM vendor_email_events WHERE id = ? AND status = 'processing' AND match_reason = ?)
+          AND NOT EXISTS (SELECT 1 FROM notifications WHERE dedupe_key = ?)`,
+    ).bind(newId("ntf"), employeeId,
+      trackingUrl ? "Tracking added to a material request" : "Vendor email linked to a material request",
+      trackingUrl ? `${request.description} now has a ${carrier} tracking link.` : `${request.description} was updated from a vendor email.`,
+      request.id, `parts_tracking:${event.id}:${employeeId}`, timestamp,
+      event.id, `review-claim:${claim}`, `parts_tracking:${event.id}:${employeeId}`));
+  }
   statements.push(db.prepare(
     `UPDATE vendor_email_events
         SET status = 'linked', candidate_material_request_id = ?, reviewed_by = ?, reviewed_at = ?,
@@ -140,20 +157,8 @@ export async function reviewVendorEmailEvent(
   ).bind(request.id, actor.employeeId, timestamp, timestamp, event.id, `review-claim:${claim}`));
 
   const result = await db.batch(statements);
-  if (result[0]?.meta.changes !== 1) throw conflict("Another employee already handled this vendor email");
+  if (result[0]?.meta.changes !== 1) throw conflict("The email or material request changed; refresh and review it again");
 
-  const recipients = [...new Set([request.requested_by, request.ticket_assignee].filter((id): id is string => Boolean(id)))];
-  for (const employeeId of recipients) {
-    await notify(db, {
-      employeeId,
-      category: "parts_tracking",
-      title: trackingUrl ? "Tracking added to a material request" : "Vendor email linked to a material request",
-      body: trackingUrl ? `${request.description} now has a ${carrier} tracking link.` : `${request.description} was updated from a vendor email.`,
-      relatedType: "material_request",
-      relatedId: request.id,
-      dedupeKey: `parts_tracking:${event.id}:${employeeId}`,
-    });
-  }
 }
 
 function asCarrier(value: string | null): CarrierName | null {

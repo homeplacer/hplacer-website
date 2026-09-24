@@ -119,6 +119,7 @@ describe("Gmail parts import", () => {
         GMAIL_ALLOWED_MAILBOX: "brandon@hplacer.com",
       });
       let listCalls = 0;
+      const queries: string[] = [];
       const fetcher = async (input: RequestInfo | URL): Promise<Response> => {
         const url = String(input);
         if (url === "https://oauth2.googleapis.com/token") return json({
@@ -126,6 +127,7 @@ describe("Gmail parts import", () => {
         });
         if (url.endsWith("users/me/profile")) return json({ emailAddress: "brandon@hplacer.com" });
         if (url.includes("users/me/messages?")) {
+          queries.push(new URL(url).searchParams.get("q")!);
           if (new URL(url).searchParams.get("pageToken") === "page-11") return json({ messages: [] });
           listCalls += 1;
           return json(listCalls <= 10 ? { nextPageToken: `page-${listCalls + 1}` } : { messages: [] });
@@ -142,7 +144,27 @@ describe("Gmail parts import", () => {
       const second = await runConfiguredGmailImport(harness.env, { fetcher, now: new Date(now.getTime() + 15 * 60 * 1000) });
       assert.equal(second.enabled, true);
       assert.equal(await harness.db.prepare("SELECT state_value FROM portal_integration_state WHERE state_key = 'gmail_page_token'").first(), null);
-      assert.equal((await harness.db.prepare("SELECT state_value FROM portal_integration_state WHERE state_key = 'gmail_last_poll_at'").first<{ state_value: string }>())?.state_value, new Date(now.getTime() + 15 * 60 * 1000).toISOString());
+      assert.equal((await harness.db.prepare("SELECT state_value FROM portal_integration_state WHERE state_key = 'gmail_last_poll_at'").first<{ state_value: string }>())?.state_value, now.toISOString());
+      assert.equal(new Set(queries).size, 1, "resumed pages must use the original query window");
     } finally { harness.close(); }
   });
+  it("serializes overlapping polls and releases its lease after failure", async () => {
+    const harness = await createHarness();
+    try {
+      Object.assign(harness.env, { GMAIL_INGEST_ENABLED: "true", GMAIL_CLIENT_ID: "id", GMAIL_CLIENT_SECRET: "secret", GMAIL_REFRESH_TOKEN: "token", GMAIL_ALLOWED_MAILBOX: "brandon@hplacer.com" });
+      let release!: () => void;
+      let entered!: () => void;
+      const started = new Promise<void>((resolve) => { entered = resolve; });
+      const gate = new Promise<void>((resolve) => { release = resolve; });
+      const first = runConfiguredGmailImport(harness.env, { fetcher: async () => { entered(); await gate; throw new Error("failure"); } });
+      await started;
+      const second = await runConfiguredGmailImport(harness.env, { fetcher: async () => { throw new Error("overlapping poll fetched"); } });
+      assert.equal(second.found, 0);
+      release();
+      await assert.rejects(first, /token_endpoint_unavailable/);
+      assert.equal(await harness.db.prepare("SELECT * FROM portal_integration_state WHERE state_key='gmail_poll_lease'").first(), null);
+      assert.equal((await harness.db.prepare("SELECT state_value FROM portal_integration_state WHERE state_key='gmail_last_error'").first<{state_value: string}>())?.state_value, "token_endpoint_unavailable");
+    } finally { harness.close(); }
+  });
+
 });

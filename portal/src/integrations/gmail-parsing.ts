@@ -50,18 +50,26 @@ export function parseVendorMail(subject: string, text: string): ParsedVendorMail
           ? "order"
           : "unknown";
 
-  const orderMatch = source.match(/\b(?:order\s+confirmation|purchase order|order|invoice|confirmation)\s*(?:number|no\.?|#|:)?\s*([A-Z0-9][A-Z0-9-]{3,29})\b/i);
+  const orderMatch = source.match(/\b(?:order\s+confirmation|purchase order|order|invoice|confirmation)\s*(?:number|no\.?|#|:)\s*[:#]?\s*([A-Z0-9][A-Z0-9-]{3,29})\b/i);
   const orderNumber = orderMatch?.[1] ? normalizeOrderNumber(orderMatch[1]) : null;
 
+  const candidates: { carrier: CarrierName; number: string; url: string }[] = [];
   for (const carrier of CARRIERS) {
     if (!carrier.test.test(lower)) continue;
-    const trackingNumber = source.match(carrier.tracking)?.[0]?.toUpperCase() ?? null;
-    if (trackingNumber) {
-      return { kind, orderNumber, carrier: carrier.name, trackingNumber, trackingUrl: carrier.url(trackingNumber) };
-    }
-    // Carrier is known, but an absent or malformed number never creates a URL.
-    return { kind, orderNumber, carrier: carrier.name, trackingNumber: null, trackingUrl: null };
+    // Numeric strings elsewhere may be phone, invoice, or account numbers.
+    // Require an explicit tracking label; UPS's distinctive 1Z format is safe
+    // to recognize without one. Ambiguous shipments stay for manual review.
+    const contexts = carrier.name === "UPS" ? [source] : [...source.matchAll(
+      /\btracking\s*(?:(?:number|no\.?|#|id)\s*)?(?:is\s*)?[:#]?\s*([A-Z0-9-]+)/gi,
+    )].map((match) => match[1]!);
+    const numbers = new Set(contexts.flatMap((context) => [...context.matchAll(new RegExp(carrier.tracking.source, "gi"))].map((match) => match[0].toUpperCase())));
+    for (const number of numbers) candidates.push({ carrier: carrier.name, number, url: carrier.url(number) });
   }
+  if (candidates.length === 1) {
+    const match = candidates[0]!;
+    return { kind, orderNumber, carrier: match.carrier, trackingNumber: match.number, trackingUrl: match.url };
+  }
+
   return { kind, orderNumber, carrier: null, trackingNumber: null, trackingUrl: null };
 }
 
@@ -73,7 +81,7 @@ export function normalizeOrderNumber(value: string): string | null {
 export function canonicalTrackingUrl(carrier: CarrierName, value: string): string | null {
   const trimmed = value.trim().toUpperCase().replace(/[\s-]/g, "");
   const definition = CARRIERS.find((candidate) => candidate.name === carrier);
-  if (!definition || !definition.tracking.test(trimmed)) return null;
+  if (!definition || !new RegExp(`^(?:${definition.tracking.source})$`, "i").test(trimmed)) return null;
   return definition.url(trimmed);
 }
 

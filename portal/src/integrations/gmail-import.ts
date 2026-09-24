@@ -42,6 +42,36 @@ export async function runConfiguredGmailImport(
     !env.PORTAL_PHOTOS || !env.PORTAL_DB
   ) return disabled;
 
+  const lease = crypto.randomUUID();
+  const leaseNow = nowIso(options.now ?? new Date());
+  const acquired = await env.PORTAL_DB.prepare(
+    `INSERT INTO portal_integration_state(state_key, state_value, updated_at)
+     VALUES ('gmail_poll_lease', ?, ?)
+     ON CONFLICT(state_key) DO UPDATE SET state_value=excluded.state_value, updated_at=excluded.updated_at
+     WHERE portal_integration_state.updated_at < ?`,
+  ).bind(lease, leaseNow, nowIso(new Date((options.now ?? new Date()).getTime() - 60 * 60 * 1000))).run();
+  if (acquired.meta.changes !== 1) return { ...disabled, enabled: true };
+  try {
+    const result = await pollMailbox({ ...env, PORTAL_DB: env.PORTAL_DB, PORTAL_PHOTOS: env.PORTAL_PHOTOS }, options);
+    await env.PORTAL_DB.batch([
+      env.PORTAL_DB.prepare("DELETE FROM portal_integration_state WHERE state_key='gmail_last_error'"),
+      env.PORTAL_DB.prepare("INSERT OR REPLACE INTO portal_integration_state(state_key,state_value,updated_at) VALUES ('gmail_last_success_at',?,?)").bind(leaseNow, leaseNow),
+    ]);
+    return result;
+  } catch (error) {
+    await env.PORTAL_DB.prepare("INSERT OR REPLACE INTO portal_integration_state(state_key,state_value,updated_at) VALUES ('gmail_last_error',?,?)")
+      .bind(safeErrorCode(error), leaseNow).run();
+    throw error;
+  } finally {
+    await env.PORTAL_DB.prepare("DELETE FROM portal_integration_state WHERE state_key='gmail_poll_lease' AND state_value=?")
+      .bind(lease).run();
+  }
+}
+
+async function pollMailbox(
+  env: PortalEnv & { PORTAL_DB: Db; PORTAL_PHOTOS: ObjectStore },
+  options: { fetcher?: FetchLike; now?: Date },
+): Promise<GmailImportResult> {
   const fetcher = options.fetcher ?? fetch;
   const now = options.now ?? new Date();
   const accessToken = await refreshAccessToken(env, fetcher);
@@ -68,17 +98,26 @@ export async function runConfiguredGmailImport(
     }
   }
 
-  const [lastPoll, savedPage] = await Promise.all([
+  const [lastPoll, savedPage, savedSince, savedStart] = await Promise.all([
     env.PORTAL_DB.prepare("SELECT state_value FROM portal_integration_state WHERE state_key = 'gmail_last_poll_at'").first<{ state_value: string }>(),
     env.PORTAL_DB.prepare("SELECT state_value FROM portal_integration_state WHERE state_key = 'gmail_page_token'").first<{ state_value: string }>(),
+    env.PORTAL_DB.prepare("SELECT state_value FROM portal_integration_state WHERE state_key = 'gmail_scan_since'").first<{ state_value: string }>(),
+    env.PORTAL_DB.prepare("SELECT state_value FROM portal_integration_state WHERE state_key = 'gmail_scan_started_at'").first<{ state_value: string }>(),
   ]);
-  const since = lastPoll?.state_value ? new Date(lastPoll.state_value) : new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
-  if (!Number.isFinite(since.getTime())) throw new GmailIntegrationError("cursor_invalid");
+  const scanStart = savedStart?.state_value ? new Date(savedStart.state_value) : now;
+  const since = savedSince?.state_value ? new Date(savedSince.state_value) : lastPoll?.state_value ? new Date(lastPoll.state_value) : new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+  if (!Number.isFinite(since.getTime()) || !Number.isFinite(scanStart.getTime())) throw new GmailIntegrationError("cursor_invalid");
   // Overlap by five minutes to tolerate clock drift, indexing delay, and a
   // retry after partial paging. gmail_message_id uniqueness provides dedupe.
   const after = Math.max(0, Math.floor(since.getTime() / 1000) - 300);
   const query = `after:${after} ${SEARCH_TERMS}`;
 
+  if (!savedStart || !savedSince) {
+    await env.PORTAL_DB.batch([
+      env.PORTAL_DB.prepare("INSERT OR REPLACE INTO portal_integration_state(state_key,state_value,updated_at) VALUES ('gmail_scan_since',?,?)").bind(since.toISOString(), nowIso(now)),
+      env.PORTAL_DB.prepare("INSERT OR REPLACE INTO portal_integration_state(state_key,state_value,updated_at) VALUES ('gmail_scan_started_at',?,?)").bind(scanStart.toISOString(), nowIso(now)),
+    ]);
+  }
   let pageToken: string | undefined = savedPage?.state_value || undefined;
   let complete = true;
   for (let page = 0; page < MAX_PAGES_PER_RUN; page += 1) {
@@ -110,8 +149,8 @@ export async function runConfiguredGmailImport(
         `INSERT INTO portal_integration_state (state_key, state_value, updated_at)
          VALUES ('gmail_last_poll_at', ?, ?)
          ON CONFLICT(state_key) DO UPDATE SET state_value = excluded.state_value, updated_at = excluded.updated_at`,
-      ).bind(now.toISOString(), nowIso(now)),
-      env.PORTAL_DB.prepare("DELETE FROM portal_integration_state WHERE state_key = 'gmail_page_token'"),
+      ).bind(scanStart.toISOString(), nowIso(now)),
+      env.PORTAL_DB.prepare("DELETE FROM portal_integration_state WHERE state_key IN ('gmail_page_token', 'gmail_scan_since', 'gmail_scan_started_at')"),
     ]);
   } else if (pageToken) {
     await env.PORTAL_DB.prepare(
@@ -138,6 +177,7 @@ async function refreshAccessToken(env: PortalEnv, fetcher: FetchLike): Promise<s
   let response: Response;
   try {
     response = await fetcher("https://oauth2.googleapis.com/token", {
+      signal: AbortSignal.timeout(30_000),
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: body.toString(),
@@ -159,6 +199,7 @@ async function gmailJson<T extends GmailJsonResponse>(fetcher: FetchLike, token:
   let response: Response;
   try {
     response = await fetcher(`https://gmail.googleapis.com/gmail/v1/${path}`, {
+      signal: AbortSignal.timeout(30_000),
       headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
     });
   } catch {

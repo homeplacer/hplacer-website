@@ -30,4 +30,16 @@ describe("vendor mail parsing", () => {
     assert.equal(safeAttachmentType("text/html", "receipt.html"), null);
     assert.equal(safeAttachmentType("application/pdf", "invoice.exe"), null);
   });
+  it("rejects tracking substrings and ordinary order prose as identifiers", () => {
+    assert.equal(canonicalTrackingUrl("UPS", "prefix/1Z999AA10123456784/suffix"), null);
+    assert.equal(parseVendorMail("Your order shipped", "Order confirmation is attached").orderNumber, null);
+    assert.equal(parseVendorMail("Order number: ABC123", "").orderNumber, "ABC123");
+  });
+
+  it("does not confuse carrier contact numbers or multiple packages with a tracking match", () => {
+    assert.equal(parseVendorMail("DHL shipment", "Call 8001234567").trackingNumber, null);
+    assert.equal(parseVendorMail("FedEx shipment", "Invoice 123456789012; tracking number: 123456789015").trackingNumber, "123456789015");
+    assert.equal(parseVendorMail("UPS shipment", "1Z999AA10123456784 and 1Z999AA10123456785").trackingNumber, null);
+  });
+
 });

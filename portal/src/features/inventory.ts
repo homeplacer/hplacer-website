@@ -14,18 +14,21 @@ import {
   type REQUEST_STATUSES,
 } from "../domain/inventory.ts";
 import { listVendorEmailEvents, reviewVendorEmailEvent } from "../domain/vendor-email.ts";
-import { badRequest } from "../platform/errors.ts";
+import { listDocuments } from "../domain/documents.ts";
+import { documentList } from "./documents.ts";
+import { badRequest, notFound } from "../platform/errors.ts";
 import { centsField, numberField, optionalField, readFields, requiredField, type RequestContext } from "../api/context.ts";
 import { flashFrom, json, redirect, safeRedirectPath } from "../api/responses.ts";
 import type { Router } from "../api/router.ts";
 import { html, raw } from "../ui/html.ts";
-import { badge, empty, externalLink, formatDate, kv, money, page, tabs } from "../ui/layout.ts";
+import { badge, empty, externalLink, formatDate, kv, money, page, tabs, securityHeaders } from "../ui/layout.ts";
 import { wantsJson } from "./equipment.ts";
 
 export function registerInventory(router: Router): void {
   router.get("/inventory", renderList);
   router.get("/inventory/requests", renderRequests);
   router.get("/inventory/vendor-email", renderVendorEmailQueue);
+  router.get("/api/inventory/vendor-email/:id/attachments/:attachmentId", downloadVendorAttachment);
   router.get("/inventory/new", renderNewPart);
   router.get("/inventory/:id", renderPart);
 
@@ -177,6 +180,8 @@ async function renderRequests(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "inventory.read");
   const status = ctx.url.searchParams.get("status") ?? undefined;
   const requests = await listMaterialRequests(ctx.db, { status });
+  const requestDocuments = new Map(await Promise.all(requests.map(async (request) =>
+    [request.id, await listDocuments(ctx.db, { materialRequestId: request.id })] as const)));
   const parts = await listParts(ctx.db);
   const presetPart = ctx.url.searchParams.get("partId") ?? "";
   const statuses: (typeof REQUEST_STATUSES)[number][] = ["requested", "approved", "ordered", "received", "cancelled"];
@@ -201,6 +206,7 @@ async function renderRequests(ctx: RequestContext): Promise<Response> {
               : ""}
             ${request.vendor_order_number ? html`<p class="meta">Order ${request.vendor_order_number}</p>` : ""}
             ${request.tracking_number ? html`<p class="meta">${request.carrier_name ?? "Tracking"}: ${externalLink(request.tracking_url, request.tracking_number)}</p>` : ""}
+            ${(requestDocuments.get(request.id)?.length ?? 0) > 0 ? html`<h4>Receipts and documents</h4>${documentList(requestDocuments.get(request.id)! )}` : ""}
             ${can(ctx.actor, "material_request.approve") && request.status !== "received" && request.status !== "cancelled"
               ? html`<form method="post" action="/api/inventory/requests/${request.id}/status">
                   <label for="status-${request.id}">Move to</label>
@@ -248,9 +254,15 @@ async function renderRequests(ctx: RequestContext): Promise<Response> {
 async function renderVendorEmailQueue(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "vendor_mail.review");
   const events = await listVendorEmailEvents(ctx.db);
+  const attachments = await ctx.db.prepare(`SELECT a.id, a.event_id, a.file_name FROM vendor_email_attachments a
+    JOIN vendor_email_events e ON e.id = a.event_id WHERE e.status = 'needs_review'`)
+    .all<{id: string; event_id: string; file_name: string}>();
+  const importError = await ctx.db.prepare("SELECT state_value FROM portal_integration_state WHERE state_key = 'gmail_last_error'").first<{state_value: string}>();
+  const failed = await ctx.db.prepare("SELECT count(*) AS n FROM vendor_email_events WHERE status = 'failed'").first<{n: number}>();
   const requests = (await listMaterialRequests(ctx.db, { limit: 250 })).filter((request) => !["received", "cancelled"].includes(request.status));
   const body = html`
     <h1>Vendor emails</h1>
+    ${importError?.state_value || (failed?.n ?? 0) > 0 ? html`<p role="alert">Some vendor emails could not be imported. An administrator should check the Gmail connection and Worker logs before assuming this queue is complete.${(failed?.n ?? 0) > 0 ? ` ${failed!.n} email(s) need another import attempt.` : ""}</p>` : ""}
     <p class="lede">Check the match before attaching receipts or sharing tracking with the crew.</p>
     <p><a href="/inventory/requests">Back to material requests</a></p>
     ${events.length === 0
@@ -258,6 +270,7 @@ async function renderVendorEmailQueue(ctx: RequestContext): Promise<Response> {
       : events.map((event) => html`<section class="card">
           <div class="row"><h2>${event.subject}</h2>${badge(event.event_kind, "warn")}</div>
           <p class="meta">${event.sender} · ${formatDate(event.message_date)} · ${event.attachment_count} attachment${event.attachment_count === 1 ? "" : "s"}</p>
+          ${attachments.results.filter((attachment) => attachment.event_id === event.id).map((attachment) => html`<p><a href="/api/inventory/vendor-email/${event.id}/attachments/${attachment.id}">Download ${attachment.file_name}</a></p>`)}
           ${event.vendor_order_number ? html`<p>Order ${event.vendor_order_number}</p>` : ""}
           ${event.tracking_number && event.tracking_url
             ? html`<p>Tracking ${event.carrier_name ?? ""}: ${externalLink(event.tracking_url, event.tracking_number)}</p>`
@@ -279,6 +292,25 @@ async function renderVendorEmailQueue(ctx: RequestContext): Promise<Response> {
         </section>`)}
   `;
   return page(body, { title: "Vendor emails", actor: ctx.actor, section: "/inventory", back: { href: "/inventory/requests", label: "Material requests" } });
+}
+
+async function downloadVendorAttachment(ctx: RequestContext): Promise<Response> {
+  assertCan(ctx.actor, "vendor_mail.review");
+  const attachment = await ctx.db.prepare(`SELECT a.storage_key, a.file_name, a.content_type
+    FROM vendor_email_attachments a JOIN vendor_email_events e ON e.id = a.event_id
+    WHERE a.id = ? AND e.id = ? AND e.status = 'needs_review'`)
+    .bind(ctx.params.attachmentId, ctx.params.id)
+    .first<{storage_key: string; file_name: string; content_type: string}>();
+  if (!attachment || !ctx.store) throw notFound("Vendor attachment not found");
+  const object = await ctx.store.get(attachment.storage_key);
+  if (!object || typeof object.arrayBuffer !== "function") throw notFound("Vendor attachment not found");
+  const fileName = attachment.file_name.replace(/[^a-zA-Z0-9._ -]/g, "_").slice(0, 180) || "attachment";
+  return new Response(await object.arrayBuffer(), { headers: securityHeaders({
+    "Content-Type": attachment.content_type || "application/octet-stream",
+    "Content-Disposition": `attachment; filename="${fileName}"`,
+    "Cache-Control": "private, no-store",
+    "X-Content-Type-Options": "nosniff",
+  }) });
 }
 
 async function renderNewPart(ctx: RequestContext): Promise<Response> {

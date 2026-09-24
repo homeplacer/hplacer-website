@@ -1,3 +1,5 @@
+import { registerJobPlanning } from "./job-planning.ts";
+import { newId } from "../platform/ids.ts";
 /**
  * Subdivisions and lots: directions, plats, permits, and the paperwork folder.
  *
@@ -26,6 +28,7 @@ const JOB_STATUSES = ["planning", "active", "on_hold", "complete", "archived"];
 const LOT_STATUSES = ["pending", "permitted", "prepped", "set", "complete"];
 
 export function registerSubdivisions(router: Router): void {
+  registerJobPlanning(router);
   for (const prefix of ["/subdivisions", "/jobs"]) {
     router.get(prefix, renderList);
     router.get(`${prefix}/new`, renderNewSubdivision);
@@ -93,13 +96,14 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
   const job = await requireJob(ctx.db, ctx.params.id);
   const lots = await listLots(ctx.db, job.id);
   const homes = await listHomes(ctx.db, { jobId: job.id });
-  const tasks = await listTasks(ctx.db, ctx.actor, { jobId: job.id, openOnly: true });
+  const tasks = await listTasks(ctx.db, ctx.actor, { jobId: job.id, openOnly: true, includeAvailableForCrew: true });
   const documents = await listDocuments(ctx.db, { jobId: job.id });
   const link = await getLink(ctx.db, "job", job.id);
 
   const body = html`
     <h1>${job.job_number}</h1>
     <p class="lede">${job.title}</p>
+    <a class="btn secondary" href="/subdivisions/${job.id}/planning">Edit job details and checklist</a>
 
     <div class="card">
       <div class="row">${badge(job.status, job.status === "active" ? "ok" : "")}</div>
@@ -210,9 +214,10 @@ async function renderNewSubdivision(ctx: RequestContext): Promise<Response> {
     <h1>New subdivision</h1>
     <form method="post" action="/api/subdivisions">
       <label for="job_number">Subdivision number</label>
-      <input id="job_number" name="job_number" required placeholder="HP-2610">
-      <label for="title">Title</label>
-      <input id="title" name="title" required>
+      <input id="job_number" name="job_number" placeholder="Leave blank to generate a reference">
+      <p>Start with whatever you know. You can add details later.</p>
+      <label for="title">Job name (temporary is fine)</label>
+      <input id="title" name="title" placeholder="TBD lot or a familiar site name">
       <label for="status">Status</label>
       <select id="status" name="status">${JOB_STATUSES.map((value) => html`<option value="${value}" ${value === "active" ? html`selected` : ""}>${value}</option>`)}</select>
       <label for="street_address">Address</label>
@@ -245,8 +250,8 @@ async function createSubdivisionRoute(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "subdivision.create");
   const fields = await readFields(ctx.request);
   const id = await createJob(ctx.db, {
-    jobNumber: requiredField(fields, "job_number", "Subdivision number"),
-    title: requiredField(fields, "title", "Title"),
+    jobNumber: optionalField(fields, "job_number") ?? `JOB-${newId("site")}`,
+    title: optionalField(fields, "title") ?? optionalField(fields, "street_address") ?? "New job — details to follow",
     status: optionalField(fields, "status") ?? "active",
     streetAddress: optionalField(fields, "street_address"),
     city: optionalField(fields, "city"),
