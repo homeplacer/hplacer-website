@@ -1,3 +1,4 @@
+import { repairWorkSection, registerRepairWork } from "./repair-work.ts";
 /** Repair tickets, defect reports, and Tara's bill-back queue. */
 import { assertCan, can } from "../auth/authz.ts";
 import { listAssets } from "../domain/assets.ts";
@@ -35,6 +36,7 @@ import { documentList, uploadForm } from "./documents.ts";
 import { wantsJson } from "./equipment.ts";
 
 export function registerRepairs(router: Router): void {
+  registerRepairWork(router);
   router.get("/repairs", renderList);
   router.get("/repairs/new", renderNewRepair);
   router.get("/repairs/:id", renderDetail);
@@ -136,22 +138,23 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
         ["Reported by", `${repair.reported_by_name} · ${formatDate(repair.created_at)}`],
         ["Assigned to", repair.assigned_to_name],
         ["Responsible party", repair.responsible_party_type ? `${repair.responsible_party_type.replace(/_/g, " ")}${repair.responsible_party ? ` — ${repair.responsible_party}` : ""}` : null],
-        ["Labor", `${hoursMinutes(repair.labor_minutes)} · ${money(repair.labor_cents)}`],
-        ["Materials", money(repair.material_cents)],
-        ["Total", money(repair.total_cents)],
+        ["Labor charges", labor.length ? money(repair.labor_cents) : "Not entered"],
+        ["Parts charges", materials.length ? money(repair.material_cents) : "Not entered"],
+        ["Recorded charges", labor.length || materials.length ? money(repair.total_cents) : "Not entered — see reported estimates below"],
         ["Billed back", repair.bill_back_amount_cents != null ? `${money(repair.bill_back_amount_cents)} · ${repair.invoice_reference ?? ""}` : null],
         ["Billing notes", repair.billing_notes],
         ["Source inspection", repair.source_inspection_id ? html`<a href="/inspections/${repair.source_inspection_id}">Open inspection</a>` : null],
       ])}
     </div>
 
+    ${await repairWorkSection(ctx, repair.id)}
     <h2>Photos and receipts</h2>
     ${documentList(documents)}
     ${uploadForm(ctx.actor, { repairTicketId: repair.id }, `/repairs/${repair.id}`)}
 
     <h2>Labor</h2>
     ${labor.length === 0
-      ? empty("No labor recorded.")
+      ? empty("No itemized labor charges recorded. Reported time appears above.")
       : html`<div class="table-wrap"><table>
           <thead><tr><th>Date</th><th>Who</th><th>Time</th><th>Rate</th><th>Cost</th></tr></thead>
           <tbody>${labor.map(
@@ -185,7 +188,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
 
     <h2>Materials</h2>
     ${materials.length === 0
-      ? empty("No materials recorded.")
+      ? empty("No itemized parts charges recorded. Any estimate appears above.")
       : html`<div class="table-wrap"><table>
           <thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Cost</th></tr></thead>
           <tbody>${materials.map(

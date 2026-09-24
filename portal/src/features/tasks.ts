@@ -11,6 +11,7 @@ import {
   assignTask,
   completeTask,
   createTask,
+  isAvailableToCrew,
   listTasks,
   requireTask,
   setTaskStatus,
@@ -41,6 +42,8 @@ export function registerTasks(router: Router): void {
         status: ctx.url.searchParams.get("status") ?? undefined,
         assignedTo: ctx.url.searchParams.get("assignedTo") ?? undefined,
         openOnly: ctx.url.searchParams.get("open") === "1",
+        availableOnly: ctx.url.searchParams.get("scope") === "available",
+        includeAvailableForCrew: ctx.url.searchParams.get("scope") === "available",
       }),
     }),
   );
@@ -55,20 +58,24 @@ async function renderList(ctx: RequestContext): Promise<Response> {
     status,
     assignedTo: scope === "mine" ? ctx.actor.employeeId : undefined,
     openOnly: !status,
+    availableOnly: scope === "available",
+    includeAvailableForCrew: scope === "available",
   });
 
   const body = html`
     <h1>Tasks</h1>
     ${tabs([
       { href: "/tasks?scope=mine", label: "Mine", current: scope === "mine" },
+      { href: "/tasks?scope=available", label: "Available", current: scope === "available" },
       ...(canSeeAll ? [{ href: "/tasks?scope=all", label: "Everyone", current: scope === "all" }] : []),
-      ...TASK_STATUSES.map((value) => ({
+      ...TASK_STATUSES.filter((value) => scope !== "available" || (value !== "complete" && value !== "cancelled")).map((value) => ({
         href: `/tasks${query({ scope, status: value })}`,
         label: value.replace(/_/g, " "),
         current: status === value,
       })),
     ])}
 
+    ${scope === "available" ? html`<p class="meta">Unassigned job tasks anyone on the team can pick up.</p>` : ""}
     ${tasks.length === 0
       ? empty("No tasks here.")
       : tasks.map(
@@ -89,11 +96,14 @@ async function renderList(ctx: RequestContext): Promise<Response> {
 
 async function renderDetail(ctx: RequestContext): Promise<Response> {
   const task = await requireTask(ctx.db, ctx.params.id);
-  if (!can(ctx.actor, "task.read.all") && task.assigned_to !== ctx.actor.employeeId && task.created_by !== ctx.actor.employeeId) {
+  const canRead = can(ctx.actor, "task.read.all") || task.assigned_to === ctx.actor.employeeId ||
+    task.created_by === ctx.actor.employeeId || isAvailableToCrew(ctx.actor, task);
+  if (!canRead) {
     throw forbidden("That task is assigned to someone else");
   }
   const evidence = await listDocuments(ctx.db, { workTaskId: task.id });
-  const canWork = can(ctx.actor, "task.complete.any") || task.assigned_to === ctx.actor.employeeId || task.created_by === ctx.actor.employeeId;
+  const canWork = can(ctx.actor, "task.complete.any") || task.assigned_to === ctx.actor.employeeId ||
+    task.created_by === ctx.actor.employeeId || isAvailableToCrew(ctx.actor, task);
   const employees = can(ctx.actor, "task.assign") ? await listEmployees(ctx.db) : [];
 
   const body = html`
@@ -110,6 +120,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
         ["Equipment", task.asset_tag ? html`<a href="/equipment/${task.asset_tag}">${task.asset_tag}</a>` : null],
         ["Photo required", task.requires_photo === 1 ? "Yes" : null],
         ["Completed", task.completed_at ? formatDate(task.completed_at) : null],
+        ["Completed by", task.completed_by_name],
         ["Completion notes", task.completion_notes],
       ])}
       ${task.details ? html`<p>${task.details}</p>` : ""}
@@ -166,7 +177,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
 async function renderNewTask(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "task.assign");
   const employees = await listEmployees(ctx.db);
-  const jobs = await listJobs(ctx.db, { status: "active" });
+  const jobs = (await listJobs(ctx.db)).filter(job => ["active", "planning", "on_hold"].includes(job.status));
   const assets = await listAssets(ctx.db);
   const homes = await listHomes(ctx.db);
   const preset = {
