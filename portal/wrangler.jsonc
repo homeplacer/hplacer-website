@@ -44,8 +44,9 @@
   ],
 
   "triggers": {
-    // Morning sweep: low-stock alerts and equipment coming due for service.
-    "crons": ["0 11 * * *"]
+    // Morning operations sweep plus a guarded 15-minute vendor-email poll.
+    // The latter stays inert until Gmail secrets and explicit enablement exist.
+    "crons": ["0 11 * * *", "*/15 * * * *"]
   },
 
   "observability": { "enabled": true }
