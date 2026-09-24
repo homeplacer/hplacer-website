@@ -13,6 +13,8 @@ import {
   updatePart,
   type REQUEST_STATUSES,
 } from "../domain/inventory.ts";
+import { listVendorEmailEvents, reviewVendorEmailEvent } from "../domain/vendor-email.ts";
+import { badRequest } from "../platform/errors.ts";
 import { centsField, numberField, optionalField, readFields, requiredField, type RequestContext } from "../api/context.ts";
 import { flashFrom, json, redirect, safeRedirectPath } from "../api/responses.ts";
 import type { Router } from "../api/router.ts";
@@ -23,6 +25,7 @@ import { wantsJson } from "./equipment.ts";
 export function registerInventory(router: Router): void {
   router.get("/inventory", renderList);
   router.get("/inventory/requests", renderRequests);
+  router.get("/inventory/vendor-email", renderVendorEmailQueue);
   router.get("/inventory/new", renderNewPart);
   router.get("/inventory/:id", renderPart);
 
@@ -31,6 +34,7 @@ export function registerInventory(router: Router): void {
   router.post("/api/inventory/parts/:id/movements", movementRoute);
   router.post("/api/inventory/requests", createRequestRoute);
   router.post("/api/inventory/requests/:id/status", advanceRequestRoute);
+  router.post("/api/inventory/vendor-email/:id/review", reviewVendorEmailRoute);
 
   router.get("/api/inventory/parts", async (ctx) => {
     assertCan(ctx.actor, "inventory.read");
@@ -57,6 +61,8 @@ async function renderList(ctx: RequestContext): Promise<Response> {
       { href: "/inventory?low=1", label: "Low stock", current: lowOnly },
       { href: "/inventory/requests", label: "Requests" },
     ])}
+
+    ${can(ctx.actor, "vendor_mail.review") ? html`<p><a class="btn secondary" href="/inventory/vendor-email">Vendor emails to review</a></p>` : ""}
 
     ${parts.length === 0
       ? empty("Nothing here.")
@@ -193,6 +199,8 @@ async function renderRequests(ctx: RequestContext): Promise<Response> {
             ${request.supplier_name || request.supplier_url
               ? html`<p class="meta">${request.supplier_name ?? ""} ${externalLink(request.supplier_url, "Vendor page")}</p>`
               : ""}
+            ${request.vendor_order_number ? html`<p class="meta">Order ${request.vendor_order_number}</p>` : ""}
+            ${request.tracking_number ? html`<p class="meta">${request.carrier_name ?? "Tracking"}: ${externalLink(request.tracking_url, request.tracking_number)}</p>` : ""}
             ${can(ctx.actor, "material_request.approve") && request.status !== "received" && request.status !== "cancelled"
               ? html`<form method="post" action="/api/inventory/requests/${request.id}/status">
                   <label for="status-${request.id}">Move to</label>
@@ -235,6 +243,42 @@ async function renderRequests(ctx: RequestContext): Promise<Response> {
     back: { href: "/inventory", label: "Inventory" },
     flash: flashFrom(ctx.url),
   });
+}
+
+async function renderVendorEmailQueue(ctx: RequestContext): Promise<Response> {
+  assertCan(ctx.actor, "vendor_mail.review");
+  const events = await listVendorEmailEvents(ctx.db);
+  const requests = (await listMaterialRequests(ctx.db, { limit: 250 })).filter((request) => !["received", "cancelled"].includes(request.status));
+  const body = html`
+    <h1>Vendor emails</h1>
+    <p class="lede">Check the match before attaching receipts or sharing tracking with the crew.</p>
+    <p><a href="/inventory/requests">Back to material requests</a></p>
+    ${events.length === 0
+      ? empty("No vendor emails need review.")
+      : events.map((event) => html`<section class="card">
+          <div class="row"><h2>${event.subject}</h2>${badge(event.event_kind, "warn")}</div>
+          <p class="meta">${event.sender} · ${formatDate(event.message_date)} · ${event.attachment_count} attachment${event.attachment_count === 1 ? "" : "s"}</p>
+          ${event.vendor_order_number ? html`<p>Order ${event.vendor_order_number}</p>` : ""}
+          ${event.tracking_number && event.tracking_url
+            ? html`<p>Tracking ${event.carrier_name ?? ""}: ${externalLink(event.tracking_url, event.tracking_number)}</p>`
+            : ""}
+          ${event.match_reason ? html`<p class="meta">Suggested match: ${event.match_reason}</p>` : ""}
+          <form method="post" action="/api/inventory/vendor-email/${event.id}/review">
+            <label for="request-${event.id}">Link to material request</label>
+            <select id="request-${event.id}" name="material_request_id">
+              <option value="">Choose a request</option>
+              ${requests.map((request) => html`<option value="${request.id}" ${raw(event.candidate_material_request_id === request.id ? "selected" : "")}>
+                ${request.description} · ${request.status} · ${request.requested_by_name}
+              </option>`)}
+            </select>
+            <div class="btn-row">
+              <button name="action" value="approve">Link and save</button>
+              <button class="secondary" name="action" value="ignore">Ignore email</button>
+            </div>
+          </form>
+        </section>`)}
+  `;
+  return page(body, { title: "Vendor emails", actor: ctx.actor, section: "/inventory", back: { href: "/inventory/requests", label: "Material requests" } });
 }
 
 async function renderNewPart(ctx: RequestContext): Promise<Response> {
@@ -352,4 +396,17 @@ async function advanceRequestRoute(ctx: RequestContext): Promise<Response> {
     receivedQuantity: numberField(fields, "received_quantity", "Received quantity"),
   });
   return wantsJson(ctx) ? json({ ok: true }) : redirect(`/inventory/requests?ok=${status === "received" ? "received" : "saved"}`);
+}
+
+async function reviewVendorEmailRoute(ctx: RequestContext): Promise<Response> {
+  assertCan(ctx.actor, "vendor_mail.review");
+  const fields = await readFields(ctx.request);
+  const action = requiredField(fields, "action", "Action");
+  if (action !== "approve" && action !== "ignore") throw badRequest("Choose link or ignore");
+  await reviewVendorEmailEvent(ctx.db, ctx.store, ctx.actor, {
+    eventId: ctx.params.id,
+    action,
+    materialRequestId: optionalField(fields, "material_request_id"),
+  });
+  return wantsJson(ctx) ? json({ ok: true }) : redirect("/inventory/vendor-email?ok=saved");
 }

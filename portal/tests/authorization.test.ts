@@ -33,6 +33,7 @@ describe("role permissions", () => {
       assert.ok(can(supervisor, permission), `supervisor should have ${permission}`);
     }
     assert.ok(!can(supervisor, "repair.bill"));
+    assert.ok(!can(supervisor, "vendor_mail.review"));
     assert.ok(!can(supervisor, "employee.manage"));
     assert.ok(!can(supervisor, "monday.manage"));
   });
@@ -41,6 +42,7 @@ describe("role permissions", () => {
     assert.deepEqual(billing.roles.sort(), ["billing", "supervisor"]);
     assert.ok(can(billing, "repair.bill"));
     assert.ok(can(billing, "inventory.manage"));
+    assert.ok(can(billing, "vendor_mail.review"));
     assert.ok(can(billing, "task.assign"));
     assert.ok(!can(billing, "employee.manage"));
   });

@@ -22,6 +22,7 @@ export type NotificationCategory =
   | "inspection_failed"
   | "defect_reported"
   | "material_requested"
+  | "parts_tracking"
   | "service_due"
   | "billing_ready"
   | "daily_digest"

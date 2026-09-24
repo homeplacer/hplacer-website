@@ -308,6 +308,12 @@ export interface MaterialRequestRow {
   supplier_url: string | null;
   needed_by: string | null;
   estimated_unit_cost_cents: number | null;
+  vendor_order_number: string | null;
+  carrier_name: string | null;
+  tracking_number: string | null;
+  tracking_url: string | null;
+  expected_arrival: string | null;
+  shipping_updated_at: string | null;
   created_at: string;
 }
 
@@ -373,7 +379,9 @@ export async function listMaterialRequests(db: Db, filter: { status?: string; li
     .prepare(
       `SELECT m.id, m.status, m.part_id, p.sku, m.repair_ticket_id, r.ticket_number, m.inspection_id,
               m.requested_by, e.display_name AS requested_by_name, m.requested_quantity, m.description,
-              m.supplier_name, m.supplier_url, m.needed_by, m.estimated_unit_cost_cents, m.created_at
+              m.supplier_name, m.supplier_url, m.needed_by, m.estimated_unit_cost_cents,
+              m.vendor_order_number, m.carrier_name, m.tracking_number, m.tracking_url,
+              m.expected_arrival, m.shipping_updated_at, m.created_at
          FROM material_requests m
          JOIN employees e ON e.id = m.requested_by
          LEFT JOIN parts p ON p.id = m.part_id
