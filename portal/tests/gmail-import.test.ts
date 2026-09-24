@@ -168,3 +168,78 @@ describe("Gmail parts import", () => {
   });
 
 });
+
+// All provider messages below are invented; no mailbox or vendor data is used.
+describe("synthetic MIME and duplicate delivery regressions", () => {
+  async function fixture(payload: unknown, snippet = "", subject = "Receipt") {
+    const harness = await createHarness();
+    Object.assign(harness.env, { GMAIL_INGEST_ENABLED: "true", GMAIL_CLIENT_ID: "synthetic-client", GMAIL_CLIENT_SECRET: "synthetic-secret", GMAIL_REFRESH_TOKEN: "synthetic-token", GMAIL_ALLOWED_MAILBOX: "brandon@hplacer.com" });
+    let reads = 0;
+    const fetcher = async (input: RequestInfo | URL): Promise<Response> => {
+      const url = String(input);
+      if (url === "https://oauth2.googleapis.com/token") return json({ access_token: "synthetic-access", token_type: "Bearer", scope: "https://www.googleapis.com/auth/gmail.readonly" });
+      if (url.endsWith("users/me/profile")) return json({ emailAddress: "brandon@hplacer.com" });
+      if (url.includes("users/me/messages?")) {
+        return new URL(url).searchParams.has("pageToken")
+          ? json({ messages: [{ id: "synthetic-1" }, { id: "synthetic-2" }] })
+          : json({ messages: [{ id: "synthetic-1" }, { id: "synthetic-1" }], nextPageToken: "second" });
+      }
+      if (/users\/me\/messages\/synthetic-[12]\?format=full$/.test(url)) {
+        reads += 1;
+        return json({ threadId: "same-thread", snippet, payload: { headers: [{ name: "Subject", value: subject }], ...payload as object } });
+      }
+      throw new Error("Unexpected synthetic request");
+    };
+    return { harness, fetcher, reads: () => reads };
+  }
+  const encode = (value: string) => Buffer.from(value).toString("base64url");
+
+  it("stages HTML-only receipts for review without storing or executing HTML", async () => {
+    const f = await fixture({ mimeType: "text/html", body: { data: encode('<html><script>fetch("https://example.invalid")</script>Order # HIDDEN-1001</html>') } });
+    try {
+      await runConfiguredGmailImport(f.harness.env, { fetcher: f.fetcher });
+      const rows = await f.harness.db.prepare("SELECT status, event_kind, vendor_order_number, tracking_number FROM vendor_email_events").all();
+      assert.equal(rows.results.length, 2);
+      for (const row of rows.results) assert.deepEqual({ ...row }, { status: "needs_review", event_kind: "receipt", vendor_order_number: null, tracking_number: null });
+      assert.equal((await f.harness.db.prepare("SELECT count(*) AS n FROM vendor_email_attachments").first<{n:number}>())?.n, 0);
+    } finally { f.harness.close(); }
+  });
+
+  it("uses the snippet for HTML-only mail but does not invent truncated tracking", async () => {
+    const f = await fixture({ mimeType: "text/html", body: { data: encode("<p>Receipt details</p>") } }, "Order # TEST-1001. FedEx tracking number: 123456…");
+    try {
+      await runConfiguredGmailImport(f.harness.env, { fetcher: f.fetcher });
+      const row = await f.harness.db.prepare("SELECT vendor_order_number, tracking_number FROM vendor_email_events LIMIT 1").first();
+      assert.deepEqual({ ...row }, { vendor_order_number: "TEST-1001", tracking_number: null });
+    } finally { f.harness.close(); }
+  });
+
+  it("deduplicates within and across pages/runs while keeping separate messages in one thread", async () => {
+    const pdf = encode("%PDF synthetic receipt");
+    const f = await fixture({ mimeType: "multipart/mixed", parts: [{ filename: "receipt.pdf", mimeType: "application/pdf", body: { data: pdf, size: 22 } }] });
+    try {
+      const first = await runConfiguredGmailImport(f.harness.env, { fetcher: f.fetcher });
+      assert.deepEqual(first, { enabled: true, found: 4, staged: 2, skipped: 2, failed: 0 });
+      const second = await runConfiguredGmailImport(f.harness.env, { fetcher: f.fetcher });
+      assert.equal(second.skipped, 4);
+      assert.equal(f.reads(), 2, "already staged messages are not fetched again");
+      assert.equal((await f.harness.db.prepare("SELECT count(*) AS n FROM vendor_email_events").first<{n:number}>())?.n, 2);
+      assert.equal((await f.harness.db.prepare("SELECT count(*) AS n FROM vendor_email_attachments").first<{n:number}>())?.n, 2);
+    } finally { f.harness.close(); }
+  });
+
+  it("reads nested plain text, ignores attached text, and leaves multiple packages for review", async () => {
+    const f = await fixture({ mimeType: "multipart/mixed", parts: [
+      { filename: "unrelated.txt", mimeType: "text/plain", body: { data: encode("Order # WRONG-1000") } },
+      { mimeType: "multipart/alternative", parts: [
+        { mimeType: "text/plain", body: { data: encode("Order # TEST-1001. UPS 1Z999AA10123456784 and 1Z999AA10123456785") } },
+        { mimeType: "text/html", body: { data: encode("<p>Order # WRONG-2000</p>") } },
+      ] },
+    ] });
+    try {
+      await runConfiguredGmailImport(f.harness.env, { fetcher: f.fetcher });
+      const row = await f.harness.db.prepare("SELECT status, vendor_order_number, tracking_number, tracking_url FROM vendor_email_events LIMIT 1").first();
+      assert.deepEqual({ ...row }, { status: "needs_review", vendor_order_number: "TEST-1001", tracking_number: null, tracking_url: null });
+    } finally { f.harness.close(); }
+  });
+});
