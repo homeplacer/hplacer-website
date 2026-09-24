@@ -45,7 +45,10 @@ export default function FinancingPage() {
         we&apos;ll help no matter where your credit stands today.
       </PageHero>
 
-      <div className="container-x pt-8"><Link href="/buyer-resources#financing" className="font-semibold text-brand-700 underline">Official program information and questions for your lender</Link></div>
+      <div className="container-x flex flex-wrap gap-x-6 gap-y-3 pt-8">
+        <Link href="/down-payment-assistance" className="font-semibold text-brand-700 underline">Explore down-payment assistance</Link>
+        <Link href="/buyer-resources#financing" className="font-semibold text-brand-700 underline">Official program information and questions for your lender</Link>
+      </div>
       <section className="container-x py-16">
         <div className="mx-auto mb-8 max-w-4xl rounded-card border border-brand-200 bg-brand-50/60 p-6">
           <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">Current buyer offer</p>

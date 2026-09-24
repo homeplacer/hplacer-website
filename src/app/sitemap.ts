@@ -60,6 +60,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/gallery",
     "/recently-placed",
     "/financing",
+    "/down-payment-assistance",
     "/process",
     "/warranty",
     "/faq",
