@@ -11,6 +11,7 @@ import { notifyServiceDue } from "./domain/assets.ts";
 import { sendDailyDigest } from "./domain/daily-digest.ts";
 import { notifyInsuranceExpirations } from "./domain/insurance.ts";
 import { runConfiguredMondaySync } from "./integrations/monday-sync-processor.ts";
+import { runConfiguredGmailImport } from "./integrations/gmail-import.ts";
 import type { PortalEnv } from "./platform/types.ts";
 
 const portal = {
@@ -24,8 +25,26 @@ const portal = {
    * so a manual/retried cron invocation cannot flood inboxes.
    * Configure with a cron trigger on the portal Worker.
    */
-  async scheduled(_event: { cron: string }, env: PortalEnv): Promise<void> {
+  async scheduled(event: { cron: string }, env: PortalEnv): Promise<void> {
     if (!env.PORTAL_DB) return;
+    if (event.cron === "*/15 * * * *") {
+      try {
+        const gmail = await runConfiguredGmailImport(env);
+        if (gmail.enabled) {
+          console.log(JSON.stringify({
+            message: "vendor email poll complete",
+            found: gmail.found,
+            staged: gmail.staged,
+            failed: gmail.failed,
+            skipped: gmail.skipped,
+          }));
+        }
+      } catch {
+        // Do not log remote response bodies, OAuth data, headers, or email content.
+        console.error("vendor email poll failed; check Gmail configuration and retry; no mailbox contents are logged");
+      }
+      return;
+    }
     const lowStock = await sweepLowStock(env.PORTAL_DB);
     const serviceDue = await notifyServiceDue(env.PORTAL_DB);
     const insuranceExpiring = await notifyInsuranceExpirations(env.PORTAL_DB);

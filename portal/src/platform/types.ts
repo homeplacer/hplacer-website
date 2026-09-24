@@ -109,4 +109,13 @@ export interface PortalEnv {
   MONDAY_API_TOKEN?: string;
   /** JSON board/column map; validated against the code-level field allowlist. */
   MONDAY_SYNC_MAPPINGS?: string;
+
+  /** Explicit opt-in. Gmail ingestion remains inert until all secrets exist. */
+  GMAIL_INGEST_ENABLED?: string;
+  /** Google OAuth client secrets and refresh token; provision with wrangler secret put. */
+  GMAIL_CLIENT_ID?: string;
+  GMAIL_CLIENT_SECRET?: string;
+  GMAIL_REFRESH_TOKEN?: string;
+  /** Must exactly equal the one mailbox this integration is allowed to read. */
+  GMAIL_ALLOWED_MAILBOX?: string;
 }
