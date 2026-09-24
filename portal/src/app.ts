@@ -44,6 +44,8 @@ import { registerTasks } from "./features/tasks.ts";
 import { registerWarranty } from "./features/warranty.ts";
 import { errorPage } from "./ui/error-page.ts";
 
+import { registerEquipmentParts } from "./features/equipment-parts.ts";
+
 export function buildRouter(): Router {
   const router = new Router();
   registerDashboard(router);
@@ -51,6 +53,7 @@ export function buildRouter(): Router {
   registerHomes(router);
   registerHealth(router);
   registerEquipment(router);
+  registerEquipmentParts(router);
   registerTasks(router);
   registerRepairs(router);
   registerWarranty(router);

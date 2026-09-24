@@ -16,11 +16,14 @@ import {
   serviceSchedulesFor,
   setAssetStatus,
   type AssetType,
+  type AssetVerificationStatus,
 } from "../domain/assets.ts";
 import { listDefects } from "../domain/defects.ts";
 import { listDocuments } from "../domain/documents.ts";
 import { listEmployees } from "../domain/employees.ts";
+import { listEquipmentUse, recordEquipmentUse } from "../domain/equipment-usage.ts";
 import { listInsuranceCards, recordInsuranceCard } from "../domain/insurance.ts";
+import { listJobs } from "../domain/jobs.ts";
 import {
   getInspection,
   listInspections,
@@ -47,6 +50,15 @@ import { html, query, raw } from "../ui/html.ts";
 import { badge, empty, formatDate, kv, money, page, tabs } from "../ui/layout.ts";
 import { documentList, uploadForm, workflowDocumentArea } from "./documents.ts";
 
+const VERIFICATION_LABELS: Record<AssetVerificationStatus, string> = {
+  verified: "Details checked",
+  needs_serial: "Serial number missing",
+  needs_model: "Confirm make / model",
+  needs_owner: "Confirm owning company",
+  needs_vin: "Confirm VIN",
+  unassigned: "Confirm home base / company",
+};
+
 export function registerEquipment(router: Router): void {
   router.get("/equipment", renderList);
   router.get("/equipment/new", renderNewAsset);
@@ -57,6 +69,7 @@ export function registerEquipment(router: Router): void {
   router.post("/api/equipment", createAssetRoute);
   router.post("/api/equipment/:tag/status", setStatusRoute);
   router.post("/api/equipment/:tag/service", recordServiceRoute);
+  router.post("/api/equipment/:tag/usage", recordEquipmentUseRoute);
   router.post("/api/equipment/:tag/schedules", createScheduleRoute);
   router.post("/api/equipment/:tag/source-verification", resolveSourceVerificationRoute);
   router.post("/api/equipment/:tag/insurance", recordInsuranceRoute);
@@ -77,6 +90,11 @@ export function registerEquipment(router: Router): void {
     const asset = await requireAsset(ctx.db, ctx.params.tag);
     return json({ sourceMetadata: await assetSourceMetadata(ctx.db, asset.id) });
   });
+  router.get("/api/equipment/:tag/usage", async (ctx) => {
+    assertCan(ctx.actor, "asset.read");
+    const asset = await requireAsset(ctx.db, ctx.params.tag);
+    return json({ usage: await listEquipmentUse(ctx.db, asset.id) });
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -87,26 +105,28 @@ async function renderList(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "asset.read");
   const type = ctx.url.searchParams.get("type") ?? undefined;
   const search = ctx.url.searchParams.get("q") ?? undefined;
-  const scope = ctx.url.searchParams.get("scope") === "review" ? "review" : "main";
+  const requestedScope = ctx.url.searchParams.get("scope");
+  const scope = requestedScope === "all" ? "all" : requestedScope === "review" ? "review" : "main";
   const assets = await listAssets(ctx.db, { type, search, verification: scope });
 
   const body = html`
-    <h1>Equipment</h1>
-    <p class="lede">${scope === "main" ? "Verified fleet and staff-entered assets." : "Imported records held out of the main fleet until their source details are verified."}</p>
+    <h1>Equipment (${assets.length})</h1>
+    <p class="lede">${scope === "all" ? "Complete inventory, including records that still need verification." : scope === "main" ? "Verified fleet and staff-entered assets." : "Imported records held out of the main fleet until their source details are verified."}</p>
 
     <form method="get" action="/equipment">
       <label for="q">Search by tag, serial, VIN, or model</label>
       <input id="q" name="q" value="${search ?? ""}" inputmode="search" autocomplete="off">
       ${type ? html`<input type="hidden" name="type" value="${type}">` : ""}
-      ${scope === "review" ? html`<input type="hidden" name="scope" value="review">` : ""}
+      ${scope !== "main" ? html`<input type="hidden" name="scope" value="${scope}">` : ""}
       <div class="btn-row"><button type="submit">Search</button></div>
     </form>
 
     ${tabs([
+      { href: "/equipment?scope=all", label: "All equipment", current: scope === "all" && !type },
       { href: "/equipment", label: "Verified fleet", current: scope === "main" && !type },
-      { href: "/equipment?scope=review", label: "Source review", current: scope === "review" && !type },
+      { href: "/equipment?scope=review", label: "Details to check", current: scope === "review" && !type },
       ...ASSET_TYPES.map((value) => ({
-        href: `/equipment${query({ type: value, q: search, scope: scope === "review" ? "review" : undefined })}`,
+        href: `/equipment${query({ type: value, q: search, scope: scope !== "main" ? scope : undefined })}`,
         label: ASSET_TYPE_LABELS[value],
         current: type === value,
       })),
@@ -132,7 +152,7 @@ async function renderList(ctx: RequestContext): Promise<Response> {
               ${asset.open_defect_count > 0 ? ` · ${asset.open_defect_count} open defect${asset.open_defect_count === 1 ? "" : "s"}` : ""}
               · last checked ${formatDate(asset.last_inspected_at)}
             </div>
-            ${asset.verification_status && asset.verification_status !== "verified" ? html`<p>${badge("needs source verification", "warn")}</p>` : ""}
+            ${asset.verification_status && asset.verification_status !== "verified" ? html`<p>${badge(VERIFICATION_LABELS[asset.verification_status], "warn")}</p>${asset.source_notes ? html`<p class="meta">What to check: ${asset.source_notes}</p>` : ""}` : ""}
           </a>`,
         )}
 
@@ -153,6 +173,12 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
   const link = await getLink(ctx.db, "asset", asset.id);
   const sourceMetadata = await assetSourceMetadata(ctx.db, asset.id);
   const insuranceCards = await listInsuranceCards(ctx.db, asset.id);
+  const [usageRecords, activeJobs, planningJobs] = await Promise.all([
+    listEquipmentUse(ctx.db, asset.id),
+    listJobs(ctx.db, { status: "active" }),
+    listJobs(ctx.db, { status: "planning" }),
+  ]);
+  const jobs = [...activeJobs, ...planningJobs];
   const employees = sourceMetadata && can(ctx.actor, "asset.write") ? await listEmployees(ctx.db) : [];
 
   const body = html`
@@ -223,10 +249,10 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
       : ""}
 
     ${sourceMetadata
-      ? html`<h2>Fleet record verification</h2>
+      ? html`<h2>Equipment details to check</h2>
           <div class="card">
             <div class="row"><h3>Imported from ${sourceMetadata.source_file}</h3>
-              ${badge(sourceMetadata.verification_status, sourceMetadata.verification_status === "verified" ? "ok" : "warn")}</div>
+              ${badge(VERIFICATION_LABELS[sourceMetadata.verification_status], sourceMetadata.verification_status === "verified" ? "ok" : "warn")}</div>
             <p class="meta">Source row: ${sourceMetadata.source_reference} · imported ${formatDate(sourceMetadata.imported_at)}</p>
             ${sourceMetadata.source_notes ? html`<p>${sourceMetadata.source_notes}</p>` : ""}
             ${sourceMetadata.verification_status === "verified"
@@ -353,6 +379,41 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
           </a>`,
         )}
 
+    <h2>Shared use</h2>
+    <p class="meta">Log who used this equipment and which job it went to. Serial numbers are not needed.</p>
+    ${usageRecords.length === 0
+      ? empty("No use has been logged yet.")
+      : html`<div class="table-wrap"><table>
+          <thead><tr><th>When</th><th>Used by</th><th>Job</th><th>Meter</th><th>Note</th></tr></thead>
+          <tbody>${usageRecords.map((record) => html`<tr>
+            <td>${formatDate(record.used_at)}</td>
+            <td>${record.employee_name}</td>
+            <td>${record.job_title ?? "Yard / other"}</td>
+            <td>${record.hour_meter != null ? `${record.hour_meter} h` : record.odometer != null ? `${record.odometer.toLocaleString("en-US")} mi` : "—"}</td>
+            <td>${record.notes ?? "—"}</td>
+          </tr>`)}</tbody>
+        </table></div>`}
+    <details class="card">
+      <summary><strong>Log this use</strong></summary>
+      <form method="post" action="/api/equipment/${asset.asset_tag}/usage">
+        <label for="usage_job_id">Job site (optional)</label>
+        <select id="usage_job_id" name="job_id">
+          <option value="">Yard / other</option>
+          ${jobs.map((job) => html`<option value="${job.id}">${job.title}${job.street_address ? ` · ${job.street_address}` : ""}</option>`)}
+        </select>
+        ${["excavator", "skid_steer", "bulldozer"].includes(asset.asset_type)
+          ? html`<label for="usage_hour_meter">Hours now (optional)</label><input id="usage_hour_meter" name="hour_meter" inputmode="decimal" placeholder="${asset.hour_meter ?? "Current reading"}">`
+          : ["dump_truck", "pickup_truck"].includes(asset.asset_type)
+            ? html`<label for="usage_odometer">Miles now (optional)</label><input id="usage_odometer" name="odometer" inputmode="numeric" placeholder="${asset.odometer ?? "Current reading"}">`
+            : ""}
+        <label for="usage_notes">Note (optional)</label>
+        <textarea id="usage_notes" name="notes" placeholder="Anything the next person should know?"></textarea>
+        <div class="btn-row"><button type="submit">Save use</button></div>
+      </form>
+    </details>
+
+    <h2>Parts library</h2>
+    <a class="btn secondary" href="/equipment/${asset.id}/parts">Find or save parts for this machine</a>
     <h2>Photos and documents</h2>
     ${documentList(documents)}
     ${uploadForm(ctx.actor, { assetId: asset.id }, `/equipment/${asset.asset_tag}`)}
@@ -622,6 +683,21 @@ async function recordServiceRoute(ctx: RequestContext): Promise<Response> {
     performedBy: ctx.actor.employeeId,
   });
   return wantsJson(ctx) ? json({ id }, 201) : redirect(`/equipment/${asset.asset_tag}?ok=saved`);
+}
+
+async function recordEquipmentUseRoute(ctx: RequestContext): Promise<Response> {
+  assertCan(ctx.actor, "inspection.submit");
+  const asset = await requireAsset(ctx.db, ctx.params.tag);
+  const fields = await readFields(ctx.request);
+  const id = await recordEquipmentUse(ctx.db, {
+    assetId: asset.id,
+    employeeId: ctx.actor.employeeId,
+    jobId: optionalField(fields, "job_id"),
+    hourMeter: numberField(fields, "hour_meter", "Hours"),
+    odometer: numberField(fields, "odometer", "Miles"),
+    notes: optionalField(fields, "notes"),
+  });
+  return wantsJson(ctx) ? json({ id }, 201) : redirect(`/equipment/${asset.asset_tag}?ok=usage_logged`);
 }
 
 async function createScheduleRoute(ctx: RequestContext): Promise<Response> {

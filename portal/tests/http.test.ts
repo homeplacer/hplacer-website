@@ -141,8 +141,8 @@ describe("fleet-source verification", () => {
 
   it("shows the imported-source flag through the UI and API", async () => {
     const detail = await (await harness.request("/equipment/EX-01", { as: "dale@hplacer.com" })).text();
-    assert.match(detail, /Fleet record verification/);
-    assert.match(detail, /needs serial/);
+    assert.match(detail, /Equipment details to check/);
+    assert.match(detail, /Serial number missing/);
     assert.match(detail, /supervisor or admin must review/i);
 
     const response = await harness.request("/api/equipment/EX-01/source-verification", { as: "dale@hplacer.com" });
@@ -379,10 +379,10 @@ describe("JSON API", () => {
   });
 
   it("reports a validation failure as JSON, not as a page", async () => {
-    const response = await harness.request("/api/subdivisions", { ...jsonBody({ title: "No number" }) });
+    const response = await harness.request("/api/subdivisions", { ...jsonBody({ title: "Invalid status", status: "invalid" }) });
     assert.equal(response.status, 400);
     assert.equal(response.headers.get("Content-Type"), "application/json; charset=utf-8");
-    assert.deepEqual(await response.json(), { error: "bad_request", message: "Subdivision number is required" });
+    assert.deepEqual(await response.json(), { error: "bad_request", message: 'Unknown job status "invalid"' });
   });
 
   it("records allowed writes in the audit log", async () => {

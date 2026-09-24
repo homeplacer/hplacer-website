@@ -17,7 +17,7 @@ describe("verified fleet list and private equipment photos", () => {
     assert.ok(!main.includes("EX-01 ·"));
     const review = await (await harness.request("/equipment?scope=review", { as: "dale@hplacer.com" })).text();
     assert.match(review, /EX-01 ·/);
-    assert.match(review, /Source review/);
+    assert.match(review, /Details to check/);
   });
 
   it("uploads an equipment photo privately and shows its protected thumbnail on the list", async () => {
