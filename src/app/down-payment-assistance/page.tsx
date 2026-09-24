@@ -129,13 +129,13 @@ export default function DownPaymentAssistancePage() {
         <div className="container-x grid gap-8 py-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">
-              Ask about your options
+              Find out about your options
             </p>
             <h2 className="mt-2 font-display text-3xl font-semibold text-stone-ink sm:text-4xl">
-              Let&apos;s see what may fit your plan
+              Get more information about assistance
             </h2>
             <p className="mt-4 max-w-xl text-stone-muted">
-              Share the basics. We will help you start the right conversation about your
+              Share the basics and we&apos;ll help you understand the next steps for your
               home, land, financing, and possible assistance — without collecting credit or
               financial details here.
             </p>

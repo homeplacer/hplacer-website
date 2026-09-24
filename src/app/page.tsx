@@ -138,7 +138,7 @@ export default async function HomePage() {
               href="/down-payment-assistance"
               className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-brand-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-800"
             >
-              Explore assistance <ArrowIcon className="size-4" />
+              Find out about assistance <ArrowIcon className="size-4" />
             </Link>
           </div>
         </div>
