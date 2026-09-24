@@ -36,6 +36,7 @@ export interface TaskRow {
 export interface TaskSummary extends TaskRow {
   assignee_name: string | null;
   created_by_name: string;
+  completed_by_name: string | null;
   job_number: string | null;
   serial_number: string | null;
   asset_tag: string | null;
@@ -43,12 +44,13 @@ export interface TaskSummary extends TaskRow {
 }
 
 const TASK_SELECT = `
-  SELECT t.*, a.display_name AS assignee_name, c.display_name AS created_by_name,
+  SELECT t.*, a.display_name AS assignee_name, c.display_name AS created_by_name, d.display_name AS completed_by_name,
          j.job_number, h.serial_number, s.asset_tag,
          (SELECT count(*) FROM documents d WHERE d.work_task_id = t.id AND d.upload_status = 'stored') AS evidence_count
     FROM work_tasks t
     LEFT JOIN employees a ON a.id = t.assigned_to
     JOIN employees c ON c.id = t.created_by
+    LEFT JOIN employees d ON d.id = t.completed_by
     LEFT JOIN jobs j ON j.id = t.job_id
     LEFT JOIN homes h ON h.id = t.home_id
     LEFT JOIN assets s ON s.id = t.asset_id`;
@@ -58,23 +60,29 @@ export interface TaskFilter {
   assignedTo?: string;
   jobId?: string;
   openOnly?: boolean;
+  availableOnly?: boolean;
+  includeAvailableForCrew?: boolean;
   limit?: number;
 }
 
 /**
  * Row-level scoping happens here, not in the caller: without `task.read.all`
- * an employee only ever sees tasks assigned to them or raised by them.
+ * an employee sees tasks assigned to them or raised by them, plus unassigned
+ * job-site tasks only where a caller explicitly requests that crew view.
  */
 export async function listTasks(db: Db, actor: Actor, filter: TaskFilter = {}): Promise<TaskSummary[]> {
   const restrictToActor = can(actor, "task.read.all") ? null : actor.employeeId;
   const rows = await db
     .prepare(
       `${TASK_SELECT}
-        WHERE (?1 IS NULL OR t.assigned_to = ?1 OR t.created_by = ?1)
+        WHERE (?1 IS NULL OR t.assigned_to = ?1 OR t.created_by = ?1 OR
+               (?7 = 1 AND t.assigned_to IS NULL AND (t.job_id IS NOT NULL OR t.lot_id IS NOT NULL OR t.home_id IS NOT NULL)))
           AND (?2 IS NULL OR t.status = ?2)
           AND (?3 IS NULL OR t.assigned_to = ?3)
           AND (?4 IS NULL OR t.job_id = ?4)
           AND (?5 = 0 OR t.status IN ('open', 'in_progress', 'blocked'))
+          AND (?8 = 0 OR (t.assigned_to IS NULL AND (t.job_id IS NOT NULL OR t.lot_id IS NOT NULL OR t.home_id IS NOT NULL)
+               AND t.status IN ('open', 'in_progress', 'blocked')))
         ORDER BY t.status IN ('complete', 'cancelled'),
                  CASE t.priority WHEN 'urgent' THEN 0 WHEN 'high' THEN 1 WHEN 'normal' THEN 2 ELSE 3 END,
                  t.due_at IS NULL, t.due_at
@@ -87,6 +95,8 @@ export async function listTasks(db: Db, actor: Actor, filter: TaskFilter = {}): 
       filter.jobId ?? null,
       filter.openOnly ? 1 : 0,
       filter.limit ?? 100,
+      filter.includeAvailableForCrew && can(actor, "job.read") ? 1 : 0,
+      filter.availableOnly ? 1 : 0,
     )
     .all<TaskSummary>();
   return rows.results;
@@ -249,9 +259,16 @@ export async function completeTask(db: Db, actor: Actor, input: CompleteTaskInpu
   }
 }
 
+/** Crew may open unassigned tasks tied to a home-placement job, lot, or home. */
+export function isAvailableToCrew(actor: Actor, task: Pick<TaskRow, "assigned_to" | "job_id" | "lot_id" | "home_id">): boolean {
+  return can(actor, "job.read") && task.assigned_to === null &&
+    (task.job_id !== null || task.lot_id !== null || task.home_id !== null);
+}
+
 function assertCanWorkTask(actor: Actor, task: TaskRow): void {
   if (can(actor, "task.complete.any")) return;
   if (task.assigned_to === actor.employeeId || task.created_by === actor.employeeId) return;
+  if (isAvailableToCrew(actor, task)) return;
   throw forbidden("That task is assigned to someone else");
 }
 
