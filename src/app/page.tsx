@@ -75,6 +75,13 @@ export default async function HomePage() {
                 className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-base font-semibold text-white ring-1 ring-white/20 transition hover:bg-white/15"
               />
             </div>
+            <Link
+              href="/down-payment-assistance"
+              className="mt-4 inline-flex max-w-fit items-center gap-2 rounded-full bg-accent-500/15 px-4 py-2 text-sm font-semibold text-accent-100 ring-1 ring-accent-300/40 transition hover:bg-accent-500/25"
+            >
+              See if you may qualify for $5,000–$50,000 in assistance
+              <ArrowIcon className="size-4" />
+            </Link>
             <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-stone-100/75">
               <a href={`mailto:${site.email}`} className="underline-offset-4 hover:text-white hover:underline">Email us</a>
               <Link href="/homes" className="underline-offset-4 hover:text-white hover:underline">Browse available home models</Link>
