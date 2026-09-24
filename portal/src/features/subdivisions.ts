@@ -93,7 +93,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
   const job = await requireJob(ctx.db, ctx.params.id);
   const lots = await listLots(ctx.db, job.id);
   const homes = await listHomes(ctx.db, { jobId: job.id });
-  const tasks = await listTasks(ctx.db, ctx.actor, { jobId: job.id, openOnly: true });
+  const tasks = await listTasks(ctx.db, ctx.actor, { jobId: job.id, openOnly: true, includeAvailableForCrew: true });
   const documents = await listDocuments(ctx.db, { jobId: job.id });
   const link = await getLink(ctx.db, "job", job.id);
 
