@@ -76,10 +76,6 @@ export default async function HomePage() {
                 className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-base font-semibold text-white ring-1 ring-white/20 transition hover:bg-white/15"
               />
             </div>
-            <DownPaymentAssistanceDialog
-              label="See if you may qualify for $5,000–$50,000 in assistance"
-              className="mt-4 inline-flex max-w-fit items-center gap-2 rounded-full bg-accent-500/15 px-4 py-2 text-sm font-semibold text-accent-100 ring-1 ring-accent-300/40 transition hover:bg-accent-500/25"
-            />
             <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-stone-100/75">
               <a href={`mailto:${site.email}`} className="underline-offset-4 hover:text-white hover:underline">Email us</a>
               <Link href="/homes" className="underline-offset-4 hover:text-white hover:underline">Browse available home models</Link>
@@ -124,26 +120,26 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="border-b border-brand-200 bg-brand-50">
-        <div className="container-x py-5 sm:py-6">
-          <div className="flex flex-col gap-4 rounded-card border border-brand-200 bg-stone-bg p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-wider text-brand-700">
-                Down-payment assistance
-              </p>
-              <p className="mt-1 font-display text-xl font-semibold text-stone-ink sm:text-2xl">
-                Qualifying buyers may have $5,000–$50,000 available.
-              </p>
-              <p className="mt-1 max-w-2xl text-sm leading-relaxed text-stone-muted">
-                Ask us to help you explore assistance options for a Home Placer land-home package.
-                Restrictions and lender approval apply.
-              </p>
-            </div>
-            <DownPaymentAssistanceDialog
-              label="Find out about assistance"
-              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-brand-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-800"
-            />
+      <section className="relative overflow-hidden bg-accent-500 text-white">
+        <div className="absolute inset-0 bg-brand-950/10" aria-hidden />
+        <div className="container-x relative flex flex-col gap-5 py-8 sm:py-10 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+          <div className="max-w-3xl">
+            <p className="text-sm font-bold uppercase tracking-[0.14em] text-white/80">
+              Down-payment assistance
+            </p>
+            <h2 className="mt-2 font-display text-3xl font-semibold leading-tight sm:text-4xl">
+              $5,000–$50,000 may be available for your new home
+            </h2>
+            <p className="mt-3 max-w-2xl text-base leading-relaxed text-white/90 sm:text-lg">
+              We&apos;ll help qualifying buyers explore assistance options for a Home Placer land-home package. {" "}
+              <strong className="font-semibold text-white">Restrictions apply:</strong> availability,
+              program funding, property, location, and buyer eligibility can all affect what is available.
+            </p>
           </div>
+          <DownPaymentAssistanceDialog
+            label="Find out if you may qualify"
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-brand-950 px-6 py-3.5 text-base font-semibold text-white shadow-lg transition hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-accent-500"
+          />
         </div>
       </section>
 
