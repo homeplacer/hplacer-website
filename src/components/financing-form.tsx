@@ -14,11 +14,13 @@ const fieldClass =
 // a licensed lender. This form just starts the conversation.
 export function FinancingForm({
   compact = false,
+  requireEmail = false,
   submitLabel = "Apply for financing",
   successTitle = "You're all set.",
   successMessage,
 }: {
   compact?: boolean;
+  requireEmail?: boolean;
   submitLabel?: string;
   successTitle?: string;
   successMessage?: string;
@@ -85,9 +87,16 @@ export function FinancingForm({
       </div>
       <div>
         <label htmlFor="fin-email" className="mb-1.5 block text-sm font-medium text-stone-ink">
-          Email <span className="text-stone-muted">(optional)</span>
+          Email {!requireEmail && <span className="text-stone-muted">(optional)</span>}
         </label>
-        <input id="fin-email" name="email" type="email" autoComplete="email" className={fieldClass} />
+        <input
+          id="fin-email"
+          name="email"
+          type="email"
+          required={requireEmail}
+          autoComplete="email"
+          className={fieldClass}
+        />
       </div>
 
       {!compact && (
