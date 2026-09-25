@@ -71,8 +71,13 @@ export function DownPaymentAssistanceDialog({
                 <h2 id="assistance-dialog-title" className="mt-1 font-display text-2xl font-semibold text-stone-ink">
                   Get assistance details
                 </h2>
-                <p className="mt-2 text-sm leading-relaxed text-stone-muted">
-                  Qualifying buyers may have $5,000–$50,000 in assistance available.
+                <p className="mt-4 font-display text-4xl font-semibold leading-none text-brand-800 sm:text-5xl">
+                  $5,000–$50,000
+                </p>
+                <p className="mt-1 text-base font-semibold text-stone-ink">
+                  in possible assistance for qualifying buyers
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-stone-muted">
                   Restrictions apply; availability, program funding, property, location, and buyer
                   eligibility can all affect what is available.
                 </p>
@@ -98,6 +103,7 @@ export function DownPaymentAssistanceDialog({
             <div className="mt-6">
               <FinancingForm
                 compact
+                requireEmail
                 submitLabel="Send me assistance details"
                 successTitle="Thanks — we'll be in touch."
                 successMessage="A Home Placer team member will help you understand the potential assistance options for your land-home plan."
