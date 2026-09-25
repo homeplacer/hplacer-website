@@ -43,3 +43,59 @@ describe("vendor mail parsing", () => {
   });
 
 });
+
+describe("conservative shipment matching regressions", () => {
+  it("leaves multiple labeled orders unmatched rather than picking the first", () => {
+    assert.equal(parseVendorMail("Consolidated receipt", "Order # PO-1001 and order # PO-1002").orderNumber, null);
+    assert.equal(parseVendorMail("Order # PO-1001", "Order number: po-1001").orderNumber, "PO-1001");
+  });
+  it("does not extract a valid numeric substring from a malformed tracking identifier", () => {
+    for (const suffix of ["-extra", "/extra", "_extra"]) assert.equal(parseVendorMail("FedEx shipment", `Tracking number: 123456789012${suffix}`).trackingNumber, null);
+  });
+  it("leaves multiple numeric packages unmatched, including a shared tracking label", () => {
+    for (const body of ["Tracking number: 123456789012; Tracking number: 123456789015", "Tracking numbers: 123456789012, 123456789015", "Tracking number: 123456789012, 123456789015"]) {
+      assert.equal(parseVendorMail("FedEx shipment", body).trackingNumber, null);
+    }
+  });
+  it("deduplicates repeated identifiers and refuses overlapping carrier formats", () => {
+    assert.equal(parseVendorMail("FedEx shipped", "Tracking: 123456789012\nTracking: 123456789012").trackingNumber, "123456789012");
+    assert.equal(parseVendorMail("FedEx USPS shipment", "Tracking: 9400111899223856928499").trackingNumber, null);
+  });
+});
+
+describe("identifier boundary regression review", () => {
+  it("does not truncate unsupported order identifiers into another valid order", () => {
+    for (const value of ["PO-1001/2", "PO-1001_extra", `${"A".repeat(29)}-SUFFIX`]) {
+      assert.equal(parseVendorMail("Receipt", `Order number: ${value}`).orderNumber, null);
+    }
+  });
+  it("rejects malformed UPS identifier suffixes as well as numeric carrier suffixes", () => {
+    for (const suffix of ["-extra", "/extra", "_extra"]) {
+      assert.equal(parseVendorMail("UPS shipped", `Tracking: 1Z999AA10123456784${suffix}`).trackingNumber, null);
+    }
+  });
+});
+
+describe("review of labels and repeated shipment summaries", () => {
+  it("does not interpret the start of notification as an order-number label", () => {
+    assert.equal(parseVendorMail("Order notification", "Your receipt is attached").orderNumber, null);
+    assert.equal(parseVendorMail("Order no. PO-1001", "").orderNumber, "PO-1001");
+  });
+  it("does not choose a snippet's single tracking ID when the body lists multiple packages", () => {
+    const result = parseVendorMail("FedEx shipment", "Tracking: 123456789012\nTracking number: 123456789012, 123456789015");
+    assert.equal(result.trackingNumber, null);
+  });
+  it("recognizes a repeated single tracking ID in a list without treating it as multiple packages", () => {
+    assert.equal(parseVendorMail("FedEx shipment", "Tracking: 123456789012, 123456789012").trackingNumber, "123456789012");
+  });
+});
+
+describe("plural and alphanumeric package lists", () => {
+  it("counts plural tracking labels even when the snippet mentions only one package", () => {
+    assert.equal(parseVendorMail("FedEx shipment", "Tracking: 123456789012\nTracking numbers: 123456789012, 123456789015").trackingNumber, null);
+  });
+  it("counts alphanumeric packages and treats uppercase list separators consistently", () => {
+    assert.equal(parseVendorMail("DHL shipment", "Tracking number: JD123456789012345678, JD123456789012345679").trackingNumber, null);
+    assert.equal(parseVendorMail("FedEx shipment", "Tracking: 123456789012 AND 123456789012").trackingNumber, "123456789012");
+  });
+});

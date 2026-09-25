@@ -50,8 +50,9 @@ export function parseVendorMail(subject: string, text: string): ParsedVendorMail
           ? "order"
           : "unknown";
 
-  const orderMatch = source.match(/\b(?:order\s+confirmation|purchase order|order|invoice|confirmation)\s*(?:number|no\.?|#|:)\s*[:#]?\s*([A-Z0-9][A-Z0-9-]{3,29})\b/i);
-  const orderNumber = orderMatch?.[1] ? normalizeOrderNumber(orderMatch[1]) : null;
+  const orderMatches = source.matchAll(/\b(?:order\s+confirmation|purchase order|order|invoice|confirmation)\s*(?:number\b|no\.?(?=\s|[:#])|#|:)\s*[:#]?\s*([A-Z0-9][A-Z0-9/_-]*)/gi);
+  const orderNumbers = new Set([...orderMatches].map((match) => normalizeOrderNumber(match[1]!)).filter((value): value is string => value !== null));
+  const orderNumber = orderNumbers.size === 1 ? [...orderNumbers][0]! : null;
 
   const candidates: { carrier: CarrierName; number: string; url: string }[] = [];
   for (const carrier of CARRIERS) {
@@ -60,9 +61,11 @@ export function parseVendorMail(subject: string, text: string): ParsedVendorMail
     // Require an explicit tracking label; UPS's distinctive 1Z format is safe
     // to recognize without one. Ambiguous shipments stay for manual review.
     const contexts = carrier.name === "UPS" ? [source] : [...source.matchAll(
-      /\btracking\s*(?:(?:number|no\.?|#|id)\s*)?(?:is\s*)?[:#]?\s*([A-Z0-9-]+)/gi,
-    )].map((match) => match[1]!);
-    const numbers = new Set(contexts.flatMap((context) => [...context.matchAll(new RegExp(carrier.tracking.source, "gi"))].map((match) => match[0].toUpperCase())));
+      /\btracking\s*(?:(?:numbers?\b|no\.?(?=\s|[:#])|#|ids?\b)\s*)?(?:is\s*)?[:#]?\s*([A-Z0-9/_-]+(?:[ \t]*(?:,|;|and)[ \t]*(?=[A-Z]*[0-9])[A-Z0-9][A-Z0-9/_-]*)*)/gi,
+    )].flatMap((match) => match[1]!.split(/[ \t]*(?:,|;|\band\b)[ \t]*/i));
+    const numbers = new Set(contexts.flatMap((context) => carrier.name === "UPS"
+      ? [...context.matchAll(new RegExp(`(?<![A-Z0-9/_-])${carrier.tracking.source}(?![A-Z0-9/_-])`, "gi"))].map((match) => match[0].toUpperCase())
+      : new RegExp(`^(?:${carrier.tracking.source})$`, "i").test(context) ? [context.toUpperCase()] : []));
     for (const number of numbers) candidates.push({ carrier: carrier.name, number, url: carrier.url(number) });
   }
   if (candidates.length === 1) {
