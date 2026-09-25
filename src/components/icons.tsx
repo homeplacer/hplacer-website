@@ -19,6 +19,19 @@ export const PhoneIcon = (p: IconProps) => (
   </svg>
 );
 
+export const MessageIcon = (p: IconProps) => (
+  <svg {...base} {...p}>
+    <path d="M21 11.5a8.4 8.4 0 0 1-1.35 4.55A8.9 8.9 0 0 1 12 20.5a8.4 8.4 0 0 1-4.55-1.35L3 20.5l1.35-4.45A8.4 8.4 0 0 1 3 11.5 8.9 8.9 0 0 1 12 2.5a8.9 8.9 0 0 1 9 9Z" />
+  </svg>
+);
+
+export const MailIcon = (p: IconProps) => (
+  <svg {...base} {...p}>
+    <rect x="3" y="5" width="18" height="14" rx="2" />
+    <path d="m3 7 9 6 9-6" />
+  </svg>
+);
+
 export const CheckIcon = (p: IconProps) => (
   <svg {...base} {...p}>
     <path d="M20 6 9 17l-5-5" />
