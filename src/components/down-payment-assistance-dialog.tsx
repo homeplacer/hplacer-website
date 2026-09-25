@@ -73,7 +73,8 @@ export function DownPaymentAssistanceDialog({
                 </h2>
                 <p className="mt-2 text-sm leading-relaxed text-stone-muted">
                   Qualifying buyers may have $5,000–$50,000 in assistance available.
-                  Restrictions and lender approval apply.
+                  Restrictions apply; availability, program funding, property, location, and buyer
+                  eligibility can all affect what is available.
                 </p>
               </div>
               <button
