@@ -32,6 +32,22 @@ export const MailIcon = (p: IconProps) => (
   </svg>
 );
 
+export const GridIcon = (p: IconProps) => (
+  <svg {...base} {...p}>
+    <rect x="4" y="4" width="6" height="6" rx="1" />
+    <rect x="14" y="4" width="6" height="6" rx="1" />
+    <rect x="4" y="14" width="6" height="6" rx="1" />
+    <rect x="14" y="14" width="6" height="6" rx="1" />
+  </svg>
+);
+
+export const MapIcon = (p: IconProps) => (
+  <svg {...base} {...p}>
+    <path d="m9 18-5.5 2.5V5.5L9 3l6 3 5.5-2.5v15L15 21l-6-3Z" />
+    <path d="M9 3v15M15 6v15" />
+  </svg>
+);
+
 export const CheckIcon = (p: IconProps) => (
   <svg {...base} {...p}>
     <path d="M20 6 9 17l-5-5" />

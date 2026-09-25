@@ -39,7 +39,7 @@ export function ContactBar() {
       <aside
         data-contact-bar
         aria-label="Contact Home Placer"
-        className={`fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[60] mx-auto max-w-sm rounded-[1.45rem] border border-white/10 bg-brand-950/95 p-1.5 shadow-2xl backdrop-blur-lg transition duration-200 ${visibility}`}
+        className={`fixed inset-x-3 bottom-[calc(max(0.75rem,env(safe-area-inset-bottom))+4.75rem)] z-[60] mx-auto max-w-sm rounded-[1.45rem] border border-white/10 bg-brand-950/95 p-1.5 shadow-2xl backdrop-blur-lg transition duration-200 md:bottom-[max(0.75rem,env(safe-area-inset-bottom))] ${visibility}`}
       >
         <div className="grid grid-cols-3 gap-1.5">
           <a
@@ -70,7 +70,7 @@ export function ContactBar() {
         homeName="a Home Placer land-home package"
         label="Contact us"
         showArrow={false}
-        className={`fixed bottom-[calc(max(0.75rem,env(safe-area-inset-bottom))+5.75rem)] right-3 z-[60] inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-accent-500 px-5 text-sm font-semibold text-white shadow-xl transition duration-200 hover:bg-accent-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-700 focus-visible:ring-offset-2 sm:bottom-[max(1.25rem,env(safe-area-inset-bottom))] sm:right-5 ${visibility}`}
+        className={`fixed bottom-[calc(max(0.75rem,env(safe-area-inset-bottom))+10.5rem)] right-3 z-[60] inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-accent-500 px-5 text-sm font-semibold text-white shadow-xl transition duration-200 hover:bg-accent-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-700 focus-visible:ring-offset-2 md:bottom-[max(1.25rem,env(safe-area-inset-bottom))] md:right-5 ${visibility}`}
       />
     </>
   );
