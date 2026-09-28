@@ -62,7 +62,8 @@ describe("provisional home identity", () => {
     const page = await (await harness.request("/homes?job_id=job_2601", { as: "brandon@hplacer.com" })).text();
     assert.match(page, /12 Rabbit Lane/);
     assert.doesNotMatch(page, /99 Other Road/);
-    assert.match(page, /<option value="job_2601" selected>Mill Creek Ridge — Phase 2 \(3\)<\/option>/);
+    assert.match(page, /<summary><strong>Subdivision:<\/strong> Mill Creek Ridge — Phase 2 \(3\)<\/summary>/);
+    assert.match(page, /href="\/homes\?job_id=job_2604">Hollis private placement \(2\)<\/a>/);
     assert.match(page, /href="\/homes\?job_id=job_2601"/);
     assert.match(page, /href="\/homes\?status=delivery_pending&amp;job_id=job_2601"/);
 
