@@ -103,7 +103,7 @@ async function renderList(ctx: RequestContext): Promise<Response> {
       ? empty("No homes match that.")
       : homes.map(
           (home) => html`<a class="card" href="/homes/${home.id}">
-            <div class="row"><h3>${homeIdentityLabel(home)}</h3>${home.identity_incomplete === 1 ? badge("identity incomplete", "warn") : badge(home.status, home.status === "complete" ? "ok" : "")}</div>
+            <div class="row"><h3>${homeIdentityLabel(home)}</h3>${home.monday_stage ? badge(`Monday: ${home.monday_stage}`) : ""}${home.identity_incomplete === 1 ? badge("identity incomplete", "warn") : badge(home.status, home.status === "complete" ? "ok" : "")}</div>
             <div class="meta">${home.manufacturer ?? ""} ${home.model ?? ""}
               ${home.job_number ? ` · ${home.job_number}` : ""}${home.lot_number ? ` lot ${home.lot_number}` : ""}
               ${home.open_repair_count > 0 ? ` · ${home.open_repair_count} open repair(s)` : ""}</div>
@@ -159,6 +159,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
     </div>
 
     ${home.identity_incomplete === 1 ? html`<div class="notice bad"><strong>Identity incomplete.</strong> Missing: ${missingHomeIdentity(home).join(", ")}.</div>` : ""}
+    ${renderMondaySource(ctx, home)}
     ${can(ctx.actor, "home.write") ? html`<details class="card" ${raw(home.identity_incomplete === 1 ? "open" : "")}>
       <summary><strong>Edit home identity</strong></summary>
       <form method="post" action="/api/homes/${home.id}/identity">
@@ -326,6 +327,30 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
     back: { href: "/homes", label: "Homes" },
     flash: flashFrom(ctx.url),
   });
+}
+
+function renderMondaySource(ctx: RequestContext, home: Awaited<ReturnType<typeof requireHome>>): SafeHtml | "" {
+  if (!home.monday_item_id || !home.monday_source_json || !can(ctx.actor, "monday.manage")) return "";
+  let source: { updatedAt?: string | null; group?: { title?: string } | null; columns?: { title: string; text: string | null; value: unknown }[] };
+  try {
+    source = JSON.parse(home.monday_source_json) as typeof source;
+  } catch {
+    return html`<div class="notice warn">Monday source details could not be read. The home record remains available.</div>`;
+  }
+  const valueText = (column: { text: string | null; value: unknown }) => {
+    if (column.text?.trim()) return column.text;
+    if (column.value === null || column.value === undefined || column.value === "") return "—";
+    return typeof column.value === "string" ? column.value : JSON.stringify(column.value);
+  };
+  return html`<details class="card">
+    <summary><strong>Monday source details</strong> · ${home.monday_stage ?? home.monday_source_group ?? "status unknown"}</summary>
+    <p class="meta">Read from the Homes Roster${source.updatedAt ? ` · source updated ${source.updatedAt}` : ""}. Monday stays the source of truth for these fields.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Monday column</th><th>Value</th></tr></thead>
+      <tbody>${(source.columns ?? []).map((column) => html`<tr><th scope="row">${column.title}</th><td>${valueText(column)}</td></tr>`)}</tbody>
+    </table></div>
+    <p class="meta">Last checked ${home.monday_source_synced_at ?? "not yet"}${home.monday_source_missing ? " · item is no longer on the active Monday board; it was kept here for history" : ""}</p>
+  </details>`;
 }
 
 async function saveDeliveryDateRoute(ctx: RequestContext): Promise<Response> {

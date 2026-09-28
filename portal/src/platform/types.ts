@@ -109,6 +109,9 @@ export interface PortalEnv {
   MONDAY_API_TOKEN?: string;
   /** JSON board/column map; validated against the code-level field allowlist. */
   MONDAY_SYNC_MAPPINGS?: string;
+  /** Read-only import of eligible homes from the Homes Roster board. */
+  MONDAY_HOMES_IMPORT_ENABLED?: string;
+  MONDAY_HOMES_BOARD_ID?: string;
 
   /** Explicit opt-in. Gmail ingestion remains inert until all secrets exist. */
   GMAIL_INGEST_ENABLED?: string;
