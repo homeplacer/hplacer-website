@@ -66,7 +66,9 @@ async function renderQueue(ctx: RequestContext): Promise<Response> {
             <div class="meta">${request.customer_name}
               ${request.customer_phone ? ` · ${request.customer_phone}` : ""}
               · ${formatDate(request.created_at)}
-              ${request.serial_number ? ` · ${request.serial_number}` : ""}
+              ${request.home_id
+                ? ` · ${homeDisplayName({ site_address: request.home_site_address, site_city: request.home_site_city, site_state: request.home_site_state, site_postal_code: request.home_site_postal_code })}`
+                : request.reported_address ? ` · ${request.reported_address}` : ""}
               ${request.ticket_number ? ` · ${request.ticket_number}` : ""}
               ${request.photo_count > 0 ? ` · ${request.photo_count} photo(s)` : ""}</div>
             ${request.status === "needs_review" ? html`<div class="meta">${request.match_reason}</div>` : ""}
@@ -118,7 +120,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
       ${kv([
         ["Result", `${request.match_confidence} (${request.match_method.replace(/_/g, " ")})`],
         ["Why", request.match_reason],
-        ["Home", request.home_id ? html`<a href="/homes/${request.home_id}">${homeDisplayName({ serial_number: request.serial_number, monday_item_name: request.monday_item_name, site_address: request.home_site_address, site_city: request.home_site_city, site_state: request.home_site_state, site_postal_code: request.home_site_postal_code })}</a>` : "not linked"],
+        ["Home", request.home_id ? html`<a href="/homes/${request.home_id}">${homeDisplayName({ site_address: request.home_site_address, site_city: request.home_site_city, site_state: request.home_site_state, site_postal_code: request.home_site_postal_code })}</a>` : "not linked"],
         ["Ticket", request.ticket_number ? html`<a href="/repairs/${request.repair_ticket_id}">${request.ticket_number}</a>` : "none yet"],
       ])}
     </div>

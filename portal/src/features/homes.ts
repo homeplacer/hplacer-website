@@ -1,4 +1,4 @@
-/** Manufactured homes: the serial-number record and its three reports. */
+/** Manufactured homes and their three reports. */
 import { assertCan, can } from "../auth/authz.ts";
 import { listDocuments } from "../domain/documents.ts";
 import { listDefects } from "../domain/defects.ts";
@@ -11,7 +11,6 @@ import {
   homeRepairHistory,
   homeReportTemplateKey,
   homeReports,
-  homeIdentityLabel,
   listHomes,
   missingHomeIdentity,
   requireHome,
@@ -83,10 +82,10 @@ async function renderList(ctx: RequestContext): Promise<Response> {
 
   const body = html`
     <h1>Homes</h1>
-    <p class="lede">Find homes by address. Serial numbers stay on each record for identification.</p>
+    <p class="lede">Find homes by address.</p>
 
     <form method="get" action="/homes">
-      <label for="q">Search address, serial, model, or make</label>
+      <label for="q">Search address, model, or make</label>
       <input id="q" name="q" value="${search ?? ""}" inputmode="search" autocapitalize="characters" autocomplete="off">
       <div class="btn-row"><button type="submit">Search</button></div>
     </form>
@@ -105,7 +104,7 @@ async function renderList(ctx: RequestContext): Promise<Response> {
       : homes.map(
           (home) => html`<a class="card" href="/homes/${home.id}">
             <div class="row"><h3>${homeDisplayName(home)}</h3>${home.monday_stage ? badge(`Monday: ${home.monday_stage}`) : ""}${home.identity_incomplete === 1 ? badge("identity incomplete", "warn") : badge(home.status, home.status === "complete" ? "ok" : "")}</div>
-            <div class="meta">${home.serial_number.startsWith("PENDING-") ? "" : `Serial ${home.serial_number} · `}${home.manufacturer ?? ""} ${home.model ?? ""}
+            <div class="meta">${home.manufacturer ?? ""} ${home.model ?? ""}
               ${home.job_number ? ` · ${home.job_number}` : ""}${home.lot_number ? ` lot ${home.lot_number}` : ""}
               ${home.open_repair_count > 0 ? ` · ${home.open_repair_count} open repair(s)` : ""}</div>
             ${home.identity_incomplete === 1 ? html`<div class="notice bad">Missing: ${missingHomeIdentity(home).join(", ")}</div>` : ""}
@@ -138,7 +137,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
 
   const body = html`
     <h1>${homeDisplayName(home)}</h1>
-    <p class="lede">${home.serial_number.startsWith("PENDING-") ? "" : `Serial ${home.serial_number} · `}${home.manufacturer ?? ""} ${home.model ?? ""} ${home.model_year ?? ""}</p>
+    <p class="lede">${home.manufacturer ?? ""} ${home.model ?? ""} ${home.model_year ?? ""}</p>
 
     <div class="card">
       <div class="row">${badge(home.status, home.status === "complete" ? "ok" : "")}</div>
@@ -427,7 +426,7 @@ async function renderReportForm(ctx: RequestContext): Promise<Response> {
 
   const body = html`
     <h1>${template.name}</h1>
-    <p class="lede">${homeDisplayName(home)}${home.serial_number.startsWith("PENDING-") ? "" : ` · Serial ${home.serial_number}`} · ${home.manufacturer ?? ""} ${home.model ?? ""}</p>
+    <p class="lede">${homeDisplayName(home)} · ${home.manufacturer ?? ""} ${home.model ?? ""}</p>
 
     <form method="post" action="/api/inspections">
       <input type="hidden" name="template_key" value="${template.template_key}">
