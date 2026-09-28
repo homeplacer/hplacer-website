@@ -16,7 +16,7 @@ describe("verified fleet list and private equipment photos", () => {
     const main = await (await harness.request("/equipment", { as: "dale@hplacer.com" })).text();
     assert.ok(!main.includes("EX-01 ·"));
     const review = await (await harness.request("/equipment?scope=review", { as: "dale@hplacer.com" })).text();
-    assert.match(review, /EX-01 ·/);
+    assert.match(review, /Fleet ID: EX-01/);
     assert.match(review, /Details to check/);
   });
 
@@ -38,9 +38,16 @@ describe("verified fleet list and private equipment photos", () => {
   it("shows a clean fallback and a dedicated photo manager without changing other documents", async () => {
     const list = await (await harness.request("/equipment", { as: "dale@hplacer.com" })).text();
     assert.match(list, /No photo/);
-    assert.match(list, /<h3>Kubota KX057-5<\/h3>[\s\S]*?Fleet ID: EX-02/);
+    assert.match(list, /<h3>Kubota KX057-5 \(2023\)<\/h3>[\s\S]*?Fleet ID: EX-02/);
     const detail = await (await harness.request("/equipment/EX-02", { as: "dale@hplacer.com" })).text();
     assert.match(detail, /<h2>Equipment photo<\/h2>/);
     assert.match(detail, /Upload Equipment photo/);
+  });
+
+  it("shows real equipment names before fleet IDs in every equipment picker", async () => {
+    for (const path of ["/tasks/new", "/repairs/new", "/defects/new", "/portable-john/new"]) {
+      const page = await (await harness.request(path, { as: "ops@hplacer.com" })).text();
+      assert.match(page, /Kubota KX057-5 \(2023\) — EX-02/, `${path} should show make and model before the fleet ID`);
+    }
   });
 });

@@ -1,5 +1,5 @@
 import { can } from "../auth/authz.ts";
-import { listAssets } from "../domain/assets.ts";
+import { assetOptionLabel, listAssets } from "../domain/assets.ts";
 import { homeDisplayName, listHomes } from "../domain/homes.ts";
 import { listJobs } from "../domain/jobs.ts";
 import { createPortableJohnRequest, listPortableJohnRequests, PORTABLE_JOHN_STATUSES, requirePortableJohnRequest, updatePortableJohnStatus, type PortableJohnStatus } from "../domain/portable-john.ts";
@@ -43,7 +43,7 @@ async function renderNew(ctx: RequestContext): Promise<Response> {
       <h2>Choose exactly one location</h2>
       <label for="job_id">Subdivision</label><select id="job_id" name="job_id"><option value="">None</option>${jobs.map((j) => html`<option value="${j.id}">${j.job_number} — ${j.title}</option>`)}</select>
       <label for="home_id">Home</label><select id="home_id" name="home_id"><option value="">None</option>${homes.map((h) => html`<option value="${h.id}">${homeDisplayName(h)}</option>`)}</select>
-      <label for="asset_id">Equipment location</label><select id="asset_id" name="asset_id"><option value="">None</option>${assets.map((a) => html`<option value="${a.id}">${a.asset_tag} — ${[a.manufacturer, a.model].filter(Boolean).join(" ")}${a.home_base ? ` (${a.home_base})` : ""}</option>`)}</select>
+      <label for="asset_id">Equipment location</label><select id="asset_id" name="asset_id"><option value="">None</option>${assets.map((a) => html`<option value="${a.id}">${assetOptionLabel(a)}${a.home_base ? ` (${a.home_base})` : ""}</option>`)}</select>
       <label for="location_details">Exact placement or pickup location</label><textarea id="location_details" name="location_details" required placeholder="Gate, lot, landmark, access instructions, or current unit location"></textarea>
       <label for="notes">Anything else operations should know?</label><textarea id="notes" name="notes"></textarea>
       <div class="btn-row"><button type="submit">Send to operations</button></div>

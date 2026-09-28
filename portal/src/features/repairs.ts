@@ -1,7 +1,7 @@
 import { repairWorkSection, registerRepairWork } from "./repair-work.ts";
 /** Repair tickets, defect reports, and Tara's bill-back queue. */
 import { assertCan, can } from "../auth/authz.ts";
-import { listAssets } from "../domain/assets.ts";
+import { assetOptionLabel, listAssets } from "../domain/assets.ts";
 import { DEFECT_SEVERITIES, getDefect, listDefects, reportDefect, resolveDefect } from "../domain/defects.ts";
 import { listDocuments } from "../domain/documents.ts";
 import { listEmployees } from "../domain/employees.ts";
@@ -389,7 +389,7 @@ async function renderNewDefect(ctx: RequestContext): Promise<Response> {
       <label for="asset_id">Equipment</label>
       <select id="asset_id" name="asset_id">
         <option value="">Not equipment</option>
-        ${assets.map((asset) => html`<option value="${asset.id}" ${raw(asset.id === ctx.url.searchParams.get("assetId") ? "selected" : "")}>${asset.asset_tag}</option>`)}
+        ${assets.map((asset) => html`<option value="${asset.id}" ${raw(asset.id === ctx.url.searchParams.get("assetId") ? "selected" : "")}>${assetOptionLabel(asset)}</option>`)}
       </select>
       <label for="home_id">Home</label>
       <select id="home_id" name="home_id">
@@ -429,7 +429,7 @@ async function renderNewRepair(ctx: RequestContext): Promise<Response> {
       <label for="asset_id">Equipment</label>
       <select id="asset_id" name="asset_id">
         <option value="">Not equipment</option>
-        ${assets.map((asset) => html`<option value="${asset.id}" ${raw(asset.id === presetAsset ? "selected" : "")}>${asset.asset_tag}</option>`)}
+        ${assets.map((asset) => html`<option value="${asset.id}" ${raw(asset.id === presetAsset ? "selected" : "")}>${assetOptionLabel(asset)}</option>`)}
       </select>
       <label for="responsible_party_type">Who looks responsible?</label>
       <select id="responsible_party_type" name="responsible_party_type">
