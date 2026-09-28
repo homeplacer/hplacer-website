@@ -50,7 +50,8 @@ describe("conservative shipment matching regressions", () => {
     assert.equal(parseVendorMail("Order # PO-1001", "Order number: po-1001").orderNumber, "PO-1001");
   });
   it("does not extract a valid numeric substring from a malformed tracking identifier", () => {
-    for (const suffix of ["-extra", "/extra", "_extra"]) assert.equal(parseVendorMail("FedEx shipment", `Tracking number: 123456789012${suffix}`).trackingNumber, null);
+    for (const suffix of ["-extra", "/extra", "_extra", ".extra"]) assert.equal(parseVendorMail("FedEx shipment", `Tracking number: 123456789012${suffix}`).trackingNumber, null);
+    assert.equal(parseVendorMail("FedEx shipment", "Tracking number: 123456789012.").trackingNumber, "123456789012");
   });
   it("leaves multiple numeric packages unmatched, including a shared tracking label", () => {
     for (const body of ["Tracking number: 123456789012; Tracking number: 123456789015", "Tracking numbers: 123456789012, 123456789015", "Tracking number: 123456789012, 123456789015"]) {
@@ -65,9 +66,10 @@ describe("conservative shipment matching regressions", () => {
 
 describe("identifier boundary regression review", () => {
   it("does not truncate unsupported order identifiers into another valid order", () => {
-    for (const value of ["PO-1001/2", "PO-1001_extra", `${"A".repeat(29)}-SUFFIX`]) {
+    for (const value of ["PO-1001/2", "PO-1001_extra", "PO-1001.extra", `${"A".repeat(29)}-SUFFIX`]) {
       assert.equal(parseVendorMail("Receipt", `Order number: ${value}`).orderNumber, null);
     }
+    assert.equal(parseVendorMail("Receipt", "Order number: PO-1001.").orderNumber, "PO-1001");
   });
   it("rejects malformed UPS identifier suffixes as well as numeric carrier suffixes", () => {
     for (const suffix of ["-extra", "/extra", "_extra"]) {

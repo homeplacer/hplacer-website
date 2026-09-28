@@ -50,7 +50,7 @@ export function parseVendorMail(subject: string, text: string): ParsedVendorMail
           ? "order"
           : "unknown";
 
-  const orderMatches = source.matchAll(/\b(?:order\s+confirmation|purchase order|order|invoice|confirmation)\s*(?:number\b|no\.?(?=\s|[:#])|#|:)\s*[:#]?\s*([A-Z0-9][A-Z0-9/_-]*)/gi);
+  const orderMatches = source.matchAll(/\b(?:order\s+confirmation|purchase order|order|invoice|confirmation)\s*(?:number\b|no\.?(?=\s|[:#])|#|:)\s*[:#]?\s*([A-Z0-9][A-Z0-9/_-]*)(?![A-Z0-9/_-]|\.[A-Z0-9])/gi);
   const orderNumbers = new Set([...orderMatches].map((match) => normalizeOrderNumber(match[1]!)).filter((value): value is string => value !== null));
   const orderNumber = orderNumbers.size === 1 ? [...orderNumbers][0]! : null;
 
@@ -61,7 +61,7 @@ export function parseVendorMail(subject: string, text: string): ParsedVendorMail
     // Require an explicit tracking label; UPS's distinctive 1Z format is safe
     // to recognize without one. Ambiguous shipments stay for manual review.
     const contexts = carrier.name === "UPS" ? [source] : [...source.matchAll(
-      /\btracking\s*(?:(?:numbers?\b|no\.?(?=\s|[:#])|#|ids?\b)\s*)?(?:is\s*)?[:#]?\s*([A-Z0-9/_-]+(?:[ \t]*(?:,|;|and)[ \t]*(?=[A-Z]*[0-9])[A-Z0-9][A-Z0-9/_-]*)*)/gi,
+      /\btracking\s*(?:(?:numbers?\b|no\.?(?=\s|[:#])|#|ids?\b)\s*)?(?:is\s*)?[:#]?\s*([A-Z0-9/_-]+(?:[ \t]*(?:,|;|and)[ \t]*(?=[A-Z]*[0-9])[A-Z0-9][A-Z0-9/_-]*)*)(?![A-Z0-9/_-]|\.[A-Z0-9])/gi,
     )].flatMap((match) => match[1]!.split(/[ \t]*(?:,|;|\band\b)[ \t]*/i));
     const numbers = new Set(contexts.flatMap((context) => carrier.name === "UPS"
       ? [...context.matchAll(new RegExp(`(?<![A-Z0-9/_-])${carrier.tracking.source}(?![A-Z0-9/_-])`, "gi"))].map((match) => match[0].toUpperCase())
