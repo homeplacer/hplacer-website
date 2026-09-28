@@ -193,6 +193,13 @@ describe("home site address", () => {
     assert.match(page, /Dana Whitfield/);
     assert.match(page, /Edit the site address/);
   });
+
+  it("uses the home address as the list label and keeps the serial as supporting detail", async () => {
+    const page = await (await harness.request("/homes", { as: "dale@hplacer.com" })).text();
+    assert.match(page, /<h3>184 Mill Creek Rd Lot 12 · Boone, NC · 28607<\/h3>/);
+    assert.match(page, /Serial CAV2026NC114772A/);
+    assert.match(page, /Search address, serial, model, or make/);
+  });
 });
 
 describe("subdivisions", () => {
