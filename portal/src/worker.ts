@@ -11,6 +11,7 @@ import { notifyServiceDue } from "./domain/assets.ts";
 import { sendDailyDigest } from "./domain/daily-digest.ts";
 import { notifyInsuranceExpirations } from "./domain/insurance.ts";
 import { runConfiguredMondaySync } from "./integrations/monday-sync-processor.ts";
+import { runConfiguredMondayHomesImport } from "./integrations/monday-homes-import.ts";
 import { runConfiguredGmailImport } from "./integrations/gmail-import.ts";
 import type { PortalEnv } from "./platform/types.ts";
 
@@ -42,6 +43,15 @@ const portal = {
       } catch {
         // Do not log remote response bodies, OAuth data, headers, or email content.
         console.error("vendor email poll failed; check Gmail configuration and retry; no mailbox contents are logged");
+      }
+      try {
+        const homes = await runConfiguredMondayHomesImport(env);
+        if (homes.enabled) {
+          console.log(JSON.stringify({ message: "Monday home roster import complete", ...homes }));
+        }
+      } catch {
+        // The GraphQL client redacts credentials; keep board data out of logs.
+        console.error("Monday home roster import failed; check the read-only board connection");
       }
       return;
     }

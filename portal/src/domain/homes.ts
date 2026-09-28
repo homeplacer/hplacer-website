@@ -28,6 +28,13 @@ export interface HomeRow {
   final_inspection_on: string | null;
   warranty_expires_on: string | null;
   monday_item_id: string | null;
+  monday_item_name: string | null;
+  monday_stage: string | null;
+  monday_source_group: string | null;
+  monday_source_json: string | null;
+  monday_source_updated_at: string | null;
+  monday_source_synced_at: string | null;
+  monday_source_missing: number;
   site_address: string | null;
   site_city: string | null;
   site_state: string | null;
@@ -62,8 +69,9 @@ export function missingHomeIdentity(home: Pick<HomeRow, "serial_number" | "manuf
   }).map((field) => field.label);
 }
 
-export function homeIdentityLabel(home: Pick<HomeRow, "serial_number">): string {
-  return isProvisionalSerial(home.serial_number) ? "Home pending identity" : home.serial_number;
+export function homeIdentityLabel(home: Pick<HomeRow, "serial_number" | "monday_item_name">): string {
+  if (!isProvisionalSerial(home.serial_number)) return home.serial_number;
+  return home.monday_item_name?.trim() || "Home pending identity";
 }
 
 /** The one-line address a crew or a homeowner would say out loud. */

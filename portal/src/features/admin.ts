@@ -5,6 +5,7 @@ import { createEmployee, grantRole, listEmployees, revokeRole, setEmployeeActive
 import { notifyServiceDue } from "../domain/assets.ts";
 import { addRoute, listRouting, recipientsFor, removeRoute, type NotificationCategory } from "../domain/notifications.ts";
 import { pendingMondayRuns } from "../integrations/monday.ts";
+import { mondayHomesImportEnabled, runConfiguredMondayHomesImport } from "../integrations/monday-homes-import.ts";
 import { mondayWriteEnabled, runConfiguredMondaySync } from "../integrations/monday-sync-processor.ts";
 import { sweepLowStock } from "../domain/inventory.ts";
 import { notifyInsuranceExpirations } from "../domain/insurance.ts";
@@ -26,7 +27,7 @@ import { badRequest } from "../platform/errors.ts";
 import { boolField, optionalField, readFields, requiredField, type RequestContext } from "../api/context.ts";
 import { flashFrom, json, redirect } from "../api/responses.ts";
 import type { Router } from "../api/router.ts";
-import { html } from "../ui/html.ts";
+import { html, raw } from "../ui/html.ts";
 import { badge, empty, formatDate, page, tabs } from "../ui/layout.ts";
 import { wantsJson } from "./equipment.ts";
 
@@ -53,6 +54,7 @@ export function registerAdmin(router: Router): void {
   router.post("/api/monday/links", linkRoute);
   router.post("/api/monday/links/:type/:id/detach", detachRoute);
   router.post("/api/monday/sync/run", runMondaySyncRoute);
+  router.post("/api/monday/homes/import", runMondayHomesImportRoute);
   router.post("/api/maintenance/sweeps", sweepRoute);
 
   router.get("/api/employees", async (ctx) => {
@@ -232,18 +234,24 @@ async function renderMonday(ctx: RequestContext): Promise<Response> {
   const links = await linkOverview(ctx.db);
   const queue = await pendingSyncQueue(ctx.db, 25);
   const writesEnabled = mondayWriteEnabled(ctx.env);
+  const homesImportEnabled = mondayHomesImportEnabled(ctx.env);
 
   const body = html`
     <h1>Monday.com links</h1>
     ${adminTabs("monday")}
     <div class="notice">
-      Read-only discovery does not call Monday and remains separate. Outbound queue processing is
+      Homes are copied from Monday every 15 minutes (${homesImportEnabled ? badge("import enabled", "ok") : badge("import disabled", "warn")}).
+      Outbound queue processing is
       ${writesEnabled ? badge("enabled", "warn") : badge("disabled", "ok")}; it only writes explicitly
       allowlisted columns, verifies expected remote values, and stops on conflicts.
     </div>
     <form class="card" method="post" action="/api/monday/sync/run">
       <p class="meta">Run the same guarded processor used by the scheduled Worker. When disabled, this is a no-op.</p>
       <div class="btn-row"><button class="secondary" type="submit">Process sync queue now</button></div>
+    </form>
+    <form class="card" method="post" action="/api/monday/homes/import">
+      <p class="meta">Read Active, Sold, Closed, and Pending homes from the Homes Roster now. Monday is never changed.</p>
+      <div class="btn-row"><button class="secondary" type="submit" ${raw(homesImportEnabled ? "" : "disabled")}>Update homes from Monday now</button></div>
     </form>
 
     <h2>Boards</h2>
@@ -427,6 +435,12 @@ async function runMondaySyncRoute(ctx: RequestContext): Promise<Response> {
     limit: 50,
   });
   return wantsJson(ctx) ? json(summary) : redirect(`/admin/monday?ok=${summary.enabled ? "sync_processed" : "sync_disabled"}`);
+}
+
+async function runMondayHomesImportRoute(ctx: RequestContext): Promise<Response> {
+  assertCan(ctx.actor, "monday.manage");
+  const summary = await runConfiguredMondayHomesImport(ctx.env);
+  return wantsJson(ctx) ? json(summary) : redirect(`/admin/monday?ok=${summary.enabled ? "homes_imported" : "homes_import_disabled"}`);
 }
 
 async function sweepRoute(ctx: RequestContext): Promise<Response> {

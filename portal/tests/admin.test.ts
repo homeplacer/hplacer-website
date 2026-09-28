@@ -137,7 +137,17 @@ describe("admin screens over HTTP", () => {
 
     const page = await (await harness.request("/admin/monday")).text();
     assert.match(page, /1FT8W2BT4PEC55011/);
-    assert.match(page, /does not call Monday/);
+    assert.match(page, /Monday is never changed/);
+    assert.match(page, /Update homes from Monday now/);
+  });
+
+  it("keeps the manual homes import behind Monday admin access", async () => {
+    const denied = await harness.request("/api/monday/homes/import", { as: "dale@hplacer.com", method: "POST" });
+    assert.equal(denied.status, 403);
+
+    const disabled = await harness.request("/api/monday/homes/import", { as: "ops@hplacer.com", method: "POST" });
+    assert.equal(disabled.status, 303);
+    assert.equal(disabled.headers.get("Location"), "/admin/monday?ok=homes_import_disabled");
   });
 
   it("detaches from the admin screen", async () => {

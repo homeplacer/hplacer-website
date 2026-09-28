@@ -250,12 +250,18 @@ the seed uses and what to run after a bulk import or a change to the rules.
 
 ## Monday.com
 
-Monday discovery remains read-only. A separate guarded outbound processor is
-available, and production enables it only after the linked records have been
-reviewed. It can update only code-reviewed fields on
-the exact mapped boards, and only for portal records that an administrator has
-linked. It checks the expected remote value before writing, verifies the result,
-deduplicates retries, and records a redacted audit trail.
+The Homes Roster is the source of truth for its imported fields. A scheduled,
+read-only GraphQL poll copies Active, Sold, Closed, and Pending homes into the
+portal every 15 minutes. It reads every board column and keeps a source snapshot
+on the home record; supervisors can inspect those values on the home detail
+page. The first import skips other stages. Once a home has been imported, later
+stage changes are retained so the portal does not lose its history. A removed
+Monday row is flagged as missing but is never deleted from the portal.
+
+The import uses the deployed `MONDAY_API_TOKEN` Worker secret and the board id in
+`MONDAY_HOMES_BOARD_ID`. Monday remains read-only for this import. The separate
+outbound sync below is a different feature and must stay governed by its own
+allowlist and expected-value checks.
 
 ### The link registry
 
@@ -295,14 +301,14 @@ outside that one file ever holds the raw string — the client asks for an
 `Authorization` header, not for a token. There are tests for each of those
 claims.
 
-### Read-only by construction
+### Read-only client and inbound import
 
 `MondayClient` parses every document it is given and **refuses anything that is
 not a query** — mutations, subscriptions, and a mutation aliased behind a
-batched document all throw before a byte leaves the process. Enabling writes
-takes an explicit `allowMutations: true` at a call site, and nothing in this
-repository passes it. Adding an outbound write is therefore a visible, reviewable
-change, not something that can happen by accident.
+batched document all throw before a byte leaves the process. The scheduled home
+import calls this client only, reads the full Homes Roster, and writes the
+resulting snapshot to the portal's D1 database. It does not call a Monday
+mutation. Outbound writes use a separate transport and guarded processor.
 
 ### Discovery, then import
 
