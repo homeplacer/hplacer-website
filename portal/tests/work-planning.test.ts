@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {beforeEach,afterEach,describe,it} from 'node:test';
-import {createHarness,form,type Harness} from './harness.ts';
+import {createHarness,form,jsonBody,type Harness} from './harness.ts';
 describe('repair work and flexible job planning',()=>{
  let h:Harness;beforeEach(async()=>{h=await createHarness();});afterEach(()=>h.close());
  it('keeps approximate work and costs separate from billable charges',async()=>{
@@ -17,6 +17,15 @@ describe('repair work and flexible job planning',()=>{
   const {id}=await r.json() as {id:string}; const j=await h.db.prepare('SELECT title,job_number FROM jobs WHERE id=?').bind(id).first<{title:string;job_number:string}>();assert.equal(j?.title,'123 Test Lane');assert.ok(j?.job_number);
   assert.match(await(await h.request('/tasks/new')).text(),/123 Test Lane/);
   assert.equal((await h.request(`/api/subdivisions/${id}/details`,form({title:'Confirmed site',street_address:'125 Test Lane'}))).status,303);
+ });
+ it('narrows the task Home choices to the selected subdivision',async()=>{
+  await h.request('/api/homes',{as:'brandon@hplacer.com',...jsonBody({job_id:'job_2601',site_address:'12 Rabbit Lane'})});
+  await h.request('/api/homes',{as:'brandon@hplacer.com',...jsonBody({job_id:'job_2604',site_address:'99 Other Road'})});
+  const page=await(await h.request('/tasks/new?jobId=job_2601')).text();
+  assert.match(page,/Subdivision:<\/strong> HP-2601 — Mill Creek Ridge — Phase 2/);
+  assert.match(page,/12 Rabbit Lane/);
+  assert.doesNotMatch(page,/99 Other Road/);
+  assert.match(page,/name="job_id" value="job_2601"/);
  });
  it('keeps coworkers assigned tasks private on the planning screen',async()=>{
   await h.request('/api/tasks',form({title:'Private coworker assignment',job_id:'job_2601',assigned_to:'emp_wes'}));

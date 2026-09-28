@@ -179,15 +179,23 @@ async function renderNewTask(ctx: RequestContext): Promise<Response> {
   const employees = await listEmployees(ctx.db);
   const jobs = (await listJobs(ctx.db)).filter(job => ["active", "planning", "on_hold"].includes(job.status));
   const assets = await listAssets(ctx.db);
-  const homes = await listHomes(ctx.db);
   const preset = {
     jobId: ctx.url.searchParams.get("jobId") ?? "",
     assetId: ctx.url.searchParams.get("assetId") ?? "",
     homeId: ctx.url.searchParams.get("homeId") ?? "",
   };
+  const selectedJob = jobs.find((job) => job.id === preset.jobId);
+  const homes = await listHomes(ctx.db, { jobId: selectedJob?.id });
 
   const body = html`
     <h1>Assign a task</h1>
+    <details class="card" ${raw(selectedJob ? "" : "open")}>
+      <summary><strong>Subdivision:</strong> ${selectedJob ? `${selectedJob.job_number} — ${selectedJob.title}` : "Choose one (optional)"}</summary>
+      <div class="stack" style="margin-top:0.75rem">
+        <a class="btn secondary" href="/tasks/new">No subdivision</a>
+        ${jobs.map((job) => html`<a class="btn secondary" href="/tasks/new${query({ jobId: job.id, homeId: job.id === selectedJob?.id ? preset.homeId : undefined, assetId: preset.assetId })}">${job.job_number} — ${job.title}${job.home_count > 0 ? ` (${job.home_count} homes)` : ""}</a>`)}
+      </div>
+    </details>
     <form method="post" action="/api/tasks">
       <label for="title">Task</label>
       <input id="title" name="title" required>
@@ -204,11 +212,7 @@ async function renderNewTask(ctx: RequestContext): Promise<Response> {
       </select>
       <label for="due_at">Due (YYYY-MM-DD or YYYY-MM-DD HH:MM)</label>
       <input id="due_at" name="due_at" placeholder="2026-08-30 17:00">
-      <label for="job_id">Subdivision</label>
-      <select id="job_id" name="job_id">
-        <option value="">None</option>
-        ${jobs.map((job) => html`<option value="${job.id}" ${raw(job.id === preset.jobId ? "selected" : "")}>${job.job_number} — ${job.title}</option>`)}
-      </select>
+      <input type="hidden" name="job_id" value="${selectedJob?.id ?? ""}">
       <label for="home_id">Home</label>
       <select id="home_id" name="home_id">
         <option value="">None</option>
