@@ -82,6 +82,11 @@ export interface RepairSummary extends RepairRow {
   reported_by_name: string;
   assigned_to_name: string | null;
   serial_number: string | null;
+  monday_item_name: string | null;
+  site_address: string | null;
+  site_city: string | null;
+  site_state: string | null;
+  site_postal_code: string | null;
   asset_tag: string | null;
   job_number: string | null;
   labor_cents: number;
@@ -92,7 +97,7 @@ export interface RepairSummary extends RepairRow {
 
 const REPAIR_SELECT = `
   SELECT r.*, rb.display_name AS reported_by_name, ab.display_name AS assigned_to_name,
-         h.serial_number, s.asset_tag, j.job_number,
+         h.serial_number, h.monday_item_name, h.site_address, h.site_city, h.site_state, h.site_postal_code, s.asset_tag, j.job_number,
          (SELECT ifnull(sum(round(l.minutes * l.rate_cents_per_hour / 60.0)), 0)
             FROM repair_labor_entries l WHERE l.repair_ticket_id = r.id) AS labor_cents,
          (SELECT ifnull(sum(round(m.quantity * m.unit_cost_cents)), 0)

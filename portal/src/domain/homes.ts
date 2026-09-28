@@ -74,6 +74,26 @@ export function homeIdentityLabel(home: Pick<HomeRow, "serial_number" | "monday_
   return home.monday_item_name?.trim() || "Home pending identity";
 }
 
+export type HomeDisplayFields = {
+  serial_number: string | null;
+  monday_item_name?: string | null;
+  site_address?: string | null;
+  site_city?: string | null;
+  site_state?: string | null;
+  site_postal_code?: string | null;
+};
+
+/** Use the location people recognize first; keep the serial as a fallback. */
+export function homeDisplayName(home: HomeDisplayFields): string {
+  const address = formatSiteAddress({
+    site_address: home.site_address ?? null,
+    site_city: home.site_city ?? null,
+    site_state: home.site_state ?? null,
+    site_postal_code: home.site_postal_code ?? null,
+  });
+  return address ?? home.monday_item_name?.trim() ?? home.serial_number ?? "Home address not added";
+}
+
 /** The one-line address a crew or a homeowner would say out loud. */
 export function formatSiteAddress(home: Pick<HomeRow, "site_address" | "site_city" | "site_state" | "site_postal_code">): string | null {
   if (!home.site_address) return null;

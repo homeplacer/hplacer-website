@@ -11,7 +11,7 @@ import { newId } from "../platform/ids.ts";
  */
 import { assertCan, can } from "../auth/authz.ts";
 import { listDocuments } from "../domain/documents.ts";
-import { listHomes } from "../domain/homes.ts";
+import { homeDisplayName, listHomes } from "../domain/homes.ts";
 import { createJob, createLot, listJobs, listLots, requireJob, updateLotStatus } from "../domain/jobs.ts";
 import { listSupervisors } from "../domain/employees.ts";
 import { listTasks } from "../domain/tasks.ts";
@@ -178,8 +178,8 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
       ? empty("No homes assigned to this subdivision.")
       : homes.map(
           (home) => html`<a class="card" href="/homes/${home.id}">
-            <div class="row"><h3>${home.serial_number}</h3>${badge(home.status, home.status === "complete" ? "ok" : "")}</div>
-            <div class="meta">${home.manufacturer ?? ""} ${home.model ?? ""}${home.lot_number ? ` · lot ${home.lot_number}` : ""}</div>
+            <div class="row"><h3>${homeDisplayName(home)}</h3>${badge(home.status, home.status === "complete" ? "ok" : "")}</div>
+            <div class="meta">${home.serial_number.startsWith("PENDING-") ? "" : `Serial ${home.serial_number} · `}${home.manufacturer ?? ""} ${home.model ?? ""}${home.lot_number ? ` · lot ${home.lot_number}` : ""}</div>
           </a>`,
         )}
 

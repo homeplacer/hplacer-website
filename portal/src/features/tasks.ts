@@ -4,7 +4,7 @@ import { listEmployees } from "../domain/employees.ts";
 import { listDocuments } from "../domain/documents.ts";
 import { listJobs } from "../domain/jobs.ts";
 import { listAssets } from "../domain/assets.ts";
-import { listHomes } from "../domain/homes.ts";
+import { homeDisplayName, listHomes } from "../domain/homes.ts";
 import {
   TASK_PRIORITIES,
   TASK_STATUSES,
@@ -116,7 +116,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
         ["Raised by", task.created_by_name],
         ["Due", task.due_at ? formatDate(task.due_at) : null],
         ["Subdivision", task.job_number ? html`<a href="/subdivisions/${task.job_id}">${task.job_number}</a>` : null],
-        ["Home", task.serial_number ? html`<a href="/homes/${task.home_id}">${task.serial_number}</a>` : null],
+        ["Home", task.home_id ? html`<a href="/homes/${task.home_id}">${homeDisplayName(task)}</a>` : null],
         ["Equipment", task.asset_tag ? html`<a href="/equipment/${task.asset_tag}">${task.asset_tag}</a>` : null],
         ["Photo required", task.requires_photo === 1 ? "Yes" : null],
         ["Completed", task.completed_at ? formatDate(task.completed_at) : null],
@@ -212,7 +212,7 @@ async function renderNewTask(ctx: RequestContext): Promise<Response> {
       <label for="home_id">Home</label>
       <select id="home_id" name="home_id">
         <option value="">None</option>
-        ${homes.map((home) => html`<option value="${home.id}" ${raw(home.id === preset.homeId ? "selected" : "")}>${home.serial_number}</option>`)}
+        ${homes.map((home) => html`<option value="${home.id}" ${raw(home.id === preset.homeId ? "selected" : "")}>${homeDisplayName(home)}</option>`)}
       </select>
       <label for="asset_id">Equipment</label>
       <select id="asset_id" name="asset_id">

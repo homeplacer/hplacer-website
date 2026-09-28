@@ -7,6 +7,7 @@ import {
   assignHomeToLot,
   createHome,
   formatSiteAddress,
+  homeDisplayName,
   homeRepairHistory,
   homeReportTemplateKey,
   homeReports,
@@ -103,7 +104,7 @@ async function renderList(ctx: RequestContext): Promise<Response> {
       ? empty("No homes match that.")
       : homes.map(
           (home) => html`<a class="card" href="/homes/${home.id}">
-            <div class="row"><h3>${formatSiteAddress(home) ?? homeIdentityLabel(home)}</h3>${home.monday_stage ? badge(`Monday: ${home.monday_stage}`) : ""}${home.identity_incomplete === 1 ? badge("identity incomplete", "warn") : badge(home.status, home.status === "complete" ? "ok" : "")}</div>
+            <div class="row"><h3>${homeDisplayName(home)}</h3>${home.monday_stage ? badge(`Monday: ${home.monday_stage}`) : ""}${home.identity_incomplete === 1 ? badge("identity incomplete", "warn") : badge(home.status, home.status === "complete" ? "ok" : "")}</div>
             <div class="meta">${home.serial_number.startsWith("PENDING-") ? "" : `Serial ${home.serial_number} · `}${home.manufacturer ?? ""} ${home.model ?? ""}
               ${home.job_number ? ` · ${home.job_number}` : ""}${home.lot_number ? ` lot ${home.lot_number}` : ""}
               ${home.open_repair_count > 0 ? ` · ${home.open_repair_count} open repair(s)` : ""}</div>
@@ -136,8 +137,8 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
     .reduce((sum, repair) => sum + (repair.bill_back_amount_cents ?? 0), 0);
 
   const body = html`
-    <h1>${homeIdentityLabel(home)}</h1>
-    <p class="lede">${home.manufacturer ?? ""} ${home.model ?? ""} ${home.model_year ?? ""}</p>
+    <h1>${homeDisplayName(home)}</h1>
+    <p class="lede">${home.serial_number.startsWith("PENDING-") ? "" : `Serial ${home.serial_number} · `}${home.manufacturer ?? ""} ${home.model ?? ""} ${home.model_year ?? ""}</p>
 
     <div class="card">
       <div class="row">${badge(home.status, home.status === "complete" ? "ok" : "")}</div>
@@ -320,7 +321,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
   `;
 
   return page(body, {
-    title: homeIdentityLabel(home),
+    title: homeDisplayName(home),
     actor: ctx.actor,
     section: "/homes",
     back: { href: "/homes", label: "Homes" },
@@ -426,7 +427,7 @@ async function renderReportForm(ctx: RequestContext): Promise<Response> {
 
   const body = html`
     <h1>${template.name}</h1>
-    <p class="lede">${home.serial_number} · ${home.manufacturer ?? ""} ${home.model ?? ""}</p>
+    <p class="lede">${homeDisplayName(home)}${home.serial_number.startsWith("PENDING-") ? "" : ` · Serial ${home.serial_number}`} · ${home.manufacturer ?? ""} ${home.model ?? ""}</p>
 
     <form method="post" action="/api/inspections">
       <input type="hidden" name="template_key" value="${template.template_key}">
@@ -470,7 +471,7 @@ async function renderReportForm(ctx: RequestContext): Promise<Response> {
     title: template.name,
     actor: ctx.actor,
     section: "/homes",
-    back: { href: `/homes/${home.id}`, label: home.serial_number },
+    back: { href: `/homes/${home.id}`, label: homeDisplayName(home) },
   });
 }
 
