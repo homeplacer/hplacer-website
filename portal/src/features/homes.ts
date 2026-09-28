@@ -68,6 +68,7 @@ export function registerHomes(router: Router): void {
     assertCan(ctx.actor, "home.read");
     const homes = await listHomes(ctx.db, {
       status: ctx.url.searchParams.get("status") ?? undefined,
+      jobId: ctx.url.searchParams.get("job_id") ?? undefined,
       search: ctx.url.searchParams.get("q") ?? undefined,
     });
     return json({ homes });
@@ -78,22 +79,33 @@ async function renderList(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "home.read");
   const status = ctx.url.searchParams.get("status") ?? undefined;
   const search = ctx.url.searchParams.get("q") ?? undefined;
-  const homes = await listHomes(ctx.db, { status, search });
+  const requestedJobId = ctx.url.searchParams.get("job_id") ?? undefined;
+  const allJobs = await listJobs(ctx.db);
+  const subdivisions = allJobs.filter((job) => job.home_count > 0);
+  const selectedJob = subdivisions.find((job) => job.id === requestedJobId);
+  const jobId = selectedJob?.id;
+  const homes = await listHomes(ctx.db, { status, jobId, search });
 
   const body = html`
     <h1>Homes</h1>
-    <p class="lede">Find homes by address.</p>
+    <p class="lede">${selectedJob ? `Homes in ${selectedJob.title}.` : "Find homes by address or subdivision."}</p>
 
     <form method="get" action="/homes">
+      ${status ? html`<input type="hidden" name="status" value="${status}">` : ""}
       <label for="q">Search address, model, or make</label>
       <input id="q" name="q" value="${search ?? ""}" inputmode="search" autocapitalize="characters" autocomplete="off">
-      <div class="btn-row"><button type="submit">Search</button></div>
+      <label for="job_id">Subdivision</label>
+      <select id="job_id" name="job_id">
+        <option value="">All subdivisions</option>
+        ${subdivisions.map((job) => html`<option value="${job.id}" ${job.id === jobId ? "selected" : ""}>${job.title} (${job.home_count})</option>`)}
+      </select>
+      <div class="btn-row"><button type="submit">Show homes</button></div>
     </form>
 
     ${tabs([
-      { href: "/homes", label: "All", current: !status },
+      { href: `/homes${query({ q: search, job_id: jobId })}`, label: "All", current: !status },
       ...HOME_STATUSES.map((value) => ({
-        href: `/homes${query({ status: value, q: search })}`,
+        href: `/homes${query({ status: value, q: search, job_id: jobId })}`,
         label: value.replace(/_/g, " "),
         current: status === value,
       })),
