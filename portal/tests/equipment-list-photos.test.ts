@@ -38,6 +38,7 @@ describe("verified fleet list and private equipment photos", () => {
   it("shows a clean fallback and a dedicated photo manager without changing other documents", async () => {
     const list = await (await harness.request("/equipment", { as: "dale@hplacer.com" })).text();
     assert.match(list, /No photo/);
+    assert.match(list, /<h3>Kubota KX057-5<\/h3>[\s\S]*?Fleet ID: EX-02/);
     const detail = await (await harness.request("/equipment/EX-02", { as: "dale@hplacer.com" })).text();
     assert.match(detail, /<h2>Equipment photo<\/h2>/);
     assert.match(detail, /Upload Equipment photo/);
