@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { after, before, beforeEach, describe, it } from "node:test";
 import { can } from "../src/auth/authz.ts";
-import { formatSiteAddress, getHome, listHomes, updateSiteAddress } from "../src/domain/homes.ts";
+import { formatSiteAddress, getHome, homeDisplayName, listHomes, updateSiteAddress } from "../src/domain/homes.ts";
 import { getJob, listJobs } from "../src/domain/jobs.ts";
 import { matchHome } from "../src/domain/matching.ts";
 import {
@@ -167,6 +167,10 @@ describe("home site address", () => {
     assert.equal(home?.customer_phone_key, null);
   });
 
+  it("uses a plain address-needed label when a house has no address", () => {
+    assert.equal(homeDisplayName({ site_address: null, site_city: null, site_state: null, site_postal_code: null }), "Address not added");
+  });
+
   it("is editable by field crew, not just supervisors", async () => {
     const dale = await harness.actor("dale@hplacer.com");
     assert.ok(can(dale, "home.address.edit"));
@@ -185,6 +189,8 @@ describe("home site address", () => {
     assert.deepEqual(byAddress.map((home) => home.serial_number), ["CLT2025TN881204Z"]);
     const byOwner = await listHomes(harness.db, { search: "WHITFIELD" });
     assert.deepEqual(byOwner.map((home) => home.serial_number), ["CAV2026NC114772A"]);
+    const bySerial = await listHomes(harness.db, { search: "CAV2026NC114772A" });
+    assert.deepEqual(bySerial, []);
   });
 
   it("shows the address on the home page and offers the form", async () => {
@@ -194,11 +200,11 @@ describe("home site address", () => {
     assert.match(page, /Edit the site address/);
   });
 
-  it("uses the home address as the list label and keeps the serial as supporting detail", async () => {
+  it("uses only the home address in the list label", async () => {
     const page = await (await harness.request("/homes", { as: "dale@hplacer.com" })).text();
     assert.match(page, /<h3>184 Mill Creek Rd Lot 12 · Boone, NC · 28607<\/h3>/);
-    assert.match(page, /Serial CAV2026NC114772A/);
-    assert.match(page, /Search address, serial, model, or make/);
+    assert.doesNotMatch(page, /CAV2026NC114772A/);
+    assert.match(page, /Search address, model, or make/);
   });
 
   it("uses addresses anywhere staff choose a home", async () => {

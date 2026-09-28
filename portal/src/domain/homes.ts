@@ -69,21 +69,14 @@ export function missingHomeIdentity(home: Pick<HomeRow, "serial_number" | "manuf
   }).map((field) => field.label);
 }
 
-export function homeIdentityLabel(home: Pick<HomeRow, "serial_number" | "monday_item_name">): string {
-  if (!isProvisionalSerial(home.serial_number)) return home.serial_number;
-  return home.monday_item_name?.trim() || "Home pending identity";
-}
-
 export type HomeDisplayFields = {
-  serial_number: string | null;
-  monday_item_name?: string | null;
   site_address?: string | null;
   site_city?: string | null;
   site_state?: string | null;
   site_postal_code?: string | null;
 };
 
-/** Use the location people recognize first; keep the serial as a fallback. */
+/** House labels use the site address only; never substitute an internal identifier. */
 export function homeDisplayName(home: HomeDisplayFields): string {
   const address = formatSiteAddress({
     site_address: home.site_address ?? null,
@@ -91,7 +84,7 @@ export function homeDisplayName(home: HomeDisplayFields): string {
     site_state: home.site_state ?? null,
     site_postal_code: home.site_postal_code ?? null,
   });
-  return address ?? home.monday_item_name?.trim() ?? home.serial_number ?? "Home address not added";
+  return address ?? "Address not added";
 }
 
 /** The one-line address a crew or a homeowner would say out loud. */
@@ -119,9 +112,9 @@ export async function listHomes(db: Db, options: { status?: string; jobId?: stri
          LEFT JOIN lots l ON l.id = h.lot_id
         WHERE (?1 IS NULL OR h.status = ?1)
           AND (?2 IS NULL OR h.job_id = ?2)
-          AND (?3 IS NULL OR h.serial_number LIKE ?3 OR ifnull(h.model, '') LIKE ?3 OR ifnull(h.manufacturer, '') LIKE ?3
+          AND (?3 IS NULL OR ifnull(h.model, '') LIKE ?3 OR ifnull(h.manufacturer, '') LIKE ?3
                OR upper(ifnull(h.site_address, '')) LIKE ?3 OR upper(ifnull(h.customer_name, '')) LIKE ?3)
-        ORDER BY h.status, h.serial_number`,
+        ORDER BY h.status, ifnull(h.site_address, ''), h.id`,
     )
     .bind(options.status ?? null, options.jobId ?? null, options.search ? `%${options.search.toUpperCase()}%` : null)
     .all<HomeSummary>();
