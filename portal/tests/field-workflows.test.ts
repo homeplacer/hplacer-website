@@ -6,7 +6,7 @@ import { listDefects } from "../src/domain/defects.ts";
 import { getHome, homeReports } from "../src/domain/homes.ts";
 import { submitInspection, todaysInspection, type AnswerInput } from "../src/domain/inspections.ts";
 import { inbox } from "../src/domain/notifications.ts";
-import { completeTask, createTask, listTasks } from "../src/domain/tasks.ts";
+import { assignTask, completeTask, createTask, listTasks } from "../src/domain/tasks.ts";
 import { createHarness, type Harness } from "./harness.ts";
 
 const PASSING_EXCAVATOR: AnswerInput[] = [
@@ -294,6 +294,22 @@ describe("tasks and completion evidence", () => {
 
     const mine = await listTasks(harness.db, marcus, { assignedTo: marcus.employeeId, openOnly: true });
     assert.ok(mine.some((task) => task.id === id));
+  });
+
+  it("notifies an employee when they assign a task to themselves", async () => {
+    const brandon = await harness.actor("brandon@hplacer.com");
+    const createdId = await createTask(harness.db, brandon, {
+      title: "Check the oil on the service truck",
+      assignedTo: brandon.employeeId,
+    });
+    const reassignedId = await createTask(harness.db, brandon, {
+      title: "Review equipment log",
+    });
+    await assignTask(harness.db, brandon, reassignedId, brandon.employeeId);
+
+    const notices = await inbox(harness.db, brandon.employeeId);
+    assert.ok(notices.some((notice) => notice.related_id === createdId && notice.category === "task_assigned" && notice.body.includes("You assigned yourself")));
+    assert.ok(notices.some((notice) => notice.related_id === reassignedId && notice.category === "task_assigned" && notice.body.includes("You assigned yourself")));
   });
 
   it("will not close a photo-required task without a photo", async () => {

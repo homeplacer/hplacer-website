@@ -173,13 +173,13 @@ export async function createTask(db: Db, actor: Actor, input: CreateTaskInput): 
     )
     .run();
 
-  if (input.assignedTo && input.assignedTo !== actor.employeeId) {
+  if (input.assignedTo) {
     await notify(db, {
       employeeId: input.assignedTo,
       category: "task_assigned",
       severity: priority === "urgent" ? "urgent" : "info",
       title: input.title.trim(),
-      body: `${actor.displayName} assigned you this task${input.dueAt ? `, due ${input.dueAt}` : ""}.`,
+      body: `${input.assignedTo === actor.employeeId ? "You assigned yourself this task" : `${actor.displayName} assigned you this task`}${input.dueAt ? `, due ${input.dueAt}` : ""}.`,
       relatedType: "work_task",
       relatedId: id,
     });
@@ -194,12 +194,12 @@ export async function assignTask(db: Db, actor: Actor, taskId: string, employeeI
     .bind(employeeId, nowIso(), taskId)
     .run();
 
-  if (employeeId && employeeId !== actor.employeeId) {
+  if (employeeId) {
     await notify(db, {
       employeeId,
       category: "task_assigned",
       title: task.title,
-      body: `${actor.displayName} assigned you this task.`,
+      body: employeeId === actor.employeeId ? "You assigned yourself this task." : `${actor.displayName} assigned you this task.`,
       relatedType: "work_task",
       relatedId: taskId,
     });
