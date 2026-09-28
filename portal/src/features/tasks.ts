@@ -3,7 +3,7 @@ import { assertCan, can } from "../auth/authz.ts";
 import { listEmployees } from "../domain/employees.ts";
 import { listDocuments } from "../domain/documents.ts";
 import { listJobs } from "../domain/jobs.ts";
-import { listAssets } from "../domain/assets.ts";
+import { assetOptionLabel, listAssets } from "../domain/assets.ts";
 import { homeDisplayName, listHomes } from "../domain/homes.ts";
 import {
   TASK_PRIORITIES,
@@ -221,7 +221,7 @@ async function renderNewTask(ctx: RequestContext): Promise<Response> {
       <label for="asset_id">Equipment</label>
       <select id="asset_id" name="asset_id">
         <option value="">None</option>
-        ${assets.map((asset) => html`<option value="${asset.id}" ${raw(asset.id === preset.assetId ? "selected" : "")}>${asset.asset_tag}</option>`)}
+        ${assets.map((asset) => html`<option value="${asset.id}" ${raw(asset.id === preset.assetId ? "selected" : "")}>${assetOptionLabel(asset)}</option>`)}
       </select>
       <label><input type="checkbox" name="requires_photo" value="on"> Require a photo before it can be closed</label>
       <div class="btn-row"><button type="submit">Assign</button></div>

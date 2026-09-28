@@ -27,6 +27,10 @@ describe('repair work and flexible job planning',()=>{
   assert.doesNotMatch(page,/99 Other Road/);
   assert.match(page,/name="job_id" value="job_2601"/);
  });
+ it('shows make and model before the fleet ID in the task equipment picker',async()=>{
+  const page=await(await h.request('/tasks/new',{as:'brandon@hplacer.com'})).text();
+  assert.match(page,/<option value="ast_ex2"[^>]*>Kubota KX057-5 \(2023\) — EX-02<\/option>/);
+ });
  it('keeps coworkers assigned tasks private on the planning screen',async()=>{
   await h.request('/api/tasks',form({title:'Private coworker assignment',job_id:'job_2601',assigned_to:'emp_wes'}));
   await h.request('/api/tasks',form({title:'Available crew work',job_id:'job_2601'}));

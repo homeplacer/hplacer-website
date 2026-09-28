@@ -31,6 +31,16 @@ export const ASSET_TYPE_LABELS: Record<AssetType, string> = {
   other: "Other",
 };
 
+export function assetDisplayName(asset: Pick<AssetRow, "manufacturer" | "model" | "model_year" | "asset_type" | "asset_tag">): string {
+  const makeAndModel = [asset.manufacturer, asset.model].filter((value) => value?.trim()).join(" ").trim();
+  const name = makeAndModel || ASSET_TYPE_LABELS[asset.asset_type as AssetType] || "Equipment";
+  return `${name}${asset.model_year ? ` (${asset.model_year})` : ""}`;
+}
+
+export function assetOptionLabel(asset: Pick<AssetRow, "manufacturer" | "model" | "model_year" | "asset_type" | "asset_tag">): string {
+  return `${assetDisplayName(asset)} — ${asset.asset_tag}`;
+}
+
 const ASSET_STATUSES = ["available", "in_use", "out_of_service", "retired"];
 
 export interface AssetRow {

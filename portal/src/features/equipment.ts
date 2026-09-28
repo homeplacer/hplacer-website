@@ -3,6 +3,7 @@ import { assertCan, can } from "../auth/authz.ts";
 import {
   ASSET_TYPES,
   ASSET_TYPE_LABELS,
+  assetDisplayName,
   assetSourceMetadata,
   assetCanonicalKey,
   createAsset,
@@ -58,11 +59,6 @@ const VERIFICATION_LABELS: Record<AssetVerificationStatus, string> = {
   needs_vin: "Confirm VIN",
   unassigned: "Confirm home base / company",
 };
-
-function equipmentDisplayName(asset: { manufacturer: string | null; model: string | null; asset_type: string; asset_tag: string }): string {
-  const makeAndModel = [asset.manufacturer, asset.model].filter((value) => value?.trim()).join(" ").trim();
-  return makeAndModel || ASSET_TYPE_LABELS[asset.asset_type as AssetType] || `${asset.asset_type} ${asset.asset_tag}`;
-}
 
 export function registerEquipment(router: Router): void {
   router.get("/equipment", renderList);
@@ -143,11 +139,11 @@ async function renderList(ctx: RequestContext): Promise<Response> {
           (asset) => html`<a class="card" href="/equipment/${asset.asset_tag}">
             <div class="row" style="align-items:flex-start">
               ${asset.primary_photo_id
-                ? html`<img src="/api/documents/${asset.primary_photo_id}/content" alt="${equipmentDisplayName(asset)}" width="88" height="66" style="object-fit:cover;border-radius:8px">`
+                ? html`<img src="/api/documents/${asset.primary_photo_id}/content" alt="${assetDisplayName(asset)}" width="88" height="66" style="object-fit:cover;border-radius:8px">`
                 : html`<span class="empty" style="width:88px;height:66px;display:grid;place-items:center;margin:0">No photo</span>`}
               <div style="flex:1">
-              <h3>${equipmentDisplayName(asset)}</h3>
-              <p class="meta">Fleet ID: ${asset.asset_tag}${asset.model_year ? ` · ${asset.model_year}` : ""}</p>
+              <h3>${assetDisplayName(asset)}</h3>
+              <p class="meta">Fleet ID: ${asset.asset_tag}</p>
               ${badge(asset.status, asset.status === "out_of_service" ? "bad" : asset.status === "available" ? "ok" : "")}
               </div>
             </div>
