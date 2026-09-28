@@ -92,15 +92,19 @@ async function renderList(ctx: RequestContext): Promise<Response> {
 
     <form method="get" action="/homes">
       ${status ? html`<input type="hidden" name="status" value="${status}">` : ""}
+      ${jobId ? html`<input type="hidden" name="job_id" value="${jobId}">` : ""}
       <label for="q">Search address, model, or make</label>
       <input id="q" name="q" value="${search ?? ""}" inputmode="search" autocapitalize="characters" autocomplete="off">
-      <label for="job_id">Subdivision</label>
-      <select id="job_id" name="job_id">
-        <option value="">All subdivisions</option>
-        ${subdivisions.map((job) => html`<option value="${job.id}" ${job.id === jobId ? "selected" : ""}>${job.title} (${job.home_count})</option>`)}
-      </select>
-      <div class="btn-row"><button type="submit">Show homes</button></div>
+      <div class="btn-row"><button type="submit">Search homes</button></div>
     </form>
+
+    <details class="card">
+      <summary><strong>Subdivision:</strong> ${selectedJob ? `${selectedJob.title} (${selectedJob.home_count})` : "All subdivisions"}</summary>
+      <div class="stack" style="margin-top:0.75rem">
+        <a class="btn secondary" href="/homes${query({ status, q: search })}">All subdivisions</a>
+        ${subdivisions.map((job) => html`<a class="btn secondary" href="/homes${query({ status, q: search, job_id: job.id })}">${job.title} (${job.home_count})</a>`)}
+      </div>
+    </details>
 
     ${tabs([
       { href: `/homes${query({ q: search, job_id: jobId })}`, label: "All", current: !status },
