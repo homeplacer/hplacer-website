@@ -5,7 +5,7 @@ import { listAssets } from "../domain/assets.ts";
 import { DEFECT_SEVERITIES, getDefect, listDefects, reportDefect, resolveDefect } from "../domain/defects.ts";
 import { listDocuments } from "../domain/documents.ts";
 import { listEmployees } from "../domain/employees.ts";
-import { listHomes } from "../domain/homes.ts";
+import { homeDisplayName, listHomes } from "../domain/homes.ts";
 import { listParts } from "../domain/inventory.ts";
 import {
   BILL_BACK_STATUSES,
@@ -102,7 +102,7 @@ function ticketCard(ticket: Awaited<ReturnType<typeof listRepairs>>[number]) {
   return html`<a class="card" href="/repairs/${ticket.id}">
     <div class="row"><h3>${ticket.ticket_number} — ${ticket.title}</h3>
       ${badge(ticket.status, ticket.status === "billed" || ticket.status === "closed" ? "ok" : "")}</div>
-    <div class="meta">${ticket.serial_number ?? ticket.asset_tag ?? "—"} · ${ticket.reported_by_name} · ${formatDate(ticket.created_at)}
+    <div class="meta">${ticket.home_id ? homeDisplayName(ticket) : ticket.asset_tag ?? "—"} · ${ticket.reported_by_name} · ${formatDate(ticket.created_at)}
       · ${money(ticket.total_cents)} recorded
       ${ticket.bill_back_status !== "not_applicable" ? html` · ${badge(ticket.bill_back_status, ticket.bill_back_status === "billed" ? "ok" : "warn")}` : ""}</div>
   </a>`;
@@ -132,7 +132,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
       </div>
       <p>${repair.description}</p>
       ${kv([
-        ["Home", repair.serial_number ? html`<a href="/homes/${repair.home_id}">${repair.serial_number}</a>` : null],
+        ["Home", repair.home_id ? html`<a href="/homes/${repair.home_id}">${homeDisplayName(repair)}</a>` : null],
         ["Equipment", repair.asset_tag ? html`<a href="/equipment/${repair.asset_tag}">${repair.asset_tag}</a>` : null],
         ["Subdivision", repair.job_number ? html`<a href="/subdivisions/${repair.job_id}">${repair.job_number}</a>` : null],
         ["Reported by", `${repair.reported_by_name} · ${formatDate(repair.created_at)}`],
@@ -323,7 +323,7 @@ async function renderBillingQueue(ctx: RequestContext): Promise<Response> {
           (ticket) => html`<a class="card" href="/repairs/${ticket.id}">
             <div class="row"><h3>${ticket.ticket_number} — ${ticket.title}</h3>
               ${badge(ticket.bill_back_status, ticket.bill_back_status === "ready_to_bill" ? "warn" : "")}</div>
-            <div class="meta">${ticket.serial_number ?? ticket.asset_tag ?? "—"} ·
+            <div class="meta">${ticket.home_id ? homeDisplayName(ticket) : ticket.asset_tag ?? "—"} ·
               ${ticket.responsible_party ?? ticket.responsible_party_type ?? "responsible party not set"} ·
               labor ${money(ticket.labor_cents)} + materials ${money(ticket.material_cents)} = <strong>${money(ticket.total_cents)}</strong>
               ${ticket.status !== "complete" ? " · repair not finished" : ""}</div>
@@ -348,7 +348,7 @@ async function renderDefects(ctx: RequestContext): Promise<Response> {
             <div class="row"><h3>${defect.summary}</h3>
               ${badge(defect.severity, defect.severity === "critical" ? "bad" : defect.severity === "major" ? "warn" : "")}</div>
             <div class="meta">${badge(defect.status, defect.status === "open" ? "warn" : "ok")}
-              ${defect.asset_tag ?? defect.serial_number ?? ""} · ${defect.reported_by_name} · ${formatDate(defect.created_at)}
+              ${defect.home_id ? homeDisplayName(defect) : defect.asset_tag ?? ""} · ${defect.reported_by_name} · ${formatDate(defect.created_at)}
               · ${defect.source.replace(/_/g, " ")}</div>
             ${defect.detail ? html`<p>${defect.detail}</p>` : ""}
             <div class="btn-row">
@@ -394,7 +394,7 @@ async function renderNewDefect(ctx: RequestContext): Promise<Response> {
       <label for="home_id">Home</label>
       <select id="home_id" name="home_id">
         <option value="">Not a home</option>
-        ${homes.map((home) => html`<option value="${home.id}" ${raw(home.id === ctx.url.searchParams.get("homeId") ? "selected" : "")}>${home.serial_number}</option>`)}
+        ${homes.map((home) => html`<option value="${home.id}" ${raw(home.id === ctx.url.searchParams.get("homeId") ? "selected" : "")}>${homeDisplayName(home)}</option>`)}
       </select>
       <div class="btn-row"><button type="submit">Report</button></div>
     </form>
@@ -424,7 +424,7 @@ async function renderNewRepair(ctx: RequestContext): Promise<Response> {
       <label for="home_id">Home</label>
       <select id="home_id" name="home_id">
         <option value="">Not a home</option>
-        ${homes.map((home) => html`<option value="${home.id}" ${raw(home.id === presetHome ? "selected" : "")}>${home.serial_number}</option>`)}
+        ${homes.map((home) => html`<option value="${home.id}" ${raw(home.id === presetHome ? "selected" : "")}>${homeDisplayName(home)}</option>`)}
       </select>
       <label for="asset_id">Equipment</label>
       <select id="asset_id" name="asset_id">

@@ -3,6 +3,7 @@ import { can } from "../auth/authz.ts";
 import { fleetServiceDue, describeServiceDue } from "../domain/assets.ts";
 import { openDefectCounts } from "../domain/defects.ts";
 import { listParts } from "../domain/inventory.ts";
+import { homeDisplayName } from "../domain/homes.ts";
 import { inbox, markRead, unreadCount } from "../domain/notifications.ts";
 import { billingQueue, listRepairs } from "../domain/repairs.ts";
 import { listTasks } from "../domain/tasks.ts";
@@ -100,7 +101,7 @@ async function renderDashboard(ctx: RequestContext): Promise<Response> {
           ${queue.map(
             (ticket) => html`<a class="card" href="/repairs/${ticket.id}">
               <div class="row"><h3>${ticket.ticket_number} — ${ticket.title}</h3>${badge(ticket.bill_back_status, ticket.bill_back_status === "ready_to_bill" ? "warn" : "")}</div>
-              <div class="meta">${ticket.serial_number ?? ticket.asset_tag ?? ""} · ${ticket.responsible_party ?? "responsible party not set"}</div>
+              <div class="meta">${ticket.home_id ? homeDisplayName(ticket) : ticket.serial_number ?? ticket.asset_tag ?? ""} · ${ticket.responsible_party ?? "responsible party not set"}</div>
             </a>`,
           )}`
       : ""}

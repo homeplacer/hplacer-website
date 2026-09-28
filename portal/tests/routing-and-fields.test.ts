@@ -200,6 +200,14 @@ describe("home site address", () => {
     assert.match(page, /Serial CAV2026NC114772A/);
     assert.match(page, /Search address, serial, model, or make/);
   });
+
+  it("uses addresses anywhere staff choose a home", async () => {
+    for (const path of ["/tasks/new", "/repairs/new", "/defects/new"]) {
+      const page = await (await harness.request(path)).text();
+      assert.match(page, /184 Mill Creek Rd Lot 12 · Boone, NC · 28607/, path);
+      assert.doesNotMatch(page, />CAV2026NC114772A<\/option>/, path);
+    }
+  });
 });
 
 describe("subdivisions", () => {

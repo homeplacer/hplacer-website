@@ -1,7 +1,7 @@
 /** The staff side of warranty requests: the review queue and its decisions. */
 import { assertCan } from "../auth/authz.ts";
 import { listDocuments } from "../domain/documents.ts";
-import { formatSiteAddress, listHomes, requireHome } from "../domain/homes.ts";
+import { homeDisplayName, listHomes, requireHome } from "../domain/homes.ts";
 import {
   WARRANTY_STATUSES,
   closeWarrantyRequest,
@@ -118,7 +118,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
       ${kv([
         ["Result", `${request.match_confidence} (${request.match_method.replace(/_/g, " ")})`],
         ["Why", request.match_reason],
-        ["Home", request.serial_number ? html`<a href="/homes/${request.home_id}">${request.serial_number}</a>` : "not linked"],
+        ["Home", request.home_id ? html`<a href="/homes/${request.home_id}">${homeDisplayName({ serial_number: request.serial_number, monday_item_name: request.monday_item_name, site_address: request.home_site_address, site_city: request.home_site_city, site_state: request.home_site_state, site_postal_code: request.home_site_postal_code })}</a>` : "not linked"],
         ["Ticket", request.ticket_number ? html`<a href="/repairs/${request.repair_ticket_id}">${request.ticket_number}</a>` : "none yet"],
       ])}
     </div>
@@ -127,7 +127,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
       ? html`<h2>Homes considered</h2>
           ${candidates.map(
             (candidate) => html`<div class="card">
-              <div class="row"><h3>${candidate.serial_number}</h3>
+              <div class="row"><h3>${homeDisplayName(candidate)}</h3>
                 ${candidate.signals.map((signal) => badge(signal))}</div>
               <div class="meta">${candidate.site_address ?? "no site address"}${candidate.customer_name ? ` · ${candidate.customer_name}` : ""}</div>
               <div class="btn-row">
@@ -155,7 +155,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
           <select id="home_id" name="home_id" required>
             <option value="">Choose a home</option>
             ${homes.map(
-              (home) => html`<option value="${home.id}">${home.serial_number}${formatSiteAddress(home) ? ` — ${formatSiteAddress(home)}` : ""}</option>`,
+              (home) => html`<option value="${home.id}">${homeDisplayName(home)}</option>`,
             )}
           </select>
           <label for="link_note">Note</label>

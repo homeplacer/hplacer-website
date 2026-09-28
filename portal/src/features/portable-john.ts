@@ -1,6 +1,6 @@
 import { can } from "../auth/authz.ts";
 import { listAssets } from "../domain/assets.ts";
-import { listHomes } from "../domain/homes.ts";
+import { homeDisplayName, listHomes } from "../domain/homes.ts";
 import { listJobs } from "../domain/jobs.ts";
 import { createPortableJohnRequest, listPortableJohnRequests, PORTABLE_JOHN_STATUSES, requirePortableJohnRequest, updatePortableJohnStatus, type PortableJohnStatus } from "../domain/portable-john.ts";
 import { numberField, optionalField, readFields, requiredField, type RequestContext } from "../api/context.ts";
@@ -42,7 +42,7 @@ async function renderNew(ctx: RequestContext): Promise<Response> {
       <label for="quantity">Number of units</label><input id="quantity" name="quantity" type="number" min="1" max="25" value="1" required>
       <h2>Choose exactly one location</h2>
       <label for="job_id">Subdivision</label><select id="job_id" name="job_id"><option value="">None</option>${jobs.map((j) => html`<option value="${j.id}">${j.job_number} — ${j.title}</option>`)}</select>
-      <label for="home_id">Home</label><select id="home_id" name="home_id"><option value="">None</option>${homes.map((h) => html`<option value="${h.id}">${h.serial_number}${h.site_address ? ` — ${h.site_address}` : ""}</option>`)}</select>
+      <label for="home_id">Home</label><select id="home_id" name="home_id"><option value="">None</option>${homes.map((h) => html`<option value="${h.id}">${homeDisplayName(h)}${h.serial_number.startsWith("PENDING-") ? "" : ` — Serial ${h.serial_number}`}</option>`)}</select>
       <label for="asset_id">Equipment location</label><select id="asset_id" name="asset_id"><option value="">None</option>${assets.map((a) => html`<option value="${a.id}">${a.asset_tag} — ${[a.manufacturer, a.model].filter(Boolean).join(" ")}${a.home_base ? ` (${a.home_base})` : ""}</option>`)}</select>
       <label for="location_details">Exact placement or pickup location</label><textarea id="location_details" name="location_details" required placeholder="Gate, lot, landmark, access instructions, or current unit location"></textarea>
       <label for="notes">Anything else operations should know?</label><textarea id="notes" name="notes"></textarea>
@@ -76,7 +76,7 @@ async function statusRoute(ctx: RequestContext): Promise<Response> {
 
 function targetLabel(item: { job_number: string | null; job_title: string | null; serial_number: string | null; site_address: string | null; asset_tag: string | null; asset_manufacturer: string | null; asset_model: string | null; asset_home_base: string | null }): string {
   if (item.job_number) return `${item.job_number}${item.job_title ? ` — ${item.job_title}` : ""}`;
-  if (item.serial_number) return `${item.serial_number}${item.site_address ? ` — ${item.site_address}` : ""}`;
+  if (item.serial_number) return `${item.site_address ?? item.serial_number}${item.site_address ? ` — Serial ${item.serial_number}` : ""}`;
   const equipment = [item.asset_manufacturer, item.asset_model].filter(Boolean).join(" ");
   return `${item.asset_tag ?? "Equipment"}${equipment ? ` — ${equipment}` : ""}${item.asset_home_base ? ` (${item.asset_home_base})` : ""}`;
 }

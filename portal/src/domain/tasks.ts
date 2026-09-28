@@ -39,13 +39,18 @@ export interface TaskSummary extends TaskRow {
   completed_by_name: string | null;
   job_number: string | null;
   serial_number: string | null;
+  monday_item_name: string | null;
+  site_address: string | null;
+  site_city: string | null;
+  site_state: string | null;
+  site_postal_code: string | null;
   asset_tag: string | null;
   evidence_count: number;
 }
 
 const TASK_SELECT = `
   SELECT t.*, a.display_name AS assignee_name, c.display_name AS created_by_name, d.display_name AS completed_by_name,
-         j.job_number, h.serial_number, s.asset_tag,
+         j.job_number, h.serial_number, h.monday_item_name, h.site_address, h.site_city, h.site_state, h.site_postal_code, s.asset_tag,
          (SELECT count(*) FROM documents d WHERE d.work_task_id = t.id AND d.upload_status = 'stored') AS evidence_count
     FROM work_tasks t
     LEFT JOIN employees a ON a.id = t.assigned_to

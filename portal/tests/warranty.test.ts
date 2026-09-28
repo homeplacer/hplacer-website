@@ -374,8 +374,8 @@ describe("warranty queue through HTTP", () => {
     const [request] = await listWarrantyRequests(harness.db, { needsReviewOnly: true });
     const page = await (await harness.request(`/warranty/${request.id}`, { as: "greg@hplacer.com" })).text();
     assert.match(page, /Homes considered/);
-    assert.match(page, /CAV2026NC114772A/);
-    assert.match(page, /CLT2026TN903318X/);
+    assert.match(page, /184 Mill Creek Rd Lot 12/);
+    assert.match(page, /184 Mill Creek Rd Lot 13/);
     assert.match(page, /Needs a person/);
   });
 
