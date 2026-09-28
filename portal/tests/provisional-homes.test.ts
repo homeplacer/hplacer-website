@@ -54,4 +54,20 @@ describe("provisional home identity", () => {
     const { id } = await response.json() as { id: string };
     assert.equal((await getHome(harness.db, id))?.identity_incomplete, 0);
   });
+
+  it("filters the Homes page and API by subdivision while preserving search and status filters", async () => {
+    await harness.request("/api/homes", { as: "brandon@hplacer.com", ...jsonBody({ job_id: "job_2601", site_address: "12 Rabbit Lane" }) });
+    await harness.request("/api/homes", { as: "brandon@hplacer.com", ...jsonBody({ job_id: "job_2604", site_address: "99 Other Road" }) });
+
+    const page = await (await harness.request("/homes?job_id=job_2601", { as: "brandon@hplacer.com" })).text();
+    assert.match(page, /12 Rabbit Lane/);
+    assert.doesNotMatch(page, /99 Other Road/);
+    assert.match(page, /<option value="job_2601" selected>Mill Creek Ridge — Phase 2 \(3\)<\/option>/);
+    assert.match(page, /href="\/homes\?job_id=job_2601"/);
+    assert.match(page, /href="\/homes\?status=delivery_pending&amp;job_id=job_2601"/);
+
+    const api = await harness.json<{ homes: Array<{ site_address: string | null }> }>("/api/homes?job_id=job_2601", { as: "brandon@hplacer.com" });
+    assert.ok(api.homes.some((home) => home.site_address === "12 Rabbit Lane"));
+    assert.ok(api.homes.every((home) => home.site_address !== "99 Other Road"));
+  });
 });
