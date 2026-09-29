@@ -4,11 +4,11 @@ import { fleetServiceDue, describeServiceDue } from "../domain/assets.ts";
 import { openDefectCounts } from "../domain/defects.ts";
 import { listParts } from "../domain/inventory.ts";
 import { homeDisplayName } from "../domain/homes.ts";
-import { inbox, markRead, unreadCount } from "../domain/notifications.ts";
+import { inbox, markAllRead, markRead, unreadCount } from "../domain/notifications.ts";
 import { billingQueue, listRepairs } from "../domain/repairs.ts";
 import { listTasks } from "../domain/tasks.ts";
 import { warrantyReviewCount } from "../domain/warranty.ts";
-import { badge, empty, formatDate, page, statGrid } from "../ui/layout.ts";
+import { badge, empty, formatDate, page, statGrid, tabs } from "../ui/layout.ts";
 import { html } from "../ui/html.ts";
 import type { RequestContext } from "../api/context.ts";
 import { flashFrom, redirect } from "../api/responses.ts";
@@ -19,7 +19,20 @@ export function registerDashboard(router: Router): void {
   router.get("/notifications", async (ctx) => renderNotifications(ctx));
   router.post("/api/notifications/:id/read", async (ctx) => {
     await markRead(ctx.db, ctx.actor.employeeId, ctx.params.id);
-    return redirect("/notifications");
+    return redirect("/notifications?ok=notification_read");
+  });
+  router.post("/api/notifications/:id/open", async (ctx) => {
+    const item = await ctx.db
+      .prepare("SELECT related_type, related_id FROM notifications WHERE id = ? AND employee_id = ?")
+      .bind(ctx.params.id, ctx.actor.employeeId)
+      .first<{ related_type: string | null; related_id: string | null }>();
+    if (!item) return redirect("/notifications");
+    await markRead(ctx.db, ctx.actor.employeeId, ctx.params.id);
+    return redirect(item.related_type && item.related_id ? linkFor(item.related_type, item.related_id) : "/notifications");
+  });
+  router.post("/api/notifications/read-all", async (ctx) => {
+    await markAllRead(ctx.db, ctx.actor.employeeId);
+    return redirect("/notifications?ok=notifications_cleared");
   });
 }
 
@@ -126,29 +139,37 @@ function describeRoles(ctx: RequestContext): string {
 }
 
 async function renderNotifications(ctx: RequestContext): Promise<Response> {
-  const items = await inbox(ctx.db, ctx.actor.employeeId);
+  const showAll = ctx.url.searchParams.get("view") === "all";
+  const unread = await unreadCount(ctx.db, ctx.actor.employeeId);
+  const items = await inbox(ctx.db, ctx.actor.employeeId, 50, !showAll);
   const body = html`
     <h1>Notifications</h1>
+    <p class="lede">${unread === 0 ? "You’re all caught up." : `${unread} unread notification${unread === 1 ? "" : "s"}.`}</p>
+    ${tabs([
+      { href: "/notifications", label: `Unread (${unread})`, current: !showAll },
+      { href: "/notifications?view=all", label: "All", current: showAll },
+    ])}
+    ${unread > 0 ? html`<form method="post" action="/api/notifications/read-all" class="btn-row"><button class="secondary" type="submit">Mark all read</button></form>` : ""}
     ${items.length === 0
-      ? empty("Nothing here yet.")
+      ? empty(showAll ? "No notifications yet." : "No unread notifications.")
       : items.map(
           (item) => html`<div class="card">
             <div class="row">
               <h3>${item.title}</h3>
-              ${badge(item.severity, item.severity === "urgent" ? "bad" : item.severity === "warning" ? "warn" : "")}
+              <div>${item.read_at ? badge("read") : badge("new", "ok")} ${badge(item.severity, item.severity === "urgent" ? "bad" : item.severity === "warning" ? "warn" : "")}</div>
             </div>
             <p class="meta">${formatDate(item.created_at)} · ${item.category.replace(/_/g, " ")}</p>
             <p>${item.body}</p>
             <div class="btn-row">
-              ${item.related_type && item.related_id ? html`<a class="btn secondary" href="${linkFor(item.related_type, item.related_id)}">Open</a>` : ""}
+              ${item.related_type && item.related_id ? html`<form method="post" action="/api/notifications/${item.id}/open"><button class="secondary" type="submit">${item.read_at ? "Open" : "Open and mark read"}</button></form>` : ""}
               ${item.read_at
                 ? ""
-                : html`<form method="post" action="/api/notifications/${item.id}/read"><button class="secondary" type="submit">Mark read</button></form>`}
+                : item.related_type && item.related_id ? "" : html`<form method="post" action="/api/notifications/${item.id}/read"><button class="secondary" type="submit">Mark read</button></form>`}
             </div>
           </div>`,
         )}
   `;
-  return page(body, { title: "Notifications", actor: ctx.actor, section: "/notifications", back: { href: "/", label: "Today" } });
+  return page(body, { title: "Notifications", actor: ctx.actor, section: "/notifications", unread, back: { href: "/", label: "Today" }, flash: flashFrom(ctx.url) });
 }
 
 function linkFor(type: string, id: string): string {

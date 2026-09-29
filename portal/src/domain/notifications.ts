@@ -7,8 +7,8 @@
  * named people, or removing the default entirely. Nothing in the domain layer
  * names a recipient; it names a category and lets routing decide.
  *
- * Delivery to email or SMS is a later transport. `notifications.delivered_at`
- * is the hook, and every row already carries a severity and a dedupe key.
+ * External delivery can be layered on later. `notifications.delivered_at` is
+ * the hook, and every row already carries a severity and a dedupe key.
  */
 import { badRequest, notFound } from "../platform/errors.ts";
 import { newId, nowIso } from "../platform/ids.ts";
@@ -261,14 +261,14 @@ export async function removeRoute(db: Db, routeId: string): Promise<void> {
 // Inbox
 // ---------------------------------------------------------------------------
 
-export async function inbox(db: Db, employeeId: string, limit = 50): Promise<NotificationRow[]> {
+export async function inbox(db: Db, employeeId: string, limit = 50, unreadOnly = false): Promise<NotificationRow[]> {
   const rows = await db
     .prepare(
       `SELECT id, category, severity, title, body, related_type, related_id, read_at, created_at
-         FROM notifications WHERE employee_id = ?
+         FROM notifications WHERE employee_id = ? AND (? = 0 OR read_at IS NULL)
         ORDER BY read_at IS NOT NULL, created_at DESC, rowid DESC LIMIT ?`,
     )
-    .bind(employeeId, limit)
+    .bind(employeeId, unreadOnly ? 1 : 0, limit)
     .all<NotificationRow>();
   return rows.results;
 }
@@ -288,4 +288,13 @@ export async function markRead(db: Db, employeeId: string, notificationId: strin
     .bind(nowIso(), notificationId, employeeId)
     .run();
   return (result.meta.changes ?? 0) > 0;
+}
+
+/** Clears only the signed-in employee's unread notifications. */
+export async function markAllRead(db: Db, employeeId: string): Promise<number> {
+  const result = await db
+    .prepare("UPDATE notifications SET read_at = ? WHERE employee_id = ? AND read_at IS NULL")
+    .bind(nowIso(), employeeId)
+    .run();
+  return result.meta.changes ?? 0;
 }
