@@ -6,6 +6,7 @@ import { badRequest, forbidden, notFound } from "../platform/errors.ts";
 import { newId, nowIso } from "../platform/ids.ts";
 import type { Db } from "../platform/types.ts";
 import { can, type Actor } from "../auth/authz.ts";
+import { assetOptionLabel } from "./assets.ts";
 import { notify } from "./notifications.ts";
 
 export const TASK_STATUSES = ["open", "in_progress", "blocked", "complete", "cancelled"] as const;
@@ -38,6 +39,7 @@ export interface TaskSummary extends TaskRow {
   created_by_name: string;
   completed_by_name: string | null;
   job_number: string | null;
+  job_title: string | null;
   serial_number: string | null;
   monday_item_name: string | null;
   site_address: string | null;
@@ -45,12 +47,24 @@ export interface TaskSummary extends TaskRow {
   site_state: string | null;
   site_postal_code: string | null;
   asset_tag: string | null;
+  equipment_count: number;
   evidence_count: number;
+}
+
+export interface TaskEquipment {
+  id: string;
+  asset_tag: string;
+  asset_type: string;
+  manufacturer: string | null;
+  model: string | null;
+  model_year: number | null;
+  status: string;
 }
 
 const TASK_SELECT = `
   SELECT t.*, a.display_name AS assignee_name, c.display_name AS created_by_name, d.display_name AS completed_by_name,
-         j.job_number, h.serial_number, h.monday_item_name, h.site_address, h.site_city, h.site_state, h.site_postal_code, s.asset_tag,
+         j.job_number, j.title AS job_title, h.serial_number, h.monday_item_name, h.site_address, h.site_city, h.site_state, h.site_postal_code, s.asset_tag,
+         (SELECT count(*) FROM work_task_assets ta WHERE ta.work_task_id = t.id) AS equipment_count,
          (SELECT count(*) FROM documents d WHERE d.work_task_id = t.id AND d.upload_status = 'stored') AS evidence_count
     FROM work_tasks t
     LEFT JOIN employees a ON a.id = t.assigned_to
@@ -111,6 +125,20 @@ export async function getTask(db: Db, taskId: string): Promise<TaskSummary | nul
   return db.prepare(`${TASK_SELECT} WHERE t.id = ?`).bind(taskId).first<TaskSummary>();
 }
 
+export async function listTaskEquipment(db: Db, taskId: string): Promise<TaskEquipment[]> {
+  const rows = await db.prepare(
+    `SELECT a.id, a.asset_tag, a.asset_type, a.manufacturer, a.model, a.model_year, a.status
+       FROM work_task_assets ta JOIN assets a ON a.id = ta.asset_id
+      WHERE ta.work_task_id = ?
+      ORDER BY a.asset_type, a.manufacturer, a.model, a.asset_tag`,
+  ).bind(taskId).all<TaskEquipment>();
+  return rows.results;
+}
+
+export function taskEquipmentLabel(asset: TaskEquipment): string {
+  return assetOptionLabel(asset);
+}
+
 export async function requireTask(db: Db, taskId: string): Promise<TaskSummary> {
   const task = await getTask(db, taskId);
   if (!task) throw notFound("Task not found");
@@ -127,6 +155,7 @@ export interface CreateTaskInput {
   lotId?: string | null;
   homeId?: string | null;
   assetId?: string | null;
+  assetIds?: string[];
   requiresPhoto?: boolean;
 }
 
@@ -136,6 +165,34 @@ export async function createTask(db: Db, actor: Actor, input: CreateTaskInput): 
   if (!(TASK_PRIORITIES as readonly string[]).includes(priority)) throw badRequest(`Unknown priority "${priority}"`);
   if (input.dueAt && !/^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2})?)?$/.test(input.dueAt)) {
     throw badRequest("Due date must look like 2026-08-30 or 2026-08-30 14:00");
+  }
+
+  const assetIds = [...new Set([...(input.assetIds ?? []), ...(input.assetId ? [input.assetId] : [])].map((id) => id.trim()).filter(Boolean))];
+  if (input.jobId) {
+    const job = await db.prepare("SELECT id FROM jobs WHERE id = ?").bind(input.jobId).first<{ id: string }>();
+    if (!job) throw notFound("Selected subdivision not found");
+  }
+  if (input.homeId) {
+    const home = await db.prepare("SELECT id, job_id FROM homes WHERE id = ?").bind(input.homeId)
+      .first<{ id: string; job_id: string | null }>();
+    if (!home) throw notFound("Selected home not found");
+    if (input.jobId && home.job_id !== input.jobId) {
+      throw badRequest("Choose a home that belongs to the selected subdivision");
+    }
+  }
+  if (assetIds.length > 0 && !input.jobId && !input.homeId) {
+    throw badRequest("Choose a subdivision or home as the destination for the equipment");
+  }
+  if (assetIds.length > 0) {
+    const placeholders = assetIds.map(() => "?").join(", ");
+    const assets = await db.prepare(`SELECT id, status FROM assets WHERE id IN (${placeholders})`).bind(...assetIds)
+      .all<{ id: string; status: string }>();
+    const found = new Map(assets.results.map((asset) => [asset.id, asset]));
+    for (const assetId of assetIds) {
+      const asset = found.get(assetId);
+      if (!asset) throw notFound("One of the selected pieces of equipment was not found");
+      if (asset.status === "retired") throw badRequest("Retired equipment cannot be put on a move task");
+    }
   }
 
   if (input.assignedTo) {
@@ -149,13 +206,11 @@ export async function createTask(db: Db, actor: Actor, input: CreateTaskInput): 
 
   const id = newId("tsk");
   const timestamp = nowIso();
-  await db
-    .prepare(
+  const statements = [db.prepare(
       `INSERT INTO work_tasks (id, title, details, status, priority, due_at, job_id, lot_id, home_id, asset_id,
                                assigned_to, created_by, requires_photo, created_at, updated_at)
        VALUES (?, ?, ?, 'open', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    )
-    .bind(
+    ).bind(
       id,
       input.title.trim(),
       input.details?.trim() || null,
@@ -164,14 +219,16 @@ export async function createTask(db: Db, actor: Actor, input: CreateTaskInput): 
       input.jobId ?? null,
       input.lotId ?? null,
       input.homeId ?? null,
-      input.assetId ?? null,
+      assetIds[0] ?? null,
       input.assignedTo ?? null,
       actor.employeeId,
       input.requiresPhoto ? 1 : 0,
       timestamp,
       timestamp,
-    )
-    .run();
+    ), ...assetIds.map((assetId) => db.prepare(
+      "INSERT INTO work_task_assets (work_task_id, asset_id, created_at) VALUES (?, ?, ?)",
+    ).bind(id, assetId, timestamp))];
+  await db.batch(statements);
 
   if (input.assignedTo) {
     await notify(db, {

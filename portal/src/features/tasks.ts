@@ -12,12 +12,14 @@ import {
   completeTask,
   createTask,
   isAvailableToCrew,
+  listTaskEquipment,
   listTasks,
   requireTask,
   setTaskStatus,
+  taskEquipmentLabel,
   type TaskStatus,
 } from "../domain/tasks.ts";
-import { forbidden } from "../platform/errors.ts";
+import { badRequest, forbidden } from "../platform/errors.ts";
 import { boolField, optionalField, readFields, requiredField, type RequestContext } from "../api/context.ts";
 import { flashFrom, json, redirect } from "../api/responses.ts";
 import type { Router } from "../api/router.ts";
@@ -84,7 +86,8 @@ async function renderList(ctx: RequestContext): Promise<Response> {
               ${badge(task.priority, task.priority === "urgent" ? "bad" : task.priority === "high" ? "warn" : "")}</div>
             <div class="meta">${badge(task.status, task.status === "complete" ? "ok" : task.status === "blocked" ? "warn" : "")}
               ${task.assignee_name ?? "Unassigned"}${task.due_at ? ` · due ${formatDate(task.due_at)}` : ""}
-              ${task.job_number ? ` · ${task.job_number}` : ""}${task.asset_tag ? ` · ${task.asset_tag}` : ""}
+              ${task.job_number ? ` · ${task.job_number}` : ""}
+              ${task.equipment_count > 0 ? ` · ${task.equipment_count} ${task.equipment_count === 1 ? "machine" : "machines"} to move` : task.asset_tag ? ` · ${task.asset_tag}` : ""}
               ${task.requires_photo === 1 ? " · photo required" : ""}</div>
           </a>`,
         )}
@@ -102,6 +105,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
     throw forbidden("That task is assigned to someone else");
   }
   const evidence = await listDocuments(ctx.db, { workTaskId: task.id });
+  const equipment = await listTaskEquipment(ctx.db, task.id);
   const canWork = can(ctx.actor, "task.complete.any") || task.assigned_to === ctx.actor.employeeId ||
     task.created_by === ctx.actor.employeeId || isAvailableToCrew(ctx.actor, task);
   const employees = can(ctx.actor, "task.assign") ? await listEmployees(ctx.db) : [];
@@ -115,9 +119,11 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
         ["Assigned to", task.assignee_name ?? "Unassigned"],
         ["Raised by", task.created_by_name],
         ["Due", task.due_at ? formatDate(task.due_at) : null],
-        ["Subdivision", task.job_number ? html`<a href="/subdivisions/${task.job_id}">${task.job_number}</a>` : null],
-        ["Home", task.home_id ? html`<a href="/homes/${task.home_id}">${homeDisplayName(task)}</a>` : null],
-        ["Equipment", task.asset_tag ? html`<a href="/equipment/${task.asset_tag}">${task.asset_tag}</a>` : null],
+        ["Destination subdivision", task.job_number ? html`<a href="/subdivisions/${task.job_id}">${task.job_number} — ${task.job_title ?? ""}</a>` : null],
+        ["Destination home", task.home_id ? html`<a href="/homes/${task.home_id}">${homeDisplayName(task)}</a>` : null],
+        ["Equipment to move", equipment.length
+          ? equipment.map((asset) => html`<div><a href="/equipment/${asset.asset_tag}">${taskEquipmentLabel(asset)}</a></div>`)
+          : task.asset_tag ? html`<a href="/equipment/${task.asset_tag}">${task.asset_tag}</a>` : null],
         ["Photo required", task.requires_photo === 1 ? "Yes" : null],
         ["Completed", task.completed_at ? formatDate(task.completed_at) : null],
         ["Completed by", task.completed_by_name],
@@ -190,9 +196,9 @@ async function renderNewTask(ctx: RequestContext): Promise<Response> {
   const body = html`
     <h1>Assign a task</h1>
     <details class="card" ${raw(selectedJob ? "" : "open")}>
-      <summary><strong>Subdivision:</strong> ${selectedJob ? `${selectedJob.job_number} — ${selectedJob.title}` : "Choose one (optional)"}</summary>
+      <summary><strong>Destination subdivision:</strong> ${selectedJob ? `${selectedJob.job_number} — ${selectedJob.title}` : "Choose one (optional)"}</summary>
       <div class="stack" style="margin-top:0.75rem">
-        <a class="btn secondary" href="/tasks/new">No subdivision</a>
+        <a class="btn secondary" href="/tasks/new">No destination subdivision</a>
         ${jobs.map((job) => html`<a class="btn secondary" href="/tasks/new${query({ jobId: job.id, homeId: job.id === selectedJob?.id ? preset.homeId : undefined, assetId: preset.assetId })}">${job.job_number} — ${job.title}${job.home_count > 0 ? ` (${job.home_count} homes)` : ""}</a>`)}
       </div>
     </details>
@@ -213,16 +219,19 @@ async function renderNewTask(ctx: RequestContext): Promise<Response> {
       <label for="due_at">Due (YYYY-MM-DD or YYYY-MM-DD HH:MM)</label>
       <input id="due_at" name="due_at" placeholder="2026-08-30 17:00">
       <input type="hidden" name="job_id" value="${selectedJob?.id ?? ""}">
-      <label for="home_id">Home</label>
+      <label for="home_id">Destination home (optional)</label>
       <select id="home_id" name="home_id">
         <option value="">None</option>
         ${homes.map((home) => html`<option value="${home.id}" ${raw(home.id === preset.homeId ? "selected" : "")}>${homeDisplayName(home)}</option>`)}
       </select>
-      <label for="asset_id">Equipment</label>
-      <select id="asset_id" name="asset_id">
-        <option value="">None</option>
-        ${assets.map((asset) => html`<option value="${asset.id}" ${raw(asset.id === preset.assetId ? "selected" : "")}>${assetOptionLabel(asset)}</option>`)}
-      </select>
+      <fieldset>
+        <legend>Equipment to move (optional)</legend>
+        <p class="meta">Choose every machine or truck for this task. The subdivision or home above is where the crew should take it.</p>
+        ${assets.filter((asset) => asset.status !== "retired").map((asset) => html`<label class="equipment-location-choice">
+          <input type="checkbox" name="asset_ids" value="${asset.id}" ${raw(asset.id === preset.assetId ? "checked" : "")}>
+          <span><strong>${assetOptionLabel(asset)}</strong><br><span class="meta">${asset.status.replace(/_/g, " ")}</span></span>
+        </label>`)}
+      </fieldset>
       <label><input type="checkbox" name="requires_photo" value="on"> Require a photo before it can be closed</label>
       <div class="btn-row"><button type="submit">Assign</button></div>
     </form>
@@ -232,7 +241,9 @@ async function renderNewTask(ctx: RequestContext): Promise<Response> {
 
 async function createTaskRoute(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "task.assign");
+  const listRequest = ctx.request.clone();
   const fields = await readFields(ctx.request);
+  const assetIds = await taskEquipmentIds(listRequest);
   const id = await createTask(ctx.db, ctx.actor, {
     title: requiredField(fields, "title", "Task"),
     details: optionalField(fields, "details"),
@@ -243,9 +254,34 @@ async function createTaskRoute(ctx: RequestContext): Promise<Response> {
     lotId: optionalField(fields, "lot_id"),
     homeId: optionalField(fields, "home_id"),
     assetId: optionalField(fields, "asset_id"),
+    assetIds,
     requiresPhoto: boolField(fields, "requires_photo"),
   });
   return wantsJson(ctx) ? json({ id }, 201) : redirect(`/tasks/${id}?ok=task_created`);
+}
+
+async function taskEquipmentIds(request: Request): Promise<string[]> {
+  const contentType = request.headers.get("Content-Type") ?? "";
+  if (contentType.includes("application/json")) {
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      throw badRequest("Body is not valid JSON");
+    }
+    if (!body || typeof body !== "object" || Array.isArray(body)) throw badRequest("Body must be a JSON object");
+    const value = (body as Record<string, unknown>).asset_ids;
+    if (value === undefined || value === null) return [];
+    if (!Array.isArray(value) || value.some((id) => typeof id !== "string")) {
+      throw badRequest("asset_ids must be a list of equipment IDs");
+    }
+    return value;
+  }
+  if (contentType.includes("form-urlencoded") || contentType.includes("multipart/form-data")) {
+    const form = await request.formData();
+    return form.getAll("asset_ids").filter((id): id is string => typeof id === "string");
+  }
+  return [];
 }
 
 async function setStatusRoute(ctx: RequestContext): Promise<Response> {
