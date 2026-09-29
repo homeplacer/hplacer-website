@@ -20,7 +20,7 @@ import {
   type TaskStatus,
 } from "../domain/tasks.ts";
 import { badRequest, forbidden } from "../platform/errors.ts";
-import { boolField, optionalField, readFields, requiredField, type RequestContext } from "../api/context.ts";
+import { boolField, optionalField, readFields, readListField, requiredField, type RequestContext } from "../api/context.ts";
 import { flashFrom, json, redirect } from "../api/responses.ts";
 import type { Router } from "../api/router.ts";
 import { html, query, raw } from "../ui/html.ts";
@@ -99,14 +99,15 @@ async function renderList(ctx: RequestContext): Promise<Response> {
 
 async function renderDetail(ctx: RequestContext): Promise<Response> {
   const task = await requireTask(ctx.db, ctx.params.id);
-  const canRead = can(ctx.actor, "task.read.all") || task.assigned_to === ctx.actor.employeeId ||
+  const isAssignee = task.assigned_to === ctx.actor.employeeId || (task.assignee_ids ?? "").split(",").includes(ctx.actor.employeeId);
+  const canRead = can(ctx.actor, "task.read.all") || isAssignee ||
     task.created_by === ctx.actor.employeeId || isAvailableToCrew(ctx.actor, task);
   if (!canRead) {
     throw forbidden("That task is assigned to someone else");
   }
   const evidence = await listDocuments(ctx.db, { workTaskId: task.id });
   const equipment = await listTaskEquipment(ctx.db, task.id);
-  const canWork = can(ctx.actor, "task.complete.any") || task.assigned_to === ctx.actor.employeeId ||
+  const canWork = can(ctx.actor, "task.complete.any") || isAssignee ||
     task.created_by === ctx.actor.employeeId || isAvailableToCrew(ctx.actor, task);
   const employees = can(ctx.actor, "task.assign") ? await listEmployees(ctx.db) : [];
 
@@ -161,11 +162,10 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
 
     ${can(ctx.actor, "task.assign")
       ? html`<form class="card" method="post" action="/api/tasks/${task.id}/assign">
-          <label for="assigned_to">Reassign</label>
-          <select id="assigned_to" name="assigned_to">
-            <option value="">Unassigned</option>
-            ${employees.map((person) => html`<option value="${person.id}" ${raw(person.id === task.assigned_to ? "selected" : "")}>${person.display_name}</option>`)}
-          </select>
+          <fieldset><legend>People assigned</legend>
+            <p class="meta">Choose everyone working on this task. Leave all unchecked to make it available to the crew.</p>
+            ${employees.map((person) => html`<label><input type="checkbox" name="assigned_to" value="${person.id}" ${raw((task.assignee_ids ?? task.assigned_to ?? "").split(",").includes(person.id) ? "checked" : "")}> ${person.display_name}</label>`)}
+          </fieldset>
           <div class="btn-row"><button class="secondary" type="submit">Reassign</button></div>
         </form>`
       : ""}
@@ -207,11 +207,10 @@ async function renderNewTask(ctx: RequestContext): Promise<Response> {
       <input id="title" name="title" required>
       <label for="details">Details</label>
       <textarea id="details" name="details"></textarea>
-      <label for="assigned_to">Assign to</label>
-      <select id="assigned_to" name="assigned_to">
-        <option value="">Unassigned</option>
-        ${employees.map((person) => html`<option value="${person.id}">${person.display_name} (${person.roles.join(", ")})</option>`)}
-      </select>
+      <fieldset><legend>Assign to people</legend>
+        <p class="meta">Choose everyone working on this task, or leave everyone unchecked.</p>
+        ${employees.map((person) => html`<label><input type="checkbox" name="assigned_to" value="${person.id}"> ${person.display_name}</label>`)}
+      </fieldset>
       <label for="priority">Priority</label>
       <select id="priority" name="priority">
         ${TASK_PRIORITIES.map((value) => html`<option value="${value}" ${raw(value === "normal" ? "selected" : "")}>${value}</option>`)}
@@ -241,15 +240,18 @@ async function renderNewTask(ctx: RequestContext): Promise<Response> {
 
 async function createTaskRoute(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "task.assign");
+  const fieldsRequest = ctx.request.clone();
+  const assigneesRequest = ctx.request.clone();
   const listRequest = ctx.request.clone();
-  const fields = await readFields(ctx.request);
+  const fields = await readFields(fieldsRequest);
+  const assigneeIds = await readListField(assigneesRequest, "assigned_to");
   const assetIds = await taskEquipmentIds(listRequest);
   const id = await createTask(ctx.db, ctx.actor, {
     title: requiredField(fields, "title", "Task"),
     details: optionalField(fields, "details"),
     priority: optionalField(fields, "priority") ?? "normal",
     dueAt: optionalField(fields, "due_at"),
-    assignedTo: optionalField(fields, "assigned_to"),
+    assignedToIds: assigneeIds,
     jobId: optionalField(fields, "job_id"),
     lotId: optionalField(fields, "lot_id"),
     homeId: optionalField(fields, "home_id"),
@@ -292,8 +294,8 @@ async function setStatusRoute(ctx: RequestContext): Promise<Response> {
 
 async function assignRoute(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "task.assign");
-  const fields = await readFields(ctx.request);
-  await assignTask(ctx.db, ctx.actor, ctx.params.id, optionalField(fields, "assigned_to"));
+  const assigneeIds = await readListField(ctx.request, "assigned_to");
+  await assignTask(ctx.db, ctx.actor, ctx.params.id, assigneeIds);
   return wantsJson(ctx) ? json({ ok: true }) : redirect(`/tasks/${ctx.params.id}?ok=saved`);
 }
 

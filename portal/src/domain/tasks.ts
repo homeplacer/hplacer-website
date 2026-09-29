@@ -26,6 +26,8 @@ export interface TaskRow {
   home_id: string | null;
   asset_id: string | null;
   assigned_to: string | null;
+  /** Comma-separated assignee ids returned by TASK_SELECT, including legacy assignments. */
+  assignee_ids: string | null;
   created_by: string;
   requires_photo: number;
   completed_at: string | null;
@@ -62,7 +64,13 @@ export interface TaskEquipment {
 }
 
 const TASK_SELECT = `
-  SELECT t.*, a.display_name AS assignee_name, c.display_name AS created_by_name, d.display_name AS completed_by_name,
+  SELECT t.*,
+         coalesce((SELECT group_concat(e.display_name, ', ')
+                     FROM work_task_assignees ta JOIN employees e ON e.id = ta.employee_id
+                    WHERE ta.task_id = t.id), a.display_name) AS assignee_name,
+         coalesce((SELECT group_concat(ta.employee_id, ',')
+                     FROM work_task_assignees ta WHERE ta.task_id = t.id), t.assigned_to) AS assignee_ids,
+         c.display_name AS created_by_name, d.display_name AS completed_by_name,
          j.job_number, j.title AS job_title, h.serial_number, h.monday_item_name, h.site_address, h.site_city, h.site_state, h.site_postal_code, s.asset_tag,
          (SELECT count(*) FROM work_task_assets ta WHERE ta.work_task_id = t.id) AS equipment_count,
          (SELECT count(*) FROM documents d WHERE d.work_task_id = t.id AND d.upload_status = 'stored') AS evidence_count
@@ -94,13 +102,21 @@ export async function listTasks(db: Db, actor: Actor, filter: TaskFilter = {}): 
   const rows = await db
     .prepare(
       `${TASK_SELECT}
-        WHERE (?1 IS NULL OR t.assigned_to = ?1 OR t.created_by = ?1 OR
-               (?7 = 1 AND t.assigned_to IS NULL AND (t.job_id IS NOT NULL OR t.lot_id IS NOT NULL OR t.home_id IS NOT NULL)))
+        WHERE (?1 IS NULL OR t.assigned_to = ?1 OR EXISTS (
+                 SELECT 1 FROM work_task_assignees ta WHERE ta.task_id = t.id AND ta.employee_id = ?1
+               ) OR t.created_by = ?1 OR
+               (?7 = 1 AND t.assigned_to IS NULL AND NOT EXISTS (
+                 SELECT 1 FROM work_task_assignees ta WHERE ta.task_id = t.id
+               ) AND (t.job_id IS NOT NULL OR t.lot_id IS NOT NULL OR t.home_id IS NOT NULL)))
           AND (?2 IS NULL OR t.status = ?2)
-          AND (?3 IS NULL OR t.assigned_to = ?3)
+          AND (?3 IS NULL OR t.assigned_to = ?3 OR EXISTS (
+                 SELECT 1 FROM work_task_assignees ta WHERE ta.task_id = t.id AND ta.employee_id = ?3
+               ))
           AND (?4 IS NULL OR t.job_id = ?4)
           AND (?5 = 0 OR t.status IN ('open', 'in_progress', 'blocked'))
-          AND (?8 = 0 OR (t.assigned_to IS NULL AND (t.job_id IS NOT NULL OR t.lot_id IS NOT NULL OR t.home_id IS NOT NULL)
+          AND (?8 = 0 OR (t.assigned_to IS NULL AND NOT EXISTS (
+                 SELECT 1 FROM work_task_assignees ta WHERE ta.task_id = t.id
+               ) AND (t.job_id IS NOT NULL OR t.lot_id IS NOT NULL OR t.home_id IS NOT NULL)
                AND t.status IN ('open', 'in_progress', 'blocked')))
         ORDER BY t.status IN ('complete', 'cancelled'),
                  CASE t.priority WHEN 'urgent' THEN 0 WHEN 'high' THEN 1 WHEN 'normal' THEN 2 ELSE 3 END,
@@ -151,6 +167,7 @@ export interface CreateTaskInput {
   priority?: string;
   dueAt?: string | null;
   assignedTo?: string | null;
+  assignedToIds?: string[];
   jobId?: string | null;
   lotId?: string | null;
   homeId?: string | null;
@@ -195,14 +212,8 @@ export async function createTask(db: Db, actor: Actor, input: CreateTaskInput): 
     }
   }
 
-  if (input.assignedTo) {
-    const assignee = await db
-      .prepare("SELECT id, active, display_name FROM employees WHERE id = ?")
-      .bind(input.assignedTo)
-      .first<{ id: string; active: number; display_name: string }>();
-    if (!assignee) throw notFound("Assignee not found");
-    if (assignee.active !== 1) throw badRequest(`${assignee.display_name} is deactivated`);
-  }
+  const assigneeIds = normalizeAssigneeIds(input.assignedToIds ?? (input.assignedTo ? [input.assignedTo] : []));
+  await requireActiveAssignees(db, assigneeIds);
 
   const id = newId("tsk");
   const timestamp = nowIso();
@@ -220,7 +231,7 @@ export async function createTask(db: Db, actor: Actor, input: CreateTaskInput): 
       input.lotId ?? null,
       input.homeId ?? null,
       assetIds[0] ?? null,
-      input.assignedTo ?? null,
+      assigneeIds[0] ?? null,
       actor.employeeId,
       input.requiresPhoto ? 1 : 0,
       timestamp,
@@ -230,13 +241,19 @@ export async function createTask(db: Db, actor: Actor, input: CreateTaskInput): 
     ).bind(id, assetId, timestamp))];
   await db.batch(statements);
 
-  if (input.assignedTo) {
+  if (assigneeIds.length) {
+    await db.batch(assigneeIds.map((employeeId) => db.prepare(
+      "INSERT INTO work_task_assignees (task_id, employee_id, assigned_by, assigned_at) VALUES (?, ?, ?, ?)",
+    ).bind(id, employeeId, actor.employeeId, timestamp)));
+  }
+
+  for (const employeeId of assigneeIds) {
     await notify(db, {
-      employeeId: input.assignedTo,
+      employeeId,
       category: "task_assigned",
       severity: priority === "urgent" ? "urgent" : "info",
       title: input.title.trim(),
-      body: `${input.assignedTo === actor.employeeId ? "You assigned yourself this task" : `${actor.displayName} assigned you this task`}${input.dueAt ? `, due ${input.dueAt}` : ""}.`,
+      body: `${employeeId === actor.employeeId ? "You assigned yourself this task" : `${actor.displayName} assigned you this task`}${input.dueAt ? `, due ${input.dueAt}` : ""}.`,
       relatedType: "work_task",
       relatedId: id,
       emailEligible: true,
@@ -245,14 +262,21 @@ export async function createTask(db: Db, actor: Actor, input: CreateTaskInput): 
   return id;
 }
 
-export async function assignTask(db: Db, actor: Actor, taskId: string, employeeId: string | null): Promise<void> {
+export async function assignTask(db: Db, actor: Actor, taskId: string, employeeIds: string | string[] | null): Promise<void> {
   const task = await requireTask(db, taskId);
-  await db
-    .prepare("UPDATE work_tasks SET assigned_to = ?, updated_at = ? WHERE id = ?")
-    .bind(employeeId, nowIso(), taskId)
-    .run();
+  const assigneeIds = normalizeAssigneeIds(Array.isArray(employeeIds) ? employeeIds : employeeIds ? [employeeIds] : []);
+  await requireActiveAssignees(db, assigneeIds);
+  const timestamp = nowIso();
+  await db.batch([
+    db.prepare("DELETE FROM work_task_assignees WHERE task_id = ?").bind(taskId),
+    db.prepare("UPDATE work_tasks SET assigned_to = ?, updated_at = ? WHERE id = ?").bind(assigneeIds[0] ?? null, timestamp, taskId),
+    ...assigneeIds.map((id) => db.prepare(
+      "INSERT INTO work_task_assignees (task_id, employee_id, assigned_by, assigned_at) VALUES (?, ?, ?, ?)",
+    ).bind(taskId, id, actor.employeeId, timestamp)),
+  ]);
 
-  if (employeeId) {
+  const previouslyAssigned = new Set((task.assignee_ids ?? task.assigned_to ?? "").split(",").filter(Boolean));
+  for (const employeeId of assigneeIds.filter((id) => !previouslyAssigned.has(id))) {
     await notify(db, {
       employeeId,
       category: "task_assigned",
@@ -262,6 +286,23 @@ export async function assignTask(db: Db, actor: Actor, taskId: string, employeeI
       relatedId: taskId,
       emailEligible: true,
     });
+  }
+}
+
+function normalizeAssigneeIds(ids: string[]): string[] {
+  return [...new Set(ids.map((id) => id.trim()).filter(Boolean))];
+}
+
+async function requireActiveAssignees(db: Db, ids: string[]): Promise<void> {
+  if (ids.length === 0) return;
+  const placeholders = ids.map(() => "?").join(", ");
+  const rows = await db.prepare(`SELECT id, active, display_name FROM employees WHERE id IN (${placeholders})`)
+    .bind(...ids).all<{ id: string; active: number; display_name: string }>();
+  const byId = new Map(rows.results.map((row) => [row.id, row]));
+  for (const id of ids) {
+    const person = byId.get(id);
+    if (!person) throw notFound("Assignee not found");
+    if (person.active !== 1) throw badRequest(`${person.display_name} is deactivated`);
   }
 }
 
@@ -332,7 +373,7 @@ export function isAvailableToCrew(actor: Actor, task: Pick<TaskRow, "assigned_to
 
 function assertCanWorkTask(actor: Actor, task: TaskRow): void {
   if (can(actor, "task.complete.any")) return;
-  if (task.assigned_to === actor.employeeId || task.created_by === actor.employeeId) return;
+  if (task.assigned_to === actor.employeeId || (task.assignee_ids ?? "").split(",").includes(actor.employeeId) || task.created_by === actor.employeeId) return;
   if (isAvailableToCrew(actor, task)) return;
   throw forbidden("That task is assigned to someone else");
 }
