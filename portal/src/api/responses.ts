@@ -50,6 +50,8 @@ export const FLASH_MESSAGES: Record<string, string> = {
   billed: "Marked billed back.",
   task_created: "Task created and the assignee was notified.",
   task_completed: "Task closed.",
+  notification_read: "Notification marked read.",
+  notifications_cleared: "Unread notifications cleared.",
   uploaded: "File attached.",
   linked: "Monday link recorded.",
   unlinked: "Monday link removed.",
