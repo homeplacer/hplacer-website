@@ -1,6 +1,7 @@
 /** Provider-neutral outbox dispatcher for the in-portal notification table. */
 import type { Db } from "../platform/types.ts";
 import { redact } from "../integrations/monday-credentials.ts";
+import type { NotificationCategory } from "./notifications.ts";
 
 export interface NotificationDeliveryMessage {
   /** Stable provider idempotency key. */
@@ -9,6 +10,7 @@ export interface NotificationDeliveryMessage {
   title: string;
   body: string;
   severity: string;
+  taskUrl?: string | null;
 }
 
 export interface NotificationDispatcher {
@@ -31,22 +33,29 @@ interface OutboxRow {
   body: string;
   severity: string;
   delivery_attempts: number;
+  related_id: string | null;
 }
 
 export async function dispatchNotificationOutbox(
   db: Db,
   dispatcher: NotificationDispatcher,
-  options: { limit?: number; now?: Date } = {},
+  options: { limit?: number; now?: Date; categories?: readonly NotificationCategory[]; createdAfter?: string; emailEligibleOnly?: boolean } = {},
 ): Promise<{ sent: number; retried: number; failed: number }> {
   const now = options.now ?? new Date();
+  const categories = options.categories ?? [];
+  const categorySql = categories.length ? `AND n.category IN (${categories.map(() => "?").join(", ")})` : "";
   const rows = await db
     .prepare(
-      `SELECT n.id, e.email AS recipient_email, n.title, n.body, n.severity, n.delivery_attempts
+      `SELECT n.id, e.email AS recipient_email, n.title, n.body, n.severity, n.delivery_attempts, n.related_id
          FROM notifications n JOIN employees e ON e.id = n.employee_id AND e.active = 1
-        WHERE n.delivered_at IS NULL AND (n.next_delivery_at IS NULL OR n.next_delivery_at <= ?)
+        WHERE n.delivered_at IS NULL
+          AND (n.delivery_attempts = 0 OR (n.next_delivery_at IS NOT NULL AND n.next_delivery_at <= ?))
+          AND (? IS NULL OR julianday(n.created_at) > julianday(?))
+          AND (? = 0 OR n.email_eligible = 1)
+          ${categorySql}
         ORDER BY n.created_at, n.rowid LIMIT ?`,
     )
-    .bind(now.toISOString(), Math.min(Math.max(options.limit ?? 25, 1), 100))
+    .bind(now.toISOString(), options.createdAfter ?? null, options.createdAfter ?? null, options.emailEligibleOnly ? 1 : 0, ...categories, Math.min(Math.max(options.limit ?? 25, 1), 100))
     .all<OutboxRow>();
 
   const summary = { sent: 0, retried: 0, failed: 0 };
@@ -60,6 +69,7 @@ export async function dispatchNotificationOutbox(
         title: row.title,
         body: row.body,
         severity: row.severity,
+        taskUrl: row.related_id ? `https://portal.hplacer.com/tasks/${encodeURIComponent(row.related_id)}` : null,
       });
       await db
         .prepare("UPDATE notifications SET delivered_at = ?, next_delivery_at = NULL, last_delivery_error = NULL WHERE id = ?")

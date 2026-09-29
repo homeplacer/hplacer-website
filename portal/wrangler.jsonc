@@ -46,9 +46,9 @@
   ],
 
   "triggers": {
-    // Morning operations sweep plus 15-minute vendor-email and Monday-home
-    // imports. Each importer remains inert without its explicit feature flag.
-    "crons": ["0 11 * * *", "*/15 * * * *"]
+    // Morning operations sweep, five-minute task-email delivery (off until
+    // explicitly enabled), and 15-minute vendor-email and Monday-home imports.
+    "crons": ["0 11 * * *", "*/5 * * * *", "*/15 * * * *"]
   },
 
   "observability": { "enabled": true }

@@ -13,6 +13,7 @@ import { notifyInsuranceExpirations } from "./domain/insurance.ts";
 import { runConfiguredMondaySync } from "./integrations/monday-sync-processor.ts";
 import { runConfiguredMondayHomesImport } from "./integrations/monday-homes-import.ts";
 import { runConfiguredGmailImport } from "./integrations/gmail-import.ts";
+import { runTaskAssignmentEmail } from "./integrations/task-assignment-email.ts";
 import type { PortalEnv } from "./platform/types.ts";
 
 const portal = {
@@ -28,6 +29,21 @@ const portal = {
    */
   async scheduled(event: { cron: string }, env: PortalEnv): Promise<void> {
     if (!env.PORTAL_DB) return;
+    if (event.cron === "*/5 * * * *") {
+      if (env.TASK_EMAIL_NOTIFICATIONS_ENABLED === "true") {
+        try {
+          const email = await runTaskAssignmentEmail(env);
+          if (email.enabled) {
+            console.log(JSON.stringify({ message: "task-assignment email delivery complete", ...email }));
+          } else {
+            console.error("task-assignment email delivery is enabled but configuration is incomplete");
+          }
+        } catch {
+          console.error("task-assignment email delivery failed; check provider configuration and retry");
+        }
+      }
+      return;
+    }
     if (event.cron === "*/15 * * * *") {
       try {
         const gmail = await runConfiguredGmailImport(env);
