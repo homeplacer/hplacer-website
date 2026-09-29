@@ -121,4 +121,13 @@ export interface PortalEnv {
   GMAIL_REFRESH_TOKEN?: string;
   /** Must exactly equal the one mailbox this integration is allowed to read. */
   GMAIL_ALLOWED_MAILBOX?: string;
+
+  /** Explicit opt-in for email delivery of new task-assignment alerts. */
+  TASK_EMAIL_NOTIFICATIONS_ENABLED?: string;
+  /** Sender identity verified with the transactional email provider. */
+  TASK_NOTIFICATION_FROM?: string;
+  /** Alerts older than this timestamp are never backfilled to email. */
+  TASK_EMAIL_START_AFTER?: string;
+  /** Resend API key; configure as a Worker secret, never a checked-in var. */
+  RESEND_API_KEY?: string;
 }

@@ -182,6 +182,7 @@ export async function createTask(db: Db, actor: Actor, input: CreateTaskInput): 
       body: `${input.assignedTo === actor.employeeId ? "You assigned yourself this task" : `${actor.displayName} assigned you this task`}${input.dueAt ? `, due ${input.dueAt}` : ""}.`,
       relatedType: "work_task",
       relatedId: id,
+      emailEligible: true,
     });
   }
   return id;
@@ -202,6 +203,7 @@ export async function assignTask(db: Db, actor: Actor, taskId: string, employeeI
       body: employeeId === actor.employeeId ? "You assigned yourself this task." : `${actor.displayName} assigned you this task.`,
       relatedType: "work_task",
       relatedId: taskId,
+      emailEligible: true,
     });
   }
 }

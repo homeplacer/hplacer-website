@@ -39,6 +39,8 @@ export interface NotificationInput {
   body: string;
   relatedType?: string | null;
   relatedId?: string | null;
+  /** Explicitly allow an email transport to deliver this notification. */
+  emailEligible?: boolean;
   /** Repeat conditions (a part still below its reorder point) reuse this key so
    *  the same employee is alerted once, not once per sweep. */
   dedupeKey?: string | null;
@@ -61,8 +63,8 @@ export async function notify(db: Db, input: NotificationInput): Promise<string |
   try {
     await db
       .prepare(
-        `INSERT INTO notifications (id, employee_id, category, severity, title, body, related_type, related_id, dedupe_key, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO notifications (id, employee_id, category, severity, title, body, related_type, related_id, dedupe_key, email_eligible, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .bind(
         id,
@@ -74,6 +76,7 @@ export async function notify(db: Db, input: NotificationInput): Promise<string |
         input.relatedType ?? null,
         input.relatedId ?? null,
         input.dedupeKey ?? null,
+        input.emailEligible ? 1 : 0,
         nowIso(),
       )
       .run();

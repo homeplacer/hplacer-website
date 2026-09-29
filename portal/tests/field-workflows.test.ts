@@ -291,6 +291,11 @@ describe("tasks and completion evidence", () => {
 
     const notices = await inbox(harness.db, marcus.employeeId);
     assert.ok(notices.some((notice) => notice.related_id === id && notice.category === "task_assigned"));
+    const emailEligible = await harness.db
+      .prepare("SELECT email_eligible FROM notifications WHERE employee_id = ? AND related_id = ?")
+      .bind(marcus.employeeId, id)
+      .first<{ email_eligible: number }>();
+    assert.equal(emailEligible?.email_eligible, 1);
 
     const mine = await listTasks(harness.db, marcus, { assignedTo: marcus.employeeId, openOnly: true });
     assert.ok(mine.some((task) => task.id === id));
