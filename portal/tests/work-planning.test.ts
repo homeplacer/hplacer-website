@@ -22,14 +22,16 @@ describe('repair work and flexible job planning',()=>{
   await h.request('/api/homes',{as:'brandon@hplacer.com',...jsonBody({job_id:'job_2601',site_address:'12 Rabbit Lane'})});
   await h.request('/api/homes',{as:'brandon@hplacer.com',...jsonBody({job_id:'job_2604',site_address:'99 Other Road'})});
   const page=await(await h.request('/tasks/new?jobId=job_2601')).text();
-  assert.match(page,/Subdivision:<\/strong> HP-2601 — Mill Creek Ridge — Phase 2/);
+  assert.match(page,/Destination subdivision:<\/strong> HP-2601 — Mill Creek Ridge — Phase 2/);
   assert.match(page,/12 Rabbit Lane/);
   assert.doesNotMatch(page,/99 Other Road/);
   assert.match(page,/name="job_id" value="job_2601"/);
  });
  it('shows make and model before the fleet ID in the task equipment picker',async()=>{
   const page=await(await h.request('/tasks/new',{as:'brandon@hplacer.com'})).text();
-  assert.match(page,/<option value="ast_ex2"[^>]*>Kubota KX057-5 \(2023\) — EX-02<\/option>/);
+  assert.match(page,/<input type="checkbox" name="asset_ids" value="ast_ex2"[^>]*>/);
+  assert.match(page,/Kubota KX057-5 \(2023\) — EX-02/);
+  assert.match(page,/Equipment to move/);
  });
  it('keeps coworkers assigned tasks private on the planning screen',async()=>{
   await h.request('/api/tasks',form({title:'Private coworker assignment',job_id:'job_2601',assigned_to:'emp_wes'}));
