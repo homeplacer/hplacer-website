@@ -99,6 +99,10 @@ input, select, textarea {
 }
 textarea { min-height: 5rem; }
 input[type=checkbox], input[type=radio] { width: auto; min-height: auto; }
+.equipment-location-choice { display: flex; align-items: flex-start; gap: .65rem; padding: .55rem 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+.equipment-location-choice:last-child { border-bottom: 0; }
+.equipment-location-choice input { flex: 0 0 auto; margin-top: .2rem; }
+.equipment-location-choice span { min-width: 0; }
 button, .btn {
   display: inline-flex; align-items: center; justify-content: center;
   min-height: var(--tap); padding: .5rem 1rem; gap: .4rem;

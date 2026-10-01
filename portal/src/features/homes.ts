@@ -29,6 +29,7 @@ import type { Router } from "../api/router.ts";
 import { html, query, raw, type SafeHtml } from "../ui/html.ts";
 import { badge, empty, externalLink, formatDate, kv, money, page, tabs } from "../ui/layout.ts";
 import { documentList, homeComplianceUploadForm, uploadForm, workflowDocumentArea } from "./documents.ts";
+import { renderEquipmentLocationSection } from "./equipment-locations.ts";
 import { wantsJson } from "./equipment.ts";
 
 const REPORT_FIELDS: Record<string, { key: string; label: string }[]> = {
@@ -146,6 +147,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
   const link = await getLink(ctx.db, "home", home.id);
   const warranty = await listWarrantyRequests(ctx.db, { homeId: home.id, limit: 20 });
   const workflow = await homeWorkflow(ctx.db, home.id);
+  const equipment = await renderEquipmentLocationSection(ctx.actor, ctx.db, { homeId: home.id }, `/api/homes/${home.id}/equipment`);
 
   const billedTotal = repairs
     .filter((repair) => repair.bill_back_status === "billed")
@@ -172,6 +174,8 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
         ["Monday item", link ? `${link.monday_item_id} (${link.sync_state})` : "not linked"],
       ])}
     </div>
+
+    ${equipment}
 
     ${home.identity_incomplete === 1 ? html`<div class="notice bad"><strong>Identity incomplete.</strong> Missing: ${missingHomeIdentity(home).join(", ")}.</div>` : ""}
     ${renderMondaySource(ctx, home)}

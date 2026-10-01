@@ -22,6 +22,7 @@ import type { Router } from "../api/router.ts";
 import { html, query } from "../ui/html.ts";
 import { badge, empty, externalLink, formatDate, kv, page, tabs } from "../ui/layout.ts";
 import { documentList, uploadForm } from "./documents.ts";
+import { renderEquipmentLocationSection } from "./equipment-locations.ts";
 import { wantsJson } from "./equipment.ts";
 
 const JOB_STATUSES = ["planning", "active", "on_hold", "complete", "archived"];
@@ -99,6 +100,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
   const tasks = await listTasks(ctx.db, ctx.actor, { jobId: job.id, openOnly: true, includeAvailableForCrew: true });
   const documents = await listDocuments(ctx.db, { jobId: job.id });
   const link = await getLink(ctx.db, "job", job.id);
+  const equipment = await renderEquipmentLocationSection(ctx.actor, ctx.db, { jobId: job.id }, `/api/subdivisions/${job.id}/equipment`);
 
   const body = html`
     <h1>${job.job_number}</h1>
@@ -116,6 +118,8 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
         ["Notes", job.notes],
       ])}
     </div>
+
+    ${equipment}
 
     <h2>Lots</h2>
     ${lots.length === 0
