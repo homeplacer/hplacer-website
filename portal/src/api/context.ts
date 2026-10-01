@@ -57,6 +57,30 @@ export async function readFields(request: Request): Promise<Fields> {
   throw badRequest("Unsupported content type");
 }
 
+/** Reads a repeated HTML control or JSON array while preserving every value. */
+export async function readListField(request: Request, name: string): Promise<string[]> {
+  const contentType = request.headers.get("Content-Type") ?? "";
+  if (contentType.includes("application/json")) {
+    let parsed: unknown;
+    try {
+      parsed = await request.json();
+    } catch {
+      throw badRequest("Body is not valid JSON");
+    }
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+      throw badRequest("Body must be a JSON object");
+    }
+    const value = (parsed as Record<string, unknown>)[name];
+    return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string")
+      : typeof value === "string" ? [value] : [];
+  }
+  if (contentType.includes("form-urlencoded") || contentType.includes("multipart/form-data")) {
+    const form = await request.formData();
+    return form.getAll(name).filter((value): value is string => typeof value === "string");
+  }
+  throw badRequest("Unsupported content type");
+}
+
 /** Repeated form inputs, e.g. one row per checklist item. */
 export async function readForm(request: Request): Promise<FormData> {
   const contentType = request.headers.get("Content-Type") ?? "";
