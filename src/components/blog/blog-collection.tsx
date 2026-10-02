@@ -1,18 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ArrowIcon } from "@/components/icons";
 import {
   blogTopics,
   formatDate,
   getBlogTopic,
   type BlogTopic,
-  type Post,
-} from "@/lib/blog";
+  type PostSummary,
+} from "@/lib/blog-summary";
 
-export function BlogCollection({ posts }: { posts: Post[] }) {
+export function BlogCollection({ posts }: { posts: PostSummary[] }) {
   const [selectedTopic, setSelectedTopic] = useState<BlogTopic | "All guides">("All guides");
+  const headingRef = useRef<HTMLHeadingElement>(null);
   const visiblePosts = useMemo(
     () =>
       selectedTopic === "All guides"
@@ -31,7 +32,7 @@ export function BlogCollection({ posts }: { posts: Post[] }) {
             Choose a topic to skip the scrolling and get straight to the guides most useful for your next decision.
           </p>
         </div>
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" role="list">
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" role="group" aria-label="Guide topics">
           {blogTopics.map((topic) => {
             const count = posts.filter((post) => getBlogTopic(post) === topic.name).length;
             const selected = selectedTopic === topic.name;
@@ -41,6 +42,7 @@ export function BlogCollection({ posts }: { posts: Post[] }) {
                 type="button"
                 onClick={() => setSelectedTopic(topic.name)}
                 aria-pressed={selected}
+                aria-controls="blog-guides-grid"
                 className={`rounded-xl border p-4 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 ${selected ? "border-brand-700 bg-brand-700 text-white shadow-sm" : "border-stone-line bg-white text-stone-ink hover:border-brand-300 hover:bg-brand-50"}`}
               >
                 <span className={`text-xs font-semibold uppercase tracking-wider ${selected ? "text-white/70" : "text-brand-600"}`}>
@@ -59,14 +61,20 @@ export function BlogCollection({ posts }: { posts: Post[] }) {
       <div className="mt-12 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">Buyer library</p>
-          <h2 id="blog-guides-heading" className="mt-2 font-display text-3xl font-semibold text-stone-ink">
+          <h2 ref={headingRef} id="blog-guides-heading" tabIndex={-1} className="mt-2 font-display text-3xl font-semibold text-stone-ink">
             {selectedTopic}
           </h2>
+          <p className="mt-2 text-sm text-stone-muted" role="status">
+            {visiblePosts.length} {visiblePosts.length === 1 ? "guide" : "guides"}
+          </p>
         </div>
         {selectedTopic !== "All guides" && (
           <button
             type="button"
-            onClick={() => setSelectedTopic("All guides")}
+            onClick={() => {
+              setSelectedTopic("All guides");
+              headingRef.current?.focus({ preventScroll: true });
+            }}
             className="text-sm font-semibold text-brand-700 underline-offset-4 hover:text-brand-900 hover:underline"
           >
             Show all {posts.length} guides
@@ -74,7 +82,7 @@ export function BlogCollection({ posts }: { posts: Post[] }) {
         )}
       </div>
 
-      <div className="mt-7 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <div id="blog-guides-grid" className="mt-7 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {visiblePosts.map((post) => {
           const topic = getBlogTopic(post);
           return (

@@ -17,6 +17,14 @@ export const metadata: Metadata = pageMetadata({
 export default function BlogPage() {
   const posts = getAllPosts();
   const [featured, ...rest] = posts;
+  const summaries = rest.map(({ slug, title, description, date, readMinutes, tags }) => ({
+    slug,
+    title,
+    description,
+    date,
+    readMinutes,
+    tags,
+  }));
 
   return (
     <>
@@ -59,7 +67,7 @@ export default function BlogPage() {
           </div>
         )}
       </section>
-      <BlogCollection posts={rest} />
+      <BlogCollection posts={summaries} />
     </>
   );
 }
