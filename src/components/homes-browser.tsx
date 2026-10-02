@@ -15,7 +15,7 @@ const BED_OPTIONS = [
   { label: "4+ beds", value: 4 },
 ];
 const SQFT_STEPS = [0, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400];
-const PRICE_STEPS = [0, 200000, 220000, 240000, 260000, 280000, 300000];
+const PRICE_STEPS = [0, 175000, 180000, 190000, 200000, 220000, 240000, 260000, 280000, 300000];
 
 // Single-wides are 14 or 16 ft wide; anything wider is a double-wide.
 // "32′ XL" = offered in a 32-ft section (extra-large bedrooms).
@@ -238,12 +238,12 @@ export function HomesBrowser({
           {/* Price range — only when at least one home has a price set */}
           {anyPriced && (
             <div className="inline-flex items-center gap-1.5">
-              <select aria-label="Min price" value={minPrice} onChange={(e) => setMinPrice(Number(e.target.value))} className={selectClass}>
-                {PRICE_STEPS.map((s) => (<option key={s} value={s}>{s === 0 ? "Min price" : fmtK(s)}</option>))}
+              <select aria-label="Minimum land-home estimate" value={minPrice} onChange={(e) => setMinPrice(Number(e.target.value))} className={selectClass}>
+                {PRICE_STEPS.map((s) => (<option key={s} value={s}>{s === 0 ? "Min package price" : fmtK(s)}</option>))}
               </select>
               <span className="text-stone-muted">–</span>
-              <select aria-label="Max price" value={maxPrice === Infinity ? 0 : maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value) === 0 ? Infinity : Number(e.target.value))} className={selectClass}>
-                <option value={0}>Max price</option>
+              <select aria-label="Maximum land-home estimate" value={maxPrice === Infinity ? 0 : maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value) === 0 ? Infinity : Number(e.target.value))} className={selectClass}>
+                <option value={0}>Max package price</option>
                 {PRICE_STEPS.filter((s) => s > 0).map((s) => (<option key={s} value={s}>{fmtK(s)}</option>))}
               </select>
             </div>
