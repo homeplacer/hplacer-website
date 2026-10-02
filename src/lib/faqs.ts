@@ -6,11 +6,11 @@ export interface Faq {
 export const faqs: Faq[] = [
   {
     q: "What's included in a Home Placer land-home package?",
-    a: "One price covers the brand-new home, the land it sits on, delivery, professional set on a permanent foundation, tie-downs and skirting, permits, and utility hookups (power, water, and septic or sewer). It's a single closing and a single point of contact.",
+    a: "A land-home package brings the home, land, and setup into one project with Home Placer as your point of contact. Setup can include delivery, foundation, installation, skirting, permits, and utility connections. Check the specific listing or written estimate for what's included, any allowances, and the closing arrangement.",
   },
   {
     q: "Can I put a home on land I already own?",
-    a: "Absolutely. If you have a lot or family land, we'll evaluate the site, handle the permits and setup, and place any of our homes on it. Call us and we'll walk the property with you.",
+    a: "Yes, subject to the lot and home's requirements. If you have a lot or family land, we'll review access, zoning, utilities, septic or sewer, and the space needed for the model you like. Call us to discuss the property before committing to a home.",
   },
   {
     q: "Do your homes come with land, or just the home?",
@@ -18,11 +18,11 @@ export const faqs: Faq[] = [
   },
   {
     q: "How much does a new manufactured home on land cost?",
-    a: "Current land-home packages start at $179,999 and vary by model, size, and lot. Because every site is different, we give you an exact all-in number for the home and land together — just ask.",
+    a: "Check our current land-home listings for property-specific asking prices, or ask about a model-and-lot estimate. Model package estimates assume a quarter-acre lot with full setup; the actual lot, utilities, site work, and selected options can change the cost. Call, text, or email for an estimate tailored to your project.",
   },
   {
     q: "Is there an HOA?",
-    a: "No. You own your land outright with no homeowners association and no monthly association fees or rules board.",
+    a: "Ask us to confirm the HOA status and any recorded restrictions for the specific lot you're considering. Owning the land does not by itself tell you whether association fees, covenants, or other property restrictions apply.",
   },
   {
     q: "What brands do you carry?",
@@ -30,7 +30,7 @@ export const faqs: Faq[] = [
   },
   {
     q: "What kind of financing is available?",
-    a: "FHA, VA, and conventional loans all work for a manufactured-home-on-land purchase, often with low or no down payment. We're not a lender, but we connect you with lenders who specialize in these loans and help every credit situation.",
+    a: "Conventional, FHA, VA, or USDA options may be available for an eligible manufactured-home project. Availability depends on the borrower, property, loan program, and participating lender. We're not a lender, but we can connect you with one to review your options, down payment, fees, and estimated payment.",
   },
   {
     q: "Where do you place homes?",
@@ -38,31 +38,31 @@ export const faqs: Faq[] = [
   },
   {
     q: "Is a manufactured home the same as a mobile home?",
-    a: "Today's manufactured homes are built to a strict federal HUD code and are a world apart from the old 'mobile homes.' They're energy-efficient, durable, and come with modern finishes and warranties.",
+    a: "The names are often used interchangeably, but manufactured homes built after June 15, 1976 follow the federal HUD construction and safety standards. Compare the specific model's floor plan, specifications, finishes, and written warranty to understand what you're buying.",
   },
   {
     q: "Do manufactured homes hold their value?",
-    a: "When you own the land underneath, a manufactured home behaves much more like a site-built home for value. Land ownership and HUD-code construction are the keys, and that's exactly what our packages are built around.",
+    a: "Resale value depends on the land, location, home's condition, comparable sales, and the local market. Owning the land can be part of the long-term picture, but neither a manufactured home nor a site-built home comes with guaranteed appreciation. Ask your lender how the specific property will be appraised.",
   },
   {
     q: "What warranty comes with the home?",
-    a: "Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company. We also provide a 30-day walk-through after move-in.",
+    a: "Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company. Coverage, exclusions, and claim procedures follow your written warranties. We also provide a 30-day walk-through after move-in.",
   },
   {
     q: "How long does the whole process take?",
-    a: "From picking your home to getting keys is typically a matter of weeks, not the months a site-built home takes — we coordinate permits, delivery, foundation, and utilities for you.",
+    a: "A completed, available home has a different schedule from a model that must be ordered and installed. For an ordered-home project, manufacturing, site readiness, permits, utilities, weather, inspections, and lender or closing requirements can affect move-in. Ask us for the remaining milestones and an estimated schedule for your specific home and lot.",
   },
   {
-    q: "Will the home stay put in a storm?",
-    a: "Yes. Horry and Georgetown counties sit in HUD Wind Zone II, so every home we place is built and anchored to stand up to roughly 100-mph coastal winds. It's set on a permanent foundation with an engineered tie-down system — a world apart from an old mobile home strapped to a rented lot.",
+    q: "What should I check about the home's wind rating and installation?",
+    a: "A manufactured home's HUD data plate identifies its wind, roof-load, and thermal zones. The home's ratings must suit the location, and its foundation and anchoring must follow the applicable installation requirements. Ask about those details for your specific home and lot. No home is storm-proof; follow local emergency guidance.",
   },
   {
     q: "What's a permanent foundation, and why does it matter?",
-    a: "It's the engineered piers, footings, and anchoring that lock your home to the land for good. It's what lets the home be titled as real property instead of a vehicle — which is what unlocks normal mortgages, better insurance, and long-term value. It's standard on every package we do.",
+    a: "It supports and anchors the home using a system designed for the home and site. A permanent foundation can be an important mortgage requirement, but it does not automatically establish real-property status or loan approval. The lender and closing professionals also review title, legal classification, and the program's other requirements.",
   },
   {
     q: "How is the home actually delivered and set up?",
-    a: "Your home is built and inspected in a climate-controlled factory, then transported to your lot, set on the permanent foundation, and joined and finished on site. We handle the crane/set crew, skirting, permits, and hooking up power, water, and septic or sewer — usually wrapped up in weeks.",
+    a: "The home is factory-built and inspected, then transported to the prepared site for installation and finishing. For your project, we coordinate the agreed foundation, installation, skirting, permits, and power, water, and septic or sewer connections. Site work, weather, inspections, and utility approvals can affect the schedule.",
   },
   {
     q: "Will it look like a 'trailer' on the inside?",
@@ -70,26 +70,26 @@ export const faqs: Faq[] = [
   },
   {
     q: "Does the lot need septic or sewer — and what about water?",
-    a: "It depends on the lot. In town you may tie into public sewer and water; on rural land it's usually a septic system and sometimes a well. We evaluate the site up front, handle the permits, and roll it all into your one package price so there are no surprises.",
+    a: "It depends on the lot and available services. Public water and sewer connections, septic approval, or a well may be needed. We'll review the proposed site and identify the required work and approvals; confirm the included costs and any allowances in your written estimate.",
   },
   {
     q: "How much land do I need?",
-    a: "Not much — a typical quarter-acre lot is plenty for most of our homes, and we can go bigger if you want elbow room. If you don't have land yet, we'll help you find the right lot; if you do, we'll make sure it's buildable before you commit.",
+    a: "Our model package estimates use a quarter-acre lot as a pricing assumption, not a guarantee that any quarter-acre parcel will work. The home's footprint, zoning, setbacks, delivery access, utilities, and septic requirements determine whether a particular lot is suitable. Ask us to review the model and parcel together.",
   },
   {
     q: "Can I pick the floor plan, colors, and finishes?",
-    a: "Yes. You choose the model and floor plan, then the decor package — cabinets, flooring, and color options. If you'd rather not wait, we also keep move-in-ready homes on the ground you can walk through today.",
+    a: "For an ordered home, available floor plans, cabinets, flooring, colors, and other options depend on the model and order stage. A completed home's finishes may already be set. Ask about current land-home listings and tour availability if you'd prefer a home that's already built.",
   },
   {
     q: "What credit score do I need to qualify?",
-    a: "There's no single magic number — it varies by loan program, and government-backed loans are more flexible than people expect. We're not a lender, but we work with lenders who specialize in homes on land and handle every credit situation, including buyers still rebuilding theirs.",
+    a: "The required score depends on the loan program and lender, and approval also considers factors beyond credit score. We're not a lender and can't promise qualification. We can connect you with a lender to review where you stand and discuss possible next steps.",
   },
   {
     q: "Do I need a down payment?",
-    a: "Often very little. FHA loans run around 3.5% down, and VA and USDA loans can be zero down for buyers who qualify. If you already own your land, that land can count as part of your equity — sometimes covering the down payment entirely.",
+    a: "The amount depends on the loan program, lender, borrower, and property. Ask your lender about available down-payment options, whether land equity can be considered, and any assistance programs you may qualify for. Assistance and loan approval are not guaranteed; eligibility, funding, and other restrictions apply.",
   },
   {
     q: "Is it really built as well as a site-built house?",
-    a: "It's built to the federal HUD Code in a factory where materials stay dry and every step is inspected — which catches things a rain-delayed job site can miss. Put that home on a permanent foundation on land you own, and it's real property, just like any other house.",
+    a: "Manufactured homes are factory-built to the federal HUD construction and safety standards, with inspections during production. Site-built homes follow applicable state and local building codes. Compare the actual home's specifications, installation, finishes, and warranty rather than assuming either construction method guarantees a particular quality level.",
   },
 ];
