@@ -34,8 +34,14 @@ The production Next.js build succeeds. All 93 prerendered model pages were
 checked for parseable JSON-LD, matching canonical/model identity, current
 manufacturer and all offered-width specification summaries, preserved
 BreadcrumbList, absolute image URLs, and absence of Product, offer, review,
-price, or availability claims. TypeScript and all 15 public-site tests pass;
+price, or availability claims. TypeScript and all 17 public-site tests pass;
 ESLint has no errors and one existing unused-import warning in the portal.
+
+Single-width floor area uses the recorded `home.sqft`, matching the visible
+detail page rather than assuming exterior width multiplied by length equals
+the published floor area. Offered multi-width plans retain the detail page's
+existing width-specific calculation. Regression tests cover both Summit plans
+identified during integration review and every catalog model.
 
 SEMrush's reported count is from an earlier crawl. A post-release crawl is
 needed to confirm its warning disappears; this PR has not been deployed.

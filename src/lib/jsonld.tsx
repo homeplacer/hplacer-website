@@ -1,6 +1,6 @@
 import { site, liveSocialUrls } from "@/lib/site";
 import type { Home } from "@/lib/home-types";
-import { availableWidths, sqftForWidth } from "@/lib/home-types";
+import { availableWidths, isMultiWidth, sqftForWidth } from "@/lib/home-types";
 import {
   locations as allLocations,
   counties as allCounties,
@@ -288,8 +288,9 @@ export function homesItemListLd(
 // the page and its model instead, retaining the visible facts for retrieval.
 export function modelWebPageLd(home: Home) {
   const url = `${site.url}/homes/${home.slug}`;
+  const multiWidth = isMultiWidth(home);
   const dimensions = availableWidths(home)
-    .map((width) => `${width} × ${home.lengthFt} ft (${sqftForWidth(home, width)} square feet)`)
+    .map((width) => `${width} × ${home.lengthFt} ft (${multiWidth ? sqftForWidth(home, width) : home.sqft} square feet)`)
     .join(" or ");
   const specs = `${home.beds} bedrooms, ${home.baths} bathrooms; ${dimensions}. ${home.brand} ${home.series}${home.modelCode ? `, manufacturer model ${home.modelCode}` : ""}.`;
   return {
