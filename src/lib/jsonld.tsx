@@ -1,5 +1,6 @@
 import { site, liveSocialUrls } from "@/lib/site";
 import type { Home } from "@/lib/home-types";
+import { availableWidths, sqftForWidth } from "@/lib/home-types";
 import {
   locations as allLocations,
   counties as allCounties,
@@ -262,8 +263,8 @@ export function faqLd(faqs: { q: string; a: string }[]) {
 }
 
 // ItemList for the /homes catalog — tells search engines the set of homes shown
-// on the page, each linking to its own detail page (where the full Product schema
-// lives). Names + URLs only; mirrors the visible list, no invented data.
+// on the page, each linking to its own model-reference page. Names + URLs only;
+// mirrors the visible list, no invented data.
 export function homesItemListLd(
   homes: { slug: string; name: string; brand: string }[],
 ) {
@@ -281,32 +282,35 @@ export function homesItemListLd(
   };
 }
 
-// Individual model pages are product-reference pages, not listings for a
-// specific on-the-ground home. Keep the schema equally precise: publish the
-// verified model, maker, images and dimensions, but never claim a price or
-// availability when the page itself says to call for a current quote.
-export function homeProductLd(home: Home) {
+// A factory model page describes a design and its estimated package options.
+// It has no guaranteed offer or model-specific review, so Product-snippet
+// markup would request a rich result the page cannot substantiate. Describe
+// the page and its model instead, retaining the visible facts for retrieval.
+export function modelWebPageLd(home: Home) {
   const url = `${site.url}/homes/${home.slug}`;
+  const dimensions = availableWidths(home)
+    .map((width) => `${width} × ${home.lengthFt} ft (${sqftForWidth(home, width)} square feet)`)
+    .join(" or ");
+  const specs = `${home.beds} bedrooms, ${home.baths} bathrooms; ${dimensions}. ${home.brand} ${home.series}${home.modelCode ? `, manufacturer model ${home.modelCode}` : ""}.`;
   return {
     "@context": "https://schema.org",
-    "@type": "Product",
-    "@id": `${url}#product`,
+    "@type": "WebPage",
+    "@id": `${url}#webpage`,
     name: home.name,
     description: home.excerpt || home.description,
     url,
-    ...(home.imageUrls.length ? { image: home.imageUrls.map(abs) } : {}),
-    brand: { "@type": "Brand", name: home.brand },
-    ...(home.modelCode ? { model: home.modelCode, sku: home.modelCode } : {}),
-    category: "Manufactured home floor plan",
-    additionalProperty: [
-      { "@type": "PropertyValue", name: "Bedrooms", value: home.beds },
-      { "@type": "PropertyValue", name: "Bathrooms", value: home.baths },
-      { "@type": "PropertyValue", name: "Square feet", value: home.sqft, unitCode: "FTK" },
-      { "@type": "PropertyValue", name: "Width", value: home.widthFt, unitCode: "FOT" },
-      { "@type": "PropertyValue", name: "Length", value: home.lengthFt, unitCode: "FOT" },
-      { "@type": "PropertyValue", name: "Series", value: home.series },
-    ],
-    isRelatedTo: { "@id": `${site.url}/#business` },
+    publisher: { "@id": `${site.url}/#business` },
+    about: { "@type": "Organization", name: home.brand },
+    mainEntity: {
+      "@type": "Thing",
+      "@id": `${url}#model`,
+      name: home.name,
+      description: specs,
+      url,
+      mainEntityOfPage: { "@id": `${url}#webpage` },
+      ...(home.modelCode ? { identifier: home.modelCode } : {}),
+      ...(home.imageUrls.length ? { image: home.imageUrls.map(abs) } : {}),
+    },
   };
 }
 

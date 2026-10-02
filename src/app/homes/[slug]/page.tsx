@@ -26,7 +26,7 @@ import { WantThisHouseForm } from "@/components/want-this-house-form";
 import { WidthSelector } from "@/components/width-selector";
 import { WidthProvider } from "@/components/width-context";
 import { FloorPlanSection } from "@/components/floor-plan-section";
-import { JsonLd, breadcrumbLd, homeProductLd } from "@/lib/jsonld";
+import { JsonLd, breadcrumbLd, modelWebPageLd } from "@/lib/jsonld";
 import { trustedVirtualTourUrl } from "@/lib/media-policy";
 import {
   BedIcon,
@@ -123,7 +123,7 @@ export default async function HomeDetailPage({
           { name: home.name, path: `/homes/${home.slug}` },
         ])}
       />
-      <JsonLd data={homeProductLd(home)} />
+      <JsonLd data={modelWebPageLd(home)} />
       <div className="container-x pt-8 text-sm text-stone-muted">
         <Link href="/homes" className="hover:text-brand-700">
           ← All homes
