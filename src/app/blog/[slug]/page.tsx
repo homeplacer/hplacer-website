@@ -2,10 +2,11 @@ import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAllPosts, getPost, renderMarkdown, formatDate } from "@/lib/blog";
+import { getAllPosts, getPost, getRelatedPosts, renderMarkdown, formatDate } from "@/lib/blog";
 import { JsonLd, articleLd, breadcrumbLd } from "@/lib/jsonld";
-import { PhoneIcon, ArrowIcon } from "@/components/icons";
+import { PhoneIcon } from "@/components/icons";
 import { site } from "@/lib/site";
+import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 
 export function generateStaticParams() {
   return getAllPosts().map((p) => ({ slug: p.slug }));
@@ -42,7 +43,7 @@ export default async function BlogPostPage({
   if (!post) notFound();
 
   const html = renderMarkdown(post.bodyMarkdown);
-  const more = getAllPosts().filter((p) => p.slug !== post.slug).slice(0, 2);
+  const more = getRelatedPosts(post);
 
   return (
     <>
@@ -89,17 +90,17 @@ export default async function BlogPostPage({
 
         {/* CTA */}
         <div className="topo mt-12 overflow-hidden rounded-3xl bg-brand-900 p-8 text-white">
-          <h2 className="font-display text-2xl font-semibold">Ready to talk it through?</h2>
+          <p className="text-sm font-semibold uppercase tracking-wider text-accent-300">A local conversation, not a generic quote</p>
+          <h2 className="mt-2 font-display text-2xl font-semibold">Want an answer for your land, budget, or timeline?</h2>
           <p className="mt-2 text-stone-100/80">
-            We&apos;ll give you a straight answer on homes, land, and financing — no pressure.
+            Ask us in the page and we&apos;ll give you a straight answer on homes, land, and financing — no pressure.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
-            <Link
-              href="/contact"
+            <HomeInquiryDialog
+              homeName="buying a manufactured home on land"
+              label="Ask a local question"
               className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-600"
-            >
-              Get started <ArrowIcon className="size-4" />
-            </Link>
+            />
             <a
               href={`tel:${site.phoneDial}`}
               className="inline-flex items-center gap-2 rounded-full bg-white/10 px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-white/20 transition hover:bg-white/15"
@@ -112,7 +113,7 @@ export default async function BlogPostPage({
 
       {more.length > 0 && (
         <section className="container-x max-w-3xl pb-16">
-          <h2 className="font-display text-xl font-semibold text-stone-ink">Keep reading</h2>
+          <h2 className="font-display text-xl font-semibold text-stone-ink">Related guides</h2>
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             {more.map((p) => (
               <Link
