@@ -223,7 +223,7 @@ export default async function PlacedHomeDetail({
 
           <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-stone-muted">
             {[
-              "Land + home, one closing",
+              "Recorded home + land project",
               "New, warrantied home",
               "We deliver, set & connect",
             ].map((t) => (
@@ -338,14 +338,14 @@ export default async function PlacedHomeDetail({
             </h2>
             <p className="mt-3 text-stone-muted">
               We can place {model ? `the ${model.name}` : "a home like this"} on
-              your land — or on a ¼-acre lot we provide. Tell us a little and
-              we&apos;ll get you a real price.
+              your land — or help you find a suitable lot. Tell us a little and
+              we&apos;ll prepare an estimate for your model, lot, and setup scope.
             </p>
             <ul className="mt-5 space-y-2 text-sm text-stone-ink">
               {[
-                "Land + home in one package, one closing",
+                "Land + home with a written project scope",
                 "Brand-new, warrantied home",
-                "We handle delivery, setup & utilities",
+                "Delivery, setup & utility scope confirmed for your lot",
               ].map((t) => (
                 <li key={t} className="inline-flex items-center gap-2">
                   <CheckIcon className="size-4 text-brand-600" /> {t}

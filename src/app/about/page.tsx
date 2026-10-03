@@ -25,17 +25,24 @@ export default function AboutPage() {
           <p>
             We&apos;re a licensed South Carolina manufactured-home dealer based in Myrtle
             Beach. We hand-pick floor plans from Clayton, Cavco, and Champion, then pair
-            them with land across the Grand Strand and handle everything in between —
-            permits, delivery, foundation, utilities, and the final walk-through.
+            them with land across the Grand Strand. We coordinate permits, delivery,
+            foundation, utilities, and the final walk-through according to your
+            written project scope.
           </p>
           <p>
             That &quot;everything in between&quot; is the whole point. A new home shouldn&apos;t
             require you to juggle a builder, a land seller, a setup crew, and a lender on
-            your own. We put it into one package, one price, and one team you can call.
+            your own. You have one local team you can call; your written agreement
+            confirms included work, allowances, exclusions, and closing arrangements.
           </p>
           <p>
-            And we keep it honest. Current packages from $179,999, no HOA, a one-year builder
-            warranty for defects. The separate
+            And we keep it honest. See our{" "}
+            <Link href="/land-packages" className="font-semibold text-brand-700 underline underline-offset-4">
+              current land-home packages
+            </Link>{" "}
+            for asking prices and availability. HOA fees, deed restrictions, and lot
+            requirements depend on the property. Home Placer provides a one-year
+            builder warranty for defects. The separate
             2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years
             of structural coverage through the 2–10 company. If a deal isn&apos;t right
             for you, we&apos;ll tell you.
@@ -43,10 +50,10 @@ export default function AboutPage() {
 
           <div className="grid gap-4 pt-4 sm:grid-cols-2">
             {[
-              { stat: "$179,999", label: "Current package floor" },
+              { stat: "Home + land", label: "Written scope for your project" },
               { stat: "4 counties", label: "Horry · Georgetown · Brunswick · Columbus" },
               { stat: "3 brands", label: "Clayton · Cavco · Champion" },
-              { stat: "$0 HOA", label: "You own your land" },
+              { stat: "Owned-land options", label: "Confirm the lot’s HOA terms" },
             ].map((s) => (
               <div key={s.label} className="rounded-card border border-stone-line bg-stone-surface p-5">
                 <p className="font-display text-2xl font-semibold text-brand-700">{s.stat}</p>

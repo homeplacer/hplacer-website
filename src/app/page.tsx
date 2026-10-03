@@ -13,6 +13,7 @@ import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 import { DownPaymentAssistanceDialog } from "@/components/down-payment-assistance-dialog";
 import { LivePackageListings } from "@/components/live-package-listings";
 import { getLivePackageListings } from "@/lib/forturro-package-feed";
+import { currentPackageFloorLabel } from "@/lib/package-marketing";
 import {
   ArrowIcon,
   CheckIcon,
@@ -34,14 +35,9 @@ export default async function HomePage() {
   const livePackages = await getLivePackageListings();
   // MLS is the source of truth for live package pricing. Never let a marketing
   // sentence silently drift away from the active feed.
-  const currentPackageFloor = livePackages.length
-    ? Math.min(...livePackages.map((listing) => listing.listPrice))
-    : site.priceFrom;
-  const currentPackageFloorLabel = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(currentPackageFloor);
+  const packageFloorLabel = currentPackageFloorLabel(
+    livePackages.map((listing) => listing.listPrice),
+  );
 
   return (
     <>
@@ -59,8 +55,10 @@ export default async function HomePage() {
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-stone-100/80">
               Home Placer pairs new Clayton, Cavco, and Champion manufactured homes
               with land across Horry and Georgetown counties in SC and Brunswick and
-              Columbus counties in NC. Current land-home packages from {currentPackageFloorLabel} —
-              with one local team coordinating the details.
+              Columbus counties in NC.{" "}
+              {packageFloorLabel
+                ? `Current land-home packages from ${packageFloorLabel} — with one local team coordinating the details.`
+                : "Ask our local team about current land-home package availability and pricing."}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <a
@@ -81,7 +79,7 @@ export default async function HomePage() {
               <Link href="/homes" className="underline-offset-4 hover:text-white hover:underline">Browse available home models</Link>
             </div>
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-stone-100/75">
-              {["No HOA", "Land + home bundled", "Builder + 2–10 warranties", "Licensed in SC & NC"].map((t) => (
+              {["Owned-land options", "Land + home bundled", "Builder + 2–10 warranties", "Licensed in SC & NC"].map((t) => (
                 <li key={t} className="inline-flex items-center gap-2">
                   <CheckIcon className="size-4 text-accent-300" /> {t}
                 </li>
@@ -109,8 +107,12 @@ export default async function HomePage() {
               Home Placer project · Horry County
             </span>
             <div className="absolute bottom-4 left-4 rounded-2xl bg-brand-950/85 px-4 py-3 backdrop-blur-md ring-1 ring-white/10">
-              <span className="block text-xs font-medium text-stone-100/70">Current packages from</span>
-              <span className="font-display text-2xl font-semibold text-white">{currentPackageFloorLabel}</span>
+              <span className="block text-xs font-medium text-stone-100/70">
+                {packageFloorLabel ? "Current packages from" : "Home + land packages"}
+              </span>
+              <span className="font-display text-2xl font-semibold text-white">
+                {packageFloorLabel ?? "Ask about availability"}
+              </span>
             </div>
             <div className="absolute -bottom-5 right-4 hidden rounded-2xl bg-white px-4 py-3 text-brand-950 shadow-xl sm:block">
               <span className="block text-xs font-semibold uppercase tracking-wider text-stone-muted">Built for the Carolinas</span>
@@ -213,8 +215,10 @@ export default async function HomePage() {
             </p>
             <ul className="mt-7 space-y-3 text-sm text-stone-100/85">
               {[
-                `Current packages from ${currentPackageFloorLabel} — home + land, one price`,
-                "No HOA, and financing help for FHA / VA / USDA buyers",
+                packageFloorLabel
+                  ? `Current packages from ${packageFloorLabel} — ask for the written home + land scope`
+                  : "Ask about current packages and a written home + land estimate",
+                "Confirm the lot’s HOA terms and financing options with your lender",
                 "A licensed SC & NC dealer — a real person, not a call center",
               ].map((t) => (
                 <li key={t} className="flex items-start gap-3">
@@ -297,8 +301,8 @@ export default async function HomePage() {
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { n: "01", t: "Pick your home", d: "Browse our floor plans or tell us what you need. We match you to a model and a budget." },
-            { n: "02", t: "Pick your land", d: "Use our lots or bring your own. We handle the package — home plus land, one price." },
-            { n: "03", t: "We do the setup", d: "Permits, delivery, foundation, tie-downs, and utility hookups — all coordinated by us." },
+            { n: "02", t: "Pick your land", d: "Use our lots or bring your own. We confirm land costs, restrictions, and the package scope for your site." },
+            { n: "03", t: "We do the setup", d: "We coordinate permits, delivery, foundation, tie-downs, and utility work according to your written project scope." },
             { n: "04", t: "Move in", d: "Walk through your new home and get your keys. Home Placer provides a one-year defect warranty; the 2–10 company separately provides two-year mechanical and ten-year structural coverage." },
           ].map((s) => (
             <div key={s.n} className="rounded-card border border-stone-line bg-stone-bg p-6">

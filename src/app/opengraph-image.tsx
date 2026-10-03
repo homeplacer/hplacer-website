@@ -86,7 +86,7 @@ export default function OpengraphImage() {
               {site.tagline}
             </div>
             <div style={{ fontSize: 29, color: "rgba(255,255,255,0.92)", textShadow: "0 1px 10px rgba(0,0,0,0.6)" }}>
-              Clayton · Cavco · Champion · Horry County, SC · No HOA
+              Clayton · Cavco · Champion · Horry County, SC
             </div>
             <div
               style={{
