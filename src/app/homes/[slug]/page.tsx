@@ -9,6 +9,7 @@ import {
   getHomesByBrand,
   formatPrice,
   displayPrice,
+  isRetiredHome,
 } from "@/lib/homes";
 import {
   availableWidths,
@@ -54,6 +55,7 @@ export async function generateMetadata({
     title: `${home.name} · ${home.brand}`,
     description: `${home.name} by ${home.brand}: ${home.beds} bedrooms, ${home.baths} bathrooms and ${home.sqft.toLocaleString("en-US")} sq ft. Explore the floor plan and ask about a home on your land or a land-home package.`,
     alternates: { canonical: `/homes/${home.slug}` },
+    ...(isRetiredHome(home.slug) ? { robots: { index: false, follow: true } } : {}),
     openGraph: home.imageUrls[0] ? { images: [home.imageUrls[0]] } : undefined,
   });
 }
@@ -66,6 +68,28 @@ export default async function HomeDetailPage({
   const { slug } = await params;
   const home = getHome(slug);
   if (!home) notFound();
+
+  if (isRetiredHome(home.slug)) {
+    return (
+      <section className="container-x py-12">
+        <p className="text-sm font-semibold uppercase tracking-wide text-stone-muted">
+          Archived model
+        </p>
+        <h1 className="mt-2 font-display text-4xl font-semibold text-stone-ink">
+          {home.name}
+        </h1>
+        <p className="mt-4 max-w-2xl text-stone-muted">
+          This model is no longer in our current lineup. Browse our current
+          floor plans or ask our team about a similar home.
+        </p>
+        <div className="my-6 flex flex-wrap gap-3">
+          <Link href="/homes" className="inline-flex items-center rounded-full bg-brand-700 px-5 py-3 font-semibold text-white hover:bg-brand-800">Browse current homes</Link>
+          <HomeInquiryDialog homeName={`a home similar to ${home.name}`} label="Ask about alternatives" />
+        </div>
+        <HomeGallery images={home.imageUrls} name={home.name} brand={home.brand} />
+      </section>
+    );
+  }
 
   const price = displayPrice(home);
   const sold = getAllPlacedHomes().filter(
@@ -148,22 +172,24 @@ export default async function HomeDetailPage({
           </p>
 
           {price != null ? (
-            <div className="mt-5">
-              <p className="font-display text-4xl font-semibold text-brand-700">
-                {formatPrice(price)}
-                <span className="ml-2 align-middle text-base font-normal text-stone-muted">
-                  starting
-                </span>
-              </p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-stone-muted">
-                {home.setupPrice
-                  ? "Full setup — home, ¼-acre lot & utilities"
-                  : "Home only"}
-              </p>
-              {home.setupPrice && home.price && (
-                <p className="mt-1 text-sm text-stone-muted">
-                  Home only {formatPrice(home.price)}
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-xl border border-brand-100 bg-brand-50 p-4">
+                <p className="text-sm font-semibold text-brand-900">
+                  {home.setupPrice ? "Land + home estimate" : "Home-only estimate"}
                 </p>
+                <p className="mt-2 text-xs text-stone-muted">Starting at</p>
+                <p className="font-display text-3xl font-semibold text-brand-800">
+                  {formatPrice(price)}
+                </p>
+              </div>
+              {home.setupPrice && home.price && (
+                <div className="rounded-xl border border-stone-line p-4">
+                  <p className="text-sm font-semibold text-stone-ink">Home-only estimate</p>
+                  <p className="mt-2 text-xs text-stone-muted">Starting at</p>
+                  <p className="font-display text-3xl font-semibold text-stone-ink">
+                    {formatPrice(home.price)}
+                  </p>
+                </div>
               )}
             </div>
           ) : (
@@ -173,17 +199,11 @@ export default async function HomeDetailPage({
           )}
 
           <p className="mt-3 text-sm text-stone-muted">
-            Most buyers get the{" "}
-            <strong className="font-semibold text-stone-ink">
-              complete package
-            </strong>{" "}
-            — this home on a{" "}
-            <strong className="font-semibold text-stone-ink">¼-acre lot</strong>
-            , delivered, set, and connected to utilities. Already have your own
-            land?{" "}
-            <strong className="font-semibold text-stone-ink">
-              Ask about home-only pricing.
-            </strong>
+            Estimated packages include the home and full setup and assume a
+            quarter-acre lot. Land, lot size, site work,
+            permits, utility connections, options, and local requirements can
+            change the final price. Call, text, or email us for a written
+            estimate for your lot.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-5 text-base text-stone-ink">
@@ -304,7 +324,7 @@ export default async function HomeDetailPage({
               "No HOA",
               "1-year warranty",
               "Land + setup available",
-              "Move-in ready",
+              "Written package quote",
             ].map((t) => (
               <li key={t} className="inline-flex items-center gap-1.5">
                 <CheckIcon className="size-4 text-brand-600" /> {t}
@@ -359,16 +379,17 @@ export default async function HomeDetailPage({
                 Get {home.name}&rsquo;s price
               </h2>
               <p className="mt-3 leading-relaxed text-stone-muted">
-                Tell us a little and we&apos;ll send your all-in package price —{" "}
-                {home.name} on a ¼-acre lot, delivered, set, and connected to
-                utilities — plus an estimated monthly payment. Already have
-                land? We&apos;ll price it home-only.
+                Tell us about the {home.name} and whether you have land.
+                We&apos;ll help you get a written estimate that identifies the
+                lot, setup, utility work, and selected options. Already own a
+                lot? Ask about a home-only estimate for your project. Your
+                lender confirms financing terms and estimated payments.
               </p>
               <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-stone-muted">
                 {[
-                  "Real numbers, not a range",
+                  "Written model-and-lot estimate",
                   "No pressure",
-                  "Financing help (FHA / VA / USDA)",
+                  "Lender options to discuss",
                 ].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
                     <CheckIcon className="size-4 text-brand-600" /> {t}
@@ -381,7 +402,7 @@ export default async function HomeDetailPage({
                   href={`tel:${site.phoneDial}`}
                   className="font-semibold text-brand-700 hover:text-brand-900"
                 >
-                  Call or text {site.phoneDisplay}
+                  Call {site.phoneDisplay}
                 </a>
               </p>
             </div>
@@ -397,15 +418,15 @@ export default async function HomeDetailPage({
         <div className="flex flex-col gap-5 rounded-card border border-stone-line bg-stone-surface p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">
-              Available now
+              Current land-home packages
             </p>
             <h2 className="mt-1 font-display text-2xl font-semibold text-stone-ink">
-              We keep homes ready to tour
+              See what&apos;s available to tour
             </h2>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-stone-muted">
-              Brand-new and just-completed homes are on the ground across Horry,
-              Georgetown, Brunswick, and Columbus counties. Call and we&apos;ll
-              show you what&apos;s available right now.
+              Browse current packages or ask our team which homes are available
+              to visit. We&apos;ll confirm the listing&apos;s status and help you
+              arrange the next step.
             </p>
           </div>
           <div className="flex flex-shrink-0 flex-wrap gap-3">
