@@ -362,11 +362,12 @@ export default async function PlacedHomeDetail({
         </div>
       </section>
 
-      {/* More placed homes nearby */}
+      {/* A compact path to other recorded projects */}
       {related.length > 0 && (
         <section className="container-x py-12">
           <h2 className="font-display text-2xl font-semibold text-stone-ink">
-            More homes we&apos;ve placed in {h.town}
+            More homes we&apos;ve placed
+            {related.every((home) => home.town === h.town) && ` in ${h.town}`}
           </h2>
           <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((r) => (
@@ -389,6 +390,9 @@ export default async function PlacedHomeDetail({
                   />
                   <div className="p-4">
                     <p className="font-semibold text-stone-ink">{r.address}</p>
+                    <p className="mt-1 text-sm font-medium text-brand-700">
+                      {r.town}, SC · Sold
+                    </p>
                     <p className="mt-1 text-sm text-stone-muted">
                       {r.beds} bd · {r.baths} ba · {r.style}
                     </p>
