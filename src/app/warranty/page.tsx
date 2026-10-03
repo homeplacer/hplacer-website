@@ -74,6 +74,11 @@ export default function WarrantyPage() {
               Contact our service team for help with a warranty request and your coverage documents.
               Coverage, exclusions, and claim procedures follow your written warranties.
             </p>
+            <p className="mt-4 text-sm leading-relaxed text-stone-muted">
+              For a plain-language overview and questions to ask about your documents, read our{" "}
+              <Link href="/blog/new-home-warranty-coverage-explained" className="font-semibold text-brand-700 underline underline-offset-4">new-home warranty coverage guide</Link>.
+              Your written warranties determine the applicable coverage.
+            </p>
           </div>
           <ul className="space-y-3">
             {[

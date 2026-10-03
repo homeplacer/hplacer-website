@@ -64,6 +64,12 @@ export default function BuyerResourcesPage() {
           </li>
         ))}
       </ul>
+      <p className="mt-6 max-w-3xl text-sm leading-relaxed text-stone-muted">
+        Planning for single-level living near the coast? Our{" "}
+        <Link href="/blog/affordable-retirement-homes-grand-strand-no-hoa" className="font-semibold text-brand-700 underline underline-offset-4">Grand Strand retirement-home guide</Link>{" "}
+        is a starting point for comparing homes and lots. Confirm HOA or deed restrictions,
+        access needs, and ongoing costs for the specific property before deciding.
+      </p>
     </section>
     <section className="container-x border-t border-stone-line py-12">
       <h2 className="font-display text-2xl font-semibold">Bring your home and lot together</h2>

@@ -133,6 +133,21 @@ export default function FinancingPage() {
           Placer is not a lender. A lender&apos;s written disclosures and approval
           determine your financing; this page does not promise eligibility or terms.
         </p>
+
+        <aside className="mt-10 max-w-3xl border-t border-stone-line pt-6" aria-labelledby="financing-reading">
+          <h2 id="financing-reading" className="font-display text-xl font-semibold text-stone-ink">
+            Before you compare financing
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-stone-muted">
+            Review the questions to ask about{" "}
+            <Link href="/blog/manufactured-home-down-payment-requirements" className="font-semibold text-brand-700 underline underline-offset-4">down payments and cash to close</Link>{" "}
+            and{" "}
+            <Link href="/blog/manufactured-home-insurance-cost-grand-strand-sc" className="font-semibold text-brand-700 underline underline-offset-4">insurance costs on the Grand Strand</Link>.
+            Your lender and insurance agent must provide the figures for your actual home and lot.
+            If a term is unfamiliar, use our{" "}
+            <Link href="/glossary" className="font-semibold text-brand-700 underline underline-offset-4">home-buying glossary</Link>.
+          </p>
+        </aside>
       </section>
     </>
   );
