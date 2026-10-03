@@ -3,11 +3,13 @@ import { PageHero } from "@/components/page-hero";
 import { pageMetadata } from "@/lib/metadata";
 import { getPackages, packageState } from "@/lib/packages";
 import { JsonLd } from "@/lib/jsonld";
+import { getHome } from "@/lib/homes";
+import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 export const dynamic = "force-dynamic";
 export const metadata = pageMetadata({
-  title: "Land-home package examples & availability",
+  title: "Land-home project archive & examples",
   description:
-    "Browse verified land-home records by town and status. Historical sold examples are clearly separated from current availability.",
+    "Explore recorded land-home project examples by model and town. Sold historical records are separated from links to current land-home availability.",
   alternates: { canonical: "/packages" },
 });
 export default async function PackagesPage({
@@ -17,6 +19,7 @@ export default async function PackagesPage({
 }) {
   const filters = await searchParams;
   const all = getPackages();
+  const selectedHome = filters.model ? getHome(filters.model) : undefined;
   const markets = [...new Set(all.map((p) => p.market))];
   const rows = all.filter(
     (p) =>
@@ -26,21 +29,39 @@ export default async function PackagesPage({
   );
   return (
     <>
-      <PageHero eyebrow="Home + land" title="Packages, with the status clear">
-        Explore recorded projects and check for current opportunities. A floor
+      <PageHero
+        eyebrow="Home + land project archive"
+        title={selectedHome ? `${selectedHome.name} package examples` : "Land-home project records"}
+      >
+        {selectedHome ? `Explore recorded ${selectedHome.name} projects by town and status. ` : "Explore recorded home-and-land projects by town, model, and status. "}
+        Sold examples show past projects, not homes available to buy. A floor
         plan alone is not an available land-home package.
       </PageHero>
       <section className="container-x py-12">
-        {!all.some((p) => p.status === "available") && (
-          <p className="rounded-card border border-stone-line bg-stone-surface p-6">
-            No currently available packages have been verified for this
-            directory. The examples below are sold historical projects.{" "}
-            <Link href="/contact" className="font-semibold underline">
-              Ask about current options
-            </Link>
-            .
+        <div className="rounded-card border border-stone-line bg-stone-surface p-6">
+          <h2 className="font-display text-2xl font-semibold">Looking for a home you can buy now?</h2>
+          <p className="mt-3 max-w-3xl text-stone-muted">
+            Current properties are listed separately from these recorded
+            projects. Browse current land-home packages, or ask about a similar
+            home on a new lot. We will confirm the property, available options,
+            written scope, and current price with you.
           </p>
-        )}
+          <div className="mt-4 flex flex-wrap items-center gap-4">
+            <Link href="/land-packages" className="inline-flex min-h-11 items-center font-semibold text-brand-700 underline">
+              Browse current land-home packages
+            </Link>
+            <HomeInquiryDialog
+              homeName={selectedHome?.name ?? "a land-home package"}
+              label={selectedHome ? `Ask about a ${selectedHome.name} package` : "Ask about current options"}
+              showArrow={false}
+            />
+            {selectedHome && (
+              <Link href={`/homes/${selectedHome.slug}`} className="inline-flex min-h-11 items-center text-brand-700 underline">
+                View the {selectedHome.name} floor plan
+              </Link>
+            )}
+          </div>
+        </div>
         <form
           className="my-8 flex flex-wrap items-end gap-4"
           action="/packages"
@@ -81,7 +102,17 @@ export default async function PackagesPage({
             Reset
           </Link>
         </form>
-        <p className="mb-4 text-stone-muted">{rows.length} matching records</p>
+        <p className="mb-4 text-stone-muted">{rows.length} matching {rows.length === 1 ? "record" : "records"}</p>
+        {rows.length === 0 && (
+          <p className="rounded-card border border-stone-line p-6 text-stone-muted">
+            No published project records match these filters. This does not
+            determine whether a model or a new package is available.{" "}
+            <Link href="/packages" className="font-semibold text-brand-700 underline">
+              Browse all recorded projects
+            </Link>
+            , or ask our team about your plans using the inquiry above.
+          </p>
+        )}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {rows.map((p) => (
             <article
@@ -99,6 +130,30 @@ export default async function PackagesPage({
               <p className="mt-3 text-sm text-stone-muted">
                 {p.priceDisclosure}
               </p>
+              <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+                <dt className="text-stone-muted">Town</dt>
+                <dd>{p.market}</dd>
+                <dt className="text-stone-muted">Model</dt>
+                <dd>
+                  <Link href={`/homes/${p.modelSlug}`} className="text-brand-700 underline">
+                    {getHome(p.modelSlug)?.name ?? p.title}
+                  </Link>
+                </dd>
+                {p.lotAcres !== null && (
+                  <>
+                    <dt className="text-stone-muted">Recorded lot</dt>
+                    <dd>{p.lotAcres.toLocaleString("en-US", { maximumFractionDigits: 4 })} acres</dd>
+                  </>
+                )}
+              </dl>
+              <h3 className="mt-5 text-sm font-semibold">What the record supports</h3>
+              <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-stone-muted">
+                {p.included.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+              <h3 className="mt-4 text-sm font-semibold">For a new project</h3>
+              <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-stone-muted">
+                {p.excludedOrVariable.map((item) => <li key={item}>{item}</li>)}
+              </ul>
             </article>
           ))}
         </div>
