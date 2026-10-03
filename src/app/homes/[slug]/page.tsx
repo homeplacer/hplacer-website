@@ -38,6 +38,7 @@ import {
   ArrowIcon,
 } from "@/components/icons";
 import { site } from "@/lib/site";
+import { ModelPackageJourney } from "@/components/model-package-journey";
 
 export function generateStaticParams() {
   return getAllHomes().map((h) => ({ slug: h.slug }));
@@ -542,21 +543,7 @@ export default async function HomeDetailPage({
           </div>
         </section>
       )}
-      <section className="container-x py-10">
-        <h2 className="font-display text-2xl font-semibold">
-          Home design and land-home packages
-        </h2>
-        <p className="mt-3 text-stone-muted">
-          This page describes a model. Package records identify a particular
-          home-and-land project and its status.
-        </p>
-        <Link
-          href={`/packages?model=${home.slug}`}
-          className="mt-4 inline-block font-semibold underline"
-        >
-          See package records for {home.name}
-        </Link>
-      </section>
+      <ModelPackageJourney homeName={home.name} modelSlug={home.slug} />
     </WidthProvider>
   );
 }
