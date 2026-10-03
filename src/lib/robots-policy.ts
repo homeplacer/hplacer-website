@@ -26,7 +26,7 @@ export const trainingBots = [
 ];
 export function robotsText() {
   return (
-    "# Public search and assistant retrieval allowed; model training disallowed.\nUser-agent: *\nContent-Signal: search=yes, ai-input=yes, ai-train=no\nAllow: /\n" +
+    "# Public search and assistant retrieval allowed; model training disallowed.\nUser-agent: *\n# Content-Signal: search=yes, ai-input=yes, ai-train=no\nAllow: /\n" +
     privatePaths.map((p) => `Disallow: ${p}\n`).join("") +
     "\n" +
     retrievalBots
