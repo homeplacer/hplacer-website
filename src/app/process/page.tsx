@@ -17,31 +17,43 @@ const steps = [
     n: "01",
     t: "Tell us what you need",
     d: "Call or send a quick message with your must-haves — beds, baths, budget, and whether you have land. No pressure, no obligation. We'll help you compare a current land-home listing with ordering a model for your own project.",
+    resources: [{ href: "/guides/home-land-scope", label: "What to check in a home-and-land quote" }],
   },
   {
     n: "02",
     t: "Pick your home",
     d: "Browse Clayton, Cavco, and Champion floor plans online, then ask about available tours and model options. We'll help you balance size, layout, and budget, and explain whether you're looking at a completed home or a model that needs to be ordered.",
+    resources: [],
   },
   {
     n: "03",
     t: "Pick your land",
     d: "Ask about land-home packages or bring your own land or family property. We'll review the proposed site — access, zoning, utilities, and septic or sewer — and identify the work and approvals needed. Confirm the included land and setup scope in your written estimate.",
+    resources: [
+      { href: "/guides/horry-county-lot-review", label: "Horry County lot-review checklist" },
+      { href: "/guides/horry-towns-jurisdiction", label: "Find the office responsible for your address" },
+    ],
   },
   {
     n: "04",
     t: "Review financing with a lender",
     d: "We're not a lender. We can connect you with lenders who review manufactured-home projects and explain the options for your borrower profile and property. Confirm eligibility, down payment, fees, and the estimated payment with the lender; approval and terms are not guaranteed.",
+    resources: [],
   },
   {
     n: "05",
     t: "We handle the setup",
     d: "For a project that needs setup, we coordinate the agreed permits, delivery, foundation, installation, skirting, and utility connections. Manufacturing, site readiness, weather, inspections, and third-party approvals can affect the sequence and schedule. Ask us for the remaining milestones for your home.",
+    resources: [
+      { href: "/guides/project-sequence", label: "Understand the project milestones" },
+      { href: "/guides/water-septic-sewer-questions", label: "Questions about water, sewer, and septic" },
+    ],
   },
   {
     n: "06",
     t: "Move in — and we follow up",
     d: "Once the home is complete and the required approvals and closing are in place, walk through your finished home and settle in. Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company. Coverage, exclusions, and claim procedures follow your written warranties.",
+    resources: [],
   },
 ];
 
@@ -64,6 +76,17 @@ export default function ProcessPage() {
               <div>
                 <h2 className="font-display text-xl font-semibold text-stone-ink">{s.t}</h2>
                 <p className="mt-1.5 leading-relaxed text-stone-muted">{s.d}</p>
+                {s.resources.length > 0 && (
+                  <ul className="mt-3 space-y-2 text-sm">
+                    {s.resources.map((resource) => (
+                      <li key={resource.href}>
+                        <Link href={resource.href} className="font-semibold text-brand-700 underline underline-offset-4">
+                          {resource.label} <span aria-hidden="true">→</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </li>
           ))}
