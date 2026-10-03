@@ -5,6 +5,7 @@ import { CheckIcon, ArrowIcon, PhoneIcon } from "@/components/icons";
 import { submitLead } from "@/lib/lead";
 import { site } from "@/lib/site";
 import { Honeypot } from "@/components/honeypot";
+import { contactHomeFromLocation } from "@/lib/contact-context";
 
 const fieldClass =
   "w-full rounded-lg border border-stone-line bg-stone-bg px-3.5 py-2.5 text-sm text-stone-ink outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
@@ -31,15 +32,17 @@ export function ContactForm({
     home ? `Question about ${home}` : "Home Placer inquiry",
   );
 
-  // Prefill from ?home= client-side (keeps the page statically exportable).
-  // URL params aren't available during SSR, so this must be an effect; setting
-  // state here is the intended use (same pattern as homes-browser.tsx).
-  /* eslint-disable react-hooks/set-state-in-effect */
+  // Form-only context does not create a new crawlable page. Read it after
+  // hydration, while continuing to accept bookmarked legacy ?home= URLs.
   useEffect(() => {
-    const h = new URLSearchParams(window.location.search).get("home");
-    if (h) setHome(h);
+    const prefillHome = () => {
+      const context = contactHomeFromLocation(window.location);
+      if (context) setHome(context);
+    };
+    prefillHome();
+    window.addEventListener("hashchange", prefillHome);
+    return () => window.removeEventListener("hashchange", prefillHome);
   }, []);
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

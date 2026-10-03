@@ -11,6 +11,7 @@ import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
 import { site } from "@/lib/site";
 import { asset } from "@/lib/asset";
 import { CheckIcon, PhoneIcon, ArrowIcon, PinIcon } from "@/components/icons";
+import { contactContextHref } from "@/lib/contact-context";
 
 export function generateStaticParams() {
   return locations.map((l) => ({ slug: l.slug }));
@@ -132,7 +133,7 @@ export default async function LocationPage({
             association status and recorded restrictions.
           </p>
           <Link
-            href={`/contact?home=${encodeURIComponent(loc.name + " area")}`}
+            href={contactContextHref(loc.name + " area")}
             className="mt-5 inline-flex items-center gap-2 rounded-full bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800"
           >
             Start in {loc.name} <ArrowIcon className="size-4" />
