@@ -5,6 +5,7 @@ import { CloseIcon, ArrowIcon } from "@/components/icons";
 import { ContactForm } from "@/components/contact-form";
 import { site } from "@/lib/site";
 import { track } from "@/lib/analytics";
+import { contactContextHref } from "@/lib/contact-context";
 
 export function HomeInquiryDialog({
   homeName,
@@ -52,11 +53,11 @@ export function HomeInquiryDialog({
     <>
       <a
         ref={triggerRef}
-        href={`/contact?home=${encodeURIComponent(homeName)}`}
+        href={contactContextHref(homeName)}
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={(event) => {
-          // Keep the real contact-page URL as progressive fallback. JavaScript
+          // Keep the contact-page URL as progressive fallback. JavaScript
           // users stay on the card page and get the faster in-place dialog.
           event.preventDefault();
           track("pricing_inquiry", { placement: "main_content" });
