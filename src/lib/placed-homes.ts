@@ -50,9 +50,66 @@ export function placedHomesByTown(): PlacedTown[] {
   });
 }
 
-// Homes in the same town (for "more placed homes nearby"), excluding one slug.
+function closingTime(home: PlacedHome): number | null {
+  const time = home.closeDate ? Date.parse(home.closeDate) : NaN;
+  return Number.isFinite(time) ? time : null;
+}
+
+// Neighboring projects form a small, connected browsing path through every
+// published detail page. Ranking only the first same-town records leaves most
+// projects unlinked and strands towns with a single recorded home.
 export function relatedPlacedHomes(slug: string, town: string, n = 3): PlacedHome[] {
-  return getAllPlacedHomes()
-    .filter((h) => h.town === town && h.slug !== slug)
-    .slice(0, n);
+  const limit = Number.isFinite(n) ? Math.min(3, Math.max(0, Math.floor(n))) : 0;
+  if (!limit) return [];
+  // One card per URL, using the same first record as getPlacedHome. This only
+  // builds navigation; getAllPlacedHomes and its source records stay intact.
+  const links = new Map<string, PlacedHome>();
+  for (const home of getAllPlacedHomes()) {
+    if (!links.has(home.slug)) links.set(home.slug, home);
+  }
+  const townRank = (name: string) => {
+    const index = TOWN_ORDER.indexOf(name);
+    return index < 0 ? TOWN_ORDER.length : index;
+  };
+  const ordered = [...links.values()].sort((a, b) => {
+    return townRank(a.town) - townRank(b.town)
+      || a.town.localeCompare(b.town)
+      || (closingTime(b) ?? -Infinity) - (closingTime(a) ?? -Infinity)
+      || a.slug.localeCompare(b.slug);
+  });
+  const index = ordered.findIndex((home) => home.slug === slug);
+  if (index < 0) return [];
+  const current = ordered[index];
+  const currentDate = closingTime(current);
+  const order = new Map(ordered.map((home, position) => [home.slug, position]));
+  const dateDistance = (home: PlacedHome) => {
+    const date = closingTime(home);
+    return currentDate != null && date != null ? Math.abs(date - currentDate) : Infinity;
+  };
+  const relevance = (a: PlacedHome, b: PlacedHome) =>
+    Number(b.town === town) - Number(a.town === town)
+    || Number(Boolean(current.modelSlug) && b.modelSlug === current.modelSlug)
+      - Number(Boolean(current.modelSlug) && a.modelSlug === current.modelSlug)
+    || dateDistance(a) - dateDistance(b)
+    || order.get(a.slug)! - order.get(b.slug)!;
+  const related: PlacedHome[] = [];
+  const selected = new Set([slug]);
+  const add = (home: PlacedHome) => {
+    if (related.length >= limit || selected.has(home.slug)) return false;
+    selected.add(home.slug);
+    related.push(home);
+    return true;
+  };
+
+  // Reserve the next and previous projects in the town/date traversal. The
+  // wraparound links keep even singleton towns reachable from other details.
+  for (const direction of [1, -1]) {
+    if (related.length >= limit) break;
+    for (let step = 1; step < ordered.length; step++) {
+      const neighbor = ordered[(index + direction * step + ordered.length) % ordered.length];
+      if (add(neighbor)) break;
+    }
+  }
+  for (const home of [...ordered].sort(relevance)) add(home);
+  return related.sort(relevance);
 }
