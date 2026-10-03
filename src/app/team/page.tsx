@@ -18,8 +18,8 @@ export default function TeamPage() {
   return (
     <>
       <PageHero eyebrow="Who you'll work with" title="Meet the team">
-        Home Placer is local people, not a call center. From your first question to your
-        30-day walk-through, you&apos;ll work with the same team — right here in Horry County.
+        Home Placer is local people, not a call center. Meet the team you can contact
+        with home, setup, and service questions — right here in Horry County.
       </PageHero>
 
       <section className="container-x pt-12">

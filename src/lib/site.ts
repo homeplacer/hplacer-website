@@ -83,7 +83,7 @@ export const site = {
     },
     {
       title: "Builder + 2–10 warranties",
-      body: "Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company. A 30-day walk-through is also provided.",
+      body: "Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company. Coverage, exclusions, and claim procedures follow your written warranties.",
     },
     {
       title: "Licensed SC dealer",

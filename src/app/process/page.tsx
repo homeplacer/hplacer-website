@@ -41,7 +41,7 @@ const steps = [
   {
     n: "06",
     t: "Move in — and we follow up",
-    d: "Walk through your finished home, get your keys, and settle in. We provide a 30-day walk-through. Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company.",
+    d: "Walk through your finished home, get your keys, and settle in. Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company.",
   },
 ];
 

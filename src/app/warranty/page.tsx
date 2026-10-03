@@ -72,6 +72,7 @@ export default function WarrantyPage() {
               Mechanical coverage for two years and structural coverage for ten years
               are provided separately through the 2–10 company under the 2–10 Home Buyers Warranty.
               Contact our service team for help with a warranty request and your coverage documents.
+              Coverage, exclusions, and claim procedures follow your written warranties.
             </p>
           </div>
           <ul className="space-y-3">
@@ -79,7 +80,6 @@ export default function WarrantyPage() {
               "Home Placer: one-year builder warranty for defects",
               "2–10 company: two years of mechanical coverage",
               "2–10 company: ten years of structural coverage",
-              "30-day walk-through after you move in",
               "Local service team — real people, not a call center",
             ].map((item) => (
               <li key={item} className="flex items-start gap-3 rounded-card border border-stone-line bg-stone-bg p-4">
