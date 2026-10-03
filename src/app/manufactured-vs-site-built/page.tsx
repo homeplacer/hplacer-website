@@ -13,13 +13,13 @@ export const metadata: Metadata = pageMetadata({
 });
 
 const rows = [
-  { label: "Typical price", mfg: "Current packages from $179,999, all-in with land", site: "Often $350k+ in the same area" },
-  { label: "Time to move in", mfg: "Weeks", site: "Many months to over a year" },
-  { label: "Construction", mfg: "Built indoors to the federal HUD code — no weather delays or damage", site: "Built on-site, exposed to weather during construction" },
-  { label: "Financing", mfg: "FHA, VA, conventional (as real property on land)", site: "FHA, VA, conventional" },
-  { label: "Customization", mfg: "Choose floor plan, finishes, and decor packages", site: "Highly custom (at higher cost)" },
-  { label: "Land ownership", mfg: "You own the land — no HOA in our packages", site: "You own the land (HOA varies)" },
-  { label: "Warranty", mfg: "One-year limited warranty + 30-day walk-through", site: "Builder warranty varies" },
+  { label: "Project cost", mfg: "Compare current land-home listings or request a model-and-lot estimate", site: "Request a quote with the same land, finishes, and site-work scope" },
+  { label: "Time to move in", mfg: "Ready homes and ordered homes have different schedules; confirm the specific property", site: "An existing home and a new build have different schedules; confirm the specific property" },
+  { label: "Construction", mfg: "Factory-built to the federal HUD Code, with site preparation and installation afterward", site: "Built on-site to applicable state and local building codes" },
+  { label: "Financing", mfg: "Conventional, FHA, VA, or USDA options may be available; lender and property requirements apply", site: "Loan options depend on the borrower, property, and lender" },
+  { label: "Customization", mfg: "Available floor plans, finishes, and decor depend on the model and order stage", site: "Available changes depend on the builder, plans, and budget" },
+  { label: "Land ownership", mfg: "Land-home packages include land; check the specific lot's restrictions and HOA status", site: "Check the specific lot's restrictions and HOA status" },
+  { label: "Warranty", mfg: "One-year builder defects warranty; separate 2–10 mechanical and structural coverage. Written terms apply", site: "Review the builder's written warranty" },
 ];
 
 export default function ComparisonPage() {
@@ -57,17 +57,17 @@ export default function ComparisonPage() {
         <div className="mx-auto mt-10 max-w-4xl rounded-card border border-stone-line bg-stone-surface p-8">
           <h2 className="font-display text-2xl font-semibold text-stone-ink">The honest takeaway</h2>
           <p className="mt-3 text-stone-muted">
-            A modern manufactured home is built to a strict national standard, sets on a permanent
-            foundation, and — when you own the land — is financed, taxed, and valued much like a
-            site-built house. For most buyers around the Grand Strand, it&apos;s the fastest, most
-            affordable path to owning a brand-new home on your own land.
+            Start with the home, the lot, and the total project scope — not a headline price or a
+            promised move-in date. A completed land-home listing is different from ordering a model
+            for a lot that still needs permits, utilities, and installation. We&apos;ll help you
+            compare those paths and get the details for the property you&apos;re considering.
           </p>
           <ul className="mt-5 grid gap-3 sm:grid-cols-2">
             {[
-              "Built indoors, on schedule",
-              "Real property when on land you own",
-              "FHA / VA / conventional financing",
-              "No HOA in our packages",
+              "Federal HUD Code construction",
+              "Site-work scope confirmed for your lot",
+              "Financing subject to lender approval",
+              "Property-specific price and schedule",
             ].map((t) => (
               <li key={t} className="flex items-center gap-2 text-sm text-stone-ink">
                 <CheckIcon className="size-4 text-brand-600" /> {t}
@@ -76,10 +76,10 @@ export default function ComparisonPage() {
           </ul>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
-              href="/homes"
+              href="/land-packages"
               className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-800"
             >
-              Browse homes <ArrowIcon className="size-4" />
+              View land-home packages <ArrowIcon className="size-4" />
             </Link>
             <a
               href={`tel:${site.phoneDial}`}
@@ -88,6 +88,15 @@ export default function ComparisonPage() {
               <PhoneIcon className="size-4" /> {site.phoneDisplay}
             </a>
           </div>
+          <p className="mt-5 text-sm text-stone-muted">
+            Home Placer&apos;s builder warranty covers defects for one year. The separate 2–10
+            coverage provides two years for mechanical and ten years for structural coverage
+            through the 2–10 company. See our{" "}
+            <Link href="/warranty" className="font-medium text-brand-700 underline underline-offset-4">
+              warranty overview
+            </Link>{" "}
+            and your written warranty for coverage, exclusions, and claim procedures.
+          </p>
         </div>
       </section>
     </>

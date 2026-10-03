@@ -18,6 +18,7 @@ import {
   placedHomeResidenceLd,
 } from "@/lib/jsonld";
 import { asset } from "@/lib/asset";
+import { placedHomeMetadata } from "@/lib/placed-home-metadata";
 import { site } from "@/lib/site";
 import {
   BedIcon,
@@ -43,9 +44,8 @@ export async function generateMetadata({
   if (!h) return { title: "Home not found" };
   const lot = h.lotAcres ? `${h.lotAcres} acres` : "its own land";
   return pageMetadata({
-    title: `${h.address}, ${h.town}, SC — ${h.beds} bd / ${h.baths} ba manufactured home`,
+    ...placedHomeMetadata(h),
     description: `A ${h.beds}-bed ${h.baths}-bath ${h.style.toLowerCase()} manufactured home Home Placer placed and sold on ${lot} at ${h.address}, ${h.town}, SC.${h.modelName ? ` This is the ${h.modelName} — see every photo and the floor plan.` : " See every photo."}`,
-    alternates: { canonical: `/recently-placed/${h.slug}` },
     openGraph: { images: [asset(h.photo)] },
   });
 }

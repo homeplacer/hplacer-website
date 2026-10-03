@@ -102,15 +102,22 @@ export function HomeCard({ home }: { home: Home }) {
             </div>
             {price != null && (
               <span className="shrink-0 rounded-lg bg-brand-50 px-2.5 py-2 text-right leading-none">
+                <span className="mb-1 block text-[10px] text-stone-muted">Starting at</span>
                 <span className="block font-display text-lg font-semibold text-brand-800">
                   {formatPrice(price)}
                 </span>
                 <span className="mt-1 block text-[10px] font-semibold uppercase tracking-wider text-stone-muted">
-                  {home.setupPrice ? "full setup" : "starting"}
+                  {home.setupPrice ? "est. land + home" : "home only"}
                 </span>
               </span>
             )}
           </div>
+
+          {home.setupPrice && home.price && (
+            <p className="mt-3 text-sm text-stone-muted">
+              Home-only estimate from <span className="font-semibold text-stone-ink">{formatPrice(home.price)}</span>
+            </p>
+          )}
 
           <div className="mt-5 flex items-center gap-x-4 gap-y-2 border-t border-stone-line pt-3.5 text-sm text-stone-ink/80">
             <span className="inline-flex items-center gap-1.5">

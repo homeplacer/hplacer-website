@@ -35,7 +35,7 @@ export default function AboutPage() {
           </p>
           <p>
             And we keep it honest. Current packages from $179,999, no HOA, a one-year builder
-            warranty for defects, and a 30-day walk-through after you move in. The separate
+            warranty for defects. The separate
             2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years
             of structural coverage through the 2–10 company. If a deal isn&apos;t right
             for you, we&apos;ll tell you.

@@ -18,8 +18,8 @@ export default function TeamPage() {
   return (
     <>
       <PageHero eyebrow="Who you'll work with" title="Meet the team">
-        Home Placer is local people, not a call center. From your first question to your
-        30-day walk-through, you&apos;ll work with the same team — right here in Horry County.
+        Home Placer is local people, not a call center. Meet the team you can contact
+        with home, setup, and service questions — right here in Horry County.
       </PageHero>
 
       <section className="container-x pt-12">
@@ -27,11 +27,11 @@ export default function TeamPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={asset(groupPhoto)}
-            alt="The Home Placer crew outside the Myrtle Beach office"
+            alt="The Home Placer crew"
             className="w-full object-cover"
           />
           <figcaption className="bg-stone-surface px-5 py-3 text-center text-sm text-stone-muted">
-            The Home Placer crew — Myrtle Beach, SC
+            The Home Placer crew
           </figcaption>
         </figure>
       </section>
