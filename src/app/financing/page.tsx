@@ -9,30 +9,30 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = pageMetadata({
   title: "Financing",
   description:
-    "USDA, FHA, VA, and conventional financing for new manufactured homes on land in South Carolina. $0-down options and help for every credit situation.",
+    "Explore manufactured-home financing in SC and NC. Ask about USDA, FHA, VA, and conventional options, with borrower, property, program, and lender requirements.",
   alternates: { canonical: "/financing" },
 });
 
 const programs = [
   {
     name: "USDA",
-    rate: "$0 down · rural areas",
-    body: "Putting a home on land in rural Horry County? A USDA Rural Development loan can finance 100% — zero down — in eligible areas like Loris, Aynor, and Longs. Income limits apply; primary residence only.",
+    rate: "No down payment for qualifying buyers",
+    body: "Ask a participating lender to check your address, household income, proposed home, and application. An eligible rural area is one requirement, not a loan approval. Cash for closing and other costs may still be needed.",
   },
   {
     name: "VA",
-    rate: "$0 down for veterans",
-    body: "If you’ve served, a VA loan can mean no down payment and no monthly mortgage insurance on your home-and-land package.",
+    rate: "For eligible borrowers and properties",
+    body: "A VA-backed purchase loan may offer no down payment for qualifying borrowers. Your lender checks entitlement, credit, income, the home, appraisal, and other requirements; service history alone does not establish approval.",
   },
   {
     name: "FHA",
-    rate: "As low as 3.5% down",
-    body: "Government-backed loans built for first-time and budget-conscious buyers. Flexible credit guidelines and low down payments.",
+    rate: "Ask about the applicable FHA product",
+    body: "FHA options have borrower, home, and program requirements. Ask your lender which product it offers for your manufactured-home project and confirm the down payment, mortgage insurance, costs, and property documentation.",
   },
   {
     name: "Conventional",
-    rate: "Competitive fixed rates",
-    body: "Strong credit and a down payment? A conventional loan keeps your long-term cost down with predictable fixed payments.",
+    rate: "Terms depend on your project and lender",
+    body: "Ask about conventional manufactured-home loan options and the home's required documentation, foundation, title, and appraisal. Your lender provides the actual rate, payment, fees, down payment, and approval decision.",
   },
 ];
 
@@ -40,9 +40,9 @@ export default function FinancingPage() {
   return (
     <>
       <PageHero eyebrow="Paying for it" title="Financing that fits real budgets">
-        Most of our buyers finance the home and the land together as one loan. We&apos;ll
-        connect you with lenders who actually do manufactured-home-on-land loans — and
-        we&apos;ll help no matter where your credit stands today.
+        Tell us about the home and land you have in mind. Home Placer is a
+        manufactured-home dealer, not a lender; we can help you connect with a
+        lender to review possible financing paths for your project.
       </PageHero>
 
       <div className="container-x flex flex-wrap gap-x-6 gap-y-3 pt-8">
@@ -65,10 +65,12 @@ export default function FinancingPage() {
         <div className="mx-auto mb-10 max-w-3xl rounded-card border border-brand-200 bg-brand-50/60 p-6 text-center">
           <p className="leading-relaxed text-stone-ink/90">
             <strong className="font-semibold text-stone-ink">
-              Every manufactured home we sell — on land you own — qualifies as real property.
+              The home, land, title, and borrower all matter.
             </strong>{" "}
-            That means the same <strong>conventional, FHA, VA, and USDA</strong> loans as a site-built
-            house: a real 30-year mortgage, not a short, high-rate &ldquo;mobile home&rdquo; loan.
+            Owning land and installing a permanent foundation do not automatically
+            establish real-property classification or loan approval. Ask your
+            lender and closing professionals to confirm the title, home
+            documentation, appraisal, and chosen program&apos;s requirements.
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -84,9 +86,11 @@ export default function FinancingPage() {
         <div className="mt-6 flex items-start gap-3 rounded-card border border-brand-200 bg-brand-50 p-5">
           <CheckIcon className="mt-0.5 size-5 shrink-0 text-brand-600" strokeWidth={2.5} />
           <p className="text-sm leading-relaxed text-stone-ink/85">
-            <strong className="font-semibold text-stone-ink">A lot of Horry County qualifies for USDA $0-down financing.</strong>{" "}
-            Because we place homes on land out in Conway, Loris, Longs, and Aynor, many of our lots fall in
-            USDA-eligible rural areas — ask us to check your address.
+            <strong className="font-semibold text-stone-ink">Check the address, not just the town name.</strong>{" "}
+            Start with the{" "}
+            <a href="https://eligibility.sc.egov.usda.gov/eligibility/welcomeAction.do" className="font-semibold text-brand-700 underline underline-offset-4" target="_blank" rel="noopener noreferrer">official USDA eligibility tool</a>,
+            then ask a participating lender to review the actual home and your
+            application. A map result is not a financing commitment.
           </p>
         </div>
 
@@ -96,15 +100,16 @@ export default function FinancingPage() {
         >
           <div>
             <h2 className="font-display text-2xl font-semibold text-stone-ink">
-              Apply for financing
+              Ask about financing
             </h2>
             <p className="mt-3 text-stone-muted">
-              Start here and we&apos;ll match you to the right loan. Worried your credit
-              isn&apos;t ready? Don&apos;t count yourself out — we work with lenders for a
-              wide range of situations and give you a straight answer.
+              Share your contact information and whether you already have land.
+              We&apos;ll discuss your next step and help you connect with a lender.
+              This is an information request, not a loan application or approval;
+              do not include sensitive financial information here.
             </p>
             <ul className="mt-5 space-y-2 text-sm text-stone-ink/85">
-              {["No credit pull to get started", "Down-payment assistance options", "Honest guidance, no pressure"].map((t) => (
+              {["No credit pull for this inquiry", "Ask about assistance eligibility", "Honest guidance, no pressure"].map((t) => (
                 <li key={t} className="inline-flex items-center gap-2">
                   <CheckIcon className="size-4 text-brand-600" /> {t}
                 </li>
@@ -118,14 +123,15 @@ export default function FinancingPage() {
             </a>
           </div>
           <div className="rounded-card border border-stone-line bg-stone-bg p-6 shadow-sm">
-            <FinancingForm />
+            <FinancingForm submitLabel="Request financing information" successTitle="Thanks for your inquiry." successMessage="A Home Placer team member will reach out to discuss your next step. Your request is not a loan application or approval." />
           </div>
         </div>
 
         <p className="mt-6 max-w-3xl text-xs leading-relaxed text-stone-muted">
-          Rates and terms vary by lender, credit profile, and program eligibility. Home
-          Placer is not a lender; we connect buyers with third-party lenders. All financing
-          subject to credit approval.
+          Rates, terms, payments, and available programs depend on the lender,
+          borrower, home, land, appraisal, and applicable requirements. Home
+          Placer is not a lender. A lender&apos;s written disclosures and approval
+          determine your financing; this page does not promise eligibility or terms.
         </p>
       </section>
     </>
