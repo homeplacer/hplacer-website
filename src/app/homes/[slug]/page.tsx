@@ -51,8 +51,8 @@ export async function generateMetadata({
   const home = getHome(slug);
   if (!home) return { title: "Home not found" };
   return pageMetadata({
-    title: `${home.name} — ${home.brand} ${home.series} (${home.beds} bd / ${home.baths} ba)`,
-    description: `${home.name} by ${home.brand}: ${home.beds} bedrooms, ${home.baths} bathrooms, ${home.widthFt} × ${home.lengthFt} ft. Explore this floor plan and request pricing for your home and lot.`,
+    title: `${home.name} · ${home.brand}`,
+    description: `${home.name} by ${home.brand}: ${home.beds} bedrooms, ${home.baths} bathrooms and ${home.sqft.toLocaleString("en-US")} sq ft. Explore the floor plan and ask about a home on your land or a land-home package.`,
     alternates: { canonical: `/homes/${home.slug}` },
     openGraph: home.imageUrls[0] ? { images: [home.imageUrls[0]] } : undefined,
   });
