@@ -322,7 +322,7 @@ export default async function HomeDetailPage({
 
           <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-stone-muted">
             {[
-              "No HOA",
+              "Confirm lot restrictions",
               "1-year warranty",
               "Land + setup available",
               "Written package quote",
