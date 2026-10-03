@@ -28,10 +28,11 @@ not a loan application. No live lead was submitted during verification.
 ## Backend dependency (not changed in this PR)
 
 `src/app/llms.txt/route.ts:31` still tells retrieval clients that Columbus County
-is Wind Zone I and says that this reduces cost. The backend owner should correct
-that public route to Zone II and remove the automatic cost-saving assertion,
-using the current CFR county list above. This PR changes no route handler,
-robots policy, feed, or backend behavior.
+is Wind Zone I. The backend owner should correct that public route to Zone II,
+using the current CFR county list above. The route also contains the older
+unqualified no-HOA and one-price/one-closing copy; its owner should align those
+statements with the parcel and written-scope qualifications in the public pages.
+This PR changes no route handler, robots policy, feed, or backend behavior.
 
 ## Regression coverage
 
