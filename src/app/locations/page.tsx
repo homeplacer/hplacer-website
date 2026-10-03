@@ -24,11 +24,32 @@ export default function LocationsPage() {
     <>
       <PageHero eyebrow="Where we build" title="27 towns across four counties, two states">
         We place new manufactured homes on land across Horry and Georgetown counties in South
-        Carolina and Brunswick and Columbus counties in North Carolina — on scattered lots, never
-        boxed into a subdivision, and never with an HOA.
+        Carolina and Brunswick and Columbus counties in North Carolina. We prioritize scattered
+        lots without an HOA; association obligations, deed restrictions, and manufactured-home
+        placement requirements still need to be checked for the specific parcel.
       </PageHero>
 
-      <div className="container-x pt-8"><Link href="/buyer-resources#counties" className="font-semibold text-brand-700 underline">Find official county offices and forms</Link></div>
+      <section className="container-x pt-8" aria-labelledby="area-next-step">
+        <h2 id="area-next-step" className="font-display text-xl font-semibold text-stone-ink">
+          Start with a package or your own lot
+        </h2>
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-stone-muted">
+          These are service-area planning pages, not a promise of available homes or approved
+          lots in every town. Check current packages, or use the lot-review checklist before
+          choosing a home for land you already own.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-brand-700">
+          <Link href="/land-packages" className="underline underline-offset-4">
+            See current land-home packages
+          </Link>
+          <Link href="/guides/land-readiness-checklist" className="underline underline-offset-4">
+            Review a lot you own
+          </Link>
+          <Link href="/buyer-resources#counties" className="underline underline-offset-4">
+            Find official county offices and forms
+          </Link>
+        </div>
+      </section>
       {groups.map(({ county, cities }) => (
         <section key={county.key} className="container-x py-10">
           <h2 className="font-display text-2xl font-semibold text-stone-ink sm:text-3xl">
@@ -53,7 +74,7 @@ export default function LocationsPage() {
                 </span>
                 <p className="mt-3 flex-1 text-sm text-stone-muted">{l.intro}</p>
                 <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700">
-                  Homes in {l.name} <ArrowIcon className="size-3.5" />
+                  Explore {l.name} <ArrowIcon className="size-3.5" />
                 </span>
               </Link>
             ))}
