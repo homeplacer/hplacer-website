@@ -27,11 +27,11 @@ export default function TeamPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={asset(groupPhoto)}
-            alt="The Home Placer crew outside the Myrtle Beach office"
+            alt="The Home Placer crew"
             className="w-full object-cover"
           />
           <figcaption className="bg-stone-surface px-5 py-3 text-center text-sm text-stone-muted">
-            The Home Placer crew — Myrtle Beach, SC
+            The Home Placer crew
           </figcaption>
         </figure>
       </section>

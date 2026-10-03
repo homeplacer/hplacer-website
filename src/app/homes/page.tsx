@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import { getAllHomes } from "@/lib/homes";
@@ -27,10 +26,11 @@ export default function HomesPage() {
             Find your home
           </h1>
           <p className="mt-3 max-w-2xl text-stone-muted">
-            Model-specific prices are quoted individually. Package pricing depends on the home,
-            land, site preparation, delivery, foundation, utilities, and selected options.
-            Browse our <Link href="/recently-placed" className="underline">completed projects and historical sold prices</Link> for
-            context, then request a current written quote for your model and lot.
+            Estimated land-and-home package prices assume a quarter-acre lot;
+            home-only pricing is shown when available. Land, site preparation,
+            delivery, foundation, utilities, permits, and selected options can
+            change the final price. Call, text, or email us for a written
+            estimate for your model and lot.
           </p>
         </div>
       </section>

@@ -16,32 +16,32 @@ const steps = [
   {
     n: "01",
     t: "Tell us what you need",
-    d: "Call or send a quick message with your must-haves — beds, baths, budget, and whether you have land. No pressure, no obligation. We'll point you to the right models and a realistic payment range.",
+    d: "Call or send a quick message with your must-haves — beds, baths, budget, and whether you have land. No pressure, no obligation. We'll help you compare a current land-home listing with ordering a model for your own project.",
   },
   {
     n: "02",
     t: "Pick your home",
-    d: "Browse Clayton, Cavco, and Champion floor plans online, then tour models or walk the options with us. We'll help you balance size, layout, and budget so the home fits your life and your number.",
+    d: "Browse Clayton, Cavco, and Champion floor plans online, then ask about available tours and model options. We'll help you balance size, layout, and budget, and explain whether you're looking at a completed home or a model that needs to be ordered.",
   },
   {
     n: "03",
     t: "Pick your land",
-    d: "Use one of our lots or bring your own land or family property. We'll evaluate the site — access, utilities, septic or sewer — and bundle the land and home into a single package and price.",
+    d: "Ask about land-home packages or bring your own land or family property. We'll review the proposed site — access, zoning, utilities, and septic or sewer — and identify the work and approvals needed. Confirm the included land and setup scope in your written estimate.",
   },
   {
     n: "04",
-    t: "Lock in financing",
-    d: "We connect you with lenders who do manufactured-home-on-land loans (FHA, VA, conventional) and help every credit situation. You get a clear, all-in number and monthly payment before anything is final.",
+    t: "Review financing with a lender",
+    d: "We're not a lender. We can connect you with lenders who review manufactured-home projects and explain the options for your borrower profile and property. Confirm eligibility, down payment, fees, and the estimated payment with the lender; approval and terms are not guaranteed.",
   },
   {
     n: "05",
     t: "We handle the setup",
-    d: "Permits, delivery, foundation, set, tie-downs, skirting, and utility hookups — power, water, and septic or sewer. This is the part that overwhelms people doing it alone. It's our job, start to finish.",
+    d: "For a project that needs setup, we coordinate the agreed permits, delivery, foundation, installation, skirting, and utility connections. Manufacturing, site readiness, weather, inspections, and third-party approvals can affect the sequence and schedule. Ask us for the remaining milestones for your home.",
   },
   {
     n: "06",
     t: "Move in — and we follow up",
-    d: "Walk through your finished home, get your keys, and settle in. Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company.",
+    d: "Once the home is complete and the required approvals and closing are in place, walk through your finished home and settle in. Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company. Coverage, exclusions, and claim procedures follow your written warranties.",
   },
 ];
 
@@ -70,10 +70,11 @@ export default function ProcessPage() {
         </ol>
 
         <div className="topo mx-auto mt-12 max-w-3xl overflow-hidden rounded-3xl bg-brand-900 p-8 text-center text-white">
-          <h2 className="font-display text-2xl font-semibold">It really is that simple</h2>
+          <h2 className="font-display text-2xl font-semibold">Let&apos;s map out your next step</h2>
           <p className="mx-auto mt-2 max-w-xl text-stone-100/80">
-            Most buyers go from first call to keys in a matter of weeks. Let&apos;s start with a
-            conversation.
+            A completed home and an ordered-home project have different paths to move-in. Tell us
+            which home or lot you&apos;re considering, and we&apos;ll talk through what&apos;s ready,
+            what&apos;s left, and the next step.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { CheckIcon, ArrowIcon, PhoneIcon } from "@/components/icons";
 import { submitLead } from "@/lib/lead";
 import { site } from "@/lib/site";
@@ -16,6 +16,7 @@ export function ContactForm({
   defaultHome?: string;
   packageId?: string;
 }) {
+  const formId = useId();
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
     "idle",
   );
@@ -121,13 +122,13 @@ export function ContactForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label
-            htmlFor="name"
+            htmlFor={`${formId}-name`}
             className="mb-1.5 block text-sm font-medium text-stone-ink"
           >
             Name
           </label>
           <input
-            id="name"
+            id={`${formId}-name`}
             name="name"
             required
             autoComplete="name"
@@ -136,13 +137,13 @@ export function ContactForm({
         </div>
         <div>
           <label
-            htmlFor="phone"
+            htmlFor={`${formId}-phone`}
             className="mb-1.5 block text-sm font-medium text-stone-ink"
           >
             Phone <span className="text-stone-muted">(or email)</span>
           </label>
           <input
-            id="phone"
+            id={`${formId}-phone`}
             name="phone"
             type="tel"
             inputMode="tel"
@@ -155,13 +156,13 @@ export function ContactForm({
       </div>
       <div>
         <label
-          htmlFor="email"
+          htmlFor={`${formId}-email`}
           className="mb-1.5 block text-sm font-medium text-stone-ink"
         >
           Email <span className="text-stone-muted">(or phone)</span>
         </label>
         <input
-          id="email"
+          id={`${formId}-email`}
           name="email"
           type="email"
           autoComplete="email"
@@ -170,14 +171,14 @@ export function ContactForm({
       </div>
       <div>
         <label
-          htmlFor="home"
+          htmlFor={`${formId}-home`}
           className="mb-1.5 block text-sm font-medium text-stone-ink"
         >
           Home you&apos;re interested in{" "}
           <span className="text-stone-muted">(optional)</span>
         </label>
         <input
-          id="home"
+          id={`${formId}-home`}
           name="home"
           value={home}
           onChange={(e) => setHome(e.target.value)}
@@ -187,13 +188,13 @@ export function ContactForm({
       </div>
       <div>
         <label
-          htmlFor="message"
+          htmlFor={`${formId}-message`}
           className="mb-1.5 block text-sm font-medium text-stone-ink"
         >
           What are you looking for?
         </label>
         <textarea
-          id="message"
+          id={`${formId}-message`}
           name="message"
           rows={4}
           placeholder="Beds/baths, budget, land or no land, timeline…"

@@ -1,13 +1,9 @@
 import { marked } from "marked";
 import postsJson from "../../data/blog-posts.json";
+import { getBlogTopic, type PostSummary } from "./blog-summary";
+export { blogTopics, getBlogTopic, formatDate, type BlogTopic } from "./blog-summary";
 
-export interface Post {
-  slug: string;
-  title: string;
-  description: string;
-  date: string; // ISO yyyy-mm-dd
-  readMinutes: number;
-  tags: string[];
+export interface Post extends PostSummary {
   bodyMarkdown: string;
 }
 
@@ -57,6 +53,22 @@ export function getPost(slug: string): Post | undefined {
   return getAllPosts().find((p) => p.slug === slug);
 }
 
+export function getRelatedPosts(post: Post, limit = 2): Post[] {
+  const postTags = new Set(post.tags.map((tag) => tag.toLowerCase()));
+  const topic = getBlogTopic(post);
+
+  return getAllPosts()
+    .filter((candidate) => candidate.slug !== post.slug)
+    .map((candidate) => {
+      const sharedTags = candidate.tags.filter((tag) => postTags.has(tag.toLowerCase())).length;
+      const sharedTopic = getBlogTopic(candidate) === topic ? 1 : 0;
+      return { candidate, score: sharedTags * 2 + sharedTopic };
+    })
+    .sort((a, b) => b.score - a.score || b.candidate.date.localeCompare(a.candidate.date))
+    .slice(0, limit)
+    .map(({ candidate }) => candidate);
+}
+
 // Defense-in-depth: blog HTML comes from first-party markdown (committed JSON),
 // but strip anything that could execute if a post ever carries raw HTML — scripts,
 // embeds, inline event handlers, and javascript:/data:text/html URIs. A CSP
@@ -72,12 +84,4 @@ function sanitizeHtml(html: string): string {
 
 export function renderMarkdown(md: string): string {
   return sanitizeHtml(marked.parse(md, { async: false }) as string);
-}
-
-export function formatDate(iso: string): string {
-  return new Date(`${iso}T00:00:00`).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 }

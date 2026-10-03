@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPackage, packageOffer } from "@/lib/packages";
 import { getHome } from "@/lib/homes";
+import { packagePresentation } from "@/lib/package-presentation";
 import { pageMetadata } from "@/lib/metadata";
 import { PageHero } from "@/components/page-hero";
 import { ContactForm } from "@/components/contact-form";
@@ -22,13 +23,10 @@ export async function generateMetadata({
       title: "Package not available",
       robots: { index: false, follow: true },
     };
+  const presentation = packagePresentation(p, getHome(p.modelSlug));
   return pageMetadata({
-    title: p.title + " — " + p.status.replaceAll("_", " "),
-    description:
-      p.priceDisclosure +
-      " Explore this " +
-      p.market +
-      " home-and-land record and ask about a new project.",
+    title: presentation.title,
+    description: presentation.description,
     alternates: { canonical: `/packages/${p.id}` },
   });
 }
@@ -41,6 +39,7 @@ export default async function PackagePage({
   if (!p) notFound();
   const home = getHome(p.modelSlug);
   const offer = packageOffer(p);
+  const presentation = packagePresentation(p, home);
   return (
     <>
       <PageHero eyebrow={p.status.replaceAll("_", " ")} title={p.title}>
@@ -64,6 +63,11 @@ export default async function PackagePage({
           <h2 className="font-display text-2xl font-semibold">
             The recorded project
           </h2>
+          {presentation.summary && (
+            <p className="mt-4 leading-relaxed text-stone-muted">
+              {presentation.summary}
+            </p>
+          )}
           <dl className="my-6 grid grid-cols-2 gap-4">
             <dt>Location</dt>
             <dd>{p.market}</dd>

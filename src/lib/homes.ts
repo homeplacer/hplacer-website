@@ -4,11 +4,25 @@ import rawModels from "../../data/models.json";
 import setupPricingJson from "../../data/setup-pricing.json";
 import homePricingJson from "../../data/home-pricing.json";
 
+// Kept in the source catalog for historical traceability, but intentionally
+// withheld from the current buyer-facing model lineup at the dealer's request.
+const retiredModelSlugs = new Set([
+  "dutch-2963-ashley",
+  "garner-3975",
+  "greenwood",
+  "lake-manor-2856h32p01",
+  "shenandoah",
+]);
+
+export function isRetiredHome(slug: string): boolean {
+  return retiredModelSlugs.has(slug);
+}
+
 // The manufacturer-model inventory (data/models.json, built by
 // scripts/build-models.mjs from the extraction workflow) is statically imported
 // so it bundles into the server build — the Cloudflare Workers runtime has no
 // filesystem at request time. Pricing is merged from two override files keyed by
-// model slug (empty {} until finalized — homes show "Call for pricing").
+// model slug; unpriced models show "Call for pricing".
 //
 // Types + pure helpers live in ./home-types so client components can use them
 // without bundling this module. Re-exported here for convenience.
@@ -108,7 +122,7 @@ function firstSentence(s: string): string {
 
 let cache: Home[] | null = null;
 
-export function getAllHomes(): Home[] {
+function getCatalogHomes(): Home[] {
   if (cache) return cache;
 
   const models = rawModels as unknown as RawModel[];
@@ -148,8 +162,12 @@ export function getAllHomes(): Home[] {
   return homes;
 }
 
+export function getAllHomes(): Home[] {
+  return getCatalogHomes().filter((home) => !isRetiredHome(home.slug));
+}
+
 export function getHome(slug: string): Home | undefined {
-  return getAllHomes().find((h) => h.slug === slug);
+  return getCatalogHomes().find((h) => h.slug === slug);
 }
 
 export function getHomesByBrand(brand: Brand): Home[] {

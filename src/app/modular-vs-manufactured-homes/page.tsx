@@ -16,36 +16,36 @@ export const metadata: Metadata = pageMetadata({
 });
 
 const rows = [
-  { label: "Building code", mod: "Built to the same state/local code as a site-built house (IRC)", man: "Built to the federal HUD code — one national standard" },
-  { label: "Foundation", mod: "Set on a permanent foundation (crawlspace, basement, or slab)", man: "Permanent foundation on your land, or a pier-and-beam set" },
-  { label: "Financing", mod: "Conventional, FHA, VA, USDA — just like a stick-built home", man: "Sold with land, every one qualifies: conventional, FHA, VA & USDA" },
-  { label: "Value over time", mod: "Appraised and appreciates like a site-built home", man: "Builds equity when tied to deeded land — strongest on a permanent foundation" },
-  { label: "Typical cost", man: "Most affordable — current packages from $179,999, all-in with land", mod: "More than manufactured, well under most site-built" },
-  { label: "Time to move in", mod: "Weeks (a bit longer for foundation + permits)", man: "Weeks — built indoors, no weather delays" },
-  { label: "Customization", mod: "Floor plans + finishes, with more design freedom", man: "Choose floor plan, finishes, and decor packages" },
-  { label: "When it's finished", mod: "Looks and lives like any other house on the street", man: "Looks and lives like any other house on the street" },
+  { label: "Building code", mod: "Built to applicable state and local building codes", man: "Built to the federal HUD Code" },
+  { label: "Foundation", mod: "A permanent foundation designed for the home and site", man: "An installation and foundation system designed for the home and site" },
+  { label: "Financing", mod: "Mortgage options depend on borrower, property, and lender approval", man: "Conventional, FHA, VA, or USDA options may be available; program requirements apply" },
+  { label: "Value over time", mod: "Location, condition, and the local market affect resale value", man: "Location, land, condition, and the local market affect resale value" },
+  { label: "Project cost", man: "Compare current land-home listings or ask for a model-and-lot estimate", mod: "Ask for a quote covering the same land, finishes, and site work" },
+  { label: "Time to move in", mod: "Confirm the home's status, permits, foundation, and remaining work", man: "Ready homes and ordered homes have different schedules; confirm the specific property" },
+  { label: "Customization", mod: "Available plans and finishes depend on the manufacturer and order", man: "Available floor plans, finishes, and decor depend on the model and order" },
+  { label: "When it's finished", mod: "Review the actual home, specifications, and included finishes", man: "Review the actual home, specifications, and included finishes" },
 ];
 
 const faqs = [
   {
     q: "What's the real difference between a modular and a manufactured home?",
-    a: "It comes down to the building code. A manufactured home is built to the federal HUD code — one national standard — and arrives on a steel chassis. A modular home is built to the same state and local building code as a site-built house (the IRC) and is assembled on a permanent foundation. Both are built indoors in a controlled factory; the code and foundation are what differ.",
+    a: "The main difference is the building code. A manufactured home is factory-built to the federal HUD Code on a permanent chassis. A modular home is factory-built to applicable state and local building codes and assembled on site. Both still need site preparation, installation, and local approvals.",
   },
   {
     q: "Is a manufactured home just a 'mobile home'?",
-    a: "No. True 'mobile homes' haven't been built since 1976, when the federal HUD code took over. A modern manufactured home is a brand-new, code-built, warrantied house — drywall or finished interior, full-size kitchen and baths, energy-efficient, and built to the wind zone for our area. When it's set and skirted on land, most people can't tell it from a site-built home.",
+    a: "People often use the terms interchangeably, but manufactured homes built after June 15, 1976 follow the federal HUD construction and safety standards. Look at the specific model's floor plan, finishes, specifications, and warranty rather than relying on the nickname.",
   },
   {
     q: "Do modular homes hold their value better than manufactured homes?",
-    a: "Modular homes appraise and appreciate much like site-built homes because they meet local building code on a permanent foundation. Manufactured homes also build value when they're permanently set on deeded land you own — the land is the appreciating asset, and a permanent foundation makes a big difference.",
+    a: "Neither type comes with a guaranteed resale value or appreciation rate. Location, land, condition, comparable sales, and the local market all matter. Compare actual properties and talk with your lender about the appraisal requirements for the home you're considering.",
   },
   {
     q: "Is financing different for modular vs. manufactured homes?",
-    a: "Modular homes qualify for standard conventional, FHA, VA, and USDA loans, just like stick-built. Manufactured homes qualify for those same programs when financed as real property on land — lenders look for a permanent, HUD-certified foundation and clear title to the land. We do this every day and can walk you through the path that fits.",
+    a: "Both can have mortgage options, but approval is not automatic. For a manufactured home, lenders review the home's documentation, foundation, title, land, and other program requirements, as well as the borrower. Conventional, FHA, VA, or USDA options may be available. We're not a lender; we can help you connect with one to review your specific home and situation.",
   },
   {
-    q: "Can these homes hold up to coastal Carolina weather?",
-    a: "Yes. Every home we place is built to the wind zone for its location — HUD Wind Zone II along the Grand Strand coast. Factory construction is consistent and inspected, and a proper foundation and tie-down system are part of every install.",
+    q: "What should I check for a coastal Carolina site?",
+    a: "Check that the home's design ratings suit the specific location and that the foundation and installation meet the applicable requirements. A manufactured home's HUD data plate identifies its wind, roof-load, and thermal zones. Site conditions and local approvals also matter; no home is storm-proof.",
   },
 ];
 
@@ -74,30 +74,30 @@ export default function ModularVsManufacturedPage() {
           </h2>
           <div className="mt-4 space-y-4 leading-relaxed text-stone-ink/85">
             <p>
-              Both modular and manufactured homes are built indoors, in a controlled factory, then
-              delivered to your land — so neither sits out in the rain getting built like a site-built
-              house. The difference is the <strong className="font-semibold text-stone-ink">code</strong>{" "}
-              each is built to.
+              Both modular and manufactured homes are factory-built, then delivered for installation.
+              The main difference is the <strong className="font-semibold text-stone-ink">building code</strong>{" "}
+              each follows. Indoor construction does not remove the need for outdoor site work,
+              permits, utility connections, or final inspections.
             </p>
             <p>
               <strong className="font-semibold text-stone-ink">Manufactured homes</strong> are built to
-              the federal <strong>HUD code</strong> — a single national standard — and arrive on a steel
-              frame. They&apos;re the most affordable way into a brand-new home on land.
+              the federal <strong>HUD Code</strong> on a permanent chassis. Compare available models
+              and land-home packages to see how their layout, features, and total cost fit your budget.
             </p>
             <p>
               <strong className="font-semibold text-stone-ink">Modular homes</strong> are built to the
-              same <strong>state and local building code</strong> as a stick-built house and are
-              assembled on a permanent foundation — so they appraise and finance much like any other
-              house on the street.
+              applicable <strong>state and local building codes</strong> and assembled on site.
+              The foundation, permits, and lender requirements still need to be checked for the
+              specific home and lot.
             </p>
             <h3 className="pt-2 font-display text-lg font-semibold text-stone-ink">
               &ldquo;But isn&apos;t that just a mobile home?&rdquo;
             </h3>
             <p>
-              No — and this is the biggest misconception we hear. True &ldquo;mobile homes&rdquo;
-              haven&apos;t been built since 1976. A modern manufactured home is a new, code-built,
-              warrantied house with a real kitchen, full baths, and finished interior. Set and skirted
-              on land, most people can&apos;t tell the difference from a site-built home.
+              It&apos;s a common name, but the important distinction is the construction standard.
+              Manufactured homes built after June 15, 1976 follow the federal HUD standards.
+              Browse the floor plans and actual photos to compare kitchens, baths, and finishes —
+              and ask which features are included in the model you like.
             </p>
           </div>
         </div>
@@ -138,13 +138,13 @@ export default function ModularVsManufacturedPage() {
           {[
             {
               title: "Manufactured home",
-              pros: ["Most affordable new home on land", "Sold with land, qualifies for conventional, FHA, VA or USDA", "Fastest move-in — weeks, not months", "Brand-new, warrantied, energy-efficient"],
-              cons: ["Some still carry an old 'mobile home' perception", "Value is land-driven — strongest on deeded land you own"],
+              pros: ["Factory-built to federal HUD standards", "A range of floor plans and finish options", "Land-home or your-own-land project options", "New-home warranty details available for review"],
+              cons: ["Confirm the model can be placed on your specific lot", "Foundation, title, and loan-program requirements need review"],
             },
             {
               title: "Modular home",
-              pros: ["Appraises & appreciates like a site-built home", "Built to the same local code as stick-built", "Most flexible design & layout", "Conventional/FHA/VA/USDA financing"],
-              cons: ["Costs more than a manufactured home", "Foundation + permitting take a little longer"],
+              pros: ["Factory-built to applicable state and local codes", "Manufacturer-specific plans and finish choices", "Permanent foundation designed for the site", "Mortgage options subject to lender and property approval"],
+              cons: ["Compare quotes with the same project scope", "Site preparation, permitting, and installation still affect timing"],
             },
           ].map((c) => (
             <div key={c.title} className="rounded-card border border-stone-line bg-stone-surface p-6">
@@ -170,24 +170,20 @@ export default function ModularVsManufacturedPage() {
         </div>
       </section>
 
-      {/* Permanent foundation = financeable */}
+      {/* Financing depends on the home, site, title, and borrower */}
       <section className="container-x py-4">
         <div className="mx-auto max-w-4xl rounded-card border border-brand-200 bg-brand-50/60 p-6 sm:p-10">
           <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">The financing key</p>
           <h2 className="mt-1 font-display text-2xl font-semibold text-stone-ink">
-            A permanent foundation makes a manufactured home financeable like a regular house
+            The foundation matters — so do the title, property, and borrower
           </h2>
           <p className="mt-3 max-w-2xl leading-relaxed text-stone-ink/85">
-            Here&apos;s what most people don&apos;t realize: when a manufactured home is set on a{" "}
-            <strong className="font-semibold text-stone-ink">permanent, HUD-certified foundation</strong>{" "}
-            on land you own, it&apos;s treated as <strong className="font-semibold text-stone-ink">real
-            property</strong> — not a vehicle. That opens up the same mortgage programs as a site-built
-            house: <strong>conventional, FHA, VA, and USDA</strong>. It&apos;s the difference between a
-            short, high-rate &ldquo;chattel&rdquo; loan and a real 30-year mortgage — and it&apos;s how
-            most of our buyers finance their home. In fact,{" "}
-            <strong className="font-semibold text-stone-ink">every manufactured home we sell with land
-            qualifies for conventional, FHA, VA, or USDA financing</strong> — the same programs as a
-            site-built house. We handle the land, the foundation, and the paperwork so it does.
+            A <strong className="font-semibold text-stone-ink">permanent foundation</strong> and
+            proper real-property classification can be important requirements for a manufactured-home
+            mortgage. Owning the land alone does not guarantee a loan or determine the home&apos;s
+            legal classification. Your lender reviews the home, title, site, appraisal, and borrower
+            against the chosen program&apos;s rules. Ask which options are available for your
+            property before assuming a rate, payment, or approval.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link

@@ -181,6 +181,11 @@ export default async function HomePage() {
         <p className="mt-3 max-w-2xl text-stone-muted">
           Explore the models our buyers ask for most, then we&apos;ll pair the right one with a real lot and a complete package price.
         </p>
+        <p className="mt-2 max-w-2xl text-sm text-stone-muted">
+          Package estimates include full setup and assume a quarter-acre lot.
+          Land, lot size, site work, and utility costs vary. Call, text, or email
+          us for a written estimate.
+        </p>
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {homes.map((h) => (
             <HomeCard key={h.id} home={h} />
