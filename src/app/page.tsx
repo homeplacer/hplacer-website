@@ -299,7 +299,7 @@ export default async function HomePage() {
             { n: "01", t: "Pick your home", d: "Browse our floor plans or tell us what you need. We match you to a model and a budget." },
             { n: "02", t: "Pick your land", d: "Use our lots or bring your own. We handle the package — home plus land, one price." },
             { n: "03", t: "We do the setup", d: "Permits, delivery, foundation, tie-downs, and utility hookups — all coordinated by us." },
-            { n: "04", t: "Move in", d: "Walk through your new home, get your keys, and enjoy a 30-day check-in. Home Placer provides a one-year defect warranty; the 2–10 company separately provides two-year mechanical and ten-year structural coverage." },
+            { n: "04", t: "Move in", d: "Walk through your new home and get your keys. Home Placer provides a one-year defect warranty; the 2–10 company separately provides two-year mechanical and ten-year structural coverage." },
           ].map((s) => (
             <div key={s.n} className="rounded-card border border-stone-line bg-stone-bg p-6">
               <span className="font-display text-3xl font-semibold text-accent-400">{s.n}</span>
