@@ -126,8 +126,10 @@ export default async function LocationPage({
             Placing homes in {loc.name}
           </h2>
           <p className="mt-3 text-sm text-stone-muted">
-            Tell us about your lot — or use ours. We handle permits, delivery,
-            foundation, and utilities, and hand you the keys.
+            Tell us about your lot or ask about current packages. We can discuss
+            the home, agreed setup scope, and what still needs review. Prefer a
+            lot without an HOA? Ask us to confirm the chosen parcel&apos;s
+            association status and recorded restrictions.
           </p>
           <Link
             href={`/contact?home=${encodeURIComponent(loc.name + " area")}`}
@@ -154,16 +156,16 @@ export default async function LocationPage({
                 { t: "Utilities", d: county.utilitiesText },
                 {
                   t: "Financing",
-                  d: `FHA, VA, and conventional land-home loans — and ${county.usdaText}.`,
+                  d: `Conventional, FHA, VA, or USDA options may be available; lender and property requirements apply. ${county.usdaText}.`,
                 },
                 { t: "Permitting", d: county.permittingText },
                 {
                   t: "What's included",
-                  d: "The home, a quarter-acre lot, delivery, a permanent foundation, and utility hookups — one package, one closing, no HOA.",
+                  d: "Model package estimates include full setup and assume a quarter-acre lot. The actual land, utilities, site work, options, allowances, and closing arrangement must be confirmed in the listing or written scope for your property.",
                 },
                 {
                   t: "Timeline",
-                  d: "Usually a few months from choosing your home to move-in, depending on land readiness and permits.",
+                  d: "A completed listing and an ordered-home project have different schedules. Ask what remains for the actual home: availability, site readiness, permits, installation, utilities, inspections, and closing can affect move-in.",
                 },
               ].map((f) => (
                 <div key={f.t}>

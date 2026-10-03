@@ -19,19 +19,19 @@ export const metadata: Metadata = pageMetadata({
 const faqs = [
   {
     q: "What's the difference between a mobile home and a manufactured home?",
-    a: "It comes down to a date. A 'mobile home' is a factory-built home made before June 15, 1976. On that day the federal HUD code took over with strict safety, structural, and energy standards — and every factory-built home since is legally a 'manufactured home.' So when most people say 'mobile home' today, they're picturing a manufactured home: newer, safer, and far better built.",
+    a: "The important distinction is the construction standard. 'Mobile home' commonly refers to a factory-built home made before June 15, 1976. Manufactured homes built after that date follow the federal HUD construction and safety standards. Not every factory-built home is manufactured housing: modular homes follow applicable state and local building codes.",
   },
   {
     q: "Can you still buy a brand-new mobile home?",
-    a: "No — nothing has been built as a 'mobile home' since 1976. Every new home we sell is a manufactured (or modular) home built to today's HUD code, with options like full drywall, energy-efficient construction, and a real warranty. Same idea you're picturing, just the modern, code-built version.",
+    a: "People still use 'mobile home' when searching for a new manufactured home. Compare the specific model's floor plan, specifications, included finishes, construction standard, and written warranty rather than relying on the nickname.",
   },
   {
     q: "Can I get a regular mortgage, or only a 'mobile home loan'?",
-    a: "On a permanent foundation on land you own, a manufactured home is real property — so it qualifies for the same conventional, FHA, VA, and USDA mortgages as a site-built house. That's a world away from the short, high-rate 'chattel' loans old mobile homes used. We set ours up to qualify and walk you through it.",
+    a: "Mortgage options may be available, but land ownership and a permanent foundation do not automatically establish real-property status or loan approval. A lender reviews the home, title, site, appraisal, borrower, and chosen program's requirements. Home-only financing has a different scope; ask which options fit your actual project.",
   },
   {
-    q: "Are these homes safe in Grand Strand hurricanes?",
-    a: "Yes. Every home we place is built to its wind zone — HUD Wind Zone II along the coastal Carolinas — with engineered tie-downs and a proper foundation. Factory construction is consistent and inspected. It's not a 1970s trailer; it's a modern, code-built home.",
+    q: "What should I check for a Grand Strand coastal site?",
+    a: "Confirm the home's HUD data-plate ratings and the required foundation and installation design for the actual site. Coastal exposure and other site conditions may require additional review. No home is storm-proof; follow local emergency guidance rather than treating a wind-zone designation as a safety guarantee.",
   },
 ];
 
@@ -67,20 +67,20 @@ export default function MobileVsManufacturedPage() {
               in place — covering structure, safety, energy, and wind resistance.
             </p>
             <p>
-              Every factory-built home since is, legally and technically, a{" "}
-              <strong className="font-semibold text-stone-ink">manufactured home</strong>. So when someone
-              says &ldquo;I&apos;m looking at mobile homes,&rdquo; what they&apos;re actually shopping for
-              today is a manufactured home — you simply <em>can&apos;t buy a new &ldquo;mobile home,&rdquo;</em>{" "}
-              because none have been built in almost 50 years.
+              <strong className="font-semibold text-stone-ink">Manufactured homes</strong>{" "}
+              follow those federal standards. The familiar &ldquo;mobile home&rdquo;
+              name still appears in buyer searches, but it does not tell you the
+              actual home&apos;s construction standard. Modular homes are also
+              factory-built, but follow applicable state and local building codes.
             </p>
             <h3 className="pt-2 font-display text-lg font-semibold text-stone-ink">
               Why the word still sticks
             </h3>
             <p>
-              Old habits — and old reputations. The 1970s mobile home earned a reputation for thin
-              construction and dropping in value. The modern manufactured home is a different animal:
-              built indoors to the HUD code, available with full drywall, energy-efficient, warrantied,
-              and — set on land you own — it builds equity like any other house.
+              Familiar language lasts longer than changes in construction standards.
+              Look at the model&apos;s floor plan, specifications, included finishes,
+              actual photos, and written warranty. Neither the name nor land ownership
+              guarantees a home&apos;s quality, resale value, or financing terms.
             </p>
           </div>
         </div>
@@ -105,11 +105,11 @@ export default function MobileVsManufacturedPage() {
             <tbody className="divide-y divide-stone-line">
               {[
                 { l: "Building standard", o: "No federal code", n: "Federal HUD code (since 1976)" },
-                { l: "Construction", o: "Lightweight trailers", n: "Built indoors, inspected, engineered" },
-                { l: "Wind safety", o: "Minimal", n: "Built to the coastal wind zone (HUD Zone II here)" },
-                { l: "Interior", o: "Thin panel walls", n: "Full drywall available, full-size kitchen & baths" },
-                { l: "Financing", o: "Short, high-rate 'chattel' loans", n: "Conventional / FHA / VA / USDA as real property" },
-                { l: "Value", o: "Tended to depreciate", n: "Builds equity on land you own" },
+                { l: "Construction", o: "Review the individual home's records and condition", n: "Factory-built to HUD construction and safety standards" },
+                { l: "Site suitability", o: "Check the actual home, location, and installation", n: "Match documented ratings and installation design to the site" },
+                { l: "Interior", o: "Finishes and condition vary by home", n: "Compare model-specific finishes and included options" },
+                { l: "Financing", o: "Options depend on home, title, borrower, and lender", n: "Mortgage options may be available; program requirements apply" },
+                { l: "Value", o: "Condition, land, location, and market matter", n: "Condition, land, location, and market matter; no guaranteed appreciation" },
               ].map((r, i) => (
                 <tr key={r.l} className={i % 2 ? "bg-stone-surface" : "bg-stone-bg"}>
                   <td className="p-4 font-semibold text-stone-ink">{r.l}</td>
@@ -123,28 +123,30 @@ export default function MobileVsManufacturedPage() {
         </div>
       </section>
 
-      {/* Land, financing, equity */}
+      {/* Land and financing require project-specific review */}
       <section className="container-x py-12">
         <div className="mx-auto max-w-3xl">
           <h2 className="font-display text-2xl font-semibold text-stone-ink">
-            Land, financing &amp; equity — the part that really matters
+            Match the home, land, and financing
           </h2>
           <div className="mt-4 space-y-4 leading-relaxed text-stone-ink/85">
             <p>
-              The reason old mobile homes lost value is that they were often financed and titled like a
-              vehicle, with no land underneath. Put a modern manufactured home on a{" "}
-              <strong className="font-semibold text-stone-ink">permanent foundation on land you own</strong>,
-              and it becomes <strong className="font-semibold text-stone-ink">real property</strong> — it
-              appreciates with your land and qualifies for a normal 30-year mortgage.
+              A <strong className="font-semibold text-stone-ink">permanent foundation</strong>{" "}
+              and proper real-property classification can be important mortgage
+              requirements. They are not the entire approval process. Your lender
+              and closing professionals review the title, home, property, appraisal,
+              and borrower against the applicable requirements.
             </p>
             <p>
-              That&apos;s exactly what we do: a <strong className="font-semibold text-stone-ink">land-home
-              package</strong> — your new home and a ¼-acre lot, set, connected, and financed together, in
-              one closing, across Horry County and the Grand Strand (and into NC).
+              Home Placer&apos;s <strong className="font-semibold text-stone-ink">model package estimates</strong>{" "}
+              include full setup and assume a quarter-acre lot. Confirm the actual
+              parcel, utilities, site work, options, and closing arrangement in the
+              written scope. Prefer a lot without an HOA? Ask us to confirm the
+              chosen property&apos;s association status and recorded restrictions.
             </p>
           </div>
           <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-stone-muted">
-            {["Real-property mortgage, not a trailer loan", "New, HUD-code, warrantied", "Builds equity on your land", "No HOA in our packages"].map((t) => (
+            {["Model specifications available for review", "Written home-and-land scope", "Lender reviews the actual project", "Confirm the chosen lot's restrictions"].map((t) => (
               <li key={t} className="inline-flex items-center gap-1.5">
                 <CheckIcon className="size-4 text-brand-600" /> {t}
               </li>
