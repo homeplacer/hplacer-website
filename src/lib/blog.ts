@@ -17,29 +17,13 @@ let cache: Post[] | null = null;
 // it out at a steady cadence instead of dumping everything at once.
 const TODAY = new Date().toISOString().slice(0, 10);
 
-// The public package floor is a live business fact, not an editorial estimate.
-// Older first-party posts were drafted when it was described as "low $200s";
-// normalize that wording at the content boundary so every published article
-// stays truthful after the confirmed $179,999 package became available.
-function normalizeCurrentPackagePrice(text: string): string {
-  return text
-    .replaceAll("from the low $200s", "from $179,999")
-    .replaceAll("in the low $200s", "at $179,999")
-    .replaceAll("low-to-mid $200s", "$179,999 and up")
-    .replaceAll("low $200s", "$179,999");
-}
-
 // All posts incl. future-dated queue entries. Tooling only — never user-facing.
 export function getScheduledPosts(): Post[] {
   if (!cache) {
     const posts = postsJson as unknown as Post[];
-    cache = posts
-      .map((post) => ({
-        ...post,
-        description: normalizeCurrentPackagePrice(post.description),
-        bodyMarkdown: normalizeCurrentPackagePrice(post.bodyMarkdown),
-      }))
-      .sort((a, b) => b.date.localeCompare(a.date));
+    // Editorial history is not live inventory. Preserve the authored sale
+    // examples; articles point to current listings/estimates for today's prices.
+    cache = [...posts].sort((a, b) => b.date.localeCompare(a.date));
   }
   return cache;
 }
