@@ -7,6 +7,7 @@ import { JsonLd, articleLd, breadcrumbLd } from "@/lib/jsonld";
 import { PhoneIcon } from "@/components/icons";
 import { site } from "@/lib/site";
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
+import { blogMetadataTitle } from "@/lib/blog-metadata";
 
 export function generateStaticParams() {
   return getAllPosts().map((p) => ({ slug: p.slug }));
@@ -20,14 +21,15 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) return { title: "Post not found" };
+  const seoTitle = blogMetadataTitle(post);
   return pageMetadata({
-    title: post.title,
+    title: seoTitle,
     description: post.description,
     alternates: { canonical: `/blog/${slug}` },
     openGraph: {
       type: "article",
       url: `/blog/${slug}`,
-      title: post.title,
+      title: seoTitle,
       description: post.description,
     },
   });
