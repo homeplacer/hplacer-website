@@ -84,3 +84,38 @@ the release check or changing the existing ASSETS cache policy.
 - This safeguard lane did not install dependencies, run a production build,
   populate caches, start a Worker, merge, or deploy. The release owner separately
   owns integrated build and deployment verification.
+
+## Separate inherited freshness follow-up
+
+The release owner's aged local integrated artifact returned HTTP 200 for the
+homepage with `x-nextjs-cache: STALE`, alongside dummy-queue and read-only-cache
+errors. This is a separate freshness issue, not a malformed-JSON failure and not
+a refresh fix delivered by this batch.
+
+Read-only comparison of the installed baseline (Next 16.3.3, OpenNext Cloudflare
+1.19.11, AWS adapter 4.0.2) and updated versions (16.3.8, 1.20.8, 4.1.7) found
+byte-identical static-assets cache, queue-default resolver, build-timestamp
+compiler, and dummy-queue implementations. The unchanged cache handler returns
+the fixed build timestamp as `lastModified` and cannot persist refreshed records;
+the unchanged default queue throws when a stale response requests background
+revalidation. Both Next versions compare record age against its revalidation
+interval. Configuration, bindings, and the feed's declared refresh intervals
+were not changed in this release.
+
+The existing active-listings fetch interval is 300 seconds and closed-listings
+interval is 900 seconds. The integrated prerender manifest records 300 seconds
+for `/` and `/land-packages`, 900 seconds for `/recently-placed`, and no interval
+for the static `/homes/eclipse` model page. Fresh `HIT` responses after a rebuild
+do not demonstrate that listings refresh after those intervals expire. These
+findings establish an inherited configuration mismatch; they do not establish a
+new dependency regression or verify production refresh behavior.
+
+The backend owner needs a separate writable incremental-cache and functioning
+revalidation-queue design, including any required resources, bindings,
+permissions, and release safeguards. Verify artifacts after their TTL has elapsed
+and confirm that a controlled upstream listing change is reflected without a new
+site build; preserve active-only filtering and the additive, deduplicated sold
+archive. Do not disable refresh intervals or all caching, or downgrade the
+security updates, merely to hide the errors. No cache-policy or runtime change
+is included in this PR, and automatic MLS refresh must not be described as fixed
+by this release.
