@@ -22,6 +22,7 @@ import {
 } from "@/lib/home-types";
 import { HomeCard } from "@/components/home-card";
 import { HomeGallery } from "@/components/home-gallery";
+import { ModelVirtualTour } from "@/components/model-virtual-tour";
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 import { WantThisHouseForm } from "@/components/want-this-house-form";
 import { WidthSelector } from "@/components/width-selector";
@@ -462,16 +463,7 @@ export default async function HomeDetailPage({
             Walk through {home.name} from anywhere — drag to look around, or
             step room to room.
           </p>
-          <div className="mt-5 aspect-video overflow-hidden rounded-card border border-stone-line bg-stone-sunken">
-            <iframe
-              src={tourUrl}
-              title={`${home.name} 3D virtual tour`}
-              allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer"
-              allowFullScreen
-              loading="lazy"
-              className="size-full"
-            />
-          </div>
+          <ModelVirtualTour url={tourUrl} name={home.name} />
         </section>
       )}
 
