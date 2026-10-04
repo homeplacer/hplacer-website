@@ -18,6 +18,7 @@ import {
   PhoneIcon,
 } from "@/components/icons";
 import { FallbackImage } from "@/components/fallback-image";
+import { modelGallerySrcSet } from "@/lib/model-gallery-images";
 import { site } from "@/lib/site";
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 
@@ -25,7 +26,10 @@ import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 // the fallback and source of record; these derivatives only avoid downloading a
 // 1,200px JPEG into a roughly 350–450px card on a phone.
 function cardImageSrcSet(src: string | undefined): string | undefined {
-  if (!src || !/^\/models\/[^/]+\/01\.jpg$/.test(src)) return undefined;
+  if (!src) return undefined;
+  const gallerySrcSet = modelGallerySrcSet(src, "hero");
+  if (gallerySrcSet) return gallerySrcSet;
+  if (!/^\/models\/[^/]+\/01\.jpg$/.test(src)) return undefined;
   const stem = src.slice(0, -4);
   return `${stem}-480.webp 480w, ${stem}-640.webp 640w`;
 }

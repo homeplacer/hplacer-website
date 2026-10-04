@@ -1,17 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import { HomeMark } from "@/components/icons";
 import { FallbackImage } from "@/components/fallback-image";
+import { HomeGalleryLightbox } from "@/components/home-gallery-lightbox";
+import {
+  modelGalleryHeroSizes,
+  modelGallerySrcSet,
+  modelGalleryThumbnailSizes,
+} from "@/lib/model-gallery-images";
 
-// Max thumbnails shown inline under the main image; the rest live behind a
-// "+N" tile that opens the lightbox (whose filmstrip browses every photo).
-const MAX_THUMBS = 12;
-
-// Fallbacks for hotlinked manufacturer photos that 404 — reuse the house-mark
-// placeholder look so a dead CDN image degrades to the empty state, not a broken
-// icon. The container behind supplies the gradient (same as the no-photo case).
+// Keep one compact row on desktop; the on-demand filmstrip retains every photo.
+const MAX_THUMBS = 6;
 const HERO_FALLBACK = (
   <div className="grid size-full place-items-center text-brand-300/70">
     <HomeMark className="size-24" strokeWidth={1} />
@@ -20,11 +20,6 @@ const HERO_FALLBACK = (
 const TILE_FALLBACK = (
   <div className="grid size-full place-items-center bg-stone-surface text-brand-300/60">
     <HomeMark className="size-6" strokeWidth={1.25} />
-  </div>
-);
-const STAGE_FALLBACK = (
-  <div className="grid place-items-center p-12 text-white/40">
-    <HomeMark className="size-24" strokeWidth={1} />
   </div>
 );
 
@@ -41,84 +36,42 @@ export function HomeGallery({
   const [open, setOpen] = useState(false);
   const mainBtnRef = useRef<HTMLButtonElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const lastTriggerRef = useRef<HTMLElement | null>(null);
-  const stripRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const touchX = useRef<number | null>(null);
-
   const count = images.length;
-  const hero = images[0];
-
   const go = useCallback(
-    (dir: number) => setActive((i) => (count ? (i + dir + count) % count : 0)),
+    (direction: number) =>
+      setActive((index) => (count ? (index + direction + count) % count : 0)),
     [count],
   );
+  const close = useCallback(() => setOpen(false), []);
 
-  const close = useCallback(() => {
-    setOpen(false);
-    (lastTriggerRef.current ?? mainBtnRef.current)?.focus();
-  }, []);
-
-  // Keyboard + scroll-lock while the lightbox is open.
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-      else if (e.key === "ArrowRight") go(1);
-      else if (e.key === "ArrowLeft") go(-1);
-      else if (e.key === "Tab") {
-        // Trap focus inside the modal lightbox (it declares aria-modal).
-        const root = dialogRef.current;
-        if (!root) return;
-        const f = root.querySelectorAll<HTMLElement>("button:not([disabled])");
-        if (!f.length) return;
-        const first = f[0];
-        const last = f[f.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    const prevOverflow = document.body.style.overflow;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const previousOverflow = document.body.style.overflow;
+    const trigger = lastTriggerRef.current ?? mainBtnRef.current;
     document.body.style.overflow = "hidden";
+    dialog.showModal();
     closeBtnRef.current?.focus();
     return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prevOverflow;
+      dialog.close();
+      document.body.style.overflow = previousOverflow;
+      trigger?.focus();
     };
-  }, [open, go, close]);
+  }, [open]);
 
-  // Keep the active thumbnail centered in the lightbox filmstrip.
-  useEffect(() => {
-    if (!open) return;
-    stripRefs.current[active]?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
-  }, [active, open]);
-
-  function openAt(i: number) {
-    lastTriggerRef.current = (document.activeElement as HTMLElement | null) ?? null;
-    setActive(i);
+  function openAt(index: number) {
+    lastTriggerRef.current = document.activeElement as HTMLElement | null;
+    setActive(index);
     setOpen(true);
-  }
-  function onTouchStart(e: React.TouchEvent) {
-    touchX.current = e.touches[0].clientX;
-  }
-  function onTouchEnd(e: React.TouchEvent) {
-    if (touchX.current == null) return;
-    const dx = e.changedTouches[0].clientX - touchX.current;
-    if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
-    touchX.current = null;
   }
 
   return (
     <div>
-      {/* Main image */}
       <div className="relative aspect-[4/3] overflow-hidden rounded-card bg-gradient-to-br from-brand-100 via-stone-surface to-accent-100">
-        {hero ? (
+        {images[0] ? (
           <button
             ref={mainBtnRef}
             type="button"
@@ -132,10 +85,12 @@ export function HomeGallery({
               alt={`${name} — photo ${active + 1}`}
               width={1200}
               height={900}
+              loading="eager"
               fetchPriority="high"
               decoding="async"
+              srcSet={modelGallerySrcSet(images[active], "hero")}
               responsiveWidths={[640, 960, 1200, 1600]}
-              sizes="(max-width: 1023px) calc(100vw - 2.5rem), 55vw"
+              sizes={modelGalleryHeroSizes}
               className="size-full object-cover transition duration-300 group-hover:scale-[1.02]"
               fallback={HERO_FALLBACK}
             />
@@ -144,51 +99,56 @@ export function HomeGallery({
             </span>
           </button>
         ) : (
-          <div className="absolute inset-0 grid place-items-center text-brand-300/70">
-            <HomeMark className="size-24" strokeWidth={1} />
-          </div>
+          HERO_FALLBACK
         )}
         <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-stone-bg/90 px-3 py-1 text-sm font-semibold text-brand-800 shadow-sm">
           {brand}
         </span>
       </div>
-
-      {/* Thumbnails — cap the inline grid; the lightbox filmstrip browses them all. */}
       {count > 1 && (
         <div className="mt-3 grid grid-cols-4 gap-2.5 sm:grid-cols-6">
-          {(count > MAX_THUMBS ? images.slice(0, MAX_THUMBS - 1) : images).map((src, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => (i === active ? openAt(i) : setActive(i))}
-              aria-label={i === active ? `Expand photo ${i + 1}` : `View photo ${i + 1}`}
-              aria-pressed={i === active}
-              className={
-                "group relative aspect-square w-full overflow-hidden rounded-lg transition " +
-                (i === active
-                  ? "ring-2 ring-brand-600 ring-offset-1 ring-offset-stone-bg"
-                  : "opacity-80 ring-1 ring-stone-line hover:opacity-100 hover:ring-brand-300")
-              }
-            >
-              <FallbackImage
-                src={src}
-                alt={`${name} thumbnail ${i + 1}`}
-                width={240}
-                height={240}
-                loading="lazy"
-                decoding="async"
-                responsiveWidths={[96, 160, 240]}
-                sizes="(max-width: 639px) 25vw, 160px"
-                className="size-full object-cover"
-                fallback={TILE_FALLBACK}
-              />
-              {i === active && (
-                <span className="pointer-events-none absolute inset-0 grid place-items-center bg-stone-ink/25 opacity-0 transition group-hover:opacity-100">
-                  <ExpandIcon className="size-4 text-white" />
-                </span>
-              )}
-            </button>
-          ))}
+          {(count > MAX_THUMBS ? images.slice(0, MAX_THUMBS - 1) : images).map(
+            (src, index) => (
+              <button
+                key={src}
+                type="button"
+                onClick={() =>
+                  index === active ? openAt(index) : setActive(index)
+                }
+                aria-label={
+                  index === active
+                    ? `Expand photo ${index + 1}`
+                    : `View photo ${index + 1}`
+                }
+                aria-pressed={index === active}
+                className={
+                  "group relative aspect-square w-full overflow-hidden rounded-lg transition " +
+                  (index === active
+                    ? "ring-2 ring-brand-600 ring-offset-1 ring-offset-stone-bg"
+                    : "opacity-80 ring-1 ring-stone-line hover:opacity-100 hover:ring-brand-300")
+                }
+              >
+                <FallbackImage
+                  src={src}
+                  alt={`${name} thumbnail ${index + 1}`}
+                  width={240}
+                  height={240}
+                  loading="lazy"
+                  decoding="async"
+                  srcSet={modelGallerySrcSet(src, "thumbnail")}
+                  responsiveWidths={[96, 160, 240]}
+                  sizes={modelGalleryThumbnailSizes}
+                  className="size-full object-cover"
+                  fallback={TILE_FALLBACK}
+                />
+                {index === active && (
+                  <span className="pointer-events-none absolute inset-0 grid place-items-center bg-stone-ink/25 opacity-0 transition group-hover:opacity-100">
+                    <ExpandIcon className="size-4 text-white" />
+                  </span>
+                )}
+              </button>
+            ),
+          )}
           {count > MAX_THUMBS && (
             <button
               type="button"
@@ -203,8 +163,9 @@ export function HomeGallery({
                 height={240}
                 loading="lazy"
                 decoding="async"
+                srcSet={modelGallerySrcSet(images[MAX_THUMBS - 1], "thumbnail")}
                 responsiveWidths={[96, 160, 240]}
-                sizes="(max-width: 639px) 25vw, 160px"
+                sizes={modelGalleryThumbnailSizes}
                 className="size-full object-cover"
                 fallback={TILE_FALLBACK}
               />
@@ -215,141 +176,108 @@ export function HomeGallery({
           )}
         </div>
       )}
-
-      {/* Lightbox */}
-      {open &&
-        typeof document !== "undefined" &&
-        createPortal(
-          <div
-            ref={dialogRef}
-            role="dialog"
-            aria-modal="true"
-            aria-label={`${name} photos`}
-            className="fixed inset-0 z-[100] flex flex-col bg-stone-ink/92 backdrop-blur-sm"
-            onClick={close}
-          >
-            {/* Top bar */}
-            <div className="flex items-center justify-between px-4 py-3 text-white sm:px-6">
-              <span className="text-sm font-medium tabular-nums text-white/80">
-                {active + 1} / {count}
-              </span>
-              <button
-                ref={closeBtnRef}
-                type="button"
-                onClick={close}
-                aria-label="Close"
-                className="inline-flex size-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
-              >
-                <CloseIcon className="size-5" />
-              </button>
-            </div>
-
-            {/* Stage */}
-            <div
-              className="relative flex flex-1 items-center justify-center overflow-hidden px-4 pb-6 sm:px-16"
-              onClick={(e) => e.stopPropagation()}
-              onTouchStart={onTouchStart}
-              onTouchEnd={onTouchEnd}
+      {count > 0 && (
+        <noscript>
+          <p>Open full-size photos:</p>
+          <ul>
+            {images.map((src, index) => (
+              <li key={index}>
+                <a href={src} target="_blank" rel="noopener noreferrer">
+                  {name} — photo {index + 1}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </noscript>
+      )}
+      {open && (
+        <dialog
+          ref={dialogRef}
+          aria-label={`${name} photos`}
+          onCancel={(event) => {
+            event.preventDefault();
+            close();
+          }}
+          onClose={close}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) close();
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+              event.preventDefault();
+              go(event.key === "ArrowRight" ? 1 : -1);
+            } else if (event.key === "Tab") {
+              const buttons =
+                event.currentTarget.querySelectorAll<HTMLButtonElement>(
+                  "button:not([disabled])",
+                );
+              const first = buttons[0];
+              const last = buttons[buttons.length - 1];
+              if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last?.focus();
+              } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first?.focus();
+              }
+            }
+          }}
+          className="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none flex-col border-0 bg-stone-ink/95 p-0 text-white open:flex backdrop:bg-stone-ink/95"
+        >
+          <div className="flex shrink-0 items-center justify-between px-4 py-3 sm:px-6">
+            <span className="text-sm font-medium tabular-nums text-white/80">
+              {active + 1} / {count}
+            </span>
+            <button
+              ref={closeBtnRef}
+              type="button"
+              onClick={close}
+              aria-label="Close photos"
+              className="inline-flex size-11 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20"
             >
-              {count > 1 && (
-                <button
-                  type="button"
-                  onClick={() => go(-1)}
-                  aria-label="Previous photo"
-                  className="absolute left-2 top-1/2 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:left-4"
-                >
-                  <ChevronIcon className="size-6 rotate-180" />
-                </button>
-              )}
-
-              <FallbackImage
-                key={images[active]}
-                src={images[active]}
-                alt={`${name} — photo ${active + 1}`}
-                width={1600}
-                height={1200}
-                decoding="async"
-                responsiveWidths={[960, 1280, 1600, 1920]}
-                sizes="100vw"
-                className="max-h-full max-w-full select-none rounded-lg object-contain shadow-2xl"
-                draggable={false}
-                fallback={STAGE_FALLBACK}
-              />
-
-              {count > 1 && (
-                <button
-                  type="button"
-                  onClick={() => go(1)}
-                  aria-label="Next photo"
-                  className="absolute right-2 top-1/2 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-4"
-                >
-                  <ChevronIcon className="size-6" />
-                </button>
-              )}
-            </div>
-
-            {/* Filmstrip */}
-            {count > 1 && (
-              <div
-                className="flex justify-start gap-2 overflow-x-auto px-4 pb-5 sm:justify-center sm:px-6"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {images.map((src, i) => (
-                  <button
-                    key={i}
-                    ref={(el) => {
-                      stripRefs.current[i] = el;
-                    }}
-                    type="button"
-                    onClick={() => setActive(i)}
-                    aria-label={`Go to photo ${i + 1}`}
-                    aria-pressed={i === active}
-                    className={
-                      "size-14 shrink-0 overflow-hidden rounded-md transition " +
-                      (i === active ? "ring-2 ring-white" : "opacity-50 hover:opacity-90")
-                    }
-                  >
-                    <FallbackImage
-                      src={src}
-                      alt=""
-                      width={112}
-                      height={112}
-                      loading="lazy"
-                      decoding="async"
-                      responsiveWidths={[56, 112]}
-                      sizes="56px"
-                      className="size-full object-cover"
-                      fallback={TILE_FALLBACK}
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>,
-          document.body,
-        )}
+              <CloseIcon className="size-5" />
+            </button>
+          </div>
+          <HomeGalleryLightbox
+            images={images}
+            name={name}
+            active={active}
+            onSelect={setActive}
+            onNext={() => go(1)}
+            onPrevious={() => go(-1)}
+          />
+        </dialog>
+      )}
     </div>
   );
 }
 
 function ExpandIcon({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
       <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
     </svg>
   );
 }
 function CloseIcon({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={className}>
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      className={className}
+    >
       <path d="M18 6 6 18M6 6l12 12" />
-    </svg>
-  );
-}
-function ChevronIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="m9 18 6-6-6-6" />
     </svg>
   );
 }
