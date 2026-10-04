@@ -415,7 +415,7 @@ export default async function HomeDetailPage({
         </section>
       )}
 
-      {/* Available now — tour CTA + link to the live MLS collab (compliant link, not republished data) */}
+      {/* Current packages — keep available properties separate from sold history. */}
       <section className="container-x py-4">
         <div className="flex flex-col gap-5 rounded-card border border-stone-line bg-stone-surface p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
           <div>
@@ -439,10 +439,10 @@ export default async function HomeDetailPage({
               <PhoneIcon className="size-4" /> {site.phoneDisplay}
             </a>
             <Link
-              href="/recently-placed"
+              href="/land-packages"
               className="inline-flex items-center gap-2 rounded-full border border-stone-line bg-stone-bg px-6 py-3 text-base font-semibold text-stone-ink transition hover:border-brand-300"
             >
-              See our recent homes <ArrowIcon className="size-4" />
+              Browse current packages <ArrowIcon className="size-4" />
             </Link>
           </div>
         </div>
