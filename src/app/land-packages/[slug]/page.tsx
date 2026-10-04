@@ -2,9 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
+import { LivePackageNavigation } from "@/components/live-package-navigation";
 import { BathIcon, BedIcon, PhoneIcon, RulerIcon } from "@/components/icons";
 import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
-import { getLivePackageBySlug } from "@/lib/forturro-package-feed";
+import { getLivePackageBySlug, getLivePackageListings, packageSlug } from "@/lib/forturro-package-feed";
 import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/lib/site";
 
@@ -24,7 +25,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LandPackageDetail({ params }: Props) {
   const { slug } = await params;
-  const listing = await getLivePackageBySlug(slug);
+  const listings = await getLivePackageListings();
+  const listing = listings.find((candidate) => packageSlug(candidate) === slug);
   if (!listing) notFound();
   const price = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(listing.listPrice);
   const url = `${site.url}/land-packages/${slug}`;
@@ -96,5 +98,6 @@ export default async function LandPackageDetail({ params }: Props) {
         </div>
       </div>
     </section>
+    <LivePackageNavigation listings={listings} currentSlug={slug} />
   </>;
 }
