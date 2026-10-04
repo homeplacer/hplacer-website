@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { asset } from "@/lib/asset";
 import { PinIcon } from "@/components/icons";
-import type { PlacedHome } from "@/lib/placed-homes";
+import type { PlacedHomeCard } from "@/lib/placed-home-card";
 
 const fmt = (n: number) => "$" + n.toLocaleString("en-US");
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -28,8 +28,8 @@ function CameraIcon() {
   );
 }
 
-function Card({ h, eager }: { h: PlacedHome; eager: boolean }) {
-  const count = h.photos.length;
+function Card({ h, eager }: { h: PlacedHomeCard; eager: boolean }) {
+  const count = h.photoCount;
   return (
     <li className="overflow-hidden rounded-card border border-stone-line bg-stone-surface transition hover:border-brand-300 hover:shadow-sm">
       <Link href={`/recently-placed/${h.slug}`} className="group flex h-full flex-col">
@@ -74,7 +74,7 @@ function Card({ h, eager }: { h: PlacedHome; eager: boolean }) {
 // Grid of every placed home with a sort toggle: newest sales first (default),
 // or grouped by city (cities ordered by their most-recent sale). Each card
 // links to that home's own page.
-export function PlacedHomes({ homes }: { homes: PlacedHome[] }) {
+export function PlacedHomes({ homes }: { homes: PlacedHomeCard[] }) {
   const [sort, setSort] = useState<"recent" | "city">("recent");
 
   const byDate = useMemo(
@@ -83,7 +83,7 @@ export function PlacedHomes({ homes }: { homes: PlacedHome[] }) {
   );
 
   const cities = useMemo(() => {
-    const m = new Map<string, PlacedHome[]>();
+    const m = new Map<string, PlacedHomeCard[]>();
     for (const h of byDate) {
       if (!m.has(h.town)) m.set(h.town, []);
       m.get(h.town)!.push(h);

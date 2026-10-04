@@ -8,6 +8,7 @@ import { PlacementsMap, type Placement } from "@/components/placements-map";
 import { PlacedHomes } from "@/components/placed-homes";
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 import { getAllPlacedHomes } from "@/lib/placed-homes";
+import { toPlacedHomeCard } from "@/lib/placed-home-card";
 import { getNewClosedHomePlacerSales } from "@/lib/forturro-closed-feed";
 import { JsonLd, placedHomesGalleryLd } from "@/lib/jsonld";
 import placementsData from "../../../data/placements.json";
@@ -105,7 +106,7 @@ export default async function RecentlyPlacedPage() {
           .
         </p>
 
-        <PlacedHomes homes={homes} />
+        <PlacedHomes homes={homes.map(toPlacedHomeCard)} />
 
         {newClosings.length > 0 && (
           <section className="mt-12 border-t border-stone-line pt-12">
