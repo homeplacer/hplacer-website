@@ -25,7 +25,7 @@ function load(source, imports) {
   return testModule.exports;
 }
 const feed = load(read("src/lib/forturro-package-feed.ts"), {
-  "../../data/mls-listings-active.json": { default: { listings: [] } },
+  "next/cache": { unstable_cache: (fn) => fn },
 });
 const Link = ({ children, ...props }) => React.createElement("a", props, children);
 const navigationSource = read("src/components/live-package-navigation.tsx");

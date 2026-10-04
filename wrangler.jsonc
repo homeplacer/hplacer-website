@@ -10,5 +10,19 @@
   "routes": [
     { "pattern": "hplacer.com", "custom_domain": true },
     { "pattern": "www.hplacer.com", "custom_domain": true }
+  ],
+  "services": [
+    { "binding": "WORKER_SELF_REFERENCE", "service": "hplacer-app" }
+  ],
+  "r2_buckets": [
+    { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "hplacer-web-incremental-cache" }
+  ],
+  "durable_objects": {
+    "bindings": [
+      { "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1-isr-queue", "new_sqlite_classes": ["DOQueueHandler"] }
   ]
 }

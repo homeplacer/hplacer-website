@@ -59,7 +59,7 @@ test("a valid build passes before OpenNext has populated its ASSETS mirror", (t)
   assert.equal(verifyBuildCache(root).ok, true);
   const command = cli();
   assert.equal(command.status, 0);
-  assert.match(command.stdout, /ASSETS mirror not populated yet/);
+  assert.match(command.stdout, /No ASSETS mirror/);
 });
 
 test("post-population mode fails closed when its required mirror is absent", (t) => {

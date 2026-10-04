@@ -44,12 +44,30 @@ and keep the tree clean before deploying:
 cd hplacer
 git checkout main
 git pull origin main
-npm run deploy       # = build-manifests → opennextjs-cloudflare build → opennextjs-cloudflare deploy
+npm run deploy       # validates data → manifests → OpenNext build → cache JSON gate → deploy
 ```
 
-The deploy also populates the static-assets incremental cache into the `ASSETS`
-bundle, so prerendered pages are served from cache instead of re-rendered per
-request (background: `OPENNEXT-CACHE-AUDIT.md`).
+The deploy populates the validated build cache into the dedicated R2 bucket
+`hplacer-web-incremental-cache`. Runtime regeneration writes back to R2 through
+OpenNext; `DOQueueHandler` and `WORKER_SELF_REFERENCE` handle background refresh.
+The initial switch requires separately approved R2 provisioning and the
+`v1-isr-queue` Durable Object migration in `wrangler.jsonc`. Do not use the
+employee portal's photo bucket.
+
+The source JSON gate remains mandatory before any upload. There is no ASSETS
+cache mirror with this adapter. To verify population locally:
+
+```bash
+npm run verify:build-cache
+npx opennextjs-cloudflare populateCache local
+node scripts/tests/verify-local-r2-cache.mjs
+```
+
+For the first R2 release, follow
+[the MLS refresh rollout notes](docs/operations/mls-refresh-investigation-20261004.md).
+A newly built cache HIT alone does not prove refresh: run the local runtime test
+through its real 300/900-second intervals. The first request after expiry starts
+background regeneration; updates are request-driven, not a scheduled poll.
 
 ## Post-deploy verification (safe — single requests, no load testing)
 
@@ -60,7 +78,7 @@ protection. A handful of single requests is enough:
 2. **`/homes`** — returns **200** and the model grid renders.
 3. **One detail page** — e.g. `https://hplacer.com/homes/palmer` returns **200**.
 4. **Cache is working** — request a page **twice**; the response header shows
-   **`x-nextjs-cache: HIT`**. This is the pass/fail signal — a `MISS` on every
+   **`x-open-next-cache: HIT`** (or `x-nextjs-cache: HIT` when Next serves it). This is the pass/fail signal — a `MISS` on every
    request means the incremental cache has regressed.
 5. **`/api/lead` stays dynamic** — `GET https://hplacer.com/api/lead` returns
    **405** (POST-only) with **no** `x-nextjs-cache` header. Do **not** POST a test
@@ -80,6 +98,14 @@ Then watch **Cloudflare → Workers analytics** over a few hours (CPU P90, cache
 rate, `1102`/`5xx`). No traffic generation needed.
 
 ## Rollback
+
+The first writable-cache release adds a Durable Object namespace. Do not assume
+an immediate rollback across that migration is supported. Prefer a reviewed
+forward recovery deployment preserving the namespace and R2 bindings; retain
+the bucket, build-specific cache objects, and recorded last-good version.
+Never delete production storage to force a rollback. Confirm Cloudflare's
+migration constraints before using the historical rollback commands below.
+
 
 - **Revert + redeploy (canonical — repo and live Worker stay in sync):**
   ```bash

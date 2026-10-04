@@ -105,7 +105,7 @@ function main() {
     `Build cache integrity verified: ${source.records} source records; ` +
       (assets.present
         ? `${assets.records} ASSETS mirror records.`
-        : "ASSETS mirror not populated yet (OpenNext populates it before upload)."),
+        : "No ASSETS mirror (R2 deployments populate the validated source records into R2)."),
   );
 }
 
