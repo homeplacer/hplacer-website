@@ -7,17 +7,32 @@ const localPhotos: Record<string, number[]> = galleryAssets;
 
 export function modelGallerySrcSet(
   src: string,
-  usage: "hero" | "thumbnail",
+  usage: "hero" | "thumbnail" | "card",
 ): string | undefined {
   if (!Object.hasOwn(localPhotos, src)) return undefined;
   const stem = src.slice(0, -4);
-  const widths = localPhotos[src].filter((width) =>
-    usage === "hero" ? width >= 640 : width <= 320,
-  );
+  const widths = localPhotos[src].filter((width) => {
+    if (usage === "hero") return width >= 640;
+    if (usage === "card") return width === 320 || width === 640;
+    return width <= 320;
+  });
   if (!widths.length) return undefined;
   return widths
     .map((width) => `${stem}-gallery-${width}.webp ${width}w`)
     .join(", ");
+}
+
+export function modelCardSrcSet(src: string | undefined): string | undefined {
+  if (!src) return undefined;
+  // Preserve the existing 480/640 card transfer budget for ordinary covers.
+  // Regression tests verify both legacy files for every current 01.jpg cover.
+  if (/^\/models\/[^/]+\/01\.jpg$/.test(src)) {
+    const stem = src.slice(0, -4);
+    return `${stem}-480.webp 480w, ${stem}-640.webp 640w`;
+  }
+  // Non-01 covers (including Eclipse/Beacon) need compact card variants, not
+  // the larger hero sizes used by the full model detail gallery.
+  return modelGallerySrcSet(src, "card");
 }
 
 // Match the actual 76rem shell, its padding, and the two-column gallery grid.

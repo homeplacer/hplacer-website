@@ -5,7 +5,7 @@ import { FallbackImage } from "@/components/fallback-image";
 import { HomeMark } from "@/components/icons";
 import { modelGallerySrcSet } from "@/lib/model-gallery-images";
 
-// Loaded only after a visitor expands a photo. Original JPEGs remain available
+// Rendered only after a visitor expands a photo. Original JPEGs remain available
 // at full resolution; the filmstrip uses the same compact photo derivatives.
 export function HomeGalleryLightbox({
   images,

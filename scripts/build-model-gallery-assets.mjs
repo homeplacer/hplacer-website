@@ -1,5 +1,7 @@
 // Repeatable frontend asset encoding only: no retouching, source-catalog edits,
 // remote downloads, image service, or runtime/backend dependency.
+// Prerequisite: npm ci installs the repository's currently locked Next/sharp
+// dependency tree. Normal builds use committed assets without running encoding.
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";

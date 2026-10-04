@@ -174,6 +174,14 @@ test("viewer renders only on request and retains native modality, Escape, arrows
   assert.match(shell, /trigger\?\.focus\(\)/);
   assert.match(shell, /first\?\.focus\(\)/);
   assert.match(shell, /last\?\.focus\(\)/);
+  assert.match(shell, /lastTriggerRef\.current = trigger/);
+  assert.match(shell, /openAt\(active, event\.currentTarget\)/);
+  assert.match(shell, /openAt\(index, event\.currentTarget\)/);
+  assert.match(shell, /openAt\(MAX_THUMBS - 1, event\.currentTarget\)/);
+  assert.doesNotMatch(
+    shell,
+    /lastTriggerRef\.current = document\.activeElement/,
+  );
   assert.match(shell, /document\.body\.style\.overflow = "hidden"/);
   assert.match(shell, /document\.body\.style\.overflow = previousOverflow/);
   const viewer = read("src/components/home-gallery-lightbox.tsx");
@@ -181,6 +189,7 @@ test("viewer renders only on request and retains native modality, Escape, arrows
   assert.match(viewer, /onTouchEnd=/);
   assert.match(viewer, /Previous photo/);
   assert.match(viewer, /Next photo/);
+  assert.match(viewer, /Rendered only after a visitor expands a photo/);
 });
 
 test("tour has a real start button and no initial iframe, with a server-readable original URL fallback", () => {
@@ -194,6 +203,24 @@ test("tour has a real start button and no initial iframe, with a server-readable
     html.includes(`href="${url}" target="_blank" rel="noopener noreferrer"`),
   );
   assert.doesNotMatch(html, /<iframe/);
+  const { ModelVirtualTour: StartedTour } = load(
+    "src/components/model-virtual-tour.tsx",
+    {
+      react: { ...react, useState: () => [true, () => {}] },
+      "react/jsx-runtime": jsxRuntime,
+    },
+  );
+  const started = renderToStaticMarkup(
+    createElement(StartedTour, { url, name: "Eclipse" }),
+  );
+  assert.match(started, /<iframe/);
+  assert.ok(
+    started.includes(`href="${url}" target="_blank" rel="noopener noreferrer"`),
+  );
+  assert.match(
+    read("src/components/model-virtual-tour.tsx"),
+    /iframeRef\.current\?\.focus\(\)/,
+  );
   assert.match(
     read("src/components/model-virtual-tour.tsx"),
     /started \? <iframe|started \? \(/,
@@ -203,12 +230,97 @@ test("tour has a real start button and no initial iframe, with a server-readable
   assert.match(page, /trustedVirtualTourUrl\(home\.tourUrl\)/);
 });
 
-test("cards use verified gallery cover variants and retain legacy card variants only outside the manifest", () => {
+test("cards keep all eighteen verified legacy covers and use capped variants for the two non-01 covers", async () => {
   const card = read("src/components/home-card.tsx");
   assert.match(card, /const photo = home\.imageUrls\[0\]/);
-  assert.match(card, /const gallerySrcSet = modelGallerySrcSet\(src, "hero"\)/);
-  assert.match(card, /if \(gallerySrcSet\) return gallerySrcSet/);
-  assert.ok(card.includes("${stem}-480.webp 480w, ${stem}-640.webp 640w"));
+  assert.match(card, /srcSet=\{modelCardSrcSet\(photo\)\}/);
+  const covers = models.filter((model) =>
+    model.imageUrls[0]?.startsWith("/models/"),
+  );
+  assert.equal(covers.length, 20);
+  let legacy = 0;
+  for (const model of covers) {
+    const source = model.imageUrls[0];
+    const set = galleryImages.modelCardSrcSet(source);
+    assert.ok(set, source);
+    const variants = set.split(", ").map((candidate) => {
+      const [url, width] = candidate.split(" ");
+      return { url, width: Number.parseInt(width, 10) };
+    });
+    for (const variant of variants) {
+      assert.ok(variant.width <= 640, source);
+      assert.equal(
+        (await sharp(`public${variant.url}`).metadata()).width,
+        variant.width,
+      );
+    }
+    if (source.endsWith("/01.jpg")) {
+      legacy += 1;
+      const stem = source.slice(0, -4);
+      assert.equal(set, `${stem}-480.webp 480w, ${stem}-640.webp 640w`);
+      for (const variant of variants) {
+        const path = `public${variant.url}`;
+        const original = execFileSync("git", ["show", `5030cdf:${path}`]);
+        assert.equal(digest(readFileSync(path)), digest(original), path);
+      }
+    } else {
+      assert.ok(["beacon", "eclipse"].includes(model.slug));
+      assert.deepEqual(
+        variants.map((variant) => variant.width),
+        [320, 640],
+      );
+    }
+  }
+  assert.equal(legacy, 18);
+});
+
+test("375px DPR 2 and 3 catalog cover budgets have zero per-cover regression", () => {
+  const covers = models.filter((model) =>
+    model.imageUrls[0]?.startsWith("/models/"),
+  );
+  const select = (set, needed) => {
+    const variants = set.split(", ").map((candidate) => {
+      const [url, width] = candidate.split(" ");
+      return { url, width: Number.parseInt(width, 10) };
+    });
+    return (
+      variants.find((variant) => variant.width >= needed) ?? variants.at(-1)
+    ).url;
+  };
+  for (const dpr of [2, 3]) {
+    let beforeTotal = 0;
+    let afterTotal = 0;
+    let unchanged = 0;
+    for (const model of covers) {
+      const source = model.imageUrls[0];
+      const stem = source.slice(0, -4);
+      const legacy = /^\/models\/[^/]+\/01\.jpg$/.test(source);
+      const beforeUrl = legacy
+        ? select(
+            `${stem}-480.webp 480w, ${stem}-640.webp 640w`,
+            (375 - 40) * dpr,
+          )
+        : source;
+      const afterUrl = select(
+        galleryImages.modelCardSrcSet(source),
+        (375 - 40) * dpr,
+      );
+      const before = statSync(`public${beforeUrl}`).size;
+      const after = statSync(`public${afterUrl}`).size;
+      assert.ok(
+        after <= before,
+        `${model.slug} DPR${dpr}: ${after} > ${before}`,
+      );
+      if (legacy) {
+        assert.equal(afterUrl, beforeUrl);
+        unchanged += 1;
+      }
+      beforeTotal += before;
+      afterTotal += after;
+    }
+    assert.equal(unchanged, 18);
+    assert.ok(afterTotal < beforeTotal * 0.5);
+  }
 });
 
 test("measured mobile image budget is smaller while preserving gallery originals", () => {

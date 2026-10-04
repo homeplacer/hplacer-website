@@ -62,8 +62,8 @@ export function HomeGallery({
     };
   }, [open]);
 
-  function openAt(index: number) {
-    lastTriggerRef.current = document.activeElement as HTMLElement | null;
+  function openAt(index: number, trigger: HTMLButtonElement) {
+    lastTriggerRef.current = trigger;
     setActive(index);
     setOpen(true);
   }
@@ -75,7 +75,7 @@ export function HomeGallery({
           <button
             ref={mainBtnRef}
             type="button"
-            onClick={() => openAt(active)}
+            onClick={(event) => openAt(active, event.currentTarget)}
             aria-label={`Expand photo ${active + 1} of ${count}`}
             className="group absolute inset-0 cursor-zoom-in"
           >
@@ -112,8 +112,10 @@ export function HomeGallery({
               <button
                 key={src}
                 type="button"
-                onClick={() =>
-                  index === active ? openAt(index) : setActive(index)
+                onClick={(event) =>
+                  index === active
+                    ? openAt(index, event.currentTarget)
+                    : setActive(index)
                 }
                 aria-label={
                   index === active
@@ -152,7 +154,7 @@ export function HomeGallery({
           {count > MAX_THUMBS && (
             <button
               type="button"
-              onClick={() => openAt(MAX_THUMBS - 1)}
+              onClick={(event) => openAt(MAX_THUMBS - 1, event.currentTarget)}
               aria-label={`See all ${count} photos`}
               className="relative aspect-square w-full overflow-hidden rounded-lg ring-1 ring-stone-line transition hover:ring-brand-300"
             >
