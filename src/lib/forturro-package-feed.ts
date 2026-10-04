@@ -1,9 +1,4 @@
-import registry from "../../data/mls-listings-active.json";
-
-type RegistryItem = {
-  address: string;
-  city: string;
-};
+import { unstable_cache } from "next/cache";
 
 type ForturroSearchItem = {
   listingKey: string;
@@ -33,70 +28,31 @@ export async function getLivePackageBySlug(slug: string) {
   return listings.find((listing) => packageSlug(listing) === slug) ?? null;
 }
 
-const FORTURRO_SEARCH = "https://forturro.com/api/db/search";
-const FORTURRO_HOME_PLACER_ACTIVE = "https://forturro.com/api/hplacer/active";
-
-function normalizeAddress(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
-}
-
-function isExactMatch(item: ForturroSearchItem, expected: RegistryItem) {
-  return (
-    normalizeAddress(item.address) === normalizeAddress(expected.address) &&
-    item.city.trim().toLowerCase() === expected.city.trim().toLowerCase()
-  );
-}
-
-async function fetchRegisteredListing(expected: RegistryItem) {
-  const url = new URL(FORTURRO_SEARCH);
-  url.searchParams.set("q", expected.address.replaceAll(".", ""));
-  url.searchParams.set("pageSize", "20");
-
-  try {
-    const response = await fetch(url, { next: { revalidate: 300 } });
-    if (!response.ok) return null;
-    const body = (await response.json()) as { items?: ForturroSearchItem[] };
-    const match = body.items?.find((item) => isExactMatch(item, expected));
-    if (!match) return null;
-    const result: LivePackageListing = { ...match };
-    if (match.photo) result.photoUrl = `https://forturro.com${match.photo}`;
-    return result;
-  } catch {
-    // The package page stays useful even if Forturro is temporarily unavailable.
-    return null;
-  }
-}
-
 /**
- * Read-only feed for the addresses Home Placer has explicitly registered as
- * its MLS packages. We never use a broad manufactured-home search, which would
- * surface other dealers' listings. Forturro is the live status and price source.
+ * Only the builder-scoped active endpoint can establish current availability.
+ * An empty snapshot is valid. Errors must escape so ISR retains the last good
+ * page instead of publishing stale registry matches or an outage as no homes.
  */
-export async function getLivePackageListings(): Promise<LivePackageListing[]> {
-  // Forturro's Home Placer feed filters from verified builder attribution and
-  // current MLS status. This is the primary path: it prevents new packages such
-  // as 104 Pepe Court from being invisible just because an older address list
-  // was not updated. It is Home Placer-only and never sends buyers to Forturro.
-  try {
-    const response = await fetch(FORTURRO_HOME_PLACER_ACTIVE, { next: { revalidate: 300 } });
-    if (response.ok) {
-      const body = (await response.json()) as { items?: ForturroSearchItem[] };
-      const items = body.items?.filter((item) => item.listingKey && item.address && item.city && item.listPrice) ?? [];
-      if (items.length > 0) {
-        return items.map((item) => ({
-          ...item,
-          photoUrl: item.photo ? `https://forturro.com${item.photo}` : undefined,
-        }));
-      }
-    }
-  } catch {
-    // Keep the legacy verified-address fallback below for a temporary upstream
-    // outage. It is never used to remove a live package from the page.
+export const getLivePackageListings = unstable_cache(async (): Promise<LivePackageListing[]> => {
+  const response = await fetch("https://forturro.com/api/hplacer/active", {
+    cache: "no-store",
+    signal: AbortSignal.timeout(15_000),
+  });
+  if (!response.ok) throw new Error(`Active MLS feed failed (${response.status})`);
+  const body = await response.json();
+  if (!Array.isArray(body?.items) || !body.items.every(isActiveListing)) {
+    throw new Error("Active MLS feed returned an invalid snapshot");
   }
+  return body.items.map((item: ForturroSearchItem) => ({
+    ...item,
+    photoUrl: item.photo ? `https://forturro.com${item.photo}` : undefined,
+  }));
+}, ["home-placer-active-validated-v1"], { revalidate: 300 });
 
-  // Temporary resilience fallback while the MLS source is unavailable. The
-  // active endpoint above is the source of truth for all current packages.
-  const registered = registry.listings as RegistryItem[];
-  const results = await Promise.all(registered.map(fetchRegisteredListing));
-  return results.filter((result): result is LivePackageListing => result !== null);
+function isActiveListing(item: unknown): item is ForturroSearchItem {
+  if (!item || typeof item !== "object") return false;
+  const row = item as Record<string, unknown>;
+  return [row.listingKey, row.address, row.city].every(
+    (value) => typeof value === "string" && value.trim().length > 0,
+  ) && typeof row.listPrice === "number" && Number.isFinite(row.listPrice) && row.listPrice > 0;
 }

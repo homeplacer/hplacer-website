@@ -4,7 +4,8 @@ import { guides } from "@/lib/guides";
 import type { MetadataRoute } from "next";
 import { site } from "@/lib/site";
 
-export const dynamic = "force-dynamic";
+// Share the validated active snapshot and keep the last good sitemap on outages.
+export const revalidate = 300;
 import { getAllHomes } from "@/lib/homes";
 import { getAllPosts } from "@/lib/blog";
 import { locations } from "@/lib/locations";
