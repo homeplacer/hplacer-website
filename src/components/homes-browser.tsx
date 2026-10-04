@@ -237,12 +237,12 @@ export function HomesBrowser({
 
           {/* Price range — only when at least one home has a price set */}
           {anyPriced && (
-            <div className="inline-flex items-center gap-1.5">
-              <select aria-label="Minimum land-home estimate" value={minPrice} onChange={(e) => setMinPrice(Number(e.target.value))} className={selectClass}>
+            <div className="grid w-full min-w-0 grid-cols-1 gap-1.5 sm:inline-flex sm:w-auto sm:items-center">
+              <select aria-label="Minimum land-home estimate" value={minPrice} onChange={(e) => setMinPrice(Number(e.target.value))} className={`${selectClass} min-w-0 w-full sm:w-auto`}>
                 {PRICE_STEPS.map((s) => (<option key={s} value={s}>{s === 0 ? "Min package price" : fmtK(s)}</option>))}
               </select>
-              <span className="text-stone-muted">–</span>
-              <select aria-label="Maximum land-home estimate" value={maxPrice === Infinity ? 0 : maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value) === 0 ? Infinity : Number(e.target.value))} className={selectClass}>
+              <span className="hidden text-stone-muted sm:inline">–</span>
+              <select aria-label="Maximum land-home estimate" value={maxPrice === Infinity ? 0 : maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value) === 0 ? Infinity : Number(e.target.value))} className={`${selectClass} min-w-0 w-full sm:w-auto`}>
                 <option value={0}>Max package price</option>
                 {PRICE_STEPS.filter((s) => s > 0).map((s) => (<option key={s} value={s}>{fmtK(s)}</option>))}
               </select>
