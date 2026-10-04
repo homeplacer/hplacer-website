@@ -18,6 +18,33 @@ export function isRetiredHome(slug: string): boolean {
   return retiredModelSlugs.has(slug);
 }
 
+// The Oct. 4, 2026 audit and a direct source check confirmed these two exact
+// manufacturer images return 404. Quarantine them only in the buyer-facing
+// catalog projection: preserve the source records, every other authentic photo,
+// and all tours. Query changes (for example another requested width) cannot
+// make the same missing source image reappear in a gallery or schema.
+const unavailableModelImages = new Map<string, ReadonlySet<string>>([
+  ["glimpse", new Set([
+    "https://api.claytonhomes.com/images/mfg/int/b57253ac-2692-4d47-9d46-202c1185b5c5.jpg",
+  ])],
+  ["rhythm-nation", new Set([
+    "https://api.claytonhomes.com/images/mfg/int/4fc082a6-a88a-4a54-89e4-0cfb1a3cdaa6.jpg",
+  ])],
+]);
+
+function isUnavailableModelImage(slug: string, source: string): boolean {
+  const unavailable = unavailableModelImages.get(slug);
+  if (!unavailable) return false;
+  try {
+    const url = new URL(source);
+    return unavailable.has(`${url.origin}${url.pathname}`);
+  } catch {
+    // Local paths and unrecognized references keep their existing behavior;
+    // this is not a blanket remote-media validator or an ingestion change.
+    return false;
+  }
+}
+
 // The manufacturer-model inventory (data/models.json, built by
 // scripts/build-models.mjs from the extraction workflow) is statically imported
 // so it bundles into the server build — the Cloudflare Workers runtime has no
@@ -142,7 +169,9 @@ function getCatalogHomes(): Home[] {
     description: m.description,
     excerpt: firstSentence(m.description),
     decorOptions: m.decorOptions ?? [],
-    imageUrls: (m.imageUrls ?? []).map(asset),
+    imageUrls: (m.imageUrls ?? [])
+      .filter((source) => !isUnavailableModelImage(m.slug, source))
+      .map(asset),
     aka: m.aka ?? [],
     wallFinish: m.wallFinish,
     bestSeller: m.bestSeller ?? false,
