@@ -1,5 +1,6 @@
 import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getAllHomes } from "@/lib/homes";
 import { HomesBrowser } from "@/components/homes-browser";
 import { JsonLd, homesItemListLd } from "@/lib/jsonld";
@@ -25,6 +26,13 @@ export default function HomesPage() {
           <h1 className="mt-2 font-display text-4xl font-semibold text-stone-ink sm:text-5xl">
             Find your home
           </h1>
+          <p className="mt-3 max-w-2xl text-stone-muted">
+            This is our floor-plan catalog. For specific available homes and
+            land,{" "}
+            <Link href="/land-packages" className="font-semibold text-brand-700 underline underline-offset-4">
+              browse current land-home packages
+            </Link>.
+          </p>
           <p className="mt-3 max-w-2xl text-stone-muted">
             Estimated land-and-home package prices assume a quarter-acre lot;
             home-only pricing is shown when available. Land, site preparation,
