@@ -15,24 +15,23 @@ function element(tagName, { dialog = null, region = null } = {}) {
 
 function harness(elements = []) {
   const changes = [];
-  let io;
-  let mo;
+  const observers = {};
   const root = { elements, querySelectorAll: () => root.elements };
   class IntersectionObserver {
-    constructor(callback, options) { this.callback = callback; this.options = options; this.targets = new Set(); io = this; }
+    constructor(callback, options) { this.callback = callback; this.options = options; this.targets = new Set(); observers.intersection = this; }
     observe(target) { this.targets.add(target); }
     unobserve(target) { this.targets.delete(target); }
     disconnect() { this.targets.clear(); this.disconnected = true; }
   }
   class MutationObserver {
-    constructor(callback) { this.callback = callback; mo = this; }
+    constructor(callback) { this.callback = callback; observers.mutation = this; }
     observe(target, options) { this.target = target; this.options = options; }
     disconnect() { this.disconnected = true; }
   }
-  const module = { exports: {} };
-  runInNewContext(bundle.outputFiles[0].text, { module, exports: module.exports, IntersectionObserver, MutationObserver });
-  const stop = module.exports.observeInlineFormVisibility(root, value => changes.push(value));
-  return { root, io, mo, changes, stop };
+  const fixtureModule = { exports: {} };
+  runInNewContext(bundle.outputFiles[0].text, { module: fixtureModule, exports: fixtureModule.exports, IntersectionObserver, MutationObserver });
+  const stop = fixtureModule.exports.observeInlineFormVisibility(root, value => changes.push(value));
+  return { root, io: observers.intersection, mo: observers.mutation, changes, stop };
 }
 
 test('the stable region is observed before hydration without duplicating its later native form', () => {
