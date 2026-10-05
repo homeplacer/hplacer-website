@@ -30,6 +30,7 @@ export function ContactForm({
   );
   const submissionInFlight = useRef(false);
   const successHeadingRef = useRef<HTMLHeadingElement>(null);
+  const errorRef = useRef<HTMLParagraphElement>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
     "idle",
   );
@@ -59,7 +60,8 @@ export function ContactForm({
 
   useEffect(() => {
     if (status === "sent") successHeadingRef.current?.focus({ preventScroll: true });
-  }, [status]);
+    if (status === "error" && errorReason === "submission") errorRef.current?.focus();
+  }, [status, errorReason]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -74,19 +76,26 @@ export function ContactForm({
       phone.focus();
       return;
     }
+    // Capture before disabling the fieldset: disabled fields are omitted by FormData.
+    const data = Object.fromEntries(new FormData(form).entries());
     submissionInFlight.current = true;
     setStatus("sending");
-    const data = Object.fromEntries(new FormData(form).entries());
-    const result = await submitLead("contact", data);
-    submissionInFlight.current = false;
-    if (result === "error") {
+    try {
+      const result = await submitLead("contact", data);
+      if (result === "error") {
+        setErrorReason("submission");
+        setStatus("error");
+        return;
+      }
+      setVia(result);
+      setStatus("sent");
+      form.reset();
+    } catch {
       setErrorReason("submission");
       setStatus("error");
-      return;
+    } finally {
+      submissionInFlight.current = false;
     }
-    setVia(result);
-    setStatus("sent");
-    form.reset();
   }
 
   const confirmation = (
@@ -240,7 +249,7 @@ export function ContactForm({
   );
 
   return (
-    <div className="space-y-4">
+    <div data-form-region className="space-y-4">
       {/* These regions stay mounted when the form becomes a confirmation. */}
       <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {status === "sending" && "Sending your inquiry…"}
@@ -250,6 +259,8 @@ export function ContactForm({
       </p>
       <p
         id={`${formId}-error`}
+        ref={errorRef}
+        tabIndex={-1}
         role="alert"
         aria-atomic="true"
         className={status === "error"
@@ -266,16 +277,6 @@ export function ContactForm({
           </a>.
         </>}
       </p>
-      {!hydrated && (
-        <div className="rounded-lg border border-brand-200 bg-brand-50 p-4 text-sm text-stone-ink">
-          <p>The message form needs JavaScript to load. If it doesn’t become available, call, text, or email us instead.</p>
-          <div className="mt-2 flex flex-wrap gap-3 font-semibold text-brand-800">
-            <a href={`tel:${site.phoneDial}`} className="underline">Call {site.phoneDisplay}</a>
-            <a href={`sms:${site.phoneDial}?body=${textMessage}`} className="underline">Text us</a>
-            <a href={`mailto:${site.email}?subject=${emailSubject}`} className="underline">Email us</a>
-          </div>
-        </div>
-      )}
       {status === "sent" ? confirmation : hydrated ? (
         <form data-form-type="contact" onSubmit={handleSubmit} aria-busy={status === "sending"}>
           {fields}
@@ -283,6 +284,18 @@ export function ContactForm({
       ) : (
         // There is no native form to submit (including Enter) before hydration.
         <div data-form-type="contact">{fields}</div>
+      )}
+      {status !== "sent" && (
+        // Permanent fallback below the fields avoids a disappearing startup panel.
+        <div className="rounded-lg border border-brand-200 bg-brand-50 p-4 text-sm text-stone-ink">
+          <p>Prefer another way to get in touch? Call, text, or email us.</p>
+          <div className="mt-2 flex flex-wrap gap-3 font-semibold text-brand-800">
+            <a href={`tel:${site.phoneDial}`} className="underline">Call {site.phoneDisplay}</a>
+            <a href={`sms:${site.phoneDial}?body=${textMessage}`} className="underline">Text us</a>
+            <a href={`mailto:${site.email}?subject=${emailSubject}`} className="underline">Email us</a>
+          </div>
+          <noscript><p className="mt-2">The message form needs JavaScript to load. Please use the contact options above.</p></noscript>
+        </div>
       )}
     </div>
   );

@@ -11,7 +11,9 @@ test("actual React server rendering has no native submission path before hydrati
   assert.match(html, /<input[^>]*required=""[^>]*name="name"/);
   assert.match(html, /name="packageId" value="fixture-package"/);
   assert.match(html, /name="home" value="Fixture Home"/);
-  assert.match(html, /JavaScript to load/);
+  assert.match(html, /Prefer another way to get in touch/);
+  assert.match(html, /<div data-form-region="true"/);
+  assert.ok(html.indexOf('</fieldset>') < html.indexOf('Prefer another way'), 'Fallback is below fields');
   assert.match(html, /href="tel:\+18438494663"/);
   assert.match(html, /href="sms:\+18438494663\?body=/);
   assert.match(html, /href="mailto:/);
@@ -20,7 +22,7 @@ test("actual React server rendering has no native submission path before hydrati
 test("status and alert regions exist empty before any update, with matching descriptions", () => {
   const html = renderFixture();
   assert.match(html, /<p role="status" aria-live="polite" aria-atomic="true" class="sr-only"><\/p>/);
-  const errorId = html.match(/<p id="([^"]+)" role="alert" aria-atomic="true" class="sr-only"><\/p>/)?.[1];
+  const errorId = html.match(/<p id="([^"]+)" tabindex="-1" role="alert" aria-atomic="true" class="sr-only"><\/p>/)?.[1];
   assert.ok(errorId);
   assert.equal(html.split(`aria-describedby="${errorId}"`).length - 1, 2);
   assert.doesNotMatch(html, /aria-invalid="true"/);
@@ -40,7 +42,9 @@ test("feedback distinguishes delivered leads from an unsent mail draft and prese
   assert.match(source, /Your message has not been sent yet/);
   assert.match(source, /Finish sending your inquiry/);
   assert.match(source, /submitLead\("contact", data\)/);
-  assert.match(source, /submissionInFlight\.current = true[\s\S]*?await submitLead[\s\S]*?submissionInFlight\.current = false/);
+  assert.match(source, /submissionInFlight\.current = true[\s\S]*?await submitLead[\s\S]*?finally[\s\S]*?submissionInFlight\.current = false/);
+  assert.ok(source.indexOf('new FormData(form)') < source.indexOf('setStatus("sending")'));
+  assert.match(source, /errorRef\.current\?\.focus\(\)/);
   assert.match(source, /successHeadingRef\.current\?\.focus\(\{ preventScroll: true \}\)/);
   assert.match(source, /ref=\{successHeadingRef\}[\s\S]*?tabIndex=\{-1\}/);
   assert.match(source, /e\.preventDefault\(\)/);

@@ -68,6 +68,7 @@ async function startPreview() {
         import { ContactForm } from "./src/components/contact-form";
         const requests = [];
         let finish;
+        let fail;
         function inspect() {
           const root = document.getElementById("root");
           document.getElementById("diagnostics").textContent = JSON.stringify({
@@ -83,7 +84,7 @@ async function startPreview() {
         window.fixtureSubmit = (type, data) => {
           requests.push({ type, data });
           inspect();
-          return new Promise(resolve => { finish = resolve; });
+          return new Promise((resolve, reject) => { finish = resolve; fail = reject; });
         };
         document.getElementById("hydrate").addEventListener("click", event => {
           event.currentTarget.disabled = true;
@@ -99,6 +100,11 @@ async function startPreview() {
           const form = document.querySelector("#root form");
           form?.requestSubmit();
           form?.requestSubmit();
+        });
+        document.getElementById("reject").addEventListener("click", () => {
+          fail?.(new Error("Synthetic helper rejection"));
+          finish = undefined;
+          fail = undefined;
         });
         new MutationObserver(inspect).observe(document.getElementById("root"), {
           subtree: true, childList: true, characterData: true, attributes: true
@@ -133,7 +139,7 @@ async function startPreview() {
       #diagnostics { white-space: pre-wrap; background: #eee; padding: 12px; }
     </style></head><body><h1>Isolated contact form: ${noJs ? "no JavaScript" : "delayed hydration"}</h1>
     <p>Synthetic data only. No real API, tracking, mail app, or production connection.</p>
-    ${noJs ? "" : '<div><button id="hydrate">Hydrate form</button><button id="api">Return API success</button><button id="error">Return API error</button><button id="mailto">Return mailto fallback</button><button id="double">Double-submit test</button></div>'}
+    ${noJs ? "" : '<div><button id="hydrate">Hydrate form</button><button id="api">Return API success</button><button id="error">Return API error</button><button id="mailto">Return mailto fallback</button><button id="double">Double-submit test</button><button id="reject">Reject helper promise</button></div>'}
     <hr><div id="root">${html}</div><hr><pre id="diagnostics">Server snapshot: no native form; fields disabled; zero lead requests.</pre>
     ${noJs ? "" : '<script src="/fixture.js"></script>'}</body></html>`);
   });

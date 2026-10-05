@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { MailIcon, MessageIcon, PhoneIcon } from "@/components/icons";
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 import { site } from "@/lib/site";
+import { observeInlineFormVisibility } from "@/lib/inline-form-visibility";
 
 /**
  * Persistent, low-friction contact controls. This is intentionally present on
@@ -16,20 +17,7 @@ export function ContactBar() {
     "Hi Home Placer, I’m interested in a manufactured home and land package.",
   );
 
-  useEffect(() => {
-    const forms = [...document.querySelectorAll("form")];
-    if (!forms.length) return;
-    const visible = new Set<Element>();
-    const observer = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) visible.add(entry.target);
-        else visible.delete(entry.target);
-      }
-      setHiddenForForm(visible.size > 0);
-    }, { threshold: 0.2 });
-    forms.forEach((form) => observer.observe(form));
-    return () => observer.disconnect();
-  }, []);
+  useEffect(() => observeInlineFormVisibility(document.body, setHiddenForForm), []);
   const visibility = hiddenForForm
     ? "pointer-events-none translate-y-24 opacity-0"
     : "translate-y-0 opacity-100";
@@ -38,6 +26,8 @@ export function ContactBar() {
     <>
       <aside
         data-contact-bar
+        inert={hiddenForForm}
+        aria-hidden={hiddenForForm || undefined}
         aria-label="Contact Home Placer"
         className={`fixed inset-x-3 bottom-[calc(max(0.75rem,env(safe-area-inset-bottom))+4.75rem)] z-[60] mx-auto max-w-sm rounded-[1.45rem] border border-white/10 bg-brand-950/95 p-1.5 shadow-2xl backdrop-blur-lg transition duration-200 md:bottom-[max(0.75rem,env(safe-area-inset-bottom))] ${visibility}`}
       >
@@ -70,6 +60,7 @@ export function ContactBar() {
         homeName="a Home Placer land-home package"
         label="Contact us"
         showArrow={false}
+        triggerInert={hiddenForForm}
         className={`fixed bottom-[calc(max(0.75rem,env(safe-area-inset-bottom))+10.5rem)] right-3 z-[60] inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-accent-500 px-5 text-sm font-semibold text-white shadow-xl transition duration-200 hover:bg-accent-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-700 focus-visible:ring-offset-2 md:bottom-[max(1.25rem,env(safe-area-inset-bottom))] md:right-5 ${visibility}`}
       />
     </>
