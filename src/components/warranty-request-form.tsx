@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CheckIcon, ArrowIcon } from "@/components/icons";
 import { Honeypot } from "@/components/honeypot";
 import { site } from "@/lib/site";
+import { SafePublicLeadForm, usePublicLeadFormSafety } from "@/components/public-lead-form-safety";
 
 const fieldClass =
   "w-full rounded-lg border border-stone-line bg-stone-bg px-3.5 py-2.5 text-sm text-stone-ink outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
@@ -20,17 +21,16 @@ export function WarrantyRequestForm() {
   const [message, setMessage] = useState<string | null>(null);
   const [reference, setReference] = useState<string | null>(null);
   const [photoCount, setPhotoCount] = useState(0);
+  const { formId, hydrated, successHeadingRef, errorRef, beginSubmission, endSubmission } = usePublicLeadFormSafety(status);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (status === "sending") return; // guard against a double submit in flight
-    setStatus("sending");
-    setMessage(null);
-
+    if (!beginSubmission()) return;
     const form = event.currentTarget;
-    const body = new FormData(form);
-
     try {
+      const body = new FormData(form);
+      setStatus("sending");
+      setMessage(null);
       const response = await fetch("/api/warranty-request", { method: "POST", body });
       const result = (await response.json()) as { ok: boolean; reference?: string | null; error?: string };
       if (!response.ok || !result.ok) {
@@ -45,16 +45,17 @@ export function WarrantyRequestForm() {
     } catch {
       setMessage("We couldn't reach the server. Please try again, or call our service line.");
       setStatus("error");
+    } finally {
+      endSubmission();
     }
   }
 
-  if (status === "sent") {
-    return (
+  const confirmation = (
       <div className="rounded-card border border-brand-200 bg-brand-50 p-8 text-center">
         <div className="mx-auto grid size-12 place-items-center rounded-full bg-brand-600 text-white">
           <CheckIcon className="size-6" strokeWidth={2.5} />
         </div>
-        <h3 className="mt-4 font-display text-xl font-semibold text-brand-900">Request received.</h3>
+        <h3 ref={successHeadingRef} tabIndex={-1} className="mt-4 font-display text-xl font-semibold text-brand-900 focus:outline-none">Request received.</h3>
         {reference && (
           <p className="mt-2 text-sm text-stone-ink">
             Your reference is <strong className="font-semibold">{reference}</strong> — keep it handy if you call.
@@ -69,20 +70,15 @@ export function WarrantyRequestForm() {
           .
         </p>
       </div>
-    );
-  }
+  );
 
   return (
-    <form data-form-type="warranty" onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
+    <SafePublicLeadForm hydrated={hydrated} formId={formId} errorRef={errorRef} status={status} dataFormType="warranty" service
+      legend="Send a warranty request" onSubmit={handleSubmit} confirmation={confirmation}
+      encType="multipart/form-data" pendingMessage="Sending your warranty request…"
+      successAnnouncement={`Request received.${reference ? ` Your reference is ${reference}.` : ""} Our service team will reach out to schedule.`}
+      error={<>{message}{" "}<a href={`tel:${site.warrantyPhoneDial}`} className="font-semibold underline">{site.warrantyPhoneDisplay}</a></>}>
       <Honeypot />
-      {status === "error" && message && (
-        <p className="rounded-lg border border-red-300 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">
-          {message}{" "}
-          <a href={`tel:${site.warrantyPhoneDial}`} className="font-semibold underline">
-            {site.warrantyPhoneDisplay}
-          </a>
-        </p>
-      )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -183,7 +179,7 @@ export function WarrantyRequestForm() {
 
       <button
         type="submit"
-        disabled={status === "sending"}
+        disabled={!hydrated || status === "sending"}
         className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-800 disabled:opacity-60"
       >
         {status === "sending" ? "Sending…" : "Submit warranty request"} <ArrowIcon className="size-4" />
@@ -193,6 +189,6 @@ export function WarrantyRequestForm() {
         <a href={`tel:${site.warrantyPhoneDial}`} className="font-semibold underline">{site.warrantyPhoneDisplay}</a>{" "}
         instead of using this form.
       </p>
-    </form>
+    </SafePublicLeadForm>
   );
 }

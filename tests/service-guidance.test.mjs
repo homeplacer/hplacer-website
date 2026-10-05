@@ -12,6 +12,9 @@ const read = (path) => readFileSync(path, "utf8");
 const servicePageSource = read("src/app/service-request/page.tsx");
 const formSource = read("src/components/service-request-form.tsx");
 const site = {
+  phoneDial: "+18438494663",
+  phoneDisplay: "(843) 849-HOME",
+  email: "Carolina@hplacer.com",
   warrantyPhoneDial: "+18434849844",
   warrantyPhoneDisplay: "(843) 484-9844",
 };
@@ -38,7 +41,11 @@ function loadComponent(source, imports) {
 }
 
 const icon = () => React.createElement("svg", { "aria-hidden": true });
+const safety = loadComponent(read("src/components/public-lead-form-safety.tsx"), {
+  "@/lib/site": { site },
+});
 const { ServiceRequestForm } = loadComponent(formSource, {
+  "@/components/public-lead-form-safety": safety,
   "@/components/icons": { CheckIcon: icon, ArrowIcon: icon },
   "@/lib/site": { site },
   "@/components/honeypot": { Honeypot: () => null },
