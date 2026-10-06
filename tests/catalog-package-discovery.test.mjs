@@ -27,6 +27,8 @@ test("the current-package section sends model shoppers to active packages rather
   assert.match(section, /href=\{`tel:\$\{site\.phoneDial\}`\}/);
   assert.ok(section.indexOf("site.phoneDial") < section.indexOf('href="/land-packages"'));
   assert.match(section, /confirm the listing&apos;s status/);
-  assert.match(page, /href=\{`\/recently-placed\/\$\{h\.slug\}`\}/);
+  assert.match(page, /<HistoricalProjectCard home=\{h\}/);
+  const card = readFileSync("src/components/historical-project-card.tsx", "utf8");
+  assert.match(card, /href=\{`\/recently-placed\/\$\{home\.slug\}`\}/);
   assert.match(page, /<HomeInquiryDialog[\s\S]*?homeName=\{home\.name\}/);
 });

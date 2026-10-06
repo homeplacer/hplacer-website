@@ -19,13 +19,19 @@ export async function buildSoldExampleAssets(root, { rebuild = false } = {}) {
   // Keep the component's live selection rule, not a fixed list of three photos.
   const selected = homes.filter((home) => home.photo && home.price > 0 && home.closeDate)
     .sort((a, b) => b.closeDate.localeCompare(a.closeDate)).slice(0, 3);
-  const manifestPath = path.join(root, "src/lib/sold-example-assets.json");
+  return buildProjectPhotoAssets(root, selected.map(home => home.photo), { rebuild });
+}
+
+export async function buildProjectPhotoAssets(root, sources, {
+  rebuild = false, manifest: manifestName = "sold-example-assets.json",
+} = {}) {
+  const manifestPath = path.join(root, "src/lib", manifestName);
   const previous = await existingFile(manifestPath) ? await readFile(manifestPath, "utf8") : null;
   const previousAssets = previous ? JSON.parse(previous) : {};
   const manifest = {};
   let written = 0;
   let retained = 0;
-  for (const source of new Set(selected.map((home) => home.photo))) {
+  for (const source of new Set(sources)) {
     // Never fetch remote photos or resolve user-controlled traversal paths.
     if (!/^\/recently-placed\/[a-z0-9-]+\/\d+\.jpg$/.test(source)) continue;
     const original = path.join(root, "public", source);

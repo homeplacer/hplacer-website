@@ -1,4 +1,6 @@
 import { ProjectEvidence } from "@/components/project-evidence";
+import { HistoricalProjectCard } from "@/components/historical-project-card";
+import { relatedProjectImageSizes } from "@/lib/historical-project-images";
 import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -371,36 +373,8 @@ export default async function PlacedHomeDetail({
           </h2>
           <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((r) => (
-              <li
-                key={r.slug}
-                className="overflow-hidden rounded-card border border-stone-line bg-stone-surface"
-              >
-                <Link
-                  href={`/recently-placed/${r.slug}`}
-                  className="group block"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={asset(r.photo)}
-                    alt={`A Home Placer home placed at ${r.address}, ${r.town}, SC`}
-                    loading="lazy"
-                    width={800}
-                    height={600}
-                    className="aspect-[4/3] w-full bg-stone-bg object-cover transition group-hover:opacity-95"
-                  />
-                  <div className="p-4">
-                    <p className="font-semibold text-stone-ink">{r.address}</p>
-                    <p className="mt-1 text-sm font-medium text-brand-700">
-                      {r.town}, SC · Sold
-                    </p>
-                    <p className="mt-1 text-sm text-stone-muted">
-                      {r.beds} bd · {r.baths} ba · {r.style}
-                    </p>
-                    <p className="mt-2 font-display text-lg font-semibold text-brand-700">
-                      {formatPrice(r.price)}
-                    </p>
-                  </div>
-                </Link>
+              <li key={r.slug}>
+                <HistoricalProjectCard home={r} sizes={relatedProjectImageSizes} />
               </li>
             ))}
           </ul>

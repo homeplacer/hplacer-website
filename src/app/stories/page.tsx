@@ -6,6 +6,8 @@ import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 import { PhoneIcon } from "@/components/icons";
 import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/lib/site";
+import { HistoricalProjectCard } from "@/components/historical-project-card";
+import { insetProjectImageSizes } from "@/lib/historical-project-images";
 export const metadata = pageMetadata({
   title: "Recorded project experience by town",
   description:
@@ -48,7 +50,7 @@ export default function StoriesPage() {
           </Link>
         </div>
       </section>
-      <section className="container-x grid gap-6 py-12 md:grid-cols-2">
+      <section className="container-x space-y-10 py-12">
         {towns.map((t) => (
           <article
             key={t.slug}
@@ -59,7 +61,7 @@ export default function StoriesPage() {
               {t.homes.length} {t.homes.length === 1 ? "sold home" : "sold homes"}
               {" "}in the photo archive
             </p>
-            <ul className="mt-5 divide-y divide-stone-line">
+            <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {[...t.homes]
                 .sort((a, b) => (b.closeDate ?? "").localeCompare(a.closeDate ?? ""))
                 .slice(0, 3)
@@ -67,34 +69,8 @@ export default function StoriesPage() {
                   const model = h.modelSlug ? getHome(h.modelSlug) : undefined;
                   const modelName = model?.name ?? h.modelName;
                   return (
-                    <li key={h.slug} className="py-4 first:pt-0 last:pb-0">
-                      <Link
-                        href={`/recently-placed/${h.slug}`}
-                        className="break-words font-semibold text-stone-ink underline decoration-brand-300 underline-offset-4 transition hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
-                      >
-                        {h.address}
-                      </Link>
-                      {modelName && (
-                        <p className="mt-2 text-sm text-stone-muted">
-                          Recorded model: {modelName}
-                        </p>
-                      )}
-                      <p className="mt-1 text-sm text-stone-muted">
-                        {h.beds} bedrooms · {h.baths} bathrooms
-                      </p>
-                      {h.closeDate && (
-                        <p className="mt-2 text-sm font-medium text-brand-700">
-                          Closed{" "}
-                          <time dateTime={h.closeDate}>
-                            {new Date(`${h.closeDate}T00:00:00Z`).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                              timeZone: "UTC",
-                            })}
-                          </time>
-                        </p>
-                      )}
+                    <li key={h.slug}>
+                      <HistoricalProjectCard home={{ ...h, modelName }} sizes={insetProjectImageSizes} />
                     </li>
                   );
                 })}
