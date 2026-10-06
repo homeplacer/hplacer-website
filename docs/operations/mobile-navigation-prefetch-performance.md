@@ -69,10 +69,30 @@ request suppression at that viewport, not a measured byte or CWV improvement.
 
 Keyboard focus on Homes restored two Homes RSC requests; Enter navigated to its
 correct heading and active label without horizontal overflow. An immediate click
-on Contact without prior focus navigated to its correct heading. A native
-Lighthouse comparison, throttled in-flight click, touch interaction, and actual
-no-JavaScript navigation checks remain pending. The unit checks alone establish
-Link props and preserved server markup, not those remaining browser outcomes.
+on Contact without prior focus navigated to its correct heading.
+
+A read-only local proxy then delayed only actual Next prefetch RSC responses for
+15 seconds. Homes prefetch request 18 began at 23:01:55.233 UTC; keyboard Enter
+started non-prefetch Homes navigation request 20 at 23:01:59.342 UTC, with three
+prefetches already pending, including Homes request 18. The navigation response
+completed in 5 ms, and the browser reached the correct Homes heading and active
+label at 375 px while the delayed prefetch remained pending. This verifies the
+actual Next 16.3.8 navigation flow under this synthetic fixture, not Slow 3G
+behavior, production latency, or a CWV gain.
+
+A second read-only local proxy served the actual candidate with a
+`script-src 'none'` Content Security Policy. The browser displayed all four
+unhydrated dock labels/anchors, and clicking Homes navigated to the correct
+heading and active label with client/scroll widths both 375 px. Application
+scripts were blocked by CSP; browser JavaScript itself was enabled. This does
+not establish browser-JavaScript-disabled or `noscript` behavior.
+
+Native matched Lighthouse repeats remain pending because the Mac was locked.
+Actual touch interaction was not measured; its handler is covered by source
+review and unit checks only. This change is ready for review as a scoped startup
+request reduction. The four poor SEMrush mobile results remain unresolved until
+later matched performance measurement and a fresh completed crawl establish
+otherwise.
 
 Installed Next 16.3.8 documentation used:
 `node_modules/next/dist/docs/01-app/01-getting-started/04-linking-and-navigating.md`
