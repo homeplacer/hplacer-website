@@ -6,6 +6,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import jsxRuntime from "react/jsx-runtime";
 import ts from "typescript";
+import { projectFixture } from "./fixtures/historical-project-preview.mjs";
 
 const published = JSON.parse(readFileSync("data/placed-homes.json", "utf8"));
 
@@ -191,6 +192,8 @@ test("the detail page renders crawlable neighbor links and honest town/Sold labe
     "next/link": ({ href, className, children }) => createElement("a", { href, className }, children),
     "next/navigation": { notFound: () => assert.fail("Expected published project") },
     "@/components/project-evidence": { ProjectEvidence: empty },
+    "@/components/historical-project-card": { HistoricalProjectCard: projectFixture.HistoricalProjectCard },
+    "@/lib/historical-project-images": { relatedProjectImageSizes: projectFixture.relatedProjectImageSizes },
     "@/lib/metadata": { pageMetadata: (value) => value },
     "@/lib/placed-homes": homes,
     "@/lib/homes": { getHome: () => undefined, formatPrice: (value) => String(value) },

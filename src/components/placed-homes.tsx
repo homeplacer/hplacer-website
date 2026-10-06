@@ -32,7 +32,7 @@ function Card({ h, eager }: { h: PlacedHomeCard; eager: boolean }) {
   const count = h.photoCount;
   return (
     <li className="overflow-hidden rounded-card border border-stone-line bg-stone-surface transition hover:border-brand-300 hover:shadow-sm">
-      <Link href={`/recently-placed/${h.slug}`} className="group flex h-full flex-col">
+      <Link href={`/recently-placed/${h.slug}`} className="group flex h-full flex-col focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
         <div className="relative">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -53,18 +53,23 @@ function Card({ h, eager }: { h: PlacedHomeCard; eager: boolean }) {
           )}
         </div>
 
-        <div className="flex flex-1 flex-col p-4">
-          <p className="font-semibold text-stone-ink">{h.address}</p>
+        <div className="flex flex-1 flex-col p-5">
+          <h3 className="break-words font-display text-lg font-semibold text-stone-ink">{h.address}</h3>
+          <p className="mt-1 text-sm font-medium text-brand-700">{h.town}, SC · Sold</p>
           <p className="mt-1 text-sm text-stone-muted">
-            {h.town}, SC · {h.beds} bd · {h.baths} ba · {h.style}
+            {h.beds} beds · {h.baths} baths · {h.style}
             {h.lotAcres ? ` · ${h.lotAcres} ac` : ""}
           </p>
-          <p className="mt-2 font-display text-lg font-semibold text-brand-700">{fmt(h.price)}</p>
+          <p className="mt-3 font-semibold text-brand-700">Sold for {fmt(h.price)}</p>
+          <p className="mt-1 text-xs text-stone-muted">Historical project · Not available</p>
           {h.modelName && (
             <p className="mt-auto pt-2 text-xs text-stone-muted">
               Model: <span className="font-medium text-stone-ink">{h.modelName}</span>
             </p>
           )}
+          <p className="mt-auto pt-3 text-sm font-medium text-stone-muted group-hover:text-brand-700">
+            {h.closeDate ? `Closed ${h.closeDate} · View project` : "View project"}
+          </p>
         </div>
       </Link>
     </li>

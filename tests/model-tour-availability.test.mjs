@@ -131,6 +131,8 @@ const sharedImports = {
   "@/components/icons": icons,
   "@/components/home-gallery": { HomeGallery: Gallery },
   "@/components/want-this-house-form": { WantThisHouseForm: nil },
+  "@/components/historical-project-card": { HistoricalProjectCard: nil },
+  "@/lib/historical-project-images": { insetProjectImageSizes: "", relatedProjectImageSizes: "" },
 };
 const { default: ModelPage } = load("src/app/homes/[slug]/page.tsx", {
   ...sharedImports,

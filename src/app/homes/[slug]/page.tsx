@@ -40,6 +40,8 @@ import {
 } from "@/components/icons";
 import { site } from "@/lib/site";
 import { ModelPackageJourney } from "@/components/model-package-journey";
+import { HistoricalProjectCard } from "@/components/historical-project-card";
+import { insetProjectImageSizes } from "@/lib/historical-project-images";
 
 export function generateStaticParams() {
   return getAllHomes().map((h) => ({ slug: h.slug }));
@@ -353,15 +355,10 @@ export default async function HomeDetailPage({
               sale prices, not current quotes. Land, site work, options, and
               market conditions differ.
             </p>
-            <ul className="mt-3 flex flex-wrap gap-4">
+            <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {sold.slice(0, 3).map((h) => (
                 <li key={h.slug}>
-                  <Link
-                    className="font-semibold text-brand-700 underline"
-                    href={`/recently-placed/${h.slug}`}
-                  >
-                    {h.town} · {h.closeDate} · {formatPrice(h.price)}
-                  </Link>
+                  <HistoricalProjectCard home={h} sizes={insetProjectImageSizes} />
                 </li>
               ))}
             </ul>
