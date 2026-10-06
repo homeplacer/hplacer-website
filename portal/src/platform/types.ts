@@ -72,6 +72,11 @@ export interface ObjectStore {
  * see portal/README.md for what a real deployment has to provision.
  */
 export interface PortalEnv {
+  /** Read-only GPS polling. Credentials are Worker secrets, never public vars. */
+  GPS_SYNC_ENABLED?: string;
+  LANDAIRSEA_CLIENT_TOKEN?: string;
+  LANDAIRSEA_USERNAME?: string;
+  LANDAIRSEA_PASSWORD?: string;
   PORTAL_DB: Db;
   PORTAL_PHOTOS?: ObjectStore;
 

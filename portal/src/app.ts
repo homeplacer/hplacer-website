@@ -32,6 +32,7 @@ import { registerAdmin } from "./features/admin.ts";
 import { registerCareersReview } from "./features/careers.ts";
 import { registerDashboard } from "./features/dashboard.ts";
 import { registerDocuments } from "./features/documents.ts";
+import { registerGps } from "./features/gps.ts";
 import { registerEquipment } from "./features/equipment.ts";
 import { registerEquipmentLocations } from "./features/equipment-locations.ts";
 import { registerHomes } from "./features/homes.ts";
@@ -54,6 +55,7 @@ export function buildRouter(): Router {
   registerHomes(router);
   registerHealth(router);
   registerEquipment(router);
+  registerGps(router);
   registerEquipmentLocations(router);
   registerEquipmentParts(router);
   registerTasks(router);
