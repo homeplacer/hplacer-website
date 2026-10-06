@@ -86,6 +86,10 @@ test("manifest covers every current local gallery source without inventing gappe
     /03-gallery-960.webp 960w/,
   );
   assert.match(
+    galleryImages.modelGallerySrcSet("/models/eclipse/03.jpg", "hero"),
+    /03-gallery-768.webp 768w/,
+  );
+  assert.match(
     galleryImages.modelGallerySrcSet("/models/beacon/00.jpg", "hero"),
     /00-gallery-640.webp 640w/,
   );
@@ -95,7 +99,8 @@ test("every derivative exists, has a truthful width and preserves photo proporti
   for (const [source, widths] of Object.entries(assets)) {
     const original = await sharp(`public${source}`).metadata();
     assert.equal(new Set(widths).size, widths.length, source);
-    assert.ok(widths.length <= 5, source);
+    assert.ok(widths.length <= 6, source);
+    assert.ok(widths.includes(Math.min(768, original.width)), source);
     for (const width of widths) {
       assert.ok(width <= original.width, source);
       const path = `public${source.slice(0, -4)}-gallery-${width}.webp`;
@@ -323,16 +328,36 @@ test("375px DPR 2 and 3 catalog cover budgets have zero per-cover regression", (
   }
 });
 
-test("measured mobile image budget is smaller while preserving gallery originals", () => {
+test("mobile heroes have a smaller 768w candidate while preserving gallery originals", () => {
   for (const slug of ["ultra-flex-28-68", "eclipse"]) {
     const model = models.find((candidate) => candidate.slug === slug);
+    const heroSet = galleryImages.modelGallerySrcSet(model.imageUrls[0], "hero");
+    const candidates = heroSet.split(", ").map((candidate) => {
+      const [url, width] = candidate.split(" ");
+      return { url, width: Number.parseInt(width, 10) };
+    });
+    for (const dpr of [1.75, 2]) {
+      const needed = 372 * dpr;
+      const selected = candidates.find((candidate) => candidate.width >= needed);
+      assert.equal(selected.width, 768, `${slug} DPR ${dpr}`);
+      const previous = candidates
+        .filter((candidate) => candidate.width !== 768)
+        .find((candidate) => candidate.width >= needed);
+      assert.equal(previous.width, 960, `${slug} DPR ${dpr}`);
+      assert.ok(
+        statSync(`public${selected.url}`).size <
+          statSync(`public${previous.url}`).size * 0.75,
+        `${slug}: 768w should save at least 25% against the previous 960w candidate`,
+      );
+    }
     // The original hero and its thumbnail share one URL and transfer only once.
     const before = model.imageUrls
       .slice(0, 12)
       .reduce((bytes, source) => bytes + statSync(`public${source}`).size, 0);
-    // 350 CSS pixel hero at DPR 2 chooses 960w; ~80 CSS pixel tiles choose 160w.
+    // A ~372 CSS pixel hero at DPR 1.75 or 2 has a 768w candidate;
+    // ~80 CSS pixel tiles retain their compact 160w candidate.
     const after =
-      statSync(`public${model.imageUrls[0].slice(0, -4)}-gallery-960.webp`)
+      statSync(`public${model.imageUrls[0].slice(0, -4)}-gallery-768.webp`)
         .size +
       model.imageUrls
         .slice(0, 6)
