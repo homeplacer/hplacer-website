@@ -5,6 +5,7 @@ import { CheckIcon, ArrowIcon } from "@/components/icons";
 import { submitLead } from "@/lib/lead";
 import { site } from "@/lib/site";
 import { Honeypot } from "@/components/honeypot";
+import { SafePublicLeadForm, usePublicLeadFormSafety } from "@/components/public-lead-form-safety";
 
 const fieldClass =
   "w-full rounded-lg border border-stone-line bg-stone-bg px-3.5 py-2.5 text-sm text-stone-ink outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
@@ -17,60 +18,68 @@ const fieldClass =
 export function WantThisHouseForm({ address, model }: { address?: string; model?: string }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [via, setVia] = useState<"api" | "mailto">("api");
+  const { formId, hydrated, successHeadingRef, errorRef, beginSubmission, endSubmission } = usePublicLeadFormSafety(status);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (status === "sending") return; // guard against double-submit while in flight
-    setStatus("sending");
+    if (!beginSubmission()) return;
     const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
-    const note = data.message?.trim();
-    // Enrich so the FUB lead is instantly actionable — context in structured
-    // fields (home of interest + address), the buyer's own words in the message.
-    if (address) {
-      data.home = model ? `${model} (like the one at ${address})` : `A home like ${address}`;
-      data.address = address;
-      data.message = note || `Interested in a home like the one at ${address}.`;
-    } else {
-      data.home = model || "Website inquiry";
-      data.message =
-        note || `Interested in ${model || "this home"} — please send pricing and an estimated monthly payment.`;
-    }
-    const result = await submitLead("contact", data);
-    if (result === "error") {
+    try {
+      const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+      const note = data.message?.trim();
+      // Enrich so the FUB lead is instantly actionable — context in structured
+      // fields (home of interest + address), the buyer's own words in the message.
+      if (address) {
+        data.home = model ? `${model} (like the one at ${address})` : `A home like ${address}`;
+        data.address = address;
+        data.message = note || `Interested in a home like the one at ${address}.`;
+      } else {
+        data.home = model || "Website inquiry";
+        data.message =
+          note || `Interested in ${model || "this home"} — please send pricing and an estimated monthly payment.`;
+      }
+      setStatus("sending");
+      const result = await submitLead("contact", data);
+      if (result === "error") {
+        setStatus("error");
+        return;
+      }
+      setVia(result);
+      setStatus("sent");
+      form.reset();
+    } catch {
       setStatus("error");
-      return;
+    } finally {
+      endSubmission();
     }
-    setVia(result);
-    setStatus("sent");
-    form.reset();
   }
 
-  if (status === "sent") {
-    return (
+  const confirmation = (
       <div className="rounded-card border border-brand-200 bg-brand-50 p-8 text-center">
         <div className="mx-auto grid size-12 place-items-center rounded-full bg-brand-600 text-white">
           <CheckIcon className="size-6" strokeWidth={2.5} />
         </div>
-        <h3 className="mt-4 font-display text-xl font-semibold text-brand-900">Got it — we&apos;re on it.</h3>
+        <h3 ref={successHeadingRef} tabIndex={-1} className="mt-4 font-display text-xl font-semibold text-brand-900 focus:outline-none">
+          {via === "mailto" ? "Finish sending your inquiry" : "Got it — we’re on it."}
+        </h3>
         <p className="mt-2 text-sm text-stone-muted">
           {via === "mailto"
             ? "We've opened a pre-filled email — just hit send and we'll price it out. Didn't open? Call or text (843) 849-HOME."
             : "A Home Placer team member will reach out shortly with pricing on a home like this. Want us sooner? Just call."}
         </p>
       </div>
-    );
-  }
+  );
 
   return (
-    <form data-form-type="model_pricing" onSubmit={handleSubmit} className="space-y-4">
+    <SafePublicLeadForm hydrated={hydrated} formId={formId} errorRef={errorRef} status={status} dataFormType="model_pricing"
+      legend="Request home pricing" onSubmit={handleSubmit} confirmation={confirmation}
+      pendingMessage="Sending your home pricing inquiry…"
+      successAnnouncement={via === "mailto"
+        ? "Finish sending your pricing inquiry in your mail app. Your message has not been sent yet."
+        : "Got it — we’re on it. A Home Placer team member will reach out with pricing."}
+      error={<>Something didn&apos;t look right — please check your name and phone, then try again. Or call{" "}
+        <a href={`tel:${site.phoneDial}`} className="font-semibold underline">{site.phoneDisplay}</a>.</>}>
       <Honeypot />
-      {status === "error" && (
-        <p className="rounded-lg border border-red-300 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">
-          Something didn&apos;t look right — please check your name and phone, then try again. Or call{" "}
-          <a href={`tel:${site.phoneDial}`} className="font-semibold underline">{site.phoneDisplay}</a>.
-        </p>
-      )}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="wth-name" className="mb-1.5 block text-sm font-medium text-stone-ink">
@@ -106,7 +115,7 @@ export function WantThisHouseForm({ address, model }: { address?: string; model?
 
       <button
         type="submit"
-        disabled={status === "sending"}
+        disabled={!hydrated || status === "sending"}
         className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-800 disabled:opacity-60"
       >
         {status === "sending" ? "Sending…" : "Get my price"} <ArrowIcon className="size-4" />
@@ -114,6 +123,6 @@ export function WantThisHouseForm({ address, model }: { address?: string; model?
       <p className="text-xs text-stone-muted">
         By submitting, you agree to be contacted by Home Placer about your inquiry.
       </p>
-    </form>
+    </SafePublicLeadForm>
   );
 }
