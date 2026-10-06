@@ -1,6 +1,9 @@
+import { forbidden } from "../platform/errors.ts";
+import { runConfiguredGpsSync } from "../integrations/landairsea-sync.ts";
+import { gpsFailureStage } from "../integrations/landairsea.ts";
 import type { Router } from "../api/router.ts";
 import { assertCan } from "../auth/authz.ts";
-import { json } from "../api/responses.ts";
+import { json, redirect } from "../api/responses.ts";
 import { html } from "../ui/html.ts";
 import { badge, empty, externalLink, page } from "../ui/layout.ts";
 
@@ -34,6 +37,17 @@ function mapUrl(device: GpsDisplayRow): string | null {
 }
 /** Backend contract for the GPS view; restrict fleet-wide locations to fleet managers. */
 export function registerGps(router: Router): void {
+  router.post("/api/equipment-gps/refresh", async ctx => {
+    assertCan(ctx.actor, "asset.write");
+    if (ctx.request.headers.get("Origin") !== ctx.url.origin) throw forbidden("Open the GPS page to check trackers");
+    try {
+      const result = await runConfiguredGpsSync(ctx.env);
+      return redirect(`/equipment-gps?check=${result.enabled ? "saved" : "disabled"}`);
+    } catch (error) {
+      console.error(JSON.stringify({ message: "GPS manual refresh failed", stage: gpsFailureStage(error) }));
+      return redirect("/equipment-gps?check=failed");
+    }
+  });
   router.get("/equipment-gps", async ctx => {
     assertCan(ctx.actor, "asset.write");
     const devices = await ctx.db.prepare(`SELECT g.*, a.asset_tag, a.manufacturer, a.model
@@ -42,6 +56,8 @@ export function registerGps(router: Router): void {
     const now = Date.now();
     return page(html`
       <h1>Equipment GPS</h1>
+      ${ctx.url.searchParams.get("check") === "saved" ? html`<p role="status">GPS check completed. Saved readings are shown below.</p>` : ctx.url.searchParams.get("check") === "failed" ? html`<p role="status">GPS check failed. Previous readings are unchanged.</p>` : ctx.url.searchParams.get("check") === "disabled" ? html`<p role="status">GPS checking is disabled.</p>` : ""}
+      <form method="post" action="/api/equipment-gps/refresh"><button type="submit">Check trackers now</button></form>
       <p class="lede">Last reported tracker locations. These do not change a machine's assigned job site or availability.</p>
       <p>Last successful API check: <strong>${sync ? localTime(sync.last_success_at) : "Not checked yet"}</strong></p>
       <p class="meta">Times shown in Eastern time. A successful check does not mean every tracker has sent a new location.</p>

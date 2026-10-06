@@ -66,3 +66,18 @@ describe("manager GPS phone view", () => {
     assert.match(body, /Tracker label: Test tracker/);
   });
 });
+
+describe("manual GPS checks", () => {
+  it("requires manager access and same-origin POST and leaves disabled polling inert", async () => {
+    const h = await createHarness();
+    try {
+      const employee = await h.db.prepare("SELECT email FROM employees WHERE role='employee' LIMIT 1").first<{email:string}>();
+      assert.ok(employee);
+      assert.equal((await h.request("/api/equipment-gps/refresh", {method:"POST",as:employee.email,headers:{Origin:"http://localhost:8788"}})).status,403);
+      assert.equal((await h.request("/api/equipment-gps/refresh", {method:"POST",as:"brandon@hplacer.com",headers:{Origin:"https://other.example"}})).status,403);
+      const response = await h.request("/api/equipment-gps/refresh", {method:"POST",as:"brandon@hplacer.com",headers:{Origin:"http://localhost:8788"}});
+      assert.equal(response.headers.get("location"),"/equipment-gps?check=disabled");
+      assert.equal((await h.db.prepare("SELECT COUNT(*) AS n FROM gps_devices").first<{n:number}>())?.n,0);
+    } finally {h.close();}
+  });
+});

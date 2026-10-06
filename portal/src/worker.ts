@@ -1,3 +1,4 @@
+import { gpsFailureStage } from "./integrations/landairsea.ts";
 /**
  * Cloudflare Worker entry point for portal.hplacer.com.
  *
@@ -49,8 +50,8 @@ const portal = {
       try {
         const gps = await runConfiguredGpsSync(env);
         if (gps.enabled) console.log(JSON.stringify({ message: "GPS poll complete", devices: gps.devices }));
-      } catch {
-        console.error("GPS poll failed; last successful observations retained");
+      } catch (error) {
+        console.error(JSON.stringify({ message: "GPS poll failed; last successful observations retained", stage: gpsFailureStage(error) }));
       }
       try {
         const gmail = await runConfiguredGmailImport(env);
