@@ -6,6 +6,7 @@ import { loadForms, createFormDriver } from "./fixtures/public-lead-form-compone
 
 const forms = loadForms();
 const contracts = {
+  subscribe: { type: "subscribe", names: "company name phone email", required: "name phone email" },
   financing: { type: "financing", names: "company name phone email hasLand", required: "name phone" },
   service: { type: "service", names: "company name phone email address message", required: "name phone message" },
   pricing: { type: "model_pricing", names: "company name phone email message", required: "name phone" },
@@ -64,7 +65,7 @@ for (const [key, contract] of Object.entries(contracts)) {
     await retry;
     assert.equal(driver.render().status, "sent");
     assert.equal(driver.form.resets, 1);
-    assert.match(driver.render().successAnnouncement, /received|set|reach out|on it/i);
+    assert.match(driver.render().successAnnouncement, /received|set|reach out|on it|subscribed/i);
     await driver.submit();
     assert.equal(driver.calls.length, 2, "confirmed form cannot be submitted again");
   });

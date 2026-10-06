@@ -7,6 +7,7 @@ import ts from "typescript";
 
 const require = createRequire(import.meta.url);
 export const formFiles = {
+  subscribe: ["email-capture", "EmailCapture"],
   financing: ["financing-form", "FinancingForm"],
   service: ["service-request-form", "ServiceRequestForm"],
   pricing: ["want-this-house-form", "WantThisHouseForm"],
@@ -49,12 +50,13 @@ export function loadForms(overrides = {}) {
 
 // Deterministic hook adapter for exercising real onSubmit code without a DOM.
 // Actual React SSR and the browser fixture separately verify rendering/hydration.
-export function createFormDriver(key, props = {}, hydrated = true) {
+export function createFormDriver(key, props = {}, hydrated = true, overrides = {}) {
   const cells = [];
   const calls = [];
   const order = [];
   let cursor = 0;
   let settle;
+  let effects = [];
   const react = {
     useState(initial) {
       const index = cursor++;
@@ -69,7 +71,7 @@ export function createFormDriver(key, props = {}, hydrated = true) {
       return cells[index] ??= { current: initial };
     },
     useId() { return `fixture-${cursor++}`; },
-    useEffect() { cursor++; },
+    useEffect(effect) { cursor++; effects.push(effect); },
     useSyncExternalStore() { cursor++; return hydrated; },
   };
   class FixtureFormData extends FormData {
@@ -85,15 +87,33 @@ export function createFormDriver(key, props = {}, hydrated = true) {
   };
   const forms = loadForms({
     react, FormData: FixtureFormData,
-    submitLead: (type, data) => pending({ type, data }),
+    submitLead: overrides.submitLead
+      ? (type, data) => { calls.push({ type, data }); return overrides.submitLead(type, data); }
+      : (type, data) => pending({ type, data }),
     fetch: (url, options) => pending({ url, ...options }),
   });
   const form = { entries: [], resets: 0, reset() { this.resets++; } };
   let element;
-  function render() { cursor = 0; element = forms[key](props); return element.props; }
+  function safetyElement(node) {
+    if (!node || typeof node !== "object") return undefined;
+    if (node.props?.dataFormType && node.props?.onSubmit) return node;
+    const children = Array.isArray(node.props?.children) ? node.props.children : [node.props?.children];
+    for (const child of children) {
+      const result = safetyElement(child);
+      if (result) return result;
+    }
+  }
+  function render() {
+    cursor = 0;
+    effects = [];
+    element = safetyElement(forms[key](props));
+    if (!element) throw new Error(`Missing safe form: ${key}`);
+    return element.props;
+  }
   render();
   return {
     calls, order, form, render,
+    flushEffects() { for (const effect of effects) effect(); },
     submit() { return element.props.onSubmit({ currentTarget: form, preventDefault() {} }); },
     resolve(result) { settle.resolveResult(result); },
     reject(error = new Error("Synthetic failure")) { settle.rejectResult(error); },
