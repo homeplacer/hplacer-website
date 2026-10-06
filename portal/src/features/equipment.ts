@@ -112,6 +112,7 @@ async function renderList(ctx: RequestContext): Promise<Response> {
 
   const body = html`
     <h1>Equipment (${assets.length})</h1>
+    ${can(ctx.actor, "asset.write") ? html`<div class="btn-row"><a class="btn secondary" href="/equipment-gps">View GPS locations</a></div>` : ""}
     <p class="lede">${scope === "all" ? "Complete inventory, including records that still need verification." : scope === "main" ? "Verified fleet and staff-entered assets." : "Imported records held out of the main fleet until their source details are verified."}</p>
 
     <form method="get" action="/equipment">
