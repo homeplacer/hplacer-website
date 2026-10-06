@@ -26,7 +26,7 @@ describe("read-only LandAirSea tracking client", () => {
     await fetchTrackerPositions(credentials, async (url, init) => {
       assert.equal(url, "https://gateway.landairsea.com/Track/MyDevices");
       assert.equal(init?.method, "POST");
-      assert.equal(init?.redirect, "error");
+      assert.equal(init?.redirect, "manual");
       assert.deepEqual(JSON.parse(String(init?.body)), credentials);
       assert.ok(init?.signal);
       return Response.json(payload());
@@ -66,5 +66,17 @@ it("reports only fixed safe failure stages", async () => {
   for (const [response, stage] of [[new Response("secret", {status:403}), "http_403"], [Response.json({message:{result:false,description:"secret"}}), "provider_rejected"], [new Response("secret"),"json"]] as const) {
     try {await fetchTrackerPositions(credentials,async()=>response);assert.fail("must fail");}
     catch(error){assert.equal(gpsFailureStage(error),stage);assert.doesNotMatch(String(error),/secret/);}
+  }
+});
+
+it("rejects redirects without making another credential-bearing request", async () => {
+  for (const status of [301, 302, 303, 307, 308]) {
+    let calls = 0;
+    await assert.rejects(fetchTrackerPositions(credentials, async (_url, init) => {
+      calls++;
+      assert.equal(init?.redirect, "manual");
+      return new Response(null, { status, headers: { Location: "https://other.example/" } });
+    }), { message: "GPS provider request failed", stage: `http_${status}` });
+    assert.equal(calls, 1);
   }
 });
