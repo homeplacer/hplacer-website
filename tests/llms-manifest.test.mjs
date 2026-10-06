@@ -23,6 +23,7 @@ function loadTs(path, dependencies = {}) {
   runInNewContext(output, {
     exports,
     Response,
+    URL,
     Date: AuditDate,
     console,
     require(id) {
@@ -42,6 +43,7 @@ function manifestFixture({ extraPosts = [], reviews } = {}) {
   const homes = loadTs("src/lib/homes.ts", {
     "./home-types": loadTs("src/lib/home-types.ts"),
     "./asset": loadTs("src/lib/asset.ts"),
+    "./model-tour-availability": loadTs("src/lib/model-tour-availability.ts"),
     "../../data/models.json": { default: json("data/models.json") },
     "../../data/setup-pricing.json": { default: json("data/setup-pricing.json") },
     "../../data/home-pricing.json": { default: json("data/home-pricing.json") },

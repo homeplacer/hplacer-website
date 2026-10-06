@@ -117,9 +117,8 @@ test("every derivative exists, has a truthful width and preserves photo proporti
   }
 });
 
-test("all source photos and catalog remain byte-for-byte unchanged from the task base", () => {
+test("all source photos remain byte-for-byte unchanged from the task base", () => {
   for (const path of [
-    "data/models.json",
     ...Object.keys(assets).map((source) => `public${source}`),
   ]) {
     const original = execFileSync("git", ["show", `5030cdf:${path}`], {
@@ -127,6 +126,16 @@ test("all source photos and catalog remain byte-for-byte unchanged from the task
     });
     assert.equal(digest(readFileSync(path)), digest(original), path);
   }
+});
+
+test("catalog preserves the task base except the verified exact-plan Tradition 68 tour repair", () => {
+  const original = JSON.parse(execFileSync("git", ["show", "5030cdf:data/models.json"], {
+    encoding: "utf8",
+  }));
+  const tradition = original.find((model) => model.slug === "tradition-68");
+  assert.equal(tradition.tourUrl, "https://my.matterport.com/show/?m=aa2GGU46jcX");
+  tradition.tourUrl = "https://my.matterport.com/show/?m=sFnvNkUWzgV";
+  assert.deepEqual(models, original);
 });
 
 test("server-readable galleries prioritize the true hero and limit initial thumbnails without losing originals", () => {

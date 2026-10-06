@@ -40,6 +40,7 @@ function catalog(records = models) {
   return load("src/lib/homes.ts", {
     "./home-types": load("src/lib/home-types.ts"),
     "./asset": load("src/lib/asset.ts"),
+    "./model-tour-availability": load("src/lib/model-tour-availability.ts"),
     "../../data/models.json": records,
     "../../data/setup-pricing.json": json("data/setup-pricing.json"),
     "../../data/home-pricing.json": json("data/home-pricing.json"),
@@ -74,7 +75,12 @@ test("only the two confirmed dead images are withheld, preserving authentic phot
       model.slug,
     );
     assert.equal(home.imageUrls[0], model.imageUrls[0], model.slug);
-    assert.equal(home.tourUrl, model.tourUrl, model.slug);
+    assert.equal(
+      home.tourUrl,
+      ["dutch-elite-1676-01", "dutch-elite-1676-07"].includes(model.slug)
+        ? undefined : model.tourUrl,
+      model.slug,
+    );
     assert.deepEqual(home.floorPlans, model.floorPlans ?? [], model.slug);
     assert.deepEqual(model, original, "customer projection must not mutate raw records");
   }
