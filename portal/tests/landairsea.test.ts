@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { fetchTrackerPositions, parseTrackerPositions } from "../src/integrations/landairsea.ts";
+import { fetchTrackerPositions, parseTrackerPositions, gpsFailureStage } from "../src/integrations/landairsea.ts";
 const credentials = { clientToken: "test-token", username: "test-account", password: "test-password" };
 const device = { DeviceId: "tracker-1", Latitude: 33.8, Longitude: -78.9, LastLocationTimestamp: "2026-09-17T12:00:00Z", Speed_kmh: 0, Voltage: -1 };
 function payload(devices: unknown[] = [device]) { return { message: { result: true }, DeviceDetails: devices }; }
@@ -59,4 +59,12 @@ describe("live provider response format", () => {
       assert.equal(parseTrackerPositions(live(date))[0].reportedAt, null);
     }
   });
+});
+
+it("reports only fixed safe failure stages", async () => {
+  assert.equal(gpsFailureStage(new Error("secret")), "unexpected");
+  for (const [response, stage] of [[new Response("secret", {status:403}), "http_403"], [Response.json({message:{result:false,description:"secret"}}), "provider_rejected"], [new Response("secret"),"json"]] as const) {
+    try {await fetchTrackerPositions(credentials,async()=>response);assert.fail("must fail");}
+    catch(error){assert.equal(gpsFailureStage(error),stage);assert.doesNotMatch(String(error),/secret/);}
+  }
 });

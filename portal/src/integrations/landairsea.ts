@@ -1,3 +1,10 @@
+export class GpsError extends Error {
+  readonly stage: string;
+  constructor(message: string, stage: string) { super(message); this.stage = stage; }
+}
+export function gpsFailureStage(error: unknown): string {
+  return error instanceof GpsError ? error.stage : "unexpected";
+}
 /** Read-only LandAirSea Tracking API. Never log requests, responses, or credentials. */
 export interface LandAirSeaCredentials {
   clientToken: string;
@@ -70,7 +77,7 @@ export function parseTrackerPositions(payload: unknown): TrackerPosition[] {
   });
 }
 export async function fetchTrackerPositions(credentials: LandAirSeaCredentials, fetcher: typeof fetch = fetch): Promise<TrackerPosition[]> {
-  if (Object.values(credentials).some(value => !value.trim())) throw new Error("GPS credentials are incomplete");
+  if (Object.values(credentials).some(value => !value.trim())) throw new GpsError("GPS credentials are incomplete", "configuration");
   let response: Response;
   try {
     response = await fetcher(ENDPOINT, {
@@ -80,9 +87,9 @@ export async function fetchTrackerPositions(credentials: LandAirSeaCredentials, 
       redirect: "error",
       signal: AbortSignal.timeout(15000),
     });
-  } catch { throw new Error("GPS provider connection failed"); }
-  if (!response.ok) throw new Error("GPS provider request failed");
-  if (!response.body) throw new Error("GPS provider returned an empty response");
+  } catch { throw new GpsError("GPS provider connection failed", "connection"); }
+  if (!response.ok) throw new GpsError("GPS provider request failed", `http_${response.status}`);
+  if (!response.body) throw new GpsError("GPS provider returned an empty response", "empty_response");
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let text = "";
@@ -96,7 +103,10 @@ export async function fetchTrackerPositions(credentials: LandAirSeaCredentials, 
       text += decoder.decode(chunk.value, { stream: true });
     }
     text += decoder.decode();
-    return parseTrackerPositions(JSON.parse(text));
-  } catch { throw new Error("GPS provider returned an invalid response"); }
+    let parsed: unknown;
+    try { parsed = JSON.parse(text); } catch { throw new GpsError("GPS provider returned an invalid response", "json"); }
+    if (record(record(parsed)?.message)?.result !== true) throw new GpsError("GPS provider returned an invalid response", "provider_rejected");
+    try { return parseTrackerPositions(parsed); } catch { throw new GpsError("GPS provider returned an invalid response", "device_format"); }
+  } catch (error) { if (error instanceof GpsError) throw error; throw new GpsError("GPS provider returned an invalid response", "response_stream"); }
   finally { reader.releaseLock(); }
 }
