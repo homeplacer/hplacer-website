@@ -12,11 +12,13 @@ export function HomeInquiryDialog({
   label = "Ask about this home",
   className,
   showArrow = true,
+  triggerInert = false,
 }: {
   homeName: string;
   label?: string;
   className?: string;
   showArrow?: boolean;
+  triggerInert?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const titleId = useId();
@@ -56,6 +58,8 @@ export function HomeInquiryDialog({
         href={contactContextHref(homeName)}
         aria-haspopup="dialog"
         aria-expanded={open}
+        inert={triggerInert}
+        aria-hidden={triggerInert || undefined}
         onClick={(event) => {
           // Keep the contact-page URL as progressive fallback. JavaScript
           // users stay on the card page and get the faster in-place dialog.
