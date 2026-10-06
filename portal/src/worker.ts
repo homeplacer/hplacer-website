@@ -5,6 +5,7 @@
  * separate bindings, separate route. Nothing in the marketing app imports this
  * module, and nothing here imports the marketing app.
  */
+import { runConfiguredGpsSync } from "./integrations/landairsea-sync.ts";
 import { handleRequest } from "./app.ts";
 import { sweepLowStock } from "./domain/inventory.ts";
 import { notifyServiceDue } from "./domain/assets.ts";
@@ -45,6 +46,12 @@ const portal = {
       return;
     }
     if (event.cron === "*/15 * * * *") {
+      try {
+        const gps = await runConfiguredGpsSync(env);
+        if (gps.enabled) console.log(JSON.stringify({ message: "GPS poll complete", devices: gps.devices }));
+      } catch {
+        console.error("GPS poll failed; last successful observations retained");
+      }
       try {
         const gmail = await runConfiguredGmailImport(env);
         if (gmail.enabled) {
