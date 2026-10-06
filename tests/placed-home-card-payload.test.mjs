@@ -130,6 +130,25 @@ test("city sorting retains newest-first city groups, original cards, and the sha
   assert.deepEqual(cards.map((card) => card.slug), records.map((home) => home.slug));
 });
 
+test("keyboard focus outlines stay inset inside the overflow-clipped directory cards in both sort views", () => {
+  const cards = published.map(toPlacedHomeCard);
+  for (const sort of ["recent", "city"]) {
+    const html = render(cards, sort);
+    const links = [...html.matchAll(/<li class="([^"]+)"><a\b([^>]*)>/g)];
+    assert.equal(links.length, cards.length, sort);
+    for (const [, parentClasses, attributes] of links) {
+      assert.match(parentClasses, /\boverflow-hidden\b/);
+      const classes = /class="([^"]+)"/.exec(attributes)?.[1].split(" ") ?? [];
+      assert.ok(classes.includes("focus-visible:outline-2"));
+      assert.ok(classes.includes("focus-visible:outline-brand-700"));
+      // A positive offset places the entire 2px indicator outside the Link,
+      // where its overflow-hidden parent clips it. Keep the outline inset.
+      assert.ok(classes.includes("focus-visible:-outline-offset-2"));
+      assert.equal(classes.some(name => /^focus-visible:outline-offset-/.test(name)), false);
+    }
+  }
+});
+
 test("zero/single/multiple photos and missing optional values preserve badge and label behavior", () => {
   for (const [photos, count] of [[[], 0], [["/one.jpg"], 1], [["/one.jpg", "/two.jpg"], 2]]) {
     const card = toPlacedHomeCard(fixture("badge", { photos, closeDate: null, modelName: null, lotAcres: null }));

@@ -32,7 +32,7 @@ function Card({ h, eager }: { h: PlacedHomeCard; eager: boolean }) {
   const count = h.photoCount;
   return (
     <li className="overflow-hidden rounded-card border border-stone-line bg-stone-surface transition hover:border-brand-300 hover:shadow-sm">
-      <Link href={`/recently-placed/${h.slug}`} className="group flex h-full flex-col focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+      <Link href={`/recently-placed/${h.slug}`} className="group flex h-full flex-col focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-700">
         <div className="relative">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
