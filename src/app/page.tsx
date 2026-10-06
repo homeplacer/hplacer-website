@@ -128,7 +128,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-brand-950/10" aria-hidden />
         <div className="container-x relative flex flex-col gap-5 py-8 sm:py-10 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
           <div className="max-w-3xl">
-            <p className="text-sm font-bold uppercase tracking-[0.14em] text-white/80">
+            <p className="text-sm font-bold uppercase tracking-[0.14em] text-white">
               Down-payment assistance
             </p>
             <h2 className="mt-2 font-display text-3xl font-semibold leading-tight sm:text-4xl">
