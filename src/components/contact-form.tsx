@@ -6,6 +6,7 @@ import { submitLead } from "@/lib/lead";
 import { site } from "@/lib/site";
 import { Honeypot } from "@/components/honeypot";
 import { contactHomeFromLocation } from "@/lib/contact-context";
+import { CONTACT_PHONE_PATTERN, isValidContactPhone } from "@/lib/contact-phone";
 
 const fieldClass =
   "w-full rounded-lg border border-stone-line bg-stone-bg px-3.5 py-2.5 text-sm text-stone-ink outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
@@ -35,7 +36,7 @@ export function ContactForm({
     "idle",
   );
   const [via, setVia] = useState<"api" | "mailto">("api");
-  const [errorReason, setErrorReason] = useState<"contact" | "submission">("contact");
+  const [errorReason, setErrorReason] = useState<"phone" | "submission">("phone");
   const [home, setHome] = useState(defaultHome);
   const textMessage = encodeURIComponent(
     home
@@ -69,9 +70,8 @@ export function ContactForm({
     if (!hydrated || submissionInFlight.current || status === "sent") return;
     const form = e.currentTarget;
     const phone = form.elements.namedItem("phone") as HTMLInputElement;
-    const email = form.elements.namedItem("email") as HTMLInputElement;
-    if (!phone.value.trim() && !email.value.trim()) {
-      setErrorReason("contact");
+    if (!isValidContactPhone(phone.value)) {
+      setErrorReason("phone");
       setStatus("error");
       phone.focus();
       return;
@@ -167,20 +167,30 @@ export function ContactForm({
             htmlFor={`${formId}-phone`}
             className="mb-1.5 block text-sm font-medium text-stone-ink"
           >
-            Phone <span className="text-stone-muted">(or email)</span>
+            Phone <span className="text-stone-muted">(required)</span>
           </label>
           <input
             id={`${formId}-phone`}
             name="phone"
             type="tel"
             inputMode="tel"
-            pattern="[0-9()+.\s-]{7,}"
-            title="Please enter a valid phone number."
+            required
+            pattern={CONTACT_PHONE_PATTERN}
+            title="Enter a phone number with area code, or + and the country code."
             autoComplete="tel"
-            aria-describedby={`${formId}-error`}
-            aria-invalid={(status === "error" && errorReason === "contact") || undefined}
+            aria-describedby={`${formId}-phone-help ${formId}-error`}
+            aria-invalid={(status === "error" && errorReason === "phone") || undefined}
+            onInvalid={(event) => {
+              event.preventDefault();
+              setErrorReason("phone");
+              setStatus("error");
+              event.currentTarget.focus();
+            }}
             className={fieldClass}
           />
+          <p id={`${formId}-phone-help`} className="mt-1.5 text-xs text-stone-muted">
+            Include your area code. For international numbers, include + and the country code.
+          </p>
         </div>
       </div>
       <div>
@@ -188,7 +198,7 @@ export function ContactForm({
           htmlFor={`${formId}-email`}
           className="mb-1.5 block text-sm font-medium text-stone-ink"
         >
-          Email <span className="text-stone-muted">(or phone)</span>
+          Email <span className="text-stone-muted">(optional)</span>
         </label>
         <input
           id={`${formId}-email`}
@@ -196,7 +206,6 @@ export function ContactForm({
           type="email"
           autoComplete="email"
           aria-describedby={`${formId}-error`}
-          aria-invalid={(status === "error" && errorReason === "contact") || undefined}
           className={fieldClass}
         />
       </div>
@@ -243,7 +252,7 @@ export function ContactForm({
       </button>
       <p className="text-xs text-stone-muted">
         By submitting, you agree to be contacted by Home Placer about your
-        inquiry. Please include a phone number or email address so we can reply.
+        inquiry. A phone number is required so our team can follow up. Email is optional.
       </p>
     </fieldset>
   );
@@ -268,8 +277,8 @@ export function ContactForm({
           : "sr-only"}
       >
         {status === "error" && <>
-          {errorReason === "contact"
-            ? "Please enter a phone number or email address so we can reply."
+          {errorReason === "phone"
+            ? "Please enter a valid phone number with area code, or + and the country code."
             : "We couldn’t accept your inquiry. Check your name and contact details, then try again."}
           {" "}Or call{" "}
           <a href={`tel:${site.phoneDial}`} className="font-semibold underline">
