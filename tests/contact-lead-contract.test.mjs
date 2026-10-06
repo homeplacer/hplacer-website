@@ -29,7 +29,7 @@ const bundle = await build({
   }],
 });
 
-const data = { name: "Synthetic Visitor", email: "visitor@example.test", phone: "", message: "Fixture only" };
+const data = { name: "Synthetic Visitor", email: "visitor@example.test", phone: "202-555-0100", message: "Fixture only" };
 const attribution = { utm_source: "fixture", landing_page: "https://example.test/synthetic" };
 
 function harness(response) {
@@ -77,6 +77,7 @@ for (const [label, response] of [["server failure", { ok: false, status: 503 }],
     assert.equal(fixture.requests.length, 1);
     const draft = new URL(fixture.window.location.href);
     assert.equal(draft.protocol, "mailto:");
+    assert.match(draft.searchParams.get("body"), /Phone: 202-555-0100/);
     assert.match(draft.searchParams.get("body"), /utm_source: fixture/);
     assert.match(draft.searchParams.get("body"), /landing_page: https:\/\/example.test\/synthetic/);
     assert.deepEqual(fixture.events, [{ name: "lead_submission_fallback", params: { form_type: "contact", submission_method: "mailto" } }]);

@@ -77,6 +77,8 @@ async function startPreview() {
             sendDisabled: root.querySelector("button")?.disabled ?? null,
             status: root.querySelector('[role="status"]').textContent,
             error: root.querySelector('[role="alert"]').textContent,
+            phoneRequired: root.querySelector('[name="phone"]')?.required ?? null,
+            phoneValid: root.querySelector('[name="phone"]')?.validity.valid ?? null,
             focus: document.activeElement?.tagName + ": " + (document.activeElement?.textContent || ""),
             requests
           }, null, 2);
@@ -100,6 +102,9 @@ async function startPreview() {
           const form = document.querySelector("#root form");
           form?.requestSubmit();
           form?.requestSubmit();
+        });
+        document.getElementById("bypass").addEventListener("click", () => {
+          document.querySelector("#root form")?.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
         });
         document.getElementById("reject").addEventListener("click", () => {
           fail?.(new Error("Synthetic helper rejection"));
@@ -139,12 +144,14 @@ async function startPreview() {
       #diagnostics { white-space: pre-wrap; background: #eee; padding: 12px; }
     </style></head><body><h1>Isolated contact form: ${noJs ? "no JavaScript" : "delayed hydration"}</h1>
     <p>Synthetic data only. No real API, tracking, mail app, or production connection.</p>
-    ${noJs ? "" : '<div><button id="hydrate">Hydrate form</button><button id="api">Return API success</button><button id="error">Return API error</button><button id="mailto">Return mailto fallback</button><button id="double">Double-submit test</button><button id="reject">Reject helper promise</button></div>'}
+    ${noJs ? "" : '<div><button id="hydrate">Hydrate form</button><button id="api">Return API success</button><button id="error">Return API error</button><button id="mailto">Return mailto fallback</button><button id="double">Double-submit test</button><button id="bypass">Submit event without native validation</button><button id="reject">Reject helper promise</button></div>'}
     <hr><div id="root">${html}</div><hr><pre id="diagnostics">Server snapshot: no native form; fields disabled; zero lead requests.</pre>
     ${noJs ? "" : '<script src="/fixture.js"></script>'}</body></html>`);
   });
-  server.listen(18055, "127.0.0.1", () => {
-    console.log("Isolated fixture: http://127.0.0.1:18055/ and /?mode=no-js");
+  const port = Number(process.env.CONTACT_FORM_FIXTURE_PORT || "18055");
+  if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error("Invalid loopback fixture port");
+  server.listen(port, "127.0.0.1", () => {
+    console.log(`Isolated fixture: http://127.0.0.1:${port}/ and /?mode=no-js`);
   });
 }
 

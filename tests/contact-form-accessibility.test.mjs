@@ -9,6 +9,8 @@ test("actual React server rendering has no native submission path before hydrati
   assert.match(html, /<fieldset disabled=""/);
   assert.match(html, /<button type="submit" disabled=""/);
   assert.match(html, /<input[^>]*required=""[^>]*name="name"/);
+  assert.match(html.match(/<input[^>]*name="phone"[^>]*>/)?.[0] ?? "", /required=""/);
+  assert.doesNotMatch(html.match(/<input[^>]*name="email"[^>]*>/)?.[0] ?? "", /required=/);
   assert.match(html, /name="packageId" value="fixture-package"/);
   assert.match(html, /name="home" value="Fixture Home"/);
   assert.match(html, /Prefer another way to get in touch/);
@@ -24,17 +26,23 @@ test("status and alert regions exist empty before any update, with matching desc
   assert.match(html, /<p role="status" aria-live="polite" aria-atomic="true" class="sr-only"><\/p>/);
   const errorId = html.match(/<p id="([^"]+)" tabindex="-1" role="alert" aria-atomic="true" class="sr-only"><\/p>/)?.[1];
   assert.ok(errorId);
-  assert.equal(html.split(`aria-describedby="${errorId}"`).length - 1, 2);
+  assert.match(html, new RegExp(`aria-describedby="[^"]+-phone-help ${errorId}"`));
+  assert.equal(html.split(`aria-describedby="${errorId}"`).length - 1, 1);
   assert.doesNotMatch(html, /aria-invalid="true"/);
 });
 
 test("multiple form instances keep field and error IDs distinct", () => {
   const html = renderFixtureGroup();
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
-  assert.equal(ids.length, 12);
+  assert.equal(ids.length, 14);
   assert.equal(new Set(ids).size, ids.length);
-  const errors = [...html.matchAll(/<p id="([^"]+)" role="alert"/g)].map(match => match[1]);
-  for (const id of errors) assert.equal(html.split(`aria-describedby="${id}"`).length - 1, 2);
+  const errors = [...html.matchAll(/<p\b[^>]*role="alert"[^>]*>/g)]
+    .map(match => match[0].match(/\bid="([^"]+)"/)[1]);
+  assert.equal(errors.length, 2);
+  for (const id of errors) {
+    assert.equal(html.split(`aria-describedby="${id}"`).length - 1, 1);
+    assert.match(html, new RegExp(`aria-describedby="[^"]+-phone-help ${id}"`));
+  }
 });
 
 test("feedback distinguishes delivered leads from an unsent mail draft and preserves intake", () => {
