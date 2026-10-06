@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowIcon, CheckIcon } from "@/components/icons";
 import { submitLead } from "@/lib/lead";
 import { Honeypot } from "@/components/honeypot";
+import { PUBLIC_PHONE_PATTERN } from "@/lib/phone-pattern";
 import { SafePublicLeadForm, usePublicLeadFormSafety } from "@/components/public-lead-form-safety";
 
 // Site-wide new-homes capture. It intentionally collects complete contact
@@ -87,7 +88,7 @@ export function EmailCapture() {
                 inputMode="tel"
                 autoComplete="tel"
                 aria-describedby={`${formId}-error`}
-                pattern="[0-9()+.\\s-]{7,}"
+                pattern={PUBLIC_PHONE_PATTERN}
                 title="Please enter a valid phone number."
                 placeholder="Phone number"
                 aria-label="Phone number"

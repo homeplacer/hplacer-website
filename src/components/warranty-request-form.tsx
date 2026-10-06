@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckIcon, ArrowIcon } from "@/components/icons";
 import { Honeypot } from "@/components/honeypot";
+import { PUBLIC_PHONE_PATTERN } from "@/lib/phone-pattern";
 import { site } from "@/lib/site";
 import { SafePublicLeadForm, usePublicLeadFormSafety } from "@/components/public-lead-form-safety";
 
@@ -88,7 +89,7 @@ export function WarrantyRequestForm() {
         <div>
           <label htmlFor="wr-phone" className="mb-1.5 block text-sm font-medium text-stone-ink">Phone</label>
           <input
-            id="wr-phone" name="phone" type="tel" inputMode="tel" pattern="[0-9()+.\s-]{7,}"
+            id="wr-phone" name="phone" type="tel" inputMode="tel" pattern={PUBLIC_PHONE_PATTERN}
             title="Please enter a valid phone number." autoComplete="tel" className={fieldClass}
           />
         </div>

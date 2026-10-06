@@ -5,6 +5,7 @@ import { CheckIcon, ArrowIcon } from "@/components/icons";
 import { submitLead } from "@/lib/lead";
 import { site } from "@/lib/site";
 import { Honeypot } from "@/components/honeypot";
+import { PUBLIC_PHONE_PATTERN } from "@/lib/phone-pattern";
 import { SafePublicLeadForm, usePublicLeadFormSafety } from "@/components/public-lead-form-safety";
 
 const fieldClass =
@@ -92,7 +93,7 @@ export function FinancingForm({
           <label htmlFor={fieldId("phone")} className="mb-1.5 block text-sm font-medium text-stone-ink">
             Phone
           </label>
-          <input id={fieldId("phone")} name="phone" type="tel" inputMode="tel" pattern="[0-9()+.\s-]{7,}" title="Please enter a valid phone number." required autoComplete="tel" className={fieldClass} />
+          <input id={fieldId("phone")} name="phone" type="tel" inputMode="tel" pattern={PUBLIC_PHONE_PATTERN} title="Please enter a valid phone number." required autoComplete="tel" className={fieldClass} />
         </div>
       </div>
       <div>
