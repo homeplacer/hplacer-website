@@ -2,18 +2,27 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
+import { execFileSync } from 'node:child_process';
 import ts from 'typescript';
 
-function feed(path, fetch) {
+function feed(path, fetch, cachedSnapshot) {
   const { outputText } = ts.transpileModule(readFileSync(path, 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   });
   const compiled = { exports: {} };
   runInNewContext(outputText, { module: compiled, exports: compiled.exports, fetch, AbortSignal, require: (name) => {
+    if (name === "./mls-photo") {
+      const helper = { exports: {} };
+      runInNewContext(ts.transpileModule(readFileSync('src/lib/mls-photo.ts', 'utf8'), {
+        compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+      }).outputText, { module: helper, exports: helper.exports });
+      return helper.exports;
+    }
     assert.equal(name, "next/cache");
     return { unstable_cache: (fn, keys, options) => {
       assert.equal(options.revalidate, path === activePath ? 300 : 900);
-      return fn;
+      if (path === activePath) assert.deepEqual([...keys], ['home-placer-active-validated-v1']);
+      return cachedSnapshot === undefined ? fn : async () => cachedSnapshot;
     } };
   } });
   return compiled.exports;
@@ -97,4 +106,41 @@ test('a valid empty closing feed adds nothing and leaves the archive untouched',
   assert.equal((await api.getNewClosedHomePlacerSales(archive)).length, 0);
   assert.equal(archive.length, 1);
   assert.equal(archive[0].mls, 'existing');
+});
+
+test('optional unsafe media is omitted without changing valid active availability', async () => {
+  const listingKey = '1234567890';
+  for (const photo of [null, {}, '//other.test/photo', '/api/img/other/1', '/api/img/1234567890/2', '/api/img/1234567890/1?width=480', 'https://forturro.com/api/img/1234567890/1']) {
+    const listing = (await feed(activePath, async () => Response.json({ items: [{ ...active, listingKey, photo }] })).getLivePackageListings())[0];
+    assert.equal(listing.listingKey, listingKey);
+    assert.equal(listing.listPrice, active.listPrice);
+    assert.equal(listing.photoUrl, undefined);
+  }
+  const listing = (await feed(activePath, async () => Response.json({ items: [{ ...active, listingKey, photo: '/api/img/1234567890/1' }] })).getLivePackageListings())[0];
+  assert.equal(listing.photoUrl, 'https://forturro.com/api/img/1234567890/1');
+});
+
+test('prior cached optional photo URLs are normalized safely on every read without a new feed request', async () => {
+  const listingKey = '1234567890';
+  const photo = '/api/img/1234567890/1';
+  const cached = [
+    { ...active, listingKey, photo, photoUrl: 'https://attacker.test/unsafe' },
+    { ...active, listingKey: '999', photo: '/api/img/other/1', photoUrl: 'https://forturro.com/api/img/999/1' },
+  ];
+  const before = JSON.stringify(cached);
+  const api = feed(activePath, async () => { assert.fail('A cache hit must not refetch the producer'); }, cached);
+  const normalized = await api.getLivePackageListings();
+  assert.equal(normalized[0].photoUrl, 'https://forturro.com/api/img/1234567890/1');
+  assert.equal(normalized[1].photoUrl, undefined);
+  assert.equal(normalized.length, 2);
+  assert.equal(normalized[0].listPrice, active.listPrice);
+  assert.equal(JSON.stringify(cached), before);
+});
+
+test('the private cache callback and literal key remain identical to the task base', () => {
+  const original = execFileSync('git', ['show', '7b3f403:src/lib/forturro-package-feed.ts'], { encoding: 'utf8' });
+  const current = readFileSync(activePath, 'utf8');
+  const callback = source => source.slice(source.indexOf('unstable_cache(async'), source.indexOf('\n\nfunction isActiveListing')).split('\n\n/** Validate optional media')[0];
+  assert.equal(callback(current), callback(original));
+  // This is source preservation, not a claim of compiled-function or cross-build warmth.
 });
