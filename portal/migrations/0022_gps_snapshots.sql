@@ -1,6 +1,7 @@
 -- GPS observations remain separate from assigned job location and equipment health.
 CREATE TABLE gps_devices (
   device_id TEXT PRIMARY KEY,
+  provider_name TEXT,
   asset_id TEXT UNIQUE REFERENCES assets(id),
   latitude REAL,
   longitude REAL,

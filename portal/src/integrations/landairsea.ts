@@ -6,6 +6,7 @@ export interface LandAirSeaCredentials {
 }
 export interface TrackerPosition {
   deviceId: string;
+  name: string | null;
   latitude: number | null;
   longitude: number | null;
   reportedAt: string | null;
@@ -26,29 +27,45 @@ function timestamp(value: unknown): string | null {
   const ms = Date.parse(value);
   return Number.isFinite(ms) ? new Date(ms).toISOString() : null;
 }
+/** The live API explicitly labels this US-formatted field as UTC. */
+function providerUtc(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const iso = timestamp(value);
+  if (iso) return iso;
+  const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2}):(\d{2}) (AM|PM)$/.exec(value);
+  if (!m) return null;
+  const [, month, day, year, hour, minute, second, period] = m;
+  const h = Number(hour);
+  if (h < 1 || h > 12 || Number(minute) > 59 || Number(second) > 59) return null;
+  const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), h % 12 + (period === "PM" ? 12 : 0), Number(minute), Number(second)));
+  if (date.getUTCFullYear() !== Number(year) || date.getUTCMonth() !== Number(month) - 1 || date.getUTCDate() !== Number(day)) return null;
+  return date.toISOString();
+}
 export function parseTrackerPositions(payload: unknown): TrackerPosition[] {
   const root = record(payload);
-  if (record(root?.message)?.result !== true || !Array.isArray(root?.DeviceDetails)) {
+  const devices = root?.devicedetails ?? root?.DeviceDetails;
+  if (record(root?.message)?.result !== true || root?.suspended === true || !Array.isArray(devices)) {
     throw new Error("GPS provider did not return a successful device list");
   }
-  if (root.DeviceDetails.length > 1000) throw new Error("GPS device list exceeds limit");
+  if (devices.length > 1000) throw new Error("GPS device list exceeds limit");
   const seen = new Set<string>();
-  return root.DeviceDetails.map((item: unknown) => {
+  return devices.map((item: unknown) => {
     const device = record(item);
-    const id = device?.DeviceId;
+    const id = device?.deviceId ?? device?.DeviceId;
     if (typeof id !== "string" || !/^[A-Za-z0-9_-]{1,64}$/.test(id) || seen.has(id)) {
       throw new Error("GPS provider returned an invalid or duplicate device identifier");
     }
     seen.add(id);
-    const lat = numeric(device?.Latitude, -90, 90);
-    const lon = numeric(device?.Longitude, -180, 180);
+    const lat = numeric(device?.latitude ?? device?.Latitude, -90, 90);
+    const lon = numeric(device?.longitude ?? device?.Longitude, -180, 180);
     return {
       deviceId: id,
+      name: typeof device?.name === "string" ? device.name.replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, 120) || null : null,
       latitude: lat !== null && lon !== null ? lat : null,
       longitude: lat !== null && lon !== null ? lon : null,
-      reportedAt: timestamp(device?.LastLocationTimestamp),
-      speedKmh: numeric(device?.Speed_kmh, 0, 1000),
-      voltage: numeric(device?.Voltage, 0, 100),
+      reportedAt: device?.utctime !== undefined ? providerUtc(device.utctime) : timestamp(device?.LastLocationTimestamp),
+      speedKmh: numeric(device?.speed_kmh ?? device?.Speed_kmh, 0, 1000),
+      voltage: numeric(device?.voltage ?? device?.Voltage, 0, 100),
     };
   });
 }

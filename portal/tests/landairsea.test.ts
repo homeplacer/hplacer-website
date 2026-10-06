@@ -42,3 +42,21 @@ describe("read-only LandAirSea tracking client", () => {
     await assert.rejects(fetchTrackerPositions({ ...credentials, password: "" }, async () => { assert.fail("must not connect"); }), { message: "GPS credentials are incomplete" });
   });
 });
+
+describe("live provider response format", () => {
+  const live = (utctime: string) => ({ message: { result: true }, suspended: false, devicedetails: [{ deviceId: "test-device", latitude: 30, longitude: -80, utctime, usertime: "ignored local time", lastlocation: "address, not timestamp", speed_kmh: 0, voltage: 12 }] });
+  it("reads lower-case fields and explicit UTC without using local time or address", () => {
+    const [p] = parseTrackerPositions(live("4/13/2026 7:45:23 PM"));
+    assert.equal(p.reportedAt, "2026-04-13T19:45:23.000Z");
+    assert.equal(p.latitude, 30);
+    assert.equal(p.voltage, 12);
+    assert.equal(parseTrackerPositions(live("4/13/2026 12:00:00 AM"))[0].reportedAt, "2026-04-13T00:00:00.000Z");
+    assert.equal(parseTrackerPositions(live("4/13/2026 12:00:00 PM"))[0].reportedAt, "2026-04-13T12:00:00.000Z");
+  });
+  it("rejects suspended accounts and leaves malformed UTC observations unknown", () => {
+    assert.throws(() => parseTrackerPositions({ ...live(""), suspended: true }));
+    for (const date of ["2/30/2026 1:00:00 PM", "4/13/2026 0:00:00 AM", "4/13/2026 7:45:23", "invalid"]) {
+      assert.equal(parseTrackerPositions(live(date))[0].reportedAt, null);
+    }
+  });
+});
