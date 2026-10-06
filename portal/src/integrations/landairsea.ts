@@ -84,7 +84,8 @@ export async function fetchTrackerPositions(credentials: LandAirSeaCredentials, 
       method: "POST",
       headers: { "Content-Type": "application/json", ClientId: "homeplacer-portal-gps" },
       body: JSON.stringify(credentials),
-      redirect: "error",
+      // Workers supports manual redirects; reject 3xx below without forwarding credentials.
+      redirect: "manual",
       signal: AbortSignal.timeout(15000),
     });
   } catch { throw new GpsError("GPS provider connection failed", "connection"); }
