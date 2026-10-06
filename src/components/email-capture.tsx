@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowIcon, CheckIcon } from "@/components/icons";
 import { submitLead } from "@/lib/lead";
 import { Honeypot } from "@/components/honeypot";
+import { PUBLIC_PHONE_PATTERN } from "@/lib/phone-pattern";
 
 // Site-wide new-homes capture. It intentionally collects complete contact
 // information so Follow Up Boss never receives an unusable email-only record.
@@ -66,7 +67,7 @@ export function EmailCapture() {
                 required
                 inputMode="tel"
                 autoComplete="tel"
-                pattern="[0-9()+.\\s-]{7,}"
+                pattern={PUBLIC_PHONE_PATTERN}
                 title="Please enter a valid phone number."
                 placeholder="Phone number"
                 aria-label="Phone number"
