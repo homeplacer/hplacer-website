@@ -1,5 +1,6 @@
 import type { Brand, Home, FloorPlan, WallFinish } from "./home-types";
 import { asset } from "./asset";
+import { getAvailableModelTourUrl } from "./model-tour-availability";
 import rawModels from "../../data/models.json";
 import setupPricingJson from "../../data/setup-pricing.json";
 import homePricingJson from "../../data/home-pricing.json";
@@ -177,7 +178,7 @@ function getCatalogHomes(): Home[] {
     bestSeller: m.bestSeller ?? false,
     bestSellerRank: m.bestSellerRank ?? 999,
     widthOptions: m.widthOptions,
-    tourUrl: m.tourUrl,
+    tourUrl: getAvailableModelTourUrl(m.slug, m.tourUrl),
     floorPlans: (m.floorPlans ?? []).map((f) => ({ ...f, url: asset(f.url) })),
     price: homePricing[m.slug],
     setupPrice: setupPricing[m.slug],
