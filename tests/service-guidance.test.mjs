@@ -46,6 +46,7 @@ const safety = loadComponent(read("src/components/public-lead-form-safety.tsx"),
 });
 const { ServiceRequestForm } = loadComponent(formSource, {
   "@/components/public-lead-form-safety": safety,
+  "@/lib/phone-pattern": loadComponent(read("src/lib/phone-pattern.ts"), {}),
   "@/components/icons": { CheckIcon: icon, ArrowIcon: icon },
   "@/lib/site": { site },
   "@/components/honeypot": { Honeypot: () => null },
