@@ -61,9 +61,18 @@ No current query-specific HTML or caching fault was established by that check.
   reviewed PR and a user's deployment instruction are required for production.
 
 Matched cold browser comparison and real pointer/touch/keyboard navigation
-checks remain pending. The unit checks establish the Link props and preserved
-server markup, not browser timing improvements or completed browser interaction
-coverage.
+checks remain partly pending. Actual browser QA at a 375 px viewport observed
+nine initial RSC requests in the baseline and five in the candidate: four fewer
+requests for two destinations, Homes and Contact. Home and Packages still
+prefetched, including Packages through its visible inline link. This is observed
+request suppression at that viewport, not a measured byte or CWV improvement.
+
+Keyboard focus on Homes restored two Homes RSC requests; Enter navigated to its
+correct heading and active label without horizontal overflow. An immediate click
+on Contact without prior focus navigated to its correct heading. A native
+Lighthouse comparison, throttled in-flight click, touch interaction, and actual
+no-JavaScript navigation checks remain pending. The unit checks alone establish
+Link props and preserved server markup, not those remaining browser outcomes.
 
 Installed Next 16.3.8 documentation used:
 `node_modules/next/dist/docs/01-app/01-getting-started/04-linking-and-navigating.md`
