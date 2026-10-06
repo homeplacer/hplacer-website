@@ -41,7 +41,9 @@ replacement.
 
 The projected catalog omits these two `tourUrl` values, so there is no broken
 anchor, start button, iframe, empty tour section or recently placed-home `#tour`
-CTA. Photos, floor plans, specs and pricing remain available normally.
+CTA. Their thirteen original photos, specs and pricing remain available
+normally. Neither Dutch record currently has a `floorPlans` attachment, so no
+floor-plan control is invented. Other models' recorded floor plans are retained.
 
 ## Safe restoration
 

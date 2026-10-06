@@ -144,7 +144,7 @@ const { default: ModelPage } = load("src/app/homes/[slug]/page.tsx", {
   "@/components/model-package-journey": { ModelPackageJourney: nil },
 });
 
-test("real model-page rendering omits unavailable sections/controls but preserves authentic photos, floor plans and estimated prices", async () => {
+test("real model-page rendering omits unavailable sections/controls but preserves authentic photos, existing floor plans and estimated prices", async () => {
   for (const slug of [...Object.keys(deadTours), "tradition-68", "eclipse"]) {
     const home = homes.getHome(slug);
     const html = renderToStaticMarkup(await ModelPage({ params: Promise.resolve({ slug }) }));
