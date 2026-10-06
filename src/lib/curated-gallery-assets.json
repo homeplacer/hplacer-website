@@ -1,0 +1,171 @@
+{
+  "/gallery/dev-01.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/dev-02.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/dev-03.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/dev-04.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/dev-05.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/dev-06.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/dev-07.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/home-01.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/home-02.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/home-03.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/home-04.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/home-05.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/home-06.jpg": {
+    "width": 1200,
+    "widths": [
+      320,
+      480,
+      640,
+      768
+    ]
+  },
+  "/gallery/home-07.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/home-08.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/home-09.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  },
+  "/gallery/home-10.jpg": {
+    "width": 1600,
+    "widths": [
+      320,
+      480,
+      640,
+      768,
+      1200
+    ]
+  }
+}

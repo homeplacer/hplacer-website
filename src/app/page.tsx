@@ -4,6 +4,8 @@ import { SoldExamples } from "@/components/sold-examples";
 import { site } from "@/lib/site";
 import { bestSellerHomes, BRANDS } from "@/lib/homes";
 import { galleryByCategory } from "@/lib/gallery";
+import { homepageWorkImageSizes } from "@/lib/curated-gallery-images";
+import { CuratedGalleryImage } from "@/components/curated-gallery-image";
 import { asset } from "@/lib/asset";
 import { HomeCard } from "@/components/home-card";
 import { Testimonials } from "@/components/testimonials";
@@ -379,17 +381,11 @@ export default async function HomePage() {
             <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
               {work.map((img) => (
                 <Link key={img.src} href="/gallery" className="group block overflow-hidden rounded-card border border-stone-line">
-                  <picture>
-                    <source type="image/webp" srcSet={img.webpSrc} />
-                    <img
-                      src={img.src}
-                      alt={img.alt}
-                      width={img.width}
-                      height={img.height}
-                      loading="lazy"
-                      className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-[1.03]"
-                    />
-                  </picture>
+                  <CuratedGalleryImage
+                    image={img}
+                    sizes={homepageWorkImageSizes}
+                    className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+                  />
                 </Link>
               ))}
             </div>
