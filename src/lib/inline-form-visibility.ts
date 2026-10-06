@@ -10,6 +10,9 @@ export function observeInlineFormVisibility(
     return () => {};
   const observed = new Set<Element>();
   const visible = new Set<Element>();
+  const selector = "[data-form-region], form";
+  const isInlineRegion = (element: Element) => !element.closest("dialog") &&
+    !(element.tagName === "FORM" && element.closest("[data-form-region]"));
   const intersection = new IntersectionObserver((entries) => {
     for (const entry of entries) {
       if (!observed.has(entry.target)) continue;
@@ -20,10 +23,7 @@ export function observeInlineFormVisibility(
   }, { threshold: 0.2 });
 
   const reconcile = () => {
-    const current = new Set([...root.querySelectorAll("[data-form-region], form")].filter((element) =>
-      !element.closest("dialog") &&
-      !(element.tagName === "FORM" && element.closest("[data-form-region]")),
-    ));
+    const current = new Set([...root.querySelectorAll(selector)].filter(isInlineRegion));
     let removed = false;
     for (const element of observed) {
       if (current.has(element)) continue;
@@ -41,7 +41,18 @@ export function observeInlineFormVisibility(
     if (removed) onVisibility(visible.size > 0);
   };
   reconcile();
-  const mutation = new MutationObserver(reconcile);
+  const mutation = new MutationObserver((records) => {
+    // Hydration, status messages, images, and dialogs mutate the document too.
+    // Only rescan the page when an actual inline region appears or disappears.
+    const addedInlineRegion = records.some((record) => [...record.addedNodes].some((node) => {
+      if (node.nodeType !== 1) return false;
+      const element = node as Element;
+      if (element.closest("dialog")) return false;
+      return (element.matches(selector) && isInlineRegion(element)) ||
+        [...element.querySelectorAll(selector)].some(isInlineRegion);
+    }));
+    if (addedInlineRegion || [...observed].some((element) => !root.contains(element) || !isInlineRegion(element))) reconcile();
+  });
   mutation.observe(root, { childList: true, subtree: true });
   return () => {
     mutation.disconnect();
