@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { GridIcon, HomeMark, MapIcon, MessageIcon } from "@/components/icons";
 
 const navigation = [
@@ -13,6 +14,7 @@ const navigation = [
 
 export function BottomNavigation() {
   const pathname = usePathname();
+  const [prefetchHref, setPrefetchHref] = useState<string>();
 
   return (
     <nav
@@ -26,6 +28,13 @@ export function BottomNavigation() {
             <Link
               key={href}
               href={href}
+              // This dock is visible on every mobile page. Wait for visitor
+              // intent before fetching its other routes in the background.
+              // Next's normal Link click and navigation behavior stays intact.
+              prefetch={prefetchHref === href ? null : false}
+              onPointerEnter={() => setPrefetchHref(href)}
+              onFocus={() => setPrefetchHref(href)}
+              onTouchStart={() => setPrefetchHref(href)}
               aria-current={active ? "page" : undefined}
               className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-2 text-[11px] font-semibold transition ${active ? "bg-brand-50 text-brand-800" : "text-stone-muted hover:bg-stone-sunken hover:text-brand-800"}`}
             >
