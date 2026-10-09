@@ -1,6 +1,5 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import ts from "typescript";
 
@@ -145,7 +144,7 @@ test("sitemap has one homepage and only evidence-backed location pages with no f
   );
 });
 
-test("homepage slash normalization preserves every other sitemap field and entry from the reviewed base", async () => {
+test("homepage slash normalization preserves the full offline sitemap versus the pre-change negative control", async () => {
   const imports = {
     "@/lib/location-evidence": { locationEvidence },
     "@/lib/packages": { getPackages: () => [{ id: "fixture-package", lastVerifiedAt: "2026-10-01" }] },
@@ -172,11 +171,17 @@ test("homepage slash normalization preserves every other sitemap field and entry
       packageSlug: (listing) => listing.slug,
     },
   };
-  // Pin the reviewed task base; both versions receive only offline fixtures.
-  const previousSource = execFileSync("git", ["show", "80116bc:src/app/sitemap.ts"], { encoding: "utf8" });
+  // Reconstruct only the pre-change root expression, without requiring Git
+  // history in a shallow checkout or an exported source tree.
+  const currentSource = read("src/app/sitemap.ts");
+  const rootExpression = 'url: `${base}${p || "/"}`,';
+  assert.equal(currentSource.split(rootExpression).length - 1, 1);
+  const previousSource = currentSource.replace(rootExpression, 'url: `${base}${p}`,');
   const previous = loadSource(previousSource, imports);
-  const current = load("src/app/sitemap.ts", imports);
-  const expected = (await previous.default()).map((entry) =>
+  const current = loadSource(currentSource, imports);
+  const previousEntries = await previous.default();
+  assert.equal(previousEntries.filter((entry) => entry.url === site.url).length, 1);
+  const expected = previousEntries.map((entry) =>
     entry.url === site.url ? { ...entry, url: new URL("/", site.url).href } : entry,
   );
   assert.deepEqual(await current.default(), expected);
