@@ -98,3 +98,64 @@ test("price filters remain conditional rather than becoming empty controls", () 
   assert.match(emptyHtml, /No homes match your search/);
   assert.match(emptyHtml, /Clear filters/);
 });
+
+test("catalog SSR names its floor-plan section before real card headings and retains shopping content", () => {
+  const fixtures = [
+    { ...home, price: 134999, bestSellerRank: 0 },
+    { ...home, id: 2, slug: "home-only-plan", name: "Home-only plan", brand: "Cavco", setupPrice: undefined, price: 159999, bestSellerRank: 1 },
+  ];
+  const Link = ({ children, ...props }) => React.createElement("a", props, children);
+  const icons = load(readFileSync("src/components/icons.tsx", "utf8"));
+  const { FallbackImage } = load(readFileSync("src/components/fallback-image.tsx", "utf8"));
+  const galleryImages = load(readFileSync("src/lib/model-gallery-images.ts", "utf8"), {
+    "./model-gallery-assets.json": {},
+  });
+  const { HomeCard } = load(readFileSync("src/components/home-card.tsx", "utf8"), {
+    "next/link": { default: Link },
+    "@/lib/home-types": types,
+    "@/components/icons": icons,
+    "@/components/fallback-image": { FallbackImage },
+    "@/lib/model-gallery-images": galleryImages,
+    "@/lib/site": { site: { phoneDial: "+15555550100" } },
+    "@/components/home-inquiry-dialog": {
+      HomeInquiryDialog: ({ label }) => React.createElement("button", { type: "button" }, label),
+    },
+  });
+  const { HomesBrowser: CatalogBrowser } = load(source, {
+    "@/lib/home-types": types,
+    "@/components/home-card": { HomeCard },
+  });
+  // Use the real page, browser, and cards; providers and lead dialogs stay offline.
+  const { default: HomesPage } = load(readFileSync("src/app/homes/page.tsx", "utf8"), {
+    "next/link": { default: Link },
+    "@/lib/metadata": { pageMetadata: (metadata) => metadata },
+    "@/lib/homes": { getAllHomes: () => fixtures },
+    "@/components/homes-browser": { HomesBrowser: CatalogBrowser },
+    "@/lib/jsonld": { JsonLd: () => null, homesItemListLd: () => null },
+  });
+  const html = renderToStaticMarkup(React.createElement(HomesPage));
+  const headings = [...html.matchAll(/<h([1-6])\b[^>]*>([^<]+)<\/h\1>/g)]
+    .map(([, level, text]) => [Number(level), text.trim()]);
+  assert.deepEqual(headings, [
+    [1, "Find your home"],
+    [2, "Floor plans"],
+    [3, "Test home"],
+    [3, "Home-only plan"],
+  ]);
+  assert.match(html, /<section class="container-x py-10" aria-labelledby="homes-catalog-heading"><h2 id="homes-catalog-heading" class="sr-only">Floor plans<\/h2>/);
+  assert.equal((html.match(/id="homes-catalog-heading"/g) ?? []).length, 1);
+  for (const fixture of fixtures) {
+    assert.ok(html.includes(`href="/homes/${fixture.slug}"`), fixture.slug);
+    assert.ok(html.includes(`aria-label="View ${fixture.name} details and request pricing"`), fixture.name);
+  }
+  for (const price of ["$199,999", "$134,999", "$159,999"]) assert.ok(html.includes(price), price);
+  assert.match(html, /est\. land \+ home/);
+  assert.match(html, /home only/);
+  assert.match(html, /browse current land-home packages/);
+  assert.match(html, /quarter-acre lot/);
+  assert.match(html, /aria-label="Search homes"/);
+  assert.deepEqual(
+    [...html.matchAll(/<select\b[^>]*aria-label="([^"]+)"/g)].map((match) => match[1]),
+    ["Bedrooms", "Min square feet", "Max square feet", "Minimum land-home estimate", "Maximum land-home estimate", "Sort"],
+  );
+});
