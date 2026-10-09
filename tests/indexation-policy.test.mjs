@@ -1,11 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import ts from "typescript";
 
 const read = (path) => readFileSync(path, "utf8");
-const load = (path, imports = {}) => {
-  const { outputText } = ts.transpileModule(read(path), {
+const loadSource = (source, imports = {}) => {
+  const { outputText } = ts.transpileModule(source, {
     compilerOptions: {
       module: ts.ModuleKind.CommonJS,
       target: ts.ScriptTarget.ES2022,
@@ -21,6 +22,7 @@ const load = (path, imports = {}) => {
   new Function("require", "module", "exports", outputText)(require, compiled, compiled.exports);
   return compiled.exports;
 };
+const load = (path, imports = {}) => loadSource(read(path), imports);
 
 const site = {
   ...JSON.parse(read("data/business-identity.json")),
@@ -130,12 +132,53 @@ test("sitemap has one homepage and only evidence-backed location pages with no f
     "@/lib/placed-homes": { getAllPlacedHomes: () => [] },
     "@/lib/forturro-package-feed": { getLivePackageListings: async () => [], packageSlug: () => "unused" },
   });
-  const urls = (await sitemap()).map((entry) => new URL(entry.url));
-  assert.equal(urls.filter((url) => url.pathname === "/").length, 1);
-  assert.equal(urls.find((url) => url.pathname === "/").href, new URL(site.url).href);
+  const entries = await sitemap();
+  const homepages = entries.filter((entry) => new URL(entry.url).pathname === "/");
+  assert.equal(homepages.length, 1);
+  assert.equal(homepages[0].url, new URL("/", site.url).href);
+  assert.equal(homepages[0].priority, 1);
+  const urls = entries.map((entry) => new URL(entry.url));
   assert.ok(urls.every((url) => url.origin === new URL(site.url).origin && url.search === "" && url.hash === ""));
   assert.deepEqual(
     urls.filter((url) => url.pathname.startsWith("/locations/")).map((url) => url.pathname).sort(),
     Object.keys(evidence).map((slug) => `/locations/${slug}`).sort(),
   );
+});
+
+test("homepage slash normalization preserves every other sitemap field and entry from the reviewed base", async () => {
+  const imports = {
+    "@/lib/location-evidence": { locationEvidence },
+    "@/lib/packages": { getPackages: () => [{ id: "fixture-package", lastVerifiedAt: "2026-10-01" }] },
+    "@/lib/guides": { guides: [{ slug: "fixture-guide", sourceCheckedAt: "2026-10-02" }] },
+    "@/lib/site": { site },
+    "@/lib/homes": { getAllHomes: () => [
+      { slug: "fixture-model", imageUrls: ["/models/fixture/01.jpg", "https://example.test/photo.jpg"] },
+      { slug: "fixture-no-photo", imageUrls: [] },
+    ] },
+    "@/lib/blog": { getAllPosts: () => [
+      { slug: "fixture-post", date: "2026-10-03" },
+      { slug: "fixture-undated-post", date: null },
+    ] },
+    "@/lib/locations": locationData,
+    "@/lib/placed-homes": { getAllPlacedHomes: () => [
+      { slug: "fixture-project", closeDate: "2026-10-04", photo: "/placed/fixture/01.jpg", photos: ["/placed/fixture/01.jpg", "/placed/fixture/02.jpg"] },
+      { slug: "fixture-undated-project", closeDate: null, photo: "/placed/fixture/03.jpg", photos: [] },
+    ] },
+    "@/lib/forturro-package-feed": {
+      getLivePackageListings: async () => [
+        { slug: "fixture-live", photoUrl: "https://example.test/listing.jpg" },
+        { slug: "fixture-live-no-photo", photoUrl: null },
+      ],
+      packageSlug: (listing) => listing.slug,
+    },
+  };
+  // Pin the reviewed task base; both versions receive only offline fixtures.
+  const previousSource = execFileSync("git", ["show", "80116bc:src/app/sitemap.ts"], { encoding: "utf8" });
+  const previous = loadSource(previousSource, imports);
+  const current = load("src/app/sitemap.ts", imports);
+  const expected = (await previous.default()).map((entry) =>
+    entry.url === site.url ? { ...entry, url: new URL("/", site.url).href } : entry,
+  );
+  assert.deepEqual(await current.default(), expected);
+  assert.equal(current.revalidate, previous.revalidate);
 });
