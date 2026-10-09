@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { mlsPhotoSource } from "./mls-photo";
 
 type ForturroSearchItem = {
   listingKey: string;
@@ -33,7 +34,7 @@ export async function getLivePackageBySlug(slug: string) {
  * An empty snapshot is valid. Errors must escape so ISR retains the last good
  * page instead of publishing stale registry matches or an outage as no homes.
  */
-export const getLivePackageListings = unstable_cache(async (): Promise<LivePackageListing[]> => {
+const getCachedLivePackageListings = unstable_cache(async (): Promise<LivePackageListing[]> => {
   const response = await fetch("https://forturro.com/api/hplacer/active", {
     cache: "no-store",
     signal: AbortSignal.timeout(15_000),
@@ -48,6 +49,15 @@ export const getLivePackageListings = unstable_cache(async (): Promise<LivePacka
     photoUrl: item.photo ? `https://forturro.com${item.photo}` : undefined,
   }));
 }, ["home-placer-active-validated-v1"], { revalidate: 300 });
+
+/** Validate optional media on consumption, including any prior cached snapshot. */
+export async function getLivePackageListings(): Promise<LivePackageListing[]> {
+  const listings = await getCachedLivePackageListings();
+  return listings.map((item) => ({
+    ...item,
+    photoUrl: mlsPhotoSource(item.listingKey, item.photo),
+  }));
+}
 
 function isActiveListing(item: unknown): item is ForturroSearchItem {
   if (!item || typeof item !== "object") return false;

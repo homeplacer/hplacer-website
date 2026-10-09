@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 import { LivePackageNavigation } from "@/components/live-package-navigation";
+import { MlsPackagePhoto } from "@/components/mls-package-photo";
 import { BathIcon, BedIcon, PhoneIcon, RulerIcon } from "@/components/icons";
 import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
 import { getLivePackageBySlug, getLivePackageListings, packageSlug } from "@/lib/forturro-package-feed";
@@ -51,9 +52,7 @@ export default async function LandPackageDetail({ params }: Props) {
       <div className="mt-5 grid gap-8 lg:grid-cols-[1.35fr_0.65fr]">
         <div>
           {listing.photoUrl ? (
-            // Forturro's signed MLS proxy URL cannot be safely re-hosted by Next's image optimizer.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={listing.photoUrl} alt={`${listing.address}, ${listing.city}, SC`} className="aspect-[3/2] w-full rounded-card object-cover shadow-sm" decoding="async" />
+            <MlsPackagePhoto listingKey={listing.listingKey} photoUrl={listing.photoUrl} alt={`${listing.address}, ${listing.city}, SC`} className="aspect-[3/2] w-full rounded-card object-cover shadow-sm" sizes="(min-width: 1216px) 756px, (min-width: 1024px) calc((100vw - 96px) * 0.675), (min-width: 768px) calc(100vw - 64px), calc(100vw - 40px)" />
           ) : <div className="aspect-[3/2] rounded-card bg-stone-surface" />}
         </div>
         <aside className="rounded-card border border-stone-line bg-stone-surface p-6 sm:p-8">
