@@ -43,7 +43,8 @@ export default function HomesPage() {
         </div>
       </section>
 
-      <section className="container-x py-10">
+      <section className="container-x py-10" aria-labelledby="homes-catalog-heading">
+        <h2 id="homes-catalog-heading" className="sr-only">Floor plans</h2>
         <HomesBrowser homes={all.map(h => ({ ...h, description: "", excerpt: "", decorOptions: [], floorPlans: [], imageUrls: h.imageUrls.slice(0, 1), tourUrl: undefined }))} />
       </section>
     </>
