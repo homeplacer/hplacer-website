@@ -56,7 +56,7 @@ src/
   components/                 UI (cards, header, footer, forms, browser)
   lib/                        site config, data loaders, jsonld, types
 data/
-  models.json                <- THE inventory (94 models), built by scripts
+  models.json                <- THE inventory (93 models), built by scripts
   blog-posts.json            blog content
   setup-pricing.json         full-setup prices (slug -> number) — fill at go-live
   home-pricing.json          home-only prices (slug -> number) — optional
@@ -68,8 +68,8 @@ scripts/
 
 ## Inventory
 
-`data/models.json` holds 94 real manufacturer models (Clayton 44, Cavco 6,
-Champion 44) scraped from the builders' sites — with photos, decor options, and
+`data/models.json` holds 93 real manufacturer models (Clayton 64, Cavco 13,
+Champion 16) scraped from the builders' sites — with photos, decor options, and
 **square footage computed as width x length** (the MLS convention; the sites'
 stated sqft is ignored). To rebuild after a new extraction:
 
