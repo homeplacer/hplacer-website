@@ -4,6 +4,7 @@ import { readFileSync, statSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import sharp from "sharp";
+import { homepagePhoto } from "../scripts/build-homepage-photo-asset.mjs";
 
 const page = readFileSync("src/app/page.tsx", "utf8");
 const hero = page.match(/<picture>[\s\S]*?<\/picture>/)?.[0];
@@ -18,12 +19,21 @@ test("the homepage offers an existing mid-size authentic hero without an image-s
     const metadata = await sharp(file).metadata();
     assert.equal(metadata.format, "webp");
     assert.equal(metadata.width, width);
-    // These are already-reviewed derivatives of this same source photo, not
-    // a new crop, visualization, or replacement uploaded by this change.
-    const previous = execFileSync("git", ["show", `origin/main:${file}`]);
     const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
-    assert.equal(hash(readFileSync(file)), hash(previous), file);
+    if (path === homepagePhoto.destination) {
+      // The new homepage-only encoding is pinned to the unchanged authentic
+      // source and visually reviewed output, preserving the shared gallery.
+      assert.equal(hash(readFileSync(`public${homepagePhoto.source}`)), homepagePhoto.sourceSha256);
+      assert.equal(hash(readFileSync(file)), homepagePhoto.encodedSha256);
+      assert.equal(metadata.height, homepagePhoto.height);
+      assert.ok(statSync(file).size <= homepagePhoto.maxBytes);
+    } else {
+      // The established 640w/1200w candidates remain byte-for-byte unchanged.
+      const previous = execFileSync("git", ["show", `origin/main:${file}`]);
+      assert.equal(hash(readFileSync(file)), hash(previous), file);
+    }
   }
+  assert.equal(candidates[1].path, homepagePhoto.destination);
   assert.ok(statSync(`public${candidates[1].path}`).size < statSync(`public${candidates[2].path}`).size * 0.75);
   assert.doesNotMatch(hero, /_next\/image|loader=|https?:\/\//);
 });

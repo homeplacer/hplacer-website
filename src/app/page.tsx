@@ -95,7 +95,7 @@ export default async function HomePage() {
             <picture>
               <source
                 type="image/webp"
-                srcSet={`${asset("/models/ultra-flex-28-52/01-hero-640.webp")} 640w, ${asset("/models/ultra-flex-28-52/01-gallery-960.webp")} 960w, ${asset("/models/ultra-flex-28-52/01-hero-1200.webp")} 1200w`}
+                srcSet={`${asset("/models/ultra-flex-28-52/01-hero-640.webp")} 640w, ${asset("/models/ultra-flex-28-52/01-homepage-960.webp")} 960w, ${asset("/models/ultra-flex-28-52/01-hero-1200.webp")} 1200w`}
                 // Match container-x's padding/max width and the 48% desktop
                 // column minus its 2rem inset; don't size it as half a wide screen.
                 sizes="(min-width: 76rem) 31.36rem, (min-width: 64rem) calc(48vw - 5.12rem), (min-width: 48rem) calc(100vw - 4rem), calc(100vw - 2.5rem)"
