@@ -177,6 +177,47 @@ const allowedValues: Record<string, readonly string[]> = {
   placement: ["header", "footer", "main_content", "navigation", "contact_bar", "other"],
   destination: ["forturro.com"],
 };
+// --- Privacy-preserving organic-search attribution --------------------------
+// GA4 derives a session's source/medium from the referrer ONLY when no campaign
+// parameters are present. Because every event here ships page_referrer:"" (a
+// deliberate privacy safeguard that strips the full referring URL), a visitor
+// arriving from a Google organic result carries NO channel signal, so GA4
+// defaults the session to Direct. To let GA4 classify Google organic WITHOUT
+// leaking the referring URL, we pass ONLY the bare, allowlisted referrer ORIGIN
+// (scheme + host) — never the path, query, fragment, userinfo, or a non-default
+// port, and never an arbitrary host.
+//
+// Scope is deliberately bounded to the canonical Google Search origins, the only
+// source justified by the retained google/organic evidence (2026-09-10..10-08).
+// Anything else resolves to "" and stays Direct. Broaden ONLY with evidence.
+// NOTE: this removes a known signal-stripping cause; it is NOT a measured causal
+// share and must be validated in GA4 DebugView before the gap is declared closed.
+const APPROVED_REFERRER_ORIGINS = new Set<string>([
+  "https://www.google.com",
+  "https://google.com",
+]);
+
+// Pure and unit-testable (no window/document access). Returns an allowlisted
+// origin, or "" for a direct, internal, unapproved, or malformed referrer.
+export function approvedReferrerOrigin(
+  referrer: string | null | undefined,
+  currentOrigin: string,
+): string {
+  if (!referrer) return ""; // direct visit / no referrer
+  let url: URL;
+  try {
+    url = new URL(referrer);
+  } catch {
+    return ""; // malformed → treat as direct
+  }
+  if (url.protocol !== "https:") return ""; // https only (drops app:// , http, data:, javascript:)
+  if (url.username || url.password) return ""; // never pass userinfo/credentials
+  if (url.port) return ""; // only the implicit default https port
+  if (url.origin === currentOrigin) return ""; // internal navigation is not a source
+  // Exact-origin allowlist → rejects arbitrary subdomains (e.g. www.google.com.evil).
+  // url.origin is scheme+host only, so path/query/fragment are already excluded.
+  return APPROVED_REFERRER_ORIGINS.has(url.origin) ? url.origin : "";
+}
 export function track(
   event: string,
   params: Record<string, unknown> = {},
@@ -197,7 +238,7 @@ export function track(
   window.gtag("event", event, {
     ...safe,
     page_location: `https://hplacer.com${path}`,
-    page_referrer: "",
+    page_referrer: approvedReferrerOrigin(document.referrer, window.location.origin),
     page_title: `Home Placer ${path}`,
   });
 }
