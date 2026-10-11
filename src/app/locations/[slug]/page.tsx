@@ -90,6 +90,14 @@ export default async function LocationPage({
             {loc.intro}
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
+            {loc.slug === "myrtle-beach" && (
+              <Link
+                href="/land-packages"
+                className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-base font-semibold text-white ring-1 ring-white/20 transition hover:bg-white/15"
+              >
+                Browse current land-home packages <ArrowIcon className="size-4" />
+              </Link>
+            )}
             <Link
               href="/homes"
               className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-6 py-3 text-base font-semibold text-white transition hover:bg-accent-600"

@@ -95,7 +95,7 @@ export const locations: LocationInfo[] = [
     "countyKey": "horry-sc",
     "zip": "29577",
     "headline": "New manufactured homes on land in Myrtle Beach, SC",
-    "intro": "Myrtle Beach is the heart of the Grand Strand. Explore a new manufactured home and a lot in or around the city with Home Placer.",
+    "intro": "Explore manufactured homes and land-home packages in the Myrtle Beach area with Home Placer. Compare a home and lot, or ask about placing a new home on your own land.",
     "paragraphs": [
       "Choose a Clayton, Cavco, or Champion model, then compare the home and a particular Myrtle Beach-area lot together. Looking for a lot without an HOA? Tell us your preference, and ask us to confirm the association status and recorded restrictions for the property.",
       "Being near the ocean does not establish that a parcel can take the home you like. Ask about the responsible city or county office, access, site conditions, utilities, and required approvals before committing. Request current availability and a written home-and-land scope, not a town-wide starting price."
