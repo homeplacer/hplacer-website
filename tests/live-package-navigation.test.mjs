@@ -24,8 +24,11 @@ function load(source, imports) {
   });
   return testModule.exports;
 }
+const photoHelpers = load(read("src/lib/mls-photo.ts"), {});
+const { MlsPackagePhoto } = load(read("src/components/mls-package-photo.tsx"), { "@/lib/mls-photo": photoHelpers });
 const feed = load(read("src/lib/forturro-package-feed.ts"), {
   "next/cache": { unstable_cache: (fn) => fn },
+  "./mls-photo": photoHelpers,
 });
 const Link = ({ children, ...props }) => React.createElement("a", props, children);
 const navigationSource = read("src/components/live-package-navigation.tsx");
@@ -136,6 +139,7 @@ test("the detail uses one existing live snapshot for its current listing and rel
     "next/navigation": { notFound: () => { throw notFoundSignal; } },
     "@/components/home-inquiry-dialog": { HomeInquiryDialog: ({ label }) => React.createElement("button", null, label) },
     "@/components/live-package-navigation": { LivePackageNavigation },
+    "@/components/mls-package-photo": { MlsPackagePhoto },
     "@/components/icons": { BathIcon: icon, BedIcon: icon, PhoneIcon: icon, RulerIcon: icon },
     "@/lib/jsonld": { JsonLd: () => null, breadcrumbLd: () => ({}) },
     "@/lib/forturro-package-feed": {
