@@ -177,6 +177,60 @@ const allowedValues: Record<string, readonly string[]> = {
   placement: ["header", "footer", "main_content", "navigation", "contact_bar", "other"],
   destination: ["forturro.com"],
 };
+// --- Privacy-preserving organic-search attribution --------------------------
+// GA4 derives a session's source/medium from the referrer only when no campaign
+// parameters are present. Every event here ships page_referrer:"" (a deliberate
+// privacy safeguard that strips the full referring URL), which removes the signal
+// GA4 would use to classify a Google-organic arrival — a plausible contributor to
+// organic sessions landing under Direct (NOT a measured causal share). To let GA4
+// classify Google organic WITHOUT leaking the referring URL, the initial landing
+// page_view passes ONLY the bare, allowlisted referrer ORIGIN (scheme + host) —
+// never the path, query, fragment, userinfo, a non-default port, or an arbitrary
+// host.
+//
+// Scope is deliberately bounded to the canonical Google Search origins, the only
+// source justified by the retained google/organic evidence (2026-09-10..10-08).
+// Anything else resolves to "" and stays Direct. Broaden ONLY with evidence.
+// NOTE: removing the signal-stripping does not by itself close the gap; the
+// reclassification must be validated in GA4 DebugView before anything is declared
+// fixed (session-source propagation is unverified here).
+const APPROVED_REFERRER_ORIGINS = new Set<string>([
+  "https://www.google.com",
+  "https://google.com",
+]);
+
+// Pure and unit-testable (no window/document access). Returns an allowlisted
+// origin, or "" for a direct, internal, unapproved, or malformed referrer.
+export function approvedReferrerOrigin(
+  referrer: string | null | undefined,
+  currentOrigin: string,
+): string {
+  if (!referrer) return ""; // direct visit / no referrer
+  let url: URL;
+  try {
+    url = new URL(referrer);
+  } catch {
+    return ""; // malformed → treat as direct
+  }
+  if (url.protocol !== "https:") return ""; // https only (drops app:// , http, data:, javascript:)
+  if (url.username || url.password) return ""; // never pass userinfo/credentials
+  if (url.port) return ""; // only the implicit default https port
+  if (url.origin === currentOrigin) return ""; // internal navigation is not a source
+  // Exact-origin allowlist → rejects arbitrary subdomains (e.g. www.google.com.evil).
+  // url.origin is scheme+host only, so path/query/fragment are already excluded.
+  return APPROVED_REFERRER_ORIGINS.has(url.origin) ? url.origin : "";
+}
+
+// Per-navigation page_referrer state (browser singleton; resets on full reload).
+// Google's SPA guidance requires page_referrer to update correctly between virtual
+// pageviews. So the EXTERNAL acquisition origin is attached to exactly one event —
+// the initial landing page_view — and is never re-sent. Each later virtual
+// page_view carries the PREVIOUS screen's sanitized internal location, and
+// non-pageview actions carry "". This prevents the stale Google referrer (which
+// document.referrer keeps through client-side navigation) from reintroducing an
+// acquisition signal on a new session after a timeout / return-after-inactivity.
+let hasLanded = false;
+let previousPageLocation = "";
 export function track(
   event: string,
   params: Record<string, unknown> = {},
@@ -194,10 +248,27 @@ export function track(
     else if (allowedValues[key]?.includes(value)) safe[key] = value;
   }
   const path = analyticsPath(window.location.pathname);
+  const location = `https://hplacer.com${path}`;
+  let referrer = "";
+  if (event === "page_view") {
+    if (!hasLanded) {
+      // Initial landing: the only event that may carry an external acquisition
+      // origin (allowlisted + origin-only).
+      referrer = approvedReferrerOrigin(document.referrer, window.location.origin);
+      hasLanded = true;
+    } else {
+      // Virtual pageview: the previous screen's sanitized internal location,
+      // so the referrer updates correctly between screens (per GA4 SPA guidance)
+      // without re-asserting the external origin.
+      referrer = previousPageLocation;
+    }
+    previousPageLocation = location;
+  }
+  // Non-pageview actions keep referrer "" — never the external origin.
   window.gtag("event", event, {
     ...safe,
-    page_location: `https://hplacer.com${path}`,
-    page_referrer: "",
+    page_location: location,
+    page_referrer: referrer,
     page_title: `Home Placer ${path}`,
   });
 }
