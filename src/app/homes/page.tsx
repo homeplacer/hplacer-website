@@ -24,10 +24,12 @@ export default function HomesPage() {
             {all.length} floor plans to explore
           </p>
           <h1 className="mt-2 font-display text-4xl font-semibold text-stone-ink sm:text-5xl">
-            Find your home
+            Compare new manufactured-home floor plans
           </h1>
           <p className="mt-3 max-w-2xl text-stone-muted">
-            This is our floor-plan catalog. For specific available homes and
+            Explore new Clayton, Cavco, and Champion manufactured-home floor
+            plans. Compare layouts and home-only or land-home estimates in this
+            catalog. For specific available homes and
             land,{" "}
             <Link href="/land-packages" className="font-semibold text-brand-700 underline underline-offset-4">
               browse current land-home packages
