@@ -29,7 +29,7 @@ const rows = [
 const faqs = [
   {
     q: "What's the real difference between a modular and a manufactured home?",
-    a: "The main difference is the building code. A manufactured home is factory-built to the federal HUD Code on a permanent chassis. A modular home is factory-built to applicable state and local building codes and assembled on site. Both still need site preparation, installation, and local approvals.",
+    a: "The main difference is the building code. A manufactured home is factory-built to the federal HUD Code. A modular home is factory-built to applicable state and local building codes and assembled on site. Both still need site preparation, installation, and local approvals.",
   },
   {
     q: "Is a manufactured home just a 'mobile home'?",
@@ -81,7 +81,7 @@ export default function ModularVsManufacturedPage() {
             </p>
             <p>
               <strong className="font-semibold text-stone-ink">Manufactured homes</strong> are built to
-              the federal <strong>HUD Code</strong> on a permanent chassis. Compare available models
+              the federal <strong>HUD Code</strong>. Compare available models
               and land-home packages to see how their layout, features, and total cost fit your budget.
             </p>
             <p>
@@ -89,6 +89,15 @@ export default function ModularVsManufacturedPage() {
               applicable <strong>state and local building codes</strong> and assembled on site.
               The foundation, permits, and lender requirements still need to be checked for the
               specific home and lot.
+            </p>
+            <p>
+              HUD announced changes to the longstanding permanent-chassis requirement
+              in October 2026. Check the certification and manufacturer documents for
+              the specific home; the announcement does not establish model availability,
+              site approval, or financing eligibility.{" "}
+              <a href="https://www.hud.gov/news/hud-no-26-082" className="font-semibold text-brand-700 underline underline-offset-4">
+                Read HUD’s manufactured-housing update
+              </a>.
             </p>
             <h3 className="pt-2 font-display text-lg font-semibold text-stone-ink">
               &ldquo;But isn&apos;t that just a mobile home?&rdquo;
