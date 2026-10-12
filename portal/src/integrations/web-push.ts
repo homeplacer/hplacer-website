@@ -318,7 +318,9 @@ export class WebPushSender implements PushSender {
 
   constructor(keys: VapidKeys, fetcher: typeof fetch = fetch, options: { timeoutMs?: number; now?: () => Date } = {}) {
     this.keys = keys;
-    this.fetcher = fetcher;
+    // Workers' fetch throws "Illegal invocation" unless its receiver is
+    // undefined or globalThis, so never invoke it as `this.fetcher(...)`.
+    this.fetcher = (input, init) => fetcher(input, init);
     this.timeoutMs = options.timeoutMs ?? 10_000;
     this.now = options.now ?? (() => new Date());
   }

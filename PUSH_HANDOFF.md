@@ -136,7 +136,7 @@ CI=1 npx wrangler d1 migrations apply hplacer-portal --local --persist-to <scrat
 
 ## Known limits / blockers
 
-- **Not live-tested.** No push has been sent to Apple, Google, or Mozilla. Real-device delivery needs the deploy steps above.
+- **Not live-tested from the Worker yet.** The first deployed release (`8fc0c8c`) failed every Worker send; see "Fix: Workers fetch receiver" below. Real-device delivery from the Worker still needs the live test after that fix ships.
 - Fetching the manifest and icons behind Access depends on iOS sending the Access cookie (`crossorigin="use-credentials"` is set). If iOS fetches the icon without cookies, the Home Screen falls back to a page snapshot icon. This is cosmetic only.
 - The VAPID token cache is per isolate. A new isolate signs a fresh token, which is still well under Apple's hourly guidance in normal traffic.
 - `pushsubscriptionchange` is not handled. If a browser rotates an endpoint, the old one returns 410 and is cleaned up, and the Notifications page shows Turn on or Get my alerts again.
@@ -150,3 +150,19 @@ CI=1 npx wrangler d1 migrations apply hplacer-portal --local --persist-to <scrat
 - Checked the notifications screen at 390px width; only the correct opt-in button appears, readable setup, no browser errors.
 - Perplexity Desktop source-only review found no confirmed blocker. Missing-context questions were checked directly: unique endpoint/FK migration, same-origin referrer policy, timestamp format, credentialed manifest, atomic notification/outbox and task-route hook.
 - Production database backup saved before release. No real device delivery has been verified yet.
+
+## Fix: Workers fetch receiver (branch `codex/fix-push-fetch-binding-20261012`, base `8fc0c8c`)
+
+**Symptom.** In production, the test alert and task-assignment pushes failed with `last_error = network` and `last_status = null`. The same `WebPushSender` sent successfully from Node 24 on a Mac: Apple returned HTTP 201 and the alert reached the device.
+
+**Cause.** `WebPushSender` stored `fetch` as `this.fetcher` and called it as `this.fetcher(...)`, so `this` was the sender object. Workers' `fetch` throws `TypeError: Illegal invocation` unless its receiver is `undefined` or `globalThis`; Node does not check. The sender's `catch` turns any exception into a retryable `network` outcome, which hid the error. The tests passed because their stub functions ignored `this`. The coordinator confirmed in local workerd that `holder.fetcher(...)` throws, while a direct `fetch(...)` with `AbortSignal.timeout` returns HTTP 200. `AbortSignal.timeout`, `redirect: "manual"`, and compatibility date `2024-12-30` are not involved.
+
+**Fix.** One line in `portal/src/integrations/web-push.ts`: the constructor stores `(input, init) => fetcher(input, init)`, so `fetch` is always called as a plain function. Timeout, redirect handling, error classification, the email sender, compatibility settings, and secrets are unchanged.
+
+**Regression test.** In `portal/tests/web-push-transport.test.ts`, "calls fetch with a Workers-valid receiver, whether injected or the global default". Its stub throws `Illegal invocation` unless `this` is `undefined` or `globalThis`, as workerd does. The test covers an injected fetcher and the default global `fetch`.
+- Against the old line it fails with exactly the production outcome, `{ kind: "retry", status: null, code: "network" }`.
+- With the fix it passes.
+
+**Known follow-up, not changed here.** `ResendTaskNotificationDispatcher` (`portal/src/integrations/task-assignment-email.ts`) has the same `this.fetcher(...)` pattern. It will fail the same way if task email is enabled, which it is not today.
+
+**After deploy.** Queued assignment alerts that are still `pending` (fewer than 5 attempts, inside the 12-hour window) send on the next drain. Older ones expire rather than replay. Re-send test alerts manually: they are not queued. Live check order: the in-app test alert first, then one task assignment.

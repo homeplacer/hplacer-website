@@ -223,6 +223,29 @@ describe("WebPushSender", () => {
     }
   });
 
+  it("calls fetch with a Workers-valid receiver, whether injected or the global default", async () => {
+    // Mirrors workerd: fetch throws "Illegal invocation" unless `this` is undefined or globalThis.
+    let calls = 0;
+    const strictFetch = function (this: unknown): Promise<Response> {
+      if (this !== undefined && this !== globalThis) throw new TypeError("Illegal invocation: function called with incorrect `this` reference");
+      calls += 1;
+      return Promise.resolve(new Response(null, { status: 201 }));
+    } as unknown as typeof fetch;
+    const vapid = await vapidFixture();
+    const keys = await importVapidKeys(vapid.publicKey, vapid.privateKey, "mailto:ops@hplacer.com");
+
+    assert.deepEqual(await new WebPushSender(keys, strictFetch).send(fakeDevice(), { payload: {}, ttlSeconds: 60 }), { kind: "sent", status: 201 });
+
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = strictFetch;
+    try {
+      assert.deepEqual(await new WebPushSender(keys).send(fakeDevice(), { payload: {}, ttlSeconds: 60 }), { kind: "sent", status: 201 });
+    } finally {
+      globalThis.fetch = realFetch;
+    }
+    assert.equal(calls, 2);
+  });
+
   it("never contacts a stored endpoint that fails validation", async () => {
     const { calls, sender: push } = await sender();
     const device = fakeDevice();
