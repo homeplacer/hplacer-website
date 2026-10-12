@@ -154,6 +154,8 @@ nav.bottom a {
 nav.bottom a[aria-current=page] { color: var(--brand); font-weight: 700; }
 nav.bottom .ico { font-size: 1.1rem; line-height: 1; }
 .empty { color: var(--ink-soft); font-size: .9rem; padding: 1.5rem 0; text-align: center; }
+/* Author display rules (e.g. on buttons) must not un-hide [hidden] controls. */
+[hidden] { display: none !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 footer.foot { color: var(--ink-soft); font-size: .75rem; padding: 1.5rem 1rem 0; text-align: center; }
 `;

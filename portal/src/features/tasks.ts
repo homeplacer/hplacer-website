@@ -27,6 +27,7 @@ import { html, query, raw } from "../ui/html.ts";
 import { badge, empty, formatDate, kv, page, tabs } from "../ui/layout.ts";
 import { documentList, uploadForm } from "./documents.ts";
 import { wantsJson } from "./equipment.ts";
+import { drainPushSoon } from "./push.ts";
 
 export function registerTasks(router: Router): void {
   router.get("/tasks", renderList);
@@ -259,6 +260,7 @@ async function createTaskRoute(ctx: RequestContext): Promise<Response> {
     assetIds,
     requiresPhoto: boolField(fields, "requires_photo"),
   });
+  drainPushSoon(ctx);
   return wantsJson(ctx) ? json({ id }, 201) : redirect(`/tasks/${id}?ok=task_created`);
 }
 
@@ -296,6 +298,7 @@ async function assignRoute(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "task.assign");
   const assigneeIds = await readListField(ctx.request, "assigned_to");
   await assignTask(ctx.db, ctx.actor, ctx.params.id, assigneeIds);
+  drainPushSoon(ctx);
   return wantsJson(ctx) ? json({ ok: true }) : redirect(`/tasks/${ctx.params.id}?ok=saved`);
 }
 

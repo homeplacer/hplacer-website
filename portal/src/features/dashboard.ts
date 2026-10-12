@@ -5,11 +5,13 @@ import { openDefectCounts } from "../domain/defects.ts";
 import { listParts } from "../domain/inventory.ts";
 import { homeDisplayName } from "../domain/homes.ts";
 import { inbox, markAllRead, markRead, unreadCount } from "../domain/notifications.ts";
+import { deviceLabel, listDevices } from "../domain/push.ts";
+import { loadWebPushConfig } from "../integrations/web-push.ts";
 import { billingQueue, listRepairs } from "../domain/repairs.ts";
 import { listTasks } from "../domain/tasks.ts";
 import { warrantyReviewCount } from "../domain/warranty.ts";
 import { badge, empty, formatDate, page, statGrid, tabs } from "../ui/layout.ts";
-import { html } from "../ui/html.ts";
+import { html, type SafeHtml } from "../ui/html.ts";
 import type { RequestContext } from "../api/context.ts";
 import { flashFrom, redirect } from "../api/responses.ts";
 import type { Router } from "../api/router.ts";
@@ -142,9 +144,11 @@ async function renderNotifications(ctx: RequestContext): Promise<Response> {
   const showAll = ctx.url.searchParams.get("view") === "all";
   const unread = await unreadCount(ctx.db, ctx.actor.employeeId);
   const items = await inbox(ctx.db, ctx.actor.employeeId, 50, !showAll);
+  const pushKeys = await loadWebPushConfig(ctx.env);
   const body = html`
     <h1>Notifications</h1>
     <p class="lede">${unread === 0 ? "You’re all caught up." : `${unread} unread notification${unread === 1 ? "" : "s"}.`}</p>
+    ${await phoneAlertsPanel(ctx, pushKeys?.publicKey ?? null)}
     ${tabs([
       { href: "/notifications", label: `Unread (${unread})`, current: !showAll },
       { href: "/notifications?view=all", label: "All", current: showAll },
@@ -169,7 +173,42 @@ async function renderNotifications(ctx: RequestContext): Promise<Response> {
           </div>`,
         )}
   `;
-  return page(body, { title: "Notifications", actor: ctx.actor, section: "/notifications", unread, back: { href: "/", label: "Today" }, flash: flashFrom(ctx.url) });
+  return page(body, { title: "Notifications", actor: ctx.actor, section: "/notifications", unread, back: { href: "/", label: "Today" }, flash: flashFrom(ctx.url), pushClient: Boolean(pushKeys) });
+}
+
+/** Opt-in controls for task alerts on this phone; driven by /push-client.js. */
+async function phoneAlertsPanel(ctx: RequestContext, publicKey: string | null): Promise<SafeHtml> {
+  if (!publicKey) {
+    return html`<section class="card"><h2>Phone alerts</h2><p class="meta">Phone alerts for new tasks are not turned on for the portal yet.</p></section>`;
+  }
+  const devices = await listDevices(ctx.db, ctx.actor.employeeId);
+  return html`<section class="card" id="push-panel" data-public-key="${publicKey}">
+    <h2>Phone alerts</h2>
+    <p class="meta">Get an alert on your phone when a task is assigned to you. The alert only says you have a new task; open it to see the details in the portal.</p>
+    <p data-push-status role="status">Checking this device…</p>
+    <noscript><p class="meta">Phone alerts need JavaScript turned on.</p></noscript>
+    <div class="btn-row">
+      <button type="button" data-push-on hidden>Turn on phone alerts</button>
+      <button type="button" data-push-claim hidden>Get my alerts on this device</button>
+      <button type="button" class="secondary" data-push-test hidden>Send test alert</button>
+      <button type="button" class="secondary" data-push-off hidden>Turn off on this device</button>
+    </div>
+    <details>
+      <summary>iPhone setup</summary>
+      <ol>
+        <li>Open portal.hplacer.com in Safari (iOS 16.4 or later).</li>
+        <li>Tap Share, then Add to Home Screen.</li>
+        <li>Open the portal from the new Home Screen icon and sign in.</li>
+        <li>Come back to Notifications, tap Turn on phone alerts, and allow notifications.</li>
+      </ol>
+    </details>
+    ${devices.length
+      ? html`<h3>Your devices</h3>${devices.map((device) => html`<div class="row">
+          <p class="meta">${deviceLabel(device.service)} · added ${formatDate(device.created_at)}${device.last_success_at ? ` · last alert ${formatDate(device.last_success_at)}` : ""}</p>
+          <form method="post" action="/api/push/devices/${device.id}/delete"><button class="secondary" type="submit">Remove</button></form>
+        </div>`)}`
+      : ""}
+  </section>`;
 }
 
 function linkFor(type: string, id: string): string {

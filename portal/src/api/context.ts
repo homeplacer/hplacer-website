@@ -14,6 +14,8 @@ export interface RequestContext {
   params: Record<string, string>;
   monday: MondaySyncPort;
   requestId: string;
+  /** Background work that may outlive the response (Workers `ctx.waitUntil`). Absent in tests. */
+  waitUntil?: (promise: Promise<unknown>) => void;
 }
 
 export type Fields = Record<string, string | undefined>;

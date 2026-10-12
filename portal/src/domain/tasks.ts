@@ -257,6 +257,7 @@ export async function createTask(db: Db, actor: Actor, input: CreateTaskInput): 
       relatedType: "work_task",
       relatedId: id,
       emailEligible: true,
+      pushEligible: true,
     });
   }
   return id;
@@ -285,6 +286,7 @@ export async function assignTask(db: Db, actor: Actor, taskId: string, employeeI
       relatedType: "work_task",
       relatedId: taskId,
       emailEligible: true,
+      pushEligible: true,
     });
   }
 }

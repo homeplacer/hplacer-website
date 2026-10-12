@@ -11,6 +11,8 @@ export interface PageOptions {
   unread?: number;
   flash?: { kind: "ok" | "bad" | "info"; message: string } | null;
   back?: { href: string; label: string } | null;
+  /** Load the phone-alert opt-in script. The only page-level script the portal serves. */
+  pushClient?: boolean;
 }
 
 const BOTTOM_NAV: { href: string; label: string; icon: string; permission?: Permission }[] = [
@@ -31,7 +33,14 @@ export function page(body: SafeHtml, options: PageOptions): Response {
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="referrer" content="same-origin">
 <meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#16457a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="HP Portal">
+<link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>${options.title} · Home Placer portal</title>
+${options.pushClient ? html`<script src="/push-client.js" defer></script>` : ""}
 <style>${raw(STYLESHEET)}</style>
 </head>
 <body>
@@ -63,7 +72,10 @@ export function page(body: SafeHtml, options: PageOptions): Response {
 
   return new Response(toString(document), {
     status: 200,
-    headers: securityHeaders({ "Content-Type": "text/html; charset=utf-8" }),
+    headers: securityHeaders({
+      "Content-Type": "text/html; charset=utf-8",
+      ...(options.pushClient ? { "Content-Security-Policy": PUSH_PAGE_CSP } : {}),
+    }),
   });
 }
 
@@ -71,14 +83,23 @@ function isCurrent(section: string, href: string): boolean {
   return href === "/" ? section === "/" : section.startsWith(href);
 }
 
+const PORTAL_CSP =
+  "default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; manifest-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'";
+
+/**
+ * The notifications page is the one place a script runs: the same-origin
+ * phone-alert opt-in file. No inline script and no third-party origin is
+ * allowed, so an injected `<script>` still has nothing to run under.
+ */
+export const PUSH_PAGE_CSP = `${PORTAL_CSP}; script-src 'self'; connect-src 'self'; worker-src 'self'`;
+
 /**
  * Applied to every response. The CSP is strict because the portal serves no
- * scripts at all: an injected `<script>` has nothing to run under.
+ * inline scripts: an injected `<script>` has nothing to run under.
  */
 export function securityHeaders(extra: Record<string, string> = {}): Headers {
   return new Headers({
-    "Content-Security-Policy":
-      "default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
+    "Content-Security-Policy": PORTAL_CSP,
     "Referrer-Policy": "same-origin",
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
