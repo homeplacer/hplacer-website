@@ -24,13 +24,13 @@ export default function HomesPage() {
             {all.length} floor plans to explore
           </p>
           <h1 className="mt-2 font-display text-4xl font-semibold text-stone-ink sm:text-5xl">
-            Compare new manufactured-home floor plans
+            Compare new single-wide and double-wide manufactured homes
           </h1>
           <p className="mt-3 max-w-2xl text-stone-muted">
-            Explore new Clayton, Cavco, and Champion manufactured-home floor
-            plans. Compare layouts and home-only or land-home estimates in this
-            catalog. For specific available homes and
-            land,{" "}
+            Browse single wide manufactured homes and double wide manufactured
+            homes from Clayton, Cavco, and Champion. Compare floor plans and
+            home-only or land-home estimates in this catalog. For specific
+            available homes and land,{" "}
             <Link href="/land-packages" className="font-semibold text-brand-700 underline underline-offset-4">
               browse current land-home packages
             </Link>.
