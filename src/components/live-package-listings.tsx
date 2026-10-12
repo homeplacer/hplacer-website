@@ -1,6 +1,7 @@
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 import { BathIcon, BedIcon, RulerIcon } from "@/components/icons";
 import Link from "next/link";
+import { MlsPackagePhoto } from "@/components/mls-package-photo";
 import { packageSlug, type LivePackageListing } from "@/lib/forturro-package-feed";
 
 export function LivePackageListings({
@@ -28,14 +29,13 @@ export function LivePackageListings({
           className="overflow-hidden rounded-card border border-stone-line bg-stone-bg shadow-sm"
         >
           {listing.photoUrl && (
-            // Plain img preserves Forturro's MLS media proxy URL without duplicating its images.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={listing.photoUrl}
+            <MlsPackagePhoto
+              listingKey={listing.listingKey}
+              photoUrl={listing.photoUrl}
               alt={`${listing.address}, ${listing.city}`}
               className="aspect-[3/2] w-full object-cover"
+              sizes="(min-width: 1216px) 366px, (min-width: 1024px) calc((100vw - 118px) / 3), (min-width: 768px) calc((100vw - 92px) / 2), calc(100vw - 42px)"
               loading="lazy"
-              decoding="async"
             />
           )}
           <div className="p-5">
