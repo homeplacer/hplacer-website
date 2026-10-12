@@ -39,6 +39,7 @@ import { registerHomes } from "./features/homes.ts";
 import { registerHealth } from "./features/health.ts";
 import { registerInventory } from "./features/inventory.ts";
 import { registerPortableJohn } from "./features/portable-john.ts";
+import { registerPush } from "./features/push.ts";
 import { handlePublicJobApplicationIntake, handlePublicWarrantyIntake, isPublicIntakeRequest, PUBLIC_JOB_APPLICATION_PATH } from "./features/public-intake.ts";
 import { registerSubdivisions } from "./features/subdivisions.ts";
 import { registerRepairs } from "./features/repairs.ts";
@@ -66,6 +67,7 @@ export function buildRouter(): Router {
   registerDocuments(router);
   registerAdmin(router);
   registerCareersReview(router);
+  registerPush(router);
   return router;
 }
 
@@ -76,6 +78,8 @@ export interface HandleOptions {
   access?: AccessConfig;
   identity?: AccessIdentity;
   monday?: MondaySyncPort;
+  /** The Worker's `ctx.waitUntil`, for best-effort work after the response. */
+  waitUntil?: (promise: Promise<unknown>) => void;
 }
 
 export async function handleRequest(request: Request, env: PortalEnv, options: HandleOptions = {}): Promise<Response> {
@@ -143,6 +147,7 @@ export async function handleRequest(request: Request, env: PortalEnv, options: H
     params: match.params,
     monday: options.monday ?? new QueuedMondaySyncPort(env.PORTAL_DB),
     requestId,
+    waitUntil: options.waitUntil,
   };
 
   const mutating = request.method !== "GET" && request.method !== "HEAD";

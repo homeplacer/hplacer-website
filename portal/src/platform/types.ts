@@ -135,4 +135,13 @@ export interface PortalEnv {
   TASK_EMAIL_START_AFTER?: string;
   /** Resend API key; configure as a Worker secret, never a checked-in var. */
   RESEND_API_KEY?: string;
+
+  /** Web Push task alerts for the installed app. Off unless exactly "true". */
+  WEB_PUSH_ENABLED?: string;
+  /** VAPID public key (base64url, 65-byte uncompressed P-256). Not secret; handed to browsers. */
+  WEB_PUSH_VAPID_PUBLIC_KEY?: string;
+  /** VAPID private key (base64url 32-byte scalar). Worker secret only, never a var. */
+  WEB_PUSH_VAPID_PRIVATE_KEY?: string;
+  /** VAPID contact, `mailto:` or `https:`; push services use it to reach the operator. */
+  WEB_PUSH_SUBJECT?: string;
 }

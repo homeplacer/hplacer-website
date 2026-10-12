@@ -471,6 +471,10 @@ tooling and is never needed by the deployed Worker.
 - Task-assignment emails use the notification outbox and run every five
   minutes. They remain disabled until the sender domain, provider secret, and
   start-after watermark are deliberately configured. SMS is not connected.
+- Task-assignment phone alerts (Web Push to the installed Home Screen app)
+  share the five-minute trigger and also start right after assignment. They
+  stay off until `WEB_PUSH_ENABLED` is `"true"` and the VAPID secrets are set;
+  see [`../PUSH_HANDOFF.md`](../PUSH_HANDOFF.md) for the contract and phone test.
 - Turn on Access logging retention, and mirror it against the portal's own audit
   log at `/admin/audit`.
 - Follow [`ops/R2-RETENTION.md`](ops/R2-RETENTION.md) before changing bucket

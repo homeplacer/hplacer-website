@@ -14,6 +14,7 @@ import { badRequest, notFound } from "../platform/errors.ts";
 import { newId, nowIso } from "../platform/ids.ts";
 import type { Db } from "../platform/types.ts";
 import { isRole, type Role } from "../auth/authz.ts";
+import { enqueuePushStatement } from "./push.ts";
 
 export type NotificationCategory =
   | "repair_reported"
@@ -41,6 +42,8 @@ export interface NotificationInput {
   relatedId?: string | null;
   /** Explicitly allow an email transport to deliver this notification. */
   emailEligible?: boolean;
+  /** Queue a Web Push alert to the employee's devices registered right now. */
+  pushEligible?: boolean;
   /** Repeat conditions (a part still below its reorder point) reuse this key so
    *  the same employee is alerted once, not once per sweep. */
   dedupeKey?: string | null;
@@ -60,26 +63,29 @@ export interface NotificationRow {
 
 export async function notify(db: Db, input: NotificationInput): Promise<string | null> {
   const id = newId("ntf");
+  const timestamp = nowIso();
+  const insert = db
+    .prepare(
+      `INSERT INTO notifications (id, employee_id, category, severity, title, body, related_type, related_id, dedupe_key, email_eligible, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+    .bind(
+      id,
+      input.employeeId,
+      input.category,
+      input.severity ?? "info",
+      input.title,
+      input.body,
+      input.relatedType ?? null,
+      input.relatedId ?? null,
+      input.dedupeKey ?? null,
+      input.emailEligible ? 1 : 0,
+      timestamp,
+    );
   try {
-    await db
-      .prepare(
-        `INSERT INTO notifications (id, employee_id, category, severity, title, body, related_type, related_id, dedupe_key, email_eligible, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      )
-      .bind(
-        id,
-        input.employeeId,
-        input.category,
-        input.severity ?? "info",
-        input.title,
-        input.body,
-        input.relatedType ?? null,
-        input.relatedId ?? null,
-        input.dedupeKey ?? null,
-        input.emailEligible ? 1 : 0,
-        nowIso(),
-      )
-      .run();
+    // The push outbox rows commit with the notification or not at all.
+    if (input.pushEligible) await db.batch([insert, enqueuePushStatement(db, id, input.employeeId, timestamp)]);
+    else await insert.run();
     return id;
   } catch (error) {
     // The dedupe index is the only uniqueness on this table; a collision means

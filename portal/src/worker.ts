@@ -16,11 +16,12 @@ import { runConfiguredMondaySync } from "./integrations/monday-sync-processor.ts
 import { runConfiguredMondayHomesImport } from "./integrations/monday-homes-import.ts";
 import { runConfiguredGmailImport } from "./integrations/gmail-import.ts";
 import { runTaskAssignmentEmail } from "./integrations/task-assignment-email.ts";
+import { runWebPush } from "./domain/push.ts";
 import type { PortalEnv } from "./platform/types.ts";
 
 const portal = {
-  async fetch(request: Request, env: PortalEnv): Promise<Response> {
-    return handleRequest(request, env);
+  async fetch(request: Request, env: PortalEnv, ctx?: { waitUntil(promise: Promise<unknown>): void }): Promise<Response> {
+    return handleRequest(request, env, ctx ? { waitUntil: (promise) => ctx.waitUntil(promise) } : {});
   },
 
   /**
@@ -42,6 +43,19 @@ const portal = {
           }
         } catch {
           console.error("task-assignment email delivery failed; check provider configuration and retry");
+        }
+      }
+      if (env.WEB_PUSH_ENABLED === "true") {
+        try {
+          const push = await runWebPush(env);
+          if (push.enabled) {
+            // Counts only: never endpoints, keys, tokens, or task details.
+            console.log(JSON.stringify({ message: "task-assignment push delivery complete", ...push }));
+          } else {
+            console.error("web push is enabled but VAPID configuration is missing or invalid");
+          }
+        } catch {
+          console.error("task-assignment push delivery failed; queued alerts will be retried");
         }
       }
       return;
