@@ -33,6 +33,15 @@ export default function BlogPage() {
         land readiness, and what happens between choosing a plan and getting the keys.
       </PageHero>
 
+      <nav className="container-x flex flex-wrap gap-x-6 gap-y-3 pt-8" aria-label="Buying process and warranty answers">
+        <Link href="/process" className="font-semibold text-brand-700 underline underline-offset-4">
+          Steps to buy a manufactured home with Home Placer
+        </Link>
+        <Link href="/warranty" className="font-semibold text-brand-700 underline underline-offset-4">
+          Home Placer manufactured-home warranty coverage
+        </Link>
+      </nav>
+
       <section className="container-x pt-12 sm:pt-16">
         {featured && (
           <div className="grid overflow-hidden rounded-[1.5rem] border border-stone-line bg-stone-surface lg:grid-cols-[1.3fr_0.7fr]">
