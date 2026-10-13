@@ -4,9 +4,12 @@ import { readFileSync } from "node:fs";
 
 test("the floor-plan catalog distinguishes models from available home-and-land properties", () => {
   const page = readFileSync("src/app/homes/page.tsx", "utf8");
-  const intro = page.slice(page.indexOf("Find your home"), page.indexOf("<HomesBrowser"));
+  const intro = page.slice(
+    page.indexOf("Compare new single-wide and double-wide manufactured homes"),
+    page.indexOf("<HomesBrowser"),
+  );
   assert.match(page, /import Link from "next\/link"/);
-  assert.match(intro, /This is our floor-plan catalog\. For specific available homes and\s+land/);
+  assert.match(intro, /Compare floor plans and\s+home-only or land-home estimates in this catalog\. For specific\s+available homes and land/);
   assert.match(intro, /<Link href="\/land-packages"[^>]*>\s*browse current land-home packages\s*<\/Link>/);
   assert.match(intro, /quarter-acre lot/);
   assert.match(intro, /Call, text, or email us for a written/);
