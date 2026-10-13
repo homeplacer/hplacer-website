@@ -271,7 +271,7 @@ export function homesItemListLd(
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Manufactured & mobile homes available with land — Home Placer",
+    name: "New manufactured home floor plans — Home Placer",
     numberOfItems: homes.length,
     itemListElement: homes.map((h, i) => ({
       "@type": "ListItem",
