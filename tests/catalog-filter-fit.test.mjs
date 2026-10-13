@@ -137,7 +137,7 @@ test("catalog SSR names its floor-plan section before real card headings and ret
   const headings = [...html.matchAll(/<h([1-6])\b[^>]*>([^<]+)<\/h\1>/g)]
     .map(([, level, text]) => [Number(level), text.trim()]);
   assert.deepEqual(headings, [
-    [1, "Find your home"],
+    [1, "Compare new single-wide and double-wide manufactured homes"],
     [2, "Floor plans"],
     [3, "Test home"],
     [3, "Home-only plan"],
