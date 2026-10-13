@@ -56,6 +56,7 @@ export default async function LandPackagesPage() {
           <div className="mt-6 flex flex-wrap gap-3">
             <a
               href="https://forturro.com/manufactured-homes?utm_source=hplacer&utm_medium=referral&utm_campaign=existing-manufactured-homes"
+              data-existing-inventory="all"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full bg-brand-700 px-5 py-3 font-semibold text-white hover:bg-brand-800"
@@ -64,6 +65,7 @@ export default async function LandPackagesPage() {
             </a>
             <a
               href="https://forturro.com/manufactured-homes-with-land?utm_source=hplacer&utm_medium=referral&utm_campaign=existing-manufactured-homes"
+              data-existing-inventory="owned_land"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full border border-stone-line px-5 py-3 font-semibold text-brand-700 hover:border-brand-300"
@@ -72,6 +74,7 @@ export default async function LandPackagesPage() {
             </a>
             <a
               href="https://forturro.com/search?mfgTenure=leased&type=Manufactured&utm_source=hplacer&utm_medium=referral&utm_campaign=existing-manufactured-homes"
+              data-existing-inventory="leased_land"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full border border-stone-line px-5 py-3 font-semibold text-brand-700 hover:border-brand-300"
