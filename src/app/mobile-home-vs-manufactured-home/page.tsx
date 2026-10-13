@@ -186,11 +186,14 @@ export default function MobileVsManufacturedPage() {
             Ready to see what a modern one looks like?
           </h2>
           <p className="mx-auto max-w-xl text-stone-muted">
-            Forget the word — come see the homes. Browse what we&apos;ve placed on land across the Grand
-            Strand, or just call and we&apos;ll answer every question, no pressure.
+            Browse current model floor plans, see homes we&apos;ve placed on land across the Grand
+            Strand, or call and we&apos;ll answer every question, no pressure.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/recently-placed" className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-800">
+            <Link href="/homes" className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-800">
+              Browse model floor plans <ArrowIcon className="size-4" />
+            </Link>
+            <Link href="/recently-placed" className="inline-flex items-center gap-2 rounded-full border border-stone-line bg-stone-bg px-6 py-3 text-base font-semibold text-stone-ink transition hover:border-brand-300">
               See homes we&apos;ve placed <ArrowIcon className="size-4" />
             </Link>
             <a href={`tel:${site.phoneDial}`} className="inline-flex items-center gap-2 rounded-full border border-stone-line bg-stone-bg px-6 py-3 text-base font-semibold text-stone-ink transition hover:border-brand-300">
