@@ -7,6 +7,7 @@ import {
   assignHomeToLot,
   createHome,
   formatSiteAddress,
+  homeDirectionsUrl,
   homeDisplayName,
   homeRepairHistory,
   homeReportTemplateKey,
@@ -205,7 +206,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
     <div class="card">
       ${formatSiteAddress(home)
         ? kv([
-            ["Address", formatSiteAddress(home)],
+            ["Address", html`<a href="${homeDirectionsUrl(home)}" target="_blank" rel="noopener noreferrer">${formatSiteAddress(home)}</a>`],
             ["Directions", home.site_address_notes],
             ["Owner", home.customer_name],
             ["Phone", home.customer_phone],

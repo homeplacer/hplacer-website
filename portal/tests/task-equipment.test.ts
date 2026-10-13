@@ -18,7 +18,7 @@ describe("equipment to move on an assigned task", () => {
   afterEach(() => harness.close());
 
   it("lets a supervisor assign several named machines to a destination and shows them to the crew", async () => {
-    await harness.db.prepare("UPDATE homes SET site_address = '123 Main Street' WHERE id = 'hom_a1'").run();
+    await harness.db.prepare("UPDATE homes SET site_address = '123 Main Street', site_city = 'Conway', site_state = 'SC', site_postal_code = '29526' WHERE id = 'hom_a1'").run();
     const response = await harness.request("/api/tasks", {
       as: "brandon@hplacer.com",
       ...taskForm({
@@ -46,6 +46,10 @@ describe("equipment to move on an assigned task", () => {
     const page = await (await harness.request(`/tasks/${task.id}`, { as: "dale@hplacer.com" })).text();
     assert.match(page, /HP-2601/);
     assert.match(page, /123 Main Street/);
+    assert.match(page, /href="https:\/\/www\.google\.com\/maps\/dir\/\?api=1&amp;destination=123%20Main%20Street%2C%20Conway%2C%20SC%2C%2029526"[^>]*>123 Main Street · Conway, SC · 29526<\/a>/);
+    assert.match(page, /href="\/homes\/hom_a1">Home details<\/a>/);
+    const homePage = await (await harness.request("/homes/hom_a1", { as: "dale@hplacer.com" })).text();
+    assert.match(homePage, /href="https:\/\/www\.google\.com\/maps\/dir\/\?api=1&amp;destination=123%20Main%20Street%2C%20Conway%2C%20SC%2C%2029526"[^>]*>123 Main Street · Conway, SC · 29526<\/a>/);
     assert.match(page, /Deere 135G \(2021\) — EX-01/);
     assert.match(page, /Kubota KX057-5 \(2023\) — EX-02/);
     assert.match(page, /Equipment to move/);
