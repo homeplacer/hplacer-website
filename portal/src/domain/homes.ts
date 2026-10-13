@@ -87,6 +87,15 @@ export function homeDisplayName(home: HomeDisplayFields): string {
   return address ?? "Address not added";
 }
 
+/** Open phone directions to the recorded site address, not an internal home ID. */
+export function homeDirectionsUrl(home: HomeDisplayFields): string | null {
+  const street = home.site_address?.trim();
+  if (!street) return null;
+  const cityState = [home.site_city?.trim(), home.site_state?.trim()].filter(Boolean).join(", ");
+  const destination = [street, cityState, home.site_postal_code?.trim()].filter(Boolean).join(", ");
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
+}
+
 /** The one-line address a crew or a homeowner would say out loud. */
 export function formatSiteAddress(home: Pick<HomeRow, "site_address" | "site_city" | "site_state" | "site_postal_code">): string | null {
   if (!home.site_address) return null;
