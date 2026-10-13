@@ -67,6 +67,13 @@ export function AnalyticsEvents() {
         }
         if (link.hasAttribute("data-land-handoff"))
           track("land_handoff", { placement, destination: "forturro.com" });
+        // Existing-inventory resale handoff (PR120's three Forturro links). The
+        // frontend marks each link with data-existing-inventory="all|owned_land|
+        // leased_land"; we emit ONLY that enum + placement — never the href, query,
+        // or referrer. track() drops any value outside the inventory_type allowlist.
+        const inventoryType = link.getAttribute("data-existing-inventory");
+        if (inventoryType)
+          track("existing_inventory_handoff", { inventory_type: inventoryType, placement });
       } catch {
         /* Invalid links must not interrupt navigation. */
       }

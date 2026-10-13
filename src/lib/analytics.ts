@@ -156,6 +156,7 @@ const allowedEvents = new Set([
   "financing_click",
   "land_search_click",
   "land_handoff",
+  "existing_inventory_handoff",
   "generate_lead",
   "lead_submission_fallback",
   "view_package",
@@ -176,6 +177,9 @@ const allowedValues: Record<string, readonly string[]> = {
   submission_method: ["api", "mailto"],
   placement: ["header", "footer", "main_content", "navigation", "contact_bar", "other"],
   destination: ["forturro.com"],
+  // Which existing-inventory resale path a visitor chose on /land-packages.
+  // Enum ONLY — never a URL, query string, referrer, address, or PII.
+  inventory_type: ["all", "owned_land", "leased_land"],
 };
 // --- Privacy-preserving organic-search attribution --------------------------
 // GA4 derives a session's source/medium from the referrer only when no campaign
