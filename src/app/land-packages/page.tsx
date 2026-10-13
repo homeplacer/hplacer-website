@@ -39,6 +39,52 @@ export default async function LandPackagesPage() {
         </div>
         <div className="mt-8"><LivePackageListings listings={livePackages} /></div>
       </section>
+      <section className="container-x pb-4">
+        <div className="rounded-card border border-stone-line bg-stone-surface p-6 sm:p-8">
+          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand-700">
+            Existing MLS homes
+          </p>
+          <h2 className="mt-2 font-display text-2xl font-semibold text-stone-ink">
+            Looking for a manufactured home already on the market?
+          </h2>
+          <p className="mt-3 max-w-3xl text-stone-muted">
+            The packages above are Home Placer&apos;s active home-and-land offers.
+            The Forturro Group is a separate real-estate team with an MLS search
+            for manufactured homes sold with land or listed on leased land. Check
+            the land arrangement and current terms for each home you consider.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a
+              href="https://forturro.com/manufactured-homes?utm_source=hplacer&utm_medium=referral&utm_campaign=existing-manufactured-homes"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-brand-700 px-5 py-3 font-semibold text-white hover:bg-brand-800"
+            >
+              Browse manufactured-home listings ↗
+            </a>
+            <a
+              href="https://forturro.com/manufactured-homes-with-land?utm_source=hplacer&utm_medium=referral&utm_campaign=existing-manufactured-homes"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full border border-stone-line px-5 py-3 font-semibold text-brand-700 hover:border-brand-300"
+            >
+              See homes listed with land ↗
+            </a>
+            <a
+              href="https://forturro.com/search?mfgTenure=leased&type=Manufactured&utm_source=hplacer&utm_medium=referral&utm_campaign=existing-manufactured-homes"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full border border-stone-line px-5 py-3 font-semibold text-brand-700 hover:border-brand-300"
+            >
+              See homes on leased land ↗
+            </a>
+          </div>
+          <p className="mt-4 text-sm text-stone-muted">
+            Forturro&apos;s website has its own contact forms and privacy practices.
+            Return to Home Placer for a new home or package quote.
+          </p>
+        </div>
+      </section>
       <section className="container-x grid gap-6 py-10 md:grid-cols-2">
         <div className="rounded-card border border-stone-line bg-brand-950 p-8 text-white">
           <p className="text-sm font-semibold uppercase tracking-wider text-accent-300">Already have land?</p>
