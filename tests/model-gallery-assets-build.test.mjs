@@ -31,6 +31,11 @@ test("gallery encoding adds missing candidates and repeated runs retain existing
     assert.deepEqual(JSON.parse(await readFile(manifestPath, "utf8")), {
       [source]: [160, 320, 640, 768, 960, 1280],
     });
+    assert.deepEqual(
+      await readFile(originalPath.slice(0, -4) + "-gallery-640.webp"),
+      await readFile("public/models/eclipse/03-gallery-640.webp"),
+      "the reviewed catalog card derivative stays reproducible from its original",
+    );
     assert.deepEqual(await readFile(originalPath), originalBytes);
     assert.deepEqual(await readFile(existingPath), existingBytes);
     assert.equal((await stat(existingPath)).mtimeMs, existingTime);

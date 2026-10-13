@@ -52,6 +52,11 @@ export async function buildModelGalleryAssets(root, { rebuild = false } = {}) {
       manifest[source] = widths;
       for (const width of widths) {
         const destination = original.slice(0, -4) + `-gallery-${width}.webp`;
+        // The Eclipse exterior is also used as a catalog card. Its 640w
+        // derivative can use a smaller reviewed encode without changing the
+        // original photo or the other gallery sizes.
+        const catalogCardEncode = model.slug === "eclipse" &&
+          source === "/models/eclipse/03.jpg" && width === 640;
         const existing = await existingFile(destination);
         if (existing && !rebuild) {
           // Retain committed bytes even when the installed encoder changes.
@@ -73,7 +78,7 @@ export async function buildModelGalleryAssets(root, { rebuild = false } = {}) {
         }
         const encoded = await sharp(originalBytes)
           .resize({ width, withoutEnlargement: true })
-          .webp({ quality: 82, effort: 5 })
+          .webp(catalogCardEncode ? { quality: 75, effort: 6 } : { quality: 82, effort: 5 })
           .toBuffer();
         if (existing && encoded.equals(await readFile(destination))) {
           retained += 1;
