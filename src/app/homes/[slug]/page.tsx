@@ -55,11 +55,18 @@ export async function generateMetadata({
   const { slug } = await params;
   const home = getHome(slug);
   if (!home) return { title: "Home not found" };
+  const retired = isRetiredHome(home.slug);
+  const details = `${home.name} by ${home.brand}: ${home.beds} bedrooms, ${home.baths} bathrooms and ${home.sqft.toLocaleString("en-US")} sq ft.`;
+  const priceDetails = `${home.name} by ${home.brand}: ${home.beds} beds, ${home.baths} baths, ${home.sqft.toLocaleString("en-US")} sq ft.`;
   return pageMetadata({
-    title: `${home.name} · ${home.brand}`,
-    description: `${home.name} by ${home.brand}: ${home.beds} bedrooms, ${home.baths} bathrooms and ${home.sqft.toLocaleString("en-US")} sq ft. Explore the floor plan and ask about a home on your land or a land-home package.`,
+    title: retired
+      ? `${home.name} · ${home.brand}`
+      : `${home.name} by ${home.brand} — Price Estimates & Floor Plan`,
+    description: retired
+      ? `${details} Explore the floor plan and ask about a home on your land or a land-home package.`
+      : `${priceDetails} Compare land + home and home-only starting price estimates, photos and floor plan. Request a written quote.`,
     alternates: { canonical: `/homes/${home.slug}` },
-    ...(isRetiredHome(home.slug) ? { robots: { index: false, follow: true } } : {}),
+    ...(retired ? { robots: { index: false, follow: true } } : {}),
     openGraph: home.imageUrls[0] ? { images: [home.imageUrls[0]] } : undefined,
   });
 }
