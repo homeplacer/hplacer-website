@@ -4,7 +4,7 @@ import { listEmployees } from "../domain/employees.ts";
 import { listDocuments } from "../domain/documents.ts";
 import { listJobs } from "../domain/jobs.ts";
 import { assetOptionLabel, listAssets } from "../domain/assets.ts";
-import { homeDisplayName, listHomes } from "../domain/homes.ts";
+import { homeDirectionsUrl, homeDisplayName, listHomes } from "../domain/homes.ts";
 import {
   TASK_PRIORITIES,
   TASK_STATUSES,
@@ -111,6 +111,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
   const canWork = can(ctx.actor, "task.complete.any") || isAssignee ||
     task.created_by === ctx.actor.employeeId || isAvailableToCrew(ctx.actor, task);
   const employees = can(ctx.actor, "task.assign") ? await listEmployees(ctx.db) : [];
+  const destinationUrl = task.home_id ? homeDirectionsUrl(task) : null;
 
   const body = html`
     <h1>${task.title}</h1>
@@ -122,7 +123,12 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
         ["Raised by", task.created_by_name],
         ["Due", task.due_at ? formatDate(task.due_at) : null],
         ["Destination subdivision", task.job_number ? html`<a href="/subdivisions/${task.job_id}">${task.job_number} — ${task.job_title ?? ""}</a>` : null],
-        ["Destination home", task.home_id ? html`<a href="/homes/${task.home_id}">${homeDisplayName(task)}</a>` : null],
+        ["Destination home", task.home_id ? html`<div>
+          ${destinationUrl
+            ? html`<a href="${destinationUrl}" target="_blank" rel="noopener noreferrer">${homeDisplayName(task)}</a>`
+            : homeDisplayName(task)}
+          <div><a href="/homes/${task.home_id}">Home details</a></div>
+        </div>` : null],
         ["Equipment to move", equipment.length
           ? equipment.map((asset) => html`<div><a href="/equipment/${asset.asset_tag}">${taskEquipmentLabel(asset)}</a></div>`)
           : task.asset_tag ? html`<a href="/equipment/${task.asset_tag}">${task.asset_tag}</a>` : null],

@@ -7,6 +7,7 @@ import {
   assignHomeToLot,
   createHome,
   formatSiteAddress,
+  homeDirectionsUrl,
   homeDisplayName,
   homeRepairHistory,
   homeReportTemplateKey,
@@ -148,6 +149,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
   const warranty = await listWarrantyRequests(ctx.db, { homeId: home.id, limit: 20 });
   const workflow = await homeWorkflow(ctx.db, home.id);
   const equipment = await renderEquipmentLocationSection(ctx.actor, ctx.db, { homeId: home.id }, `/api/homes/${home.id}/equipment`);
+  const siteDirectionsUrl = homeDirectionsUrl(home);
 
   const billedTotal = repairs
     .filter((repair) => repair.bill_back_status === "billed")
@@ -203,9 +205,9 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
 
     <h2>Site address</h2>
     <div class="card">
-      ${formatSiteAddress(home)
+      ${siteDirectionsUrl
         ? kv([
-            ["Address", formatSiteAddress(home)],
+            ["Address", html`<a href="${siteDirectionsUrl}" target="_blank" rel="noopener noreferrer">${formatSiteAddress(home)}</a>`],
             ["Directions", home.site_address_notes],
             ["Owner", home.customer_name],
             ["Phone", home.customer_phone],
