@@ -7,9 +7,9 @@ export const site = {
   legalName: identity.legalName,
   domain: "hplacer.com",
   url: identity.url,
-  tagline: "New homes, on land, from $179,999.",
+  tagline: "Your land. Your new home. One local team.",
   blurb:
-    "Horry County's licensed land + home dealer. We pair brand-new Clayton, Cavco, and Champion manufactured homes with land across the Grand Strand — one package, one team, no HOA.",
+    "New Clayton, Cavco, and Champion manufactured homes paired with land across the Grand Strand and southeastern NC, with one local team coordinating your package.",
 
   phoneDisplay: "(843) 849-HOME",
   phoneDial: identity.phone,
@@ -68,22 +68,18 @@ export const site = {
     { slug: "whiteville", name: "Whiteville" },
   ],
 
-  // Current all-in land-home package floor: 105 Pepe Court, Conway, SC.
-  // Listing availability and the final scope remain subject to confirmation.
-  priceFrom: 179999,
-
   valueProps: [
     {
-      title: "No HOA",
-      body: "Own your land outright. No monthly association fees, no rules board.",
+      title: "Owned-land options",
+      body: "Confirm HOA fees, deed restrictions, and placement requirements for the specific lot you choose.",
     },
     {
       title: "Land + home, bundled",
-      body: "One package, one price, one closing — the home and the lot it sits on.",
+      body: "One local team coordinating the home and land. Your written agreement confirms included work, costs, and closing arrangements.",
     },
     {
       title: "Builder + 2–10 warranties",
-      body: "Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company. A 30-day walk-through is also provided.",
+      body: "Home Placer provides a one-year builder warranty for defects. The separate 2–10 Home Buyers Warranty provides two years of mechanical coverage and ten years of structural coverage through the 2–10 company. Coverage, exclusions, and claim procedures follow your written warranties.",
     },
     {
       title: "Licensed SC dealer",
@@ -98,6 +94,7 @@ export const navLinks = [
   { href: "/land-packages", label: "Land Packages" },
   { href: "/recently-placed", label: "Recently Placed" },
   { href: "/financing", label: "Financing" },
+  { href: "/down-payment-assistance", label: "Assistance" },
   { href: "/warranty", label: "Warranty" },
   { href: "/about", label: "About" },
   { href: "/team", label: "Team" },

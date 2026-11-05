@@ -28,6 +28,13 @@ export interface HomeRow {
   final_inspection_on: string | null;
   warranty_expires_on: string | null;
   monday_item_id: string | null;
+  monday_item_name: string | null;
+  monday_stage: string | null;
+  monday_source_group: string | null;
+  monday_source_json: string | null;
+  monday_source_updated_at: string | null;
+  monday_source_synced_at: string | null;
+  monday_source_missing: number;
   site_address: string | null;
   site_city: string | null;
   site_state: string | null;
@@ -62,8 +69,22 @@ export function missingHomeIdentity(home: Pick<HomeRow, "serial_number" | "manuf
   }).map((field) => field.label);
 }
 
-export function homeIdentityLabel(home: Pick<HomeRow, "serial_number">): string {
-  return isProvisionalSerial(home.serial_number) ? "Home pending identity" : home.serial_number;
+export type HomeDisplayFields = {
+  site_address?: string | null;
+  site_city?: string | null;
+  site_state?: string | null;
+  site_postal_code?: string | null;
+};
+
+/** House labels use the site address only; never substitute an internal identifier. */
+export function homeDisplayName(home: HomeDisplayFields): string {
+  const address = formatSiteAddress({
+    site_address: home.site_address ?? null,
+    site_city: home.site_city ?? null,
+    site_state: home.site_state ?? null,
+    site_postal_code: home.site_postal_code ?? null,
+  });
+  return address ?? "Address not added";
 }
 
 /** The one-line address a crew or a homeowner would say out loud. */
@@ -91,9 +112,9 @@ export async function listHomes(db: Db, options: { status?: string; jobId?: stri
          LEFT JOIN lots l ON l.id = h.lot_id
         WHERE (?1 IS NULL OR h.status = ?1)
           AND (?2 IS NULL OR h.job_id = ?2)
-          AND (?3 IS NULL OR h.serial_number LIKE ?3 OR ifnull(h.model, '') LIKE ?3 OR ifnull(h.manufacturer, '') LIKE ?3
+          AND (?3 IS NULL OR ifnull(h.model, '') LIKE ?3 OR ifnull(h.manufacturer, '') LIKE ?3
                OR upper(ifnull(h.site_address, '')) LIKE ?3 OR upper(ifnull(h.customer_name, '')) LIKE ?3)
-        ORDER BY h.status, h.serial_number`,
+        ORDER BY h.status, ifnull(h.site_address, ''), h.id`,
     )
     .bind(options.status ?? null, options.jobId ?? null, options.search ? `%${options.search.toUpperCase()}%` : null)
     .all<HomeSummary>();

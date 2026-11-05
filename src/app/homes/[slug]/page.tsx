@@ -9,6 +9,7 @@ import {
   getHomesByBrand,
   formatPrice,
   displayPrice,
+  isRetiredHome,
 } from "@/lib/homes";
 import {
   availableWidths,
@@ -21,12 +22,13 @@ import {
 } from "@/lib/home-types";
 import { HomeCard } from "@/components/home-card";
 import { HomeGallery } from "@/components/home-gallery";
+import { ModelVirtualTour } from "@/components/model-virtual-tour";
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 import { WantThisHouseForm } from "@/components/want-this-house-form";
 import { WidthSelector } from "@/components/width-selector";
 import { WidthProvider } from "@/components/width-context";
 import { FloorPlanSection } from "@/components/floor-plan-section";
-import { JsonLd, breadcrumbLd, homeProductLd } from "@/lib/jsonld";
+import { JsonLd, breadcrumbLd, modelWebPageLd } from "@/lib/jsonld";
 import { trustedVirtualTourUrl } from "@/lib/media-policy";
 import {
   BedIcon,
@@ -37,6 +39,9 @@ import {
   ArrowIcon,
 } from "@/components/icons";
 import { site } from "@/lib/site";
+import { ModelPackageJourney } from "@/components/model-package-journey";
+import { HistoricalProjectCard } from "@/components/historical-project-card";
+import { insetProjectImageSizes } from "@/lib/historical-project-images";
 
 export function generateStaticParams() {
   return getAllHomes().map((h) => ({ slug: h.slug }));
@@ -50,10 +55,18 @@ export async function generateMetadata({
   const { slug } = await params;
   const home = getHome(slug);
   if (!home) return { title: "Home not found" };
+  const retired = isRetiredHome(home.slug);
+  const details = `${home.name} by ${home.brand}: ${home.beds} bedrooms, ${home.baths} bathrooms and ${home.sqft.toLocaleString("en-US")} sq ft.`;
+  const priceDetails = `${home.name} by ${home.brand}: ${home.beds} beds, ${home.baths} baths, ${home.sqft.toLocaleString("en-US")} sq ft.`;
   return pageMetadata({
-    title: `${home.name} — ${home.brand} ${home.series} (${home.beds} bd / ${home.baths} ba)`,
-    description: `${home.name} by ${home.brand}: ${home.beds} bedrooms, ${home.baths} bathrooms, ${home.widthFt} × ${home.lengthFt} ft. Explore this floor plan and request pricing for your home and lot.`,
+    title: retired
+      ? `${home.name} · ${home.brand}`
+      : `${home.name} by ${home.brand} — Price Estimates & Floor Plan`,
+    description: retired
+      ? `${details} Explore the floor plan and ask about a home on your land or a land-home package.`
+      : `${priceDetails} Compare land + home and home-only starting price estimates, photos and floor plan. Request a written quote.`,
     alternates: { canonical: `/homes/${home.slug}` },
+    ...(retired ? { robots: { index: false, follow: true } } : {}),
     openGraph: home.imageUrls[0] ? { images: [home.imageUrls[0]] } : undefined,
   });
 }
@@ -66,6 +79,28 @@ export default async function HomeDetailPage({
   const { slug } = await params;
   const home = getHome(slug);
   if (!home) notFound();
+
+  if (isRetiredHome(home.slug)) {
+    return (
+      <section className="container-x py-12">
+        <p className="text-sm font-semibold uppercase tracking-wide text-stone-muted">
+          Archived model
+        </p>
+        <h1 className="mt-2 font-display text-4xl font-semibold text-stone-ink">
+          {home.name}
+        </h1>
+        <p className="mt-4 max-w-2xl text-stone-muted">
+          This model is no longer in our current lineup. Browse our current
+          floor plans or ask our team about a similar home.
+        </p>
+        <div className="my-6 flex flex-wrap gap-3">
+          <Link href="/homes" className="inline-flex items-center rounded-full bg-brand-700 px-5 py-3 font-semibold text-white hover:bg-brand-800">Browse current homes</Link>
+          <HomeInquiryDialog homeName={`a home similar to ${home.name}`} label="Ask about alternatives" />
+        </div>
+        <HomeGallery images={home.imageUrls} name={home.name} brand={home.brand} />
+      </section>
+    );
+  }
 
   const price = displayPrice(home);
   const sold = getAllPlacedHomes().filter(
@@ -123,7 +158,7 @@ export default async function HomeDetailPage({
           { name: home.name, path: `/homes/${home.slug}` },
         ])}
       />
-      <JsonLd data={homeProductLd(home)} />
+      <JsonLd data={modelWebPageLd(home)} />
       <div className="container-x pt-8 text-sm text-stone-muted">
         <Link href="/homes" className="hover:text-brand-700">
           ← All homes
@@ -148,22 +183,24 @@ export default async function HomeDetailPage({
           </p>
 
           {price != null ? (
-            <div className="mt-5">
-              <p className="font-display text-4xl font-semibold text-brand-700">
-                {formatPrice(price)}
-                <span className="ml-2 align-middle text-base font-normal text-stone-muted">
-                  starting
-                </span>
-              </p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-stone-muted">
-                {home.setupPrice
-                  ? "Full setup — home, ¼-acre lot & utilities"
-                  : "Home only"}
-              </p>
-              {home.setupPrice && home.price && (
-                <p className="mt-1 text-sm text-stone-muted">
-                  Home only {formatPrice(home.price)}
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-xl border border-brand-100 bg-brand-50 p-4">
+                <p className="text-sm font-semibold text-brand-900">
+                  {home.setupPrice ? "Land + home estimate" : "Home-only estimate"}
                 </p>
+                <p className="mt-2 text-xs text-stone-muted">Starting at</p>
+                <p className="font-display text-3xl font-semibold text-brand-800">
+                  {formatPrice(price)}
+                </p>
+              </div>
+              {home.setupPrice && home.price && (
+                <div className="rounded-xl border border-stone-line p-4">
+                  <p className="text-sm font-semibold text-stone-ink">Home-only estimate</p>
+                  <p className="mt-2 text-xs text-stone-muted">Starting at</p>
+                  <p className="font-display text-3xl font-semibold text-stone-ink">
+                    {formatPrice(home.price)}
+                  </p>
+                </div>
               )}
             </div>
           ) : (
@@ -173,17 +210,11 @@ export default async function HomeDetailPage({
           )}
 
           <p className="mt-3 text-sm text-stone-muted">
-            Most buyers get the{" "}
-            <strong className="font-semibold text-stone-ink">
-              complete package
-            </strong>{" "}
-            — this home on a{" "}
-            <strong className="font-semibold text-stone-ink">¼-acre lot</strong>
-            , delivered, set, and connected to utilities. Already have your own
-            land?{" "}
-            <strong className="font-semibold text-stone-ink">
-              Ask about home-only pricing.
-            </strong>
+            Estimated packages include the home and full setup and assume a
+            quarter-acre lot. Land, lot size, site work,
+            permits, utility connections, options, and local requirements can
+            change the final price. Call, text, or email us for a written
+            estimate for your lot.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-5 text-base text-stone-ink">
@@ -301,10 +332,10 @@ export default async function HomeDetailPage({
 
           <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-stone-muted">
             {[
-              "No HOA",
+              "Confirm lot restrictions",
               "1-year warranty",
               "Land + setup available",
-              "Move-in ready",
+              "Written package quote",
             ].map((t) => (
               <li key={t} className="inline-flex items-center gap-1.5">
                 <CheckIcon className="size-4 text-brand-600" /> {t}
@@ -331,15 +362,10 @@ export default async function HomeDetailPage({
               sale prices, not current quotes. Land, site work, options, and
               market conditions differ.
             </p>
-            <ul className="mt-3 flex flex-wrap gap-4">
+            <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {sold.slice(0, 3).map((h) => (
                 <li key={h.slug}>
-                  <Link
-                    className="font-semibold text-brand-700 underline"
-                    href={`/recently-placed/${h.slug}`}
-                  >
-                    {h.town} · {h.closeDate} · {formatPrice(h.price)}
-                  </Link>
+                  <HistoricalProjectCard home={h} sizes={insetProjectImageSizes} />
                 </li>
               ))}
             </ul>
@@ -359,16 +385,17 @@ export default async function HomeDetailPage({
                 Get {home.name}&rsquo;s price
               </h2>
               <p className="mt-3 leading-relaxed text-stone-muted">
-                Tell us a little and we&apos;ll send your all-in package price —{" "}
-                {home.name} on a ¼-acre lot, delivered, set, and connected to
-                utilities — plus an estimated monthly payment. Already have
-                land? We&apos;ll price it home-only.
+                Tell us about the {home.name} and whether you have land.
+                We&apos;ll help you get a written estimate that identifies the
+                lot, setup, utility work, and selected options. Already own a
+                lot? Ask about a home-only estimate for your project. Your
+                lender confirms financing terms and estimated payments.
               </p>
               <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-stone-muted">
                 {[
-                  "Real numbers, not a range",
+                  "Written model-and-lot estimate",
                   "No pressure",
-                  "Financing help (FHA / VA / USDA)",
+                  "Lender options to discuss",
                 ].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
                     <CheckIcon className="size-4 text-brand-600" /> {t}
@@ -381,7 +408,7 @@ export default async function HomeDetailPage({
                   href={`tel:${site.phoneDial}`}
                   className="font-semibold text-brand-700 hover:text-brand-900"
                 >
-                  Call or text {site.phoneDisplay}
+                  Call {site.phoneDisplay}
                 </a>
               </p>
             </div>
@@ -392,20 +419,20 @@ export default async function HomeDetailPage({
         </section>
       )}
 
-      {/* Available now — tour CTA + link to the live MLS collab (compliant link, not republished data) */}
+      {/* Current packages — keep available properties separate from sold history. */}
       <section className="container-x py-4">
         <div className="flex flex-col gap-5 rounded-card border border-stone-line bg-stone-surface p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">
-              Available now
+              Current land-home packages
             </p>
             <h2 className="mt-1 font-display text-2xl font-semibold text-stone-ink">
-              We keep homes ready to tour
+              See what&apos;s available to tour
             </h2>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-stone-muted">
-              Brand-new and just-completed homes are on the ground across Horry,
-              Georgetown, Brunswick, and Columbus counties. Call and we&apos;ll
-              show you what&apos;s available right now.
+              Browse current packages or ask our team which homes are available
+              to visit. We&apos;ll confirm the listing&apos;s status and help you
+              arrange the next step.
             </p>
           </div>
           <div className="flex flex-shrink-0 flex-wrap gap-3">
@@ -416,10 +443,10 @@ export default async function HomeDetailPage({
               <PhoneIcon className="size-4" /> {site.phoneDisplay}
             </a>
             <Link
-              href="/recently-placed"
+              href="/land-packages"
               className="inline-flex items-center gap-2 rounded-full border border-stone-line bg-stone-bg px-6 py-3 text-base font-semibold text-stone-ink transition hover:border-brand-300"
             >
-              See our recent homes <ArrowIcon className="size-4" />
+              Browse current packages <ArrowIcon className="size-4" />
             </Link>
           </div>
         </div>
@@ -440,16 +467,7 @@ export default async function HomeDetailPage({
             Walk through {home.name} from anywhere — drag to look around, or
             step room to room.
           </p>
-          <div className="mt-5 aspect-video overflow-hidden rounded-card border border-stone-line bg-stone-sunken">
-            <iframe
-              src={tourUrl}
-              title={`${home.name} 3D virtual tour`}
-              allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer"
-              allowFullScreen
-              loading="lazy"
-              className="size-full"
-            />
-          </div>
+          <ModelVirtualTour url={tourUrl} name={home.name} />
         </section>
       )}
 
@@ -521,21 +539,7 @@ export default async function HomeDetailPage({
           </div>
         </section>
       )}
-      <section className="container-x py-10">
-        <h2 className="font-display text-2xl font-semibold">
-          Home design and land-home packages
-        </h2>
-        <p className="mt-3 text-stone-muted">
-          This page describes a model. Package records identify a particular
-          home-and-land project and its status.
-        </p>
-        <Link
-          href={`/packages?model=${home.slug}`}
-          className="mt-4 inline-block font-semibold underline"
-        >
-          See package records for {home.name}
-        </Link>
-      </section>
+      <ModelPackageJourney homeName={home.name} modelSlug={home.slug} />
     </WidthProvider>
   );
 }

@@ -1,0 +1,38 @@
+{
+  "/recently-placed/conway/2610417.jpg": {
+    "width": 1024,
+    "height": 546,
+    "sourceSha256": "1bac66b1ae09a31c722cb8638908334c5095c7715e75a71f82a672b652be40ed",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2604537.jpg": {
+    "width": 1024,
+    "height": 682,
+    "sourceSha256": "3d6103cffb194db9b706838653da9e8ae460c41d7027ccfbbc789acb7c6d74b5",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/longs/2608944.jpg": {
+    "width": 1024,
+    "height": 576,
+    "sourceSha256": "e1b75c8d756fe6820cbfeb0e3502f224054302221b35425f7659332c9e458e8a",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  }
+}

@@ -7,13 +7,14 @@
  * named people, or removing the default entirely. Nothing in the domain layer
  * names a recipient; it names a category and lets routing decide.
  *
- * Delivery to email or SMS is a later transport. `notifications.delivered_at`
- * is the hook, and every row already carries a severity and a dedupe key.
+ * External delivery can be layered on later. `notifications.delivered_at` is
+ * the hook, and every row already carries a severity and a dedupe key.
  */
 import { badRequest, notFound } from "../platform/errors.ts";
 import { newId, nowIso } from "../platform/ids.ts";
 import type { Db } from "../platform/types.ts";
 import { isRole, type Role } from "../auth/authz.ts";
+import { enqueuePushStatement } from "./push.ts";
 
 export type NotificationCategory =
   | "repair_reported"
@@ -22,6 +23,7 @@ export type NotificationCategory =
   | "inspection_failed"
   | "defect_reported"
   | "material_requested"
+  | "parts_tracking"
   | "service_due"
   | "billing_ready"
   | "daily_digest"
@@ -38,6 +40,10 @@ export interface NotificationInput {
   body: string;
   relatedType?: string | null;
   relatedId?: string | null;
+  /** Explicitly allow an email transport to deliver this notification. */
+  emailEligible?: boolean;
+  /** Queue a Web Push alert to the employee's devices registered right now. */
+  pushEligible?: boolean;
   /** Repeat conditions (a part still below its reorder point) reuse this key so
    *  the same employee is alerted once, not once per sweep. */
   dedupeKey?: string | null;
@@ -57,25 +63,29 @@ export interface NotificationRow {
 
 export async function notify(db: Db, input: NotificationInput): Promise<string | null> {
   const id = newId("ntf");
+  const timestamp = nowIso();
+  const insert = db
+    .prepare(
+      `INSERT INTO notifications (id, employee_id, category, severity, title, body, related_type, related_id, dedupe_key, email_eligible, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+    .bind(
+      id,
+      input.employeeId,
+      input.category,
+      input.severity ?? "info",
+      input.title,
+      input.body,
+      input.relatedType ?? null,
+      input.relatedId ?? null,
+      input.dedupeKey ?? null,
+      input.emailEligible ? 1 : 0,
+      timestamp,
+    );
   try {
-    await db
-      .prepare(
-        `INSERT INTO notifications (id, employee_id, category, severity, title, body, related_type, related_id, dedupe_key, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      )
-      .bind(
-        id,
-        input.employeeId,
-        input.category,
-        input.severity ?? "info",
-        input.title,
-        input.body,
-        input.relatedType ?? null,
-        input.relatedId ?? null,
-        input.dedupeKey ?? null,
-        nowIso(),
-      )
-      .run();
+    // The push outbox rows commit with the notification or not at all.
+    if (input.pushEligible) await db.batch([insert, enqueuePushStatement(db, id, input.employeeId, timestamp)]);
+    else await insert.run();
     return id;
   } catch (error) {
     // The dedupe index is the only uniqueness on this table; a collision means
@@ -257,14 +267,14 @@ export async function removeRoute(db: Db, routeId: string): Promise<void> {
 // Inbox
 // ---------------------------------------------------------------------------
 
-export async function inbox(db: Db, employeeId: string, limit = 50): Promise<NotificationRow[]> {
+export async function inbox(db: Db, employeeId: string, limit = 50, unreadOnly = false): Promise<NotificationRow[]> {
   const rows = await db
     .prepare(
       `SELECT id, category, severity, title, body, related_type, related_id, read_at, created_at
-         FROM notifications WHERE employee_id = ?
+         FROM notifications WHERE employee_id = ? AND (? = 0 OR read_at IS NULL)
         ORDER BY read_at IS NOT NULL, created_at DESC, rowid DESC LIMIT ?`,
     )
-    .bind(employeeId, limit)
+    .bind(employeeId, unreadOnly ? 1 : 0, limit)
     .all<NotificationRow>();
   return rows.results;
 }
@@ -284,4 +294,13 @@ export async function markRead(db: Db, employeeId: string, notificationId: strin
     .bind(nowIso(), notificationId, employeeId)
     .run();
   return (result.meta.changes ?? 0) > 0;
+}
+
+/** Clears only the signed-in employee's unread notifications. */
+export async function markAllRead(db: Db, employeeId: string): Promise<number> {
+  const result = await db
+    .prepare("UPDATE notifications SET read_at = ? WHERE employee_id = ? AND read_at IS NULL")
+    .bind(nowIso(), employeeId)
+    .run();
+  return result.meta.changes ?? 0;
 }

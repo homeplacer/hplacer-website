@@ -1,0 +1,846 @@
+{
+  "/recently-placed/conway/2407324.jpg": {
+    "width": 1024,
+    "height": 555,
+    "sourceSha256": "6c6932a694a09129cb8c5c912186790704fbe49b76f66f93035c3493bf502606",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2406093.jpg": {
+    "width": 576,
+    "height": 768,
+    "sourceSha256": "df9aebfc8d1685ce90472d14bf18d868c50080a1e1ff9fe8c7e01fa4d6f78418",
+    "widths": [
+      320,
+      480,
+      576
+    ]
+  },
+  "/recently-placed/conway/2420437.jpg": {
+    "width": 1024,
+    "height": 567,
+    "sourceSha256": "8cffb2457a8af0dacde17d78f26b5832e05c6c90b631f955a19b795ccd237428",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2603220.jpg": {
+    "width": 878,
+    "height": 668,
+    "sourceSha256": "84212004bccc8f4e9d57c1eefb3adfc664bfc307614808fbb547e5eca9f90e3e",
+    "widths": [
+      320,
+      480,
+      640,
+      878
+    ]
+  },
+  "/recently-placed/conway/2428162.jpg": {
+    "width": 808,
+    "height": 573,
+    "sourceSha256": "b90ac9436bb69b2645f9973df065340157d8a05523d7feb5f2b54fb97c62ecc1",
+    "widths": [
+      320,
+      480,
+      640,
+      808
+    ]
+  },
+  "/recently-placed/conway/2406422.jpg": {
+    "width": 1024,
+    "height": 582,
+    "sourceSha256": "f7034a875a31e2264df360a4fa0a1736ee601b97a3a04380bd7006106583d208",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2323921.jpg": {
+    "width": 1024,
+    "height": 575,
+    "sourceSha256": "c2a618589d2f8e428f33f68796a181169df9c8bf8e18ade5144939403b60f618",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2521398.jpg": {
+    "width": 1024,
+    "height": 768,
+    "sourceSha256": "c9d77b606ee36044802db36bcc8782c3af68924a90b0c4c415e6fa0f6448111a",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2521391.jpg": {
+    "width": 640,
+    "height": 480,
+    "sourceSha256": "54c5c7a3339147458f4fc486e73a372235fca578b9a093a08476be102be1b6f5",
+    "widths": [
+      320,
+      480,
+      640
+    ]
+  },
+  "/recently-placed/conway/2411320.jpg": {
+    "width": 576,
+    "height": 768,
+    "sourceSha256": "b09145e4d9c9b782362128082479402b6ac1d4fbeb9012646e00ecc1b4bb5052",
+    "widths": [
+      320,
+      480,
+      576
+    ]
+  },
+  "/recently-placed/conway/2420375.jpg": {
+    "width": 956,
+    "height": 768,
+    "sourceSha256": "5d6d3bbdffb0c2a71617c44024aa754698e58d2ea4e2f0d2ccde30d6b8ee5807",
+    "widths": [
+      320,
+      480,
+      640,
+      956
+    ]
+  },
+  "/recently-placed/conway/2400068.jpg": {
+    "width": 576,
+    "height": 768,
+    "sourceSha256": "32272f61ec208e97f3f9571db30e96d7a04dc034b49a555767eacaa633a45be2",
+    "widths": [
+      320,
+      480,
+      576
+    ]
+  },
+  "/recently-placed/conway/2403974.jpg": {
+    "width": 994,
+    "height": 768,
+    "sourceSha256": "a4d4a53d8d009bd3d7dd544b9c51074c7c305b921d1e6a56410d007a9bd618fa",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      994
+    ]
+  },
+  "/recently-placed/conway/2420377.jpg": {
+    "width": 1024,
+    "height": 732,
+    "sourceSha256": "5b4ee524fa8c5ef5e22bb195daeec5573b486c397935b264da7c4dc1c5f1773b",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2417495.jpg": {
+    "width": 576,
+    "height": 768,
+    "sourceSha256": "f4ceeeb79b7ccea6bbfcb29af4145c8fd944a5867bf51c70ed78d6398bf40545",
+    "widths": [
+      320,
+      480,
+      576
+    ]
+  },
+  "/recently-placed/conway/2427332.jpg": {
+    "width": 1024,
+    "height": 641,
+    "sourceSha256": "372248cbbdebafd976b5cd061232864536db66f539ac63a2313758f4ee079480",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2401594.jpg": {
+    "width": 976,
+    "height": 768,
+    "sourceSha256": "93753bd22efb7297e8e8d69befe56f0ceb507799f08eb07023ef70574d11a964",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      976
+    ]
+  },
+  "/recently-placed/conway/2424270.jpg": {
+    "width": 760,
+    "height": 642,
+    "sourceSha256": "46ded0de110e5b5e7854e936ef0ce94f38fdcbf1132be0f1646ec16be9c8fd30",
+    "widths": [
+      320,
+      480,
+      640,
+      760
+    ]
+  },
+  "/recently-placed/conway/2424403.jpg": {
+    "width": 1024,
+    "height": 572,
+    "sourceSha256": "dcfba5adca6cfcdad20e3028fdd1f250267c022dbd2a6c7af73fc1e5a10f8573",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2505519.jpg": {
+    "width": 1024,
+    "height": 576,
+    "sourceSha256": "6799156f45d57af8e396dedaa91654727728d737bea782fdfd9a60626208ed1b",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2418564.jpg": {
+    "width": 768,
+    "height": 768,
+    "sourceSha256": "d87c7a3a5a17898a4c0f71ac31a2dc66585504bcd39a70364adcbce37ec63e70",
+    "widths": [
+      320,
+      480,
+      640,
+      768
+    ]
+  },
+  "/recently-placed/conway/2419757.jpg": {
+    "width": 819,
+    "height": 768,
+    "sourceSha256": "a6729d4766a9a480ed6647b53ba3b0521d94570d805531499b739dc4c5d9642b",
+    "widths": [
+      320,
+      480,
+      640,
+      819
+    ]
+  },
+  "/recently-placed/conway/2423471.jpg": {
+    "width": 795,
+    "height": 570,
+    "sourceSha256": "7c22a081c85a4c2f8f794b2572f6e4a52a256d3fc86b68d3c7b34114ddabf7b4",
+    "widths": [
+      320,
+      480,
+      640,
+      795
+    ]
+  },
+  "/recently-placed/conway/2428864.jpg": {
+    "width": 792,
+    "height": 612,
+    "sourceSha256": "886ccb128ae9aa9b10d5c103804a8fe02e5359dc322e3fcce7541e8067ced865",
+    "widths": [
+      320,
+      480,
+      640,
+      792
+    ]
+  },
+  "/recently-placed/conway/2313405.jpg": {
+    "width": 979,
+    "height": 1024,
+    "sourceSha256": "7dc8a5064b6e37f6f9b166e95f5d6aa0c4ae2f8695a5d1fc32f8bede7a7fe275",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      979
+    ]
+  },
+  "/recently-placed/conway/2315294.jpg": {
+    "width": 1024,
+    "height": 599,
+    "sourceSha256": "5df47c6cfc45f928a9f8b61a98af1fccfe658473aee24b863d61a195dbc6c57e",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2316420.jpg": {
+    "width": 865,
+    "height": 1024,
+    "sourceSha256": "827a1adf580c75767631f85d1594dc3722b9553155a32a711ef7f5a26e50e0ab",
+    "widths": [
+      320,
+      480,
+      640,
+      865
+    ]
+  },
+  "/recently-placed/conway/2321132.jpg": {
+    "width": 1024,
+    "height": 627,
+    "sourceSha256": "d034c5455edaaefa63828067465dda783eb25011efe01944127a59eb49e76e17",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2321133.jpg": {
+    "width": 1024,
+    "height": 599,
+    "sourceSha256": "0328445e72ba261c742138358cfbb937e3dfbc98fd7e3c344ee742fcb216acae",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2323619.jpg": {
+    "width": 1024,
+    "height": 536,
+    "sourceSha256": "1976014629d0b9e633408b859eaefcaf5f1fef9369c6f4dcc034025793dc3363",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2323622.jpg": {
+    "width": 1024,
+    "height": 832,
+    "sourceSha256": "3d8df170c69a4313a83a7ea416d2a6fd66e5177f6ab98d645b0617a8887952d4",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2514100.jpg": {
+    "width": 1024,
+    "height": 543,
+    "sourceSha256": "2a45fa740292698fda092d1bd609053b42119d3268a7e9aad47683e56473bfc1",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2519482.jpg": {
+    "width": 1024,
+    "height": 768,
+    "sourceSha256": "a100114c46f0b1eb8b237074db28e5a3a47185609163ea207fea336d04a96212",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2500869.jpg": {
+    "width": 1014,
+    "height": 768,
+    "sourceSha256": "0168fb93707e2c29affdca1c0bafc9a855e29225599767ad439f2e8733bd0428",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1014
+    ]
+  },
+  "/recently-placed/conway/2517729.jpg": {
+    "width": 850,
+    "height": 603,
+    "sourceSha256": "85ccee93416927a3ea316be6270ea49ed6e967a820c2d1495fef8c63f385d3cd",
+    "widths": [
+      320,
+      480,
+      640,
+      850
+    ]
+  },
+  "/recently-placed/conway/2604537.jpg": {
+    "width": 1024,
+    "height": 682,
+    "sourceSha256": "3d6103cffb194db9b706838653da9e8ae460c41d7027ccfbbc789acb7c6d74b5",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2518182.jpg": {
+    "width": 1024,
+    "height": 575,
+    "sourceSha256": "f7e474a2d1c63a58dd2ad694be38eb36ac63898b265db9271d18e02a42e932cc",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2523680.jpg": {
+    "width": 850,
+    "height": 615,
+    "sourceSha256": "9f88ed71f099dcc1919ccecee4c003d16faa8dfec9f4609b4b9e8542e802b22e",
+    "widths": [
+      320,
+      480,
+      640,
+      850
+    ]
+  },
+  "/recently-placed/conway/2610417.jpg": {
+    "width": 1024,
+    "height": 546,
+    "sourceSha256": "1bac66b1ae09a31c722cb8638908334c5095c7715e75a71f82a672b652be40ed",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2510564.jpg": {
+    "width": 1024,
+    "height": 684,
+    "sourceSha256": "48a5c51de4833fc4be98eda8b2fde2eea863b910ec1555024e602f6ef3524fa9",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/conway/2502626.jpg": {
+    "width": 721,
+    "height": 376,
+    "sourceSha256": "8ae4a5f9e5e958d020fe553781845262939d10d3459e653c80250347b93d4772",
+    "widths": [
+      320,
+      480,
+      640,
+      721
+    ]
+  },
+  "/recently-placed/conway/2508766.jpg": {
+    "width": 1024,
+    "height": 576,
+    "sourceSha256": "cdd74685dff785ce4eca1131b17fabc0628e0d37b661ba0011b50d48f27b980f",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/loris/2403208.jpg": {
+    "width": 1024,
+    "height": 575,
+    "sourceSha256": "9372795c1283b6a125f84a36b0d4e69d1cc5bf207860cbd078d1682cb0cc2575",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/loris/2402266.jpg": {
+    "width": 576,
+    "height": 768,
+    "sourceSha256": "31f572e8d50b8ff568a33cda75bf20c876114392d9e4a02b267022a978f20bfa",
+    "widths": [
+      320,
+      480,
+      576
+    ]
+  },
+  "/recently-placed/loris/2428862.jpg": {
+    "width": 671,
+    "height": 702,
+    "sourceSha256": "6a1b147449b6fee327562c0ce23cd1131fab878330ca699a8c1d47b491a00a8f",
+    "widths": [
+      320,
+      480,
+      640,
+      671
+    ]
+  },
+  "/recently-placed/loris/2412502.jpg": {
+    "width": 1024,
+    "height": 575,
+    "sourceSha256": "6f3691dea27635e0a6323e95493b1b18787b42c70a550624cd5bb145092d671f",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/loris/2425175.jpg": {
+    "width": 1024,
+    "height": 768,
+    "sourceSha256": "233082b6b22378503cfcc578286378113b37ef56fe25bd30a6180ad39efb7c51",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/loris/2519502.jpg": {
+    "width": 1024,
+    "height": 768,
+    "sourceSha256": "146cae8545a83a8ce47897be397fba1b9432d8b2e61343da9a4b31a03ba6c6ef",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/loris/2505870.jpg": {
+    "width": 921,
+    "height": 768,
+    "sourceSha256": "49126744c975e49c6edf42a9274f52406362449110cdfb5bf054e4483bae2c05",
+    "widths": [
+      320,
+      480,
+      640,
+      921
+    ]
+  },
+  "/recently-placed/loris/2512540.jpg": {
+    "width": 1024,
+    "height": 575,
+    "sourceSha256": "49cf46930e51b00c601ee249c6be73c04a369905d3596630512e60fea870d0eb",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/loris/2508137.jpg": {
+    "width": 1024,
+    "height": 733,
+    "sourceSha256": "250510ed840043d8e7df5e80a62c966f64424f2f9fd8c86306760b7e030b15d8",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/loris/2501466.jpg": {
+    "width": 1024,
+    "height": 680,
+    "sourceSha256": "d66fe2d01ca2abbd4804f58a18a239dc7f6aa77a28b251003a8eb935f312cf6c",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/aynor/2404733.jpg": {
+    "width": 1024,
+    "height": 502,
+    "sourceSha256": "4566de62947e76886e97fc367e03891c1944d5e225263ba56584ee42ebe5d78c",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/aynor/2510565.jpg": {
+    "width": 1024,
+    "height": 575,
+    "sourceSha256": "5109133d6f1a51c2f62f0182a49459e4eb87f36a4e09a019bbc0412fd16cf664",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/aynor/2411319.jpg": {
+    "width": 1024,
+    "height": 576,
+    "sourceSha256": "9177fa9562f04ae9e378c3c657cc702e2174cecb2846bbe32804212f34e243f0",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/aynor/2417924.jpg": {
+    "width": 576,
+    "height": 768,
+    "sourceSha256": "ec9dcffb2d11998b5f8d2722e3fb95ed68c48e528d87a4e6e68d91cb7e516836",
+    "widths": [
+      320,
+      480,
+      576
+    ]
+  },
+  "/recently-placed/aynor/2523301.jpg": {
+    "width": 1024,
+    "height": 768,
+    "sourceSha256": "fc25133d6ac56b821ee66709b690678bd4662d285072c3f701363458638485a9",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/aynor/2510477.jpg": {
+    "width": 1024,
+    "height": 706,
+    "sourceSha256": "d8cd0b3992338fdb0b2db673d8bd94244681aabca8f702662e2d8fbfe2ea1836",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/aynor/2413882.jpg": {
+    "width": 1024,
+    "height": 576,
+    "sourceSha256": "34d65a06cee1debeec80c2985bd2c6242a18639c5070ec16c2593ff646140d15",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/aynor/2522913.jpg": {
+    "width": 1024,
+    "height": 768,
+    "sourceSha256": "8a1d4b78bd7e25cab9f1b86c147376c8144b295eba637222b3c365ce49f0abf4",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/aynor/2411437.jpg": {
+    "width": 1024,
+    "height": 576,
+    "sourceSha256": "476a2e7075cbe7930f1f0729e4822110b7e7c4339c8e570cb27a7fb09368e2f9",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/aynor/2424359.jpg": {
+    "width": 1024,
+    "height": 768,
+    "sourceSha256": "5c9eac097399d9136b1402fc7c7831767f44a4608dcc05b4896a05b8ec8e3c89",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/aynor/2411474.jpg": {
+    "width": 1024,
+    "height": 576,
+    "sourceSha256": "631fd3df8f4164d6322daedd96df5275199c66027e65d388f9f5311cf76bcfcd",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/aynor/2510566.jpg": {
+    "width": 1024,
+    "height": 768,
+    "sourceSha256": "01f73233b3f0b26f1c7e18c1e3236eca31484b10b3c91037738c7aca6c7e427d",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/aynor/2428860.jpg": {
+    "width": 895,
+    "height": 728,
+    "sourceSha256": "3803769841a32f0a9e436579a47d6d9eee0a8ff8624abd93adf8ec22df2a6cb9",
+    "widths": [
+      320,
+      480,
+      640,
+      895
+    ]
+  },
+  "/recently-placed/aynor/2517813.jpg": {
+    "width": 1014,
+    "height": 529,
+    "sourceSha256": "5946403d3c10505e9feaeeb93f4c83b38696be3586967e6cb28d9f6472be161a",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1014
+    ]
+  },
+  "/recently-placed/aynor/2426716.jpg": {
+    "width": 874,
+    "height": 689,
+    "sourceSha256": "842d654fc0da4dbd35109134623f009d5874557e1d33051265e702b61f554696",
+    "widths": [
+      320,
+      480,
+      640,
+      874
+    ]
+  },
+  "/recently-placed/aynor/2525965.jpg": {
+    "width": 1024,
+    "height": 768,
+    "sourceSha256": "75716d81c12f2e74b0fae1f063a47b757cc4130e38bc96caed968bf5b014a5c5",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/longs/2603433.jpg": {
+    "width": 1024,
+    "height": 549,
+    "sourceSha256": "7d0c4691e727cf9a186e7c9583e2ec3efceaf6a981fd4dcefb459489ad1ef61f",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/longs/2530174.jpg": {
+    "width": 1024,
+    "height": 576,
+    "sourceSha256": "5537aeaae27a271cd80ed820ae19152021ee8028e831c61b360119c9800f4c56",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/longs/2602963.jpg": {
+    "width": 753,
+    "height": 480,
+    "sourceSha256": "d177c8c85265cf49ad69358bfaa35f25b838086c2afb44e472b388ee481c7edb",
+    "widths": [
+      320,
+      480,
+      640,
+      753
+    ]
+  },
+  "/recently-placed/longs/2608944.jpg": {
+    "width": 1024,
+    "height": 576,
+    "sourceSha256": "e1b75c8d756fe6820cbfeb0e3502f224054302221b35425f7659332c9e458e8a",
+    "widths": [
+      320,
+      480,
+      640,
+      960,
+      1024
+    ]
+  },
+  "/recently-placed/myrtle-beach/2421588.jpg": {
+    "width": 906,
+    "height": 768,
+    "sourceSha256": "469dbcbeebf1fa1223643bb5925fa49710ef529d7f27678c2389b90973b1d0eb",
+    "widths": [
+      320,
+      480,
+      640,
+      906
+    ]
+  }
+}

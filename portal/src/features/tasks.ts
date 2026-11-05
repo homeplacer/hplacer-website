@@ -3,27 +3,31 @@ import { assertCan, can } from "../auth/authz.ts";
 import { listEmployees } from "../domain/employees.ts";
 import { listDocuments } from "../domain/documents.ts";
 import { listJobs } from "../domain/jobs.ts";
-import { listAssets } from "../domain/assets.ts";
-import { listHomes } from "../domain/homes.ts";
+import { assetOptionLabel, listAssets } from "../domain/assets.ts";
+import { homeDisplayName, listHomes } from "../domain/homes.ts";
 import {
   TASK_PRIORITIES,
   TASK_STATUSES,
   assignTask,
   completeTask,
   createTask,
+  isAvailableToCrew,
+  listTaskEquipment,
   listTasks,
   requireTask,
   setTaskStatus,
+  taskEquipmentLabel,
   type TaskStatus,
 } from "../domain/tasks.ts";
-import { forbidden } from "../platform/errors.ts";
-import { boolField, optionalField, readFields, requiredField, type RequestContext } from "../api/context.ts";
+import { badRequest, forbidden } from "../platform/errors.ts";
+import { boolField, optionalField, readFields, readListField, requiredField, type RequestContext } from "../api/context.ts";
 import { flashFrom, json, redirect } from "../api/responses.ts";
 import type { Router } from "../api/router.ts";
 import { html, query, raw } from "../ui/html.ts";
 import { badge, empty, formatDate, kv, page, tabs } from "../ui/layout.ts";
 import { documentList, uploadForm } from "./documents.ts";
 import { wantsJson } from "./equipment.ts";
+import { drainPushSoon } from "./push.ts";
 
 export function registerTasks(router: Router): void {
   router.get("/tasks", renderList);
@@ -41,6 +45,8 @@ export function registerTasks(router: Router): void {
         status: ctx.url.searchParams.get("status") ?? undefined,
         assignedTo: ctx.url.searchParams.get("assignedTo") ?? undefined,
         openOnly: ctx.url.searchParams.get("open") === "1",
+        availableOnly: ctx.url.searchParams.get("scope") === "available",
+        includeAvailableForCrew: ctx.url.searchParams.get("scope") === "available",
       }),
     }),
   );
@@ -55,20 +61,24 @@ async function renderList(ctx: RequestContext): Promise<Response> {
     status,
     assignedTo: scope === "mine" ? ctx.actor.employeeId : undefined,
     openOnly: !status,
+    availableOnly: scope === "available",
+    includeAvailableForCrew: scope === "available",
   });
 
   const body = html`
     <h1>Tasks</h1>
     ${tabs([
       { href: "/tasks?scope=mine", label: "Mine", current: scope === "mine" },
+      { href: "/tasks?scope=available", label: "Available", current: scope === "available" },
       ...(canSeeAll ? [{ href: "/tasks?scope=all", label: "Everyone", current: scope === "all" }] : []),
-      ...TASK_STATUSES.map((value) => ({
+      ...TASK_STATUSES.filter((value) => scope !== "available" || (value !== "complete" && value !== "cancelled")).map((value) => ({
         href: `/tasks${query({ scope, status: value })}`,
         label: value.replace(/_/g, " "),
         current: status === value,
       })),
     ])}
 
+    ${scope === "available" ? html`<p class="meta">Unassigned job tasks anyone on the team can pick up.</p>` : ""}
     ${tasks.length === 0
       ? empty("No tasks here.")
       : tasks.map(
@@ -77,7 +87,8 @@ async function renderList(ctx: RequestContext): Promise<Response> {
               ${badge(task.priority, task.priority === "urgent" ? "bad" : task.priority === "high" ? "warn" : "")}</div>
             <div class="meta">${badge(task.status, task.status === "complete" ? "ok" : task.status === "blocked" ? "warn" : "")}
               ${task.assignee_name ?? "Unassigned"}${task.due_at ? ` · due ${formatDate(task.due_at)}` : ""}
-              ${task.job_number ? ` · ${task.job_number}` : ""}${task.asset_tag ? ` · ${task.asset_tag}` : ""}
+              ${task.job_number ? ` · ${task.job_number}` : ""}
+              ${task.equipment_count > 0 ? ` · ${task.equipment_count} ${task.equipment_count === 1 ? "machine" : "machines"} to move` : task.asset_tag ? ` · ${task.asset_tag}` : ""}
               ${task.requires_photo === 1 ? " · photo required" : ""}</div>
           </a>`,
         )}
@@ -89,11 +100,16 @@ async function renderList(ctx: RequestContext): Promise<Response> {
 
 async function renderDetail(ctx: RequestContext): Promise<Response> {
   const task = await requireTask(ctx.db, ctx.params.id);
-  if (!can(ctx.actor, "task.read.all") && task.assigned_to !== ctx.actor.employeeId && task.created_by !== ctx.actor.employeeId) {
+  const isAssignee = task.assigned_to === ctx.actor.employeeId || (task.assignee_ids ?? "").split(",").includes(ctx.actor.employeeId);
+  const canRead = can(ctx.actor, "task.read.all") || isAssignee ||
+    task.created_by === ctx.actor.employeeId || isAvailableToCrew(ctx.actor, task);
+  if (!canRead) {
     throw forbidden("That task is assigned to someone else");
   }
   const evidence = await listDocuments(ctx.db, { workTaskId: task.id });
-  const canWork = can(ctx.actor, "task.complete.any") || task.assigned_to === ctx.actor.employeeId || task.created_by === ctx.actor.employeeId;
+  const equipment = await listTaskEquipment(ctx.db, task.id);
+  const canWork = can(ctx.actor, "task.complete.any") || isAssignee ||
+    task.created_by === ctx.actor.employeeId || isAvailableToCrew(ctx.actor, task);
   const employees = can(ctx.actor, "task.assign") ? await listEmployees(ctx.db) : [];
 
   const body = html`
@@ -105,11 +121,14 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
         ["Assigned to", task.assignee_name ?? "Unassigned"],
         ["Raised by", task.created_by_name],
         ["Due", task.due_at ? formatDate(task.due_at) : null],
-        ["Subdivision", task.job_number ? html`<a href="/subdivisions/${task.job_id}">${task.job_number}</a>` : null],
-        ["Home", task.serial_number ? html`<a href="/homes/${task.home_id}">${task.serial_number}</a>` : null],
-        ["Equipment", task.asset_tag ? html`<a href="/equipment/${task.asset_tag}">${task.asset_tag}</a>` : null],
+        ["Destination subdivision", task.job_number ? html`<a href="/subdivisions/${task.job_id}">${task.job_number} — ${task.job_title ?? ""}</a>` : null],
+        ["Destination home", task.home_id ? html`<a href="/homes/${task.home_id}">${homeDisplayName(task)}</a>` : null],
+        ["Equipment to move", equipment.length
+          ? equipment.map((asset) => html`<div><a href="/equipment/${asset.asset_tag}">${taskEquipmentLabel(asset)}</a></div>`)
+          : task.asset_tag ? html`<a href="/equipment/${task.asset_tag}">${task.asset_tag}</a>` : null],
         ["Photo required", task.requires_photo === 1 ? "Yes" : null],
         ["Completed", task.completed_at ? formatDate(task.completed_at) : null],
+        ["Completed by", task.completed_by_name],
         ["Completion notes", task.completion_notes],
       ])}
       ${task.details ? html`<p>${task.details}</p>` : ""}
@@ -144,11 +163,10 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
 
     ${can(ctx.actor, "task.assign")
       ? html`<form class="card" method="post" action="/api/tasks/${task.id}/assign">
-          <label for="assigned_to">Reassign</label>
-          <select id="assigned_to" name="assigned_to">
-            <option value="">Unassigned</option>
-            ${employees.map((person) => html`<option value="${person.id}" ${raw(person.id === task.assigned_to ? "selected" : "")}>${person.display_name}</option>`)}
-          </select>
+          <fieldset><legend>People assigned</legend>
+            <p class="meta">Choose everyone working on this task. Leave all unchecked to make it available to the crew.</p>
+            ${employees.map((person) => html`<label><input type="checkbox" name="assigned_to" value="${person.id}" ${raw((task.assignee_ids ?? task.assigned_to ?? "").split(",").includes(person.id) ? "checked" : "")}> ${person.display_name}</label>`)}
+          </fieldset>
           <div class="btn-row"><button class="secondary" type="submit">Reassign</button></div>
         </form>`
       : ""}
@@ -166,48 +184,54 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
 async function renderNewTask(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "task.assign");
   const employees = await listEmployees(ctx.db);
-  const jobs = await listJobs(ctx.db, { status: "active" });
+  const jobs = (await listJobs(ctx.db)).filter(job => ["active", "planning", "on_hold"].includes(job.status));
   const assets = await listAssets(ctx.db);
-  const homes = await listHomes(ctx.db);
   const preset = {
     jobId: ctx.url.searchParams.get("jobId") ?? "",
     assetId: ctx.url.searchParams.get("assetId") ?? "",
     homeId: ctx.url.searchParams.get("homeId") ?? "",
   };
+  const selectedJob = jobs.find((job) => job.id === preset.jobId);
+  const homes = await listHomes(ctx.db, { jobId: selectedJob?.id });
 
   const body = html`
     <h1>Assign a task</h1>
+    <details class="card" ${raw(selectedJob ? "" : "open")}>
+      <summary><strong>Destination subdivision:</strong> ${selectedJob ? `${selectedJob.job_number} — ${selectedJob.title}` : "Choose one (optional)"}</summary>
+      <div class="stack" style="margin-top:0.75rem">
+        <a class="btn secondary" href="/tasks/new">No destination subdivision</a>
+        ${jobs.map((job) => html`<a class="btn secondary" href="/tasks/new${query({ jobId: job.id, homeId: job.id === selectedJob?.id ? preset.homeId : undefined, assetId: preset.assetId })}">${job.job_number} — ${job.title}${job.home_count > 0 ? ` (${job.home_count} homes)` : ""}</a>`)}
+      </div>
+    </details>
     <form method="post" action="/api/tasks">
       <label for="title">Task</label>
       <input id="title" name="title" required>
       <label for="details">Details</label>
       <textarea id="details" name="details"></textarea>
-      <label for="assigned_to">Assign to</label>
-      <select id="assigned_to" name="assigned_to">
-        <option value="">Unassigned</option>
-        ${employees.map((person) => html`<option value="${person.id}">${person.display_name} (${person.roles.join(", ")})</option>`)}
-      </select>
+      <fieldset><legend>Assign to people</legend>
+        <p class="meta">Choose everyone working on this task, or leave everyone unchecked.</p>
+        ${employees.map((person) => html`<label><input type="checkbox" name="assigned_to" value="${person.id}"> ${person.display_name}</label>`)}
+      </fieldset>
       <label for="priority">Priority</label>
       <select id="priority" name="priority">
         ${TASK_PRIORITIES.map((value) => html`<option value="${value}" ${raw(value === "normal" ? "selected" : "")}>${value}</option>`)}
       </select>
       <label for="due_at">Due (YYYY-MM-DD or YYYY-MM-DD HH:MM)</label>
       <input id="due_at" name="due_at" placeholder="2026-08-30 17:00">
-      <label for="job_id">Subdivision</label>
-      <select id="job_id" name="job_id">
-        <option value="">None</option>
-        ${jobs.map((job) => html`<option value="${job.id}" ${raw(job.id === preset.jobId ? "selected" : "")}>${job.job_number} — ${job.title}</option>`)}
-      </select>
-      <label for="home_id">Home</label>
+      <input type="hidden" name="job_id" value="${selectedJob?.id ?? ""}">
+      <label for="home_id">Destination home (optional)</label>
       <select id="home_id" name="home_id">
         <option value="">None</option>
-        ${homes.map((home) => html`<option value="${home.id}" ${raw(home.id === preset.homeId ? "selected" : "")}>${home.serial_number}</option>`)}
+        ${homes.map((home) => html`<option value="${home.id}" ${raw(home.id === preset.homeId ? "selected" : "")}>${homeDisplayName(home)}</option>`)}
       </select>
-      <label for="asset_id">Equipment</label>
-      <select id="asset_id" name="asset_id">
-        <option value="">None</option>
-        ${assets.map((asset) => html`<option value="${asset.id}" ${raw(asset.id === preset.assetId ? "selected" : "")}>${asset.asset_tag}</option>`)}
-      </select>
+      <fieldset>
+        <legend>Equipment to move (optional)</legend>
+        <p class="meta">Choose every machine or truck for this task. The subdivision or home above is where the crew should take it.</p>
+        ${assets.filter((asset) => asset.status !== "retired").map((asset) => html`<label class="equipment-location-choice">
+          <input type="checkbox" name="asset_ids" value="${asset.id}" ${raw(asset.id === preset.assetId ? "checked" : "")}>
+          <span><strong>${assetOptionLabel(asset)}</strong><br><span class="meta">${asset.status.replace(/_/g, " ")}</span></span>
+        </label>`)}
+      </fieldset>
       <label><input type="checkbox" name="requires_photo" value="on"> Require a photo before it can be closed</label>
       <div class="btn-row"><button type="submit">Assign</button></div>
     </form>
@@ -217,20 +241,51 @@ async function renderNewTask(ctx: RequestContext): Promise<Response> {
 
 async function createTaskRoute(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "task.assign");
-  const fields = await readFields(ctx.request);
+  const fieldsRequest = ctx.request.clone();
+  const assigneesRequest = ctx.request.clone();
+  const listRequest = ctx.request.clone();
+  const fields = await readFields(fieldsRequest);
+  const assigneeIds = await readListField(assigneesRequest, "assigned_to");
+  const assetIds = await taskEquipmentIds(listRequest);
   const id = await createTask(ctx.db, ctx.actor, {
     title: requiredField(fields, "title", "Task"),
     details: optionalField(fields, "details"),
     priority: optionalField(fields, "priority") ?? "normal",
     dueAt: optionalField(fields, "due_at"),
-    assignedTo: optionalField(fields, "assigned_to"),
+    assignedToIds: assigneeIds,
     jobId: optionalField(fields, "job_id"),
     lotId: optionalField(fields, "lot_id"),
     homeId: optionalField(fields, "home_id"),
     assetId: optionalField(fields, "asset_id"),
+    assetIds,
     requiresPhoto: boolField(fields, "requires_photo"),
   });
+  drainPushSoon(ctx);
   return wantsJson(ctx) ? json({ id }, 201) : redirect(`/tasks/${id}?ok=task_created`);
+}
+
+async function taskEquipmentIds(request: Request): Promise<string[]> {
+  const contentType = request.headers.get("Content-Type") ?? "";
+  if (contentType.includes("application/json")) {
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      throw badRequest("Body is not valid JSON");
+    }
+    if (!body || typeof body !== "object" || Array.isArray(body)) throw badRequest("Body must be a JSON object");
+    const value = (body as Record<string, unknown>).asset_ids;
+    if (value === undefined || value === null) return [];
+    if (!Array.isArray(value) || value.some((id) => typeof id !== "string")) {
+      throw badRequest("asset_ids must be a list of equipment IDs");
+    }
+    return value;
+  }
+  if (contentType.includes("form-urlencoded") || contentType.includes("multipart/form-data")) {
+    const form = await request.formData();
+    return form.getAll("asset_ids").filter((id): id is string => typeof id === "string");
+  }
+  return [];
 }
 
 async function setStatusRoute(ctx: RequestContext): Promise<Response> {
@@ -241,8 +296,9 @@ async function setStatusRoute(ctx: RequestContext): Promise<Response> {
 
 async function assignRoute(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "task.assign");
-  const fields = await readFields(ctx.request);
-  await assignTask(ctx.db, ctx.actor, ctx.params.id, optionalField(fields, "assigned_to"));
+  const assigneeIds = await readListField(ctx.request, "assigned_to");
+  await assignTask(ctx.db, ctx.actor, ctx.params.id, assigneeIds);
+  drainPushSoon(ctx);
   return wantsJson(ctx) ? json({ ok: true }) : redirect(`/tasks/${ctx.params.id}?ok=saved`);
 }
 

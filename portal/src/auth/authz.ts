@@ -47,6 +47,7 @@ export type Permission =
   | "inventory.read"
   | "inventory.adjust"
   | "inventory.manage"
+  | "vendor_mail.review"
   | "material_request.create"
   | "material_request.approve"
   | "document.upload"
@@ -104,6 +105,7 @@ const BILLING_PERMISSIONS: Permission[] = [
   "inventory.read",
   "inventory.adjust",
   "inventory.manage",
+  "vendor_mail.review",
   "material_request.create",
   "material_request.approve",
   "repair.read.all",

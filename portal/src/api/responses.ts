@@ -50,6 +50,9 @@ export const FLASH_MESSAGES: Record<string, string> = {
   billed: "Marked billed back.",
   task_created: "Task created and the assignee was notified.",
   task_completed: "Task closed.",
+  notification_read: "Notification marked read.",
+  notifications_cleared: "Unread notifications cleared.",
+  push_device_removed: "That device will no longer get phone alerts.",
   uploaded: "File attached.",
   linked: "Monday link recorded.",
   unlinked: "Monday link removed.",
@@ -58,6 +61,8 @@ export const FLASH_MESSAGES: Record<string, string> = {
   employee_added: "Employee added.",
   swept: "Sweep complete.",
   insurance_saved: "Insurance card saved and renewal tracking updated.",
+  homes_imported: "Homes refreshed from Monday.",
+  homes_import_disabled: "Monday home import is turned off.",
 };
 
 export function flashFrom(url: URL): { kind: "ok"; message: string } | null {

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { navLinks, resourceLinks, site, socialLinks } from "@/lib/site";
 import { stateAbbrForSlug } from "@/lib/locations";
 import { asset } from "@/lib/asset";
+import { footerResourceHrefs } from "@/lib/resource-navigation";
 import {
   PhoneIcon,
   PinIcon,
@@ -17,7 +18,8 @@ const SOCIAL_ICONS = {
 } as const;
 
 const FOOTER_EXPLORE = navLinks.slice(0, 6);
-const FOOTER_RESOURCES = resourceLinks.slice(0, 8);
+const resourceDestinations = new Set<string>(footerResourceHrefs);
+const FOOTER_RESOURCES = resourceLinks.filter((link) => resourceDestinations.has(link.href));
 
 export function SiteFooter() {
   const year = 2026;
@@ -118,10 +120,10 @@ export function SiteFooter() {
           <h2 className="font-display text-sm font-semibold uppercase tracking-wider text-accent-300">
             Resources
           </h2>
-          <ul className="mt-4 space-y-2.5 text-sm">
+          <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:block sm:space-y-1">
             {FOOTER_RESOURCES.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="text-stone-100/80 hover:text-white">
+                <Link href={l.href} className="inline-flex min-h-11 items-center text-stone-100/80 hover:text-white">
                   {l.label}
                 </Link>
               </li>
@@ -131,7 +133,7 @@ export function SiteFooter() {
                 href={site.forturro.landSearchUrl}
                 target="_blank"
                 rel="noopener"
-                className="text-stone-100/80 hover:text-white"
+                className="inline-flex min-h-11 items-center text-stone-100/80 hover:text-white"
               >
                 Search Land for Sale ↗
               </a>
@@ -160,7 +162,8 @@ export function SiteFooter() {
           <p>© {year} {site.legalName}. Licensed manufactured-home dealer, Horry County, SC.</p>
           <p className="flex flex-wrap gap-x-3 gap-y-1">
             <span>Homes shown are representative. Pricing and availability subject to change.</span>
-            <Link href="/privacy" className="text-stone-100/80 underline hover:text-white">Privacy</Link>
+            <Link href="/privacy" className="inline-flex min-h-11 items-center text-stone-100/80 underline hover:text-white">Privacy</Link>
+            <Link href="/careers" className="inline-flex min-h-11 items-center text-stone-100/80 underline hover:text-white">Careers</Link>
           </p>
         </div>
       </div>

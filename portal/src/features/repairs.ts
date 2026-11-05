@@ -1,10 +1,11 @@
+import { repairWorkSection, registerRepairWork } from "./repair-work.ts";
 /** Repair tickets, defect reports, and Tara's bill-back queue. */
 import { assertCan, can } from "../auth/authz.ts";
-import { listAssets } from "../domain/assets.ts";
+import { assetOptionLabel, listAssets } from "../domain/assets.ts";
 import { DEFECT_SEVERITIES, getDefect, listDefects, reportDefect, resolveDefect } from "../domain/defects.ts";
 import { listDocuments } from "../domain/documents.ts";
 import { listEmployees } from "../domain/employees.ts";
-import { listHomes } from "../domain/homes.ts";
+import { homeDisplayName, listHomes } from "../domain/homes.ts";
 import { listParts } from "../domain/inventory.ts";
 import {
   BILL_BACK_STATUSES,
@@ -35,6 +36,7 @@ import { documentList, uploadForm } from "./documents.ts";
 import { wantsJson } from "./equipment.ts";
 
 export function registerRepairs(router: Router): void {
+  registerRepairWork(router);
   router.get("/repairs", renderList);
   router.get("/repairs/new", renderNewRepair);
   router.get("/repairs/:id", renderDetail);
@@ -100,7 +102,7 @@ function ticketCard(ticket: Awaited<ReturnType<typeof listRepairs>>[number]) {
   return html`<a class="card" href="/repairs/${ticket.id}">
     <div class="row"><h3>${ticket.ticket_number} — ${ticket.title}</h3>
       ${badge(ticket.status, ticket.status === "billed" || ticket.status === "closed" ? "ok" : "")}</div>
-    <div class="meta">${ticket.serial_number ?? ticket.asset_tag ?? "—"} · ${ticket.reported_by_name} · ${formatDate(ticket.created_at)}
+    <div class="meta">${ticket.home_id ? homeDisplayName(ticket) : ticket.asset_tag ?? "—"} · ${ticket.reported_by_name} · ${formatDate(ticket.created_at)}
       · ${money(ticket.total_cents)} recorded
       ${ticket.bill_back_status !== "not_applicable" ? html` · ${badge(ticket.bill_back_status, ticket.bill_back_status === "billed" ? "ok" : "warn")}` : ""}</div>
   </a>`;
@@ -130,28 +132,29 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
       </div>
       <p>${repair.description}</p>
       ${kv([
-        ["Home", repair.serial_number ? html`<a href="/homes/${repair.home_id}">${repair.serial_number}</a>` : null],
+        ["Home", repair.home_id ? html`<a href="/homes/${repair.home_id}">${homeDisplayName(repair)}</a>` : null],
         ["Equipment", repair.asset_tag ? html`<a href="/equipment/${repair.asset_tag}">${repair.asset_tag}</a>` : null],
         ["Subdivision", repair.job_number ? html`<a href="/subdivisions/${repair.job_id}">${repair.job_number}</a>` : null],
         ["Reported by", `${repair.reported_by_name} · ${formatDate(repair.created_at)}`],
         ["Assigned to", repair.assigned_to_name],
         ["Responsible party", repair.responsible_party_type ? `${repair.responsible_party_type.replace(/_/g, " ")}${repair.responsible_party ? ` — ${repair.responsible_party}` : ""}` : null],
-        ["Labor", `${hoursMinutes(repair.labor_minutes)} · ${money(repair.labor_cents)}`],
-        ["Materials", money(repair.material_cents)],
-        ["Total", money(repair.total_cents)],
+        ["Labor charges", labor.length ? money(repair.labor_cents) : "Not entered"],
+        ["Parts charges", materials.length ? money(repair.material_cents) : "Not entered"],
+        ["Recorded charges", labor.length || materials.length ? money(repair.total_cents) : "Not entered — see reported estimates below"],
         ["Billed back", repair.bill_back_amount_cents != null ? `${money(repair.bill_back_amount_cents)} · ${repair.invoice_reference ?? ""}` : null],
         ["Billing notes", repair.billing_notes],
         ["Source inspection", repair.source_inspection_id ? html`<a href="/inspections/${repair.source_inspection_id}">Open inspection</a>` : null],
       ])}
     </div>
 
+    ${await repairWorkSection(ctx, repair.id)}
     <h2>Photos and receipts</h2>
     ${documentList(documents)}
     ${uploadForm(ctx.actor, { repairTicketId: repair.id }, `/repairs/${repair.id}`)}
 
     <h2>Labor</h2>
     ${labor.length === 0
-      ? empty("No labor recorded.")
+      ? empty("No itemized labor charges recorded. Reported time appears above.")
       : html`<div class="table-wrap"><table>
           <thead><tr><th>Date</th><th>Who</th><th>Time</th><th>Rate</th><th>Cost</th></tr></thead>
           <tbody>${labor.map(
@@ -185,7 +188,7 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
 
     <h2>Materials</h2>
     ${materials.length === 0
-      ? empty("No materials recorded.")
+      ? empty("No itemized parts charges recorded. Any estimate appears above.")
       : html`<div class="table-wrap"><table>
           <thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Cost</th></tr></thead>
           <tbody>${materials.map(
@@ -320,7 +323,7 @@ async function renderBillingQueue(ctx: RequestContext): Promise<Response> {
           (ticket) => html`<a class="card" href="/repairs/${ticket.id}">
             <div class="row"><h3>${ticket.ticket_number} — ${ticket.title}</h3>
               ${badge(ticket.bill_back_status, ticket.bill_back_status === "ready_to_bill" ? "warn" : "")}</div>
-            <div class="meta">${ticket.serial_number ?? ticket.asset_tag ?? "—"} ·
+            <div class="meta">${ticket.home_id ? homeDisplayName(ticket) : ticket.asset_tag ?? "—"} ·
               ${ticket.responsible_party ?? ticket.responsible_party_type ?? "responsible party not set"} ·
               labor ${money(ticket.labor_cents)} + materials ${money(ticket.material_cents)} = <strong>${money(ticket.total_cents)}</strong>
               ${ticket.status !== "complete" ? " · repair not finished" : ""}</div>
@@ -345,7 +348,7 @@ async function renderDefects(ctx: RequestContext): Promise<Response> {
             <div class="row"><h3>${defect.summary}</h3>
               ${badge(defect.severity, defect.severity === "critical" ? "bad" : defect.severity === "major" ? "warn" : "")}</div>
             <div class="meta">${badge(defect.status, defect.status === "open" ? "warn" : "ok")}
-              ${defect.asset_tag ?? defect.serial_number ?? ""} · ${defect.reported_by_name} · ${formatDate(defect.created_at)}
+              ${defect.home_id ? homeDisplayName(defect) : defect.asset_tag ?? ""} · ${defect.reported_by_name} · ${formatDate(defect.created_at)}
               · ${defect.source.replace(/_/g, " ")}</div>
             ${defect.detail ? html`<p>${defect.detail}</p>` : ""}
             <div class="btn-row">
@@ -386,12 +389,12 @@ async function renderNewDefect(ctx: RequestContext): Promise<Response> {
       <label for="asset_id">Equipment</label>
       <select id="asset_id" name="asset_id">
         <option value="">Not equipment</option>
-        ${assets.map((asset) => html`<option value="${asset.id}" ${raw(asset.id === ctx.url.searchParams.get("assetId") ? "selected" : "")}>${asset.asset_tag}</option>`)}
+        ${assets.map((asset) => html`<option value="${asset.id}" ${raw(asset.id === ctx.url.searchParams.get("assetId") ? "selected" : "")}>${assetOptionLabel(asset)}</option>`)}
       </select>
       <label for="home_id">Home</label>
       <select id="home_id" name="home_id">
         <option value="">Not a home</option>
-        ${homes.map((home) => html`<option value="${home.id}" ${raw(home.id === ctx.url.searchParams.get("homeId") ? "selected" : "")}>${home.serial_number}</option>`)}
+        ${homes.map((home) => html`<option value="${home.id}" ${raw(home.id === ctx.url.searchParams.get("homeId") ? "selected" : "")}>${homeDisplayName(home)}</option>`)}
       </select>
       <div class="btn-row"><button type="submit">Report</button></div>
     </form>
@@ -421,12 +424,12 @@ async function renderNewRepair(ctx: RequestContext): Promise<Response> {
       <label for="home_id">Home</label>
       <select id="home_id" name="home_id">
         <option value="">Not a home</option>
-        ${homes.map((home) => html`<option value="${home.id}" ${raw(home.id === presetHome ? "selected" : "")}>${home.serial_number}</option>`)}
+        ${homes.map((home) => html`<option value="${home.id}" ${raw(home.id === presetHome ? "selected" : "")}>${homeDisplayName(home)}</option>`)}
       </select>
       <label for="asset_id">Equipment</label>
       <select id="asset_id" name="asset_id">
         <option value="">Not equipment</option>
-        ${assets.map((asset) => html`<option value="${asset.id}" ${raw(asset.id === presetAsset ? "selected" : "")}>${asset.asset_tag}</option>`)}
+        ${assets.map((asset) => html`<option value="${asset.id}" ${raw(asset.id === presetAsset ? "selected" : "")}>${assetOptionLabel(asset)}</option>`)}
       </select>
       <label for="responsible_party_type">Who looks responsible?</label>
       <select id="responsible_party_type" name="responsible_party_type">

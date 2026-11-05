@@ -103,7 +103,7 @@ async function uploadRoute(ctx: RequestContext): Promise<Response> {
     fileName: file.name || "photo.jpg",
     contentType: file.type || "application/octet-stream",
     bytes: await file.arrayBuffer(),
-    caption: documentCaptionFromFields(fields),
+    caption: fields.repair_ticket_id ? requiredField(fields, "caption", "Attachment name") : documentCaptionFromFields(fields),
     target: targetFromFields(fields),
   });
 
@@ -154,7 +154,7 @@ export function documentList(documents: DocumentListRow[]): SafeHtml {
   return html`${documents.map(
     (document) => html`<div class="card">
       <div class="row">
-        <h3>${document.file_name}</h3>
+        <h3>${document.caption || document.file_name}</h3>
         ${badge(document.document_type, document.upload_status === "stored" ? "" : "warn")}
       </div>
       <div class="meta">${formatDate(document.created_at)} · ${document.uploaded_by_name} ·
@@ -189,15 +189,15 @@ export function uploadForm(actor: Actor, target: DocumentTarget, redirectTo: str
   if (!can(actor, "document.upload")) return raw("");
   return html`
     <details class="card">
-      <summary><strong>Attach a photo or a Drive link</strong></summary>
+      <summary><strong>Attach a photo, receipt, or document</strong></summary>
 
       <form method="post" action="/api/documents/upload" enctype="multipart/form-data">
         ${documentTargetInputs(target)}
         <input type="hidden" name="redirect_to" value="${redirectTo}">
         <label for="file-${redirectTo}">Photo or PDF</label>
         <input id="file-${redirectTo}" type="file" name="file" accept="image/*,application/pdf" capture="environment" required>
-        <label for="caption-${redirectTo}">Caption</label>
-        <input id="caption-${redirectTo}" name="caption">
+        <label for="caption-${redirectTo}">Name this attachment</label>
+        <input id="caption-${redirectTo}" name="caption" placeholder="Before repair, finished repair, or parts receipt" required>
         <label for="doctype-${redirectTo}">Type</label>
         <select id="doctype-${redirectTo}" name="document_type">
           ${DOCUMENT_TYPES.map((value) => html`<option value="${value}" ${raw(value === "photo" ? "selected" : "")}>${value}</option>`)}

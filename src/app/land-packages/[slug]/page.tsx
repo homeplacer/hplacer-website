@@ -2,9 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
+import { LivePackageNavigation } from "@/components/live-package-navigation";
+import { MlsPackagePhoto } from "@/components/mls-package-photo";
 import { BathIcon, BedIcon, PhoneIcon, RulerIcon } from "@/components/icons";
 import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
-import { getLivePackageBySlug } from "@/lib/forturro-package-feed";
+import { getLivePackageBySlug, getLivePackageListings, packageSlug } from "@/lib/forturro-package-feed";
 import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/lib/site";
 
@@ -24,7 +26,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LandPackageDetail({ params }: Props) {
   const { slug } = await params;
-  const listing = await getLivePackageBySlug(slug);
+  const listings = await getLivePackageListings();
+  const listing = listings.find((candidate) => packageSlug(candidate) === slug);
   if (!listing) notFound();
   const price = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(listing.listPrice);
   const url = `${site.url}/land-packages/${slug}`;
@@ -49,9 +52,7 @@ export default async function LandPackageDetail({ params }: Props) {
       <div className="mt-5 grid gap-8 lg:grid-cols-[1.35fr_0.65fr]">
         <div>
           {listing.photoUrl ? (
-            // Forturro's signed MLS proxy URL cannot be safely re-hosted by Next's image optimizer.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={listing.photoUrl} alt={`${listing.address}, ${listing.city}, SC`} className="aspect-[3/2] w-full rounded-card object-cover shadow-sm" decoding="async" />
+            <MlsPackagePhoto listingKey={listing.listingKey} photoUrl={listing.photoUrl} alt={`${listing.address}, ${listing.city}, SC`} className="aspect-[3/2] w-full rounded-card object-cover shadow-sm" sizes="(min-width: 1216px) 756px, (min-width: 1024px) calc((100vw - 96px) * 0.675), (min-width: 768px) calc(100vw - 64px), calc(100vw - 40px)" />
           ) : <div className="aspect-[3/2] rounded-card bg-stone-surface" />}
         </div>
         <aside className="rounded-card border border-stone-line bg-stone-surface p-6 sm:p-8">
@@ -70,6 +71,32 @@ export default async function LandPackageDetail({ params }: Props) {
         </aside>
       </div>
     </section>
-    <section className="bg-stone-surface py-10"><div className="container-x max-w-4xl"><h2 className="font-display text-2xl font-semibold text-stone-ink">One team for the home and the land</h2><p className="mt-3 leading-relaxed text-stone-muted">We will confirm the current home-and-land scope, timing, included site work, and financing path before you make a decision. Ask us about this package or about placing a home on your own land.</p></div></section>
+    <section className="border-t border-stone-line bg-stone-surface py-10">
+      <div className="container-x grid gap-8 lg:grid-cols-2">
+        <div>
+          <h2 className="font-display text-2xl font-semibold text-stone-ink">Plan your visit to {listing.address}</h2>
+          <p className="mt-3 leading-relaxed text-stone-muted">Considering this {listing.beds}-bedroom, {listing.baths}-bath home in {listing.city}? Ask us to confirm that it is still available and arrange a visit. Tell us your preferred day, your target move-in timing, and whether you have a home to sell. We can help you work through the next steps for this specific property.</p>
+          <p className="mt-3 leading-relaxed text-stone-muted">The {price} shown here is this property’s current MLS list price, not a model-only price or a general land-home estimate. Before deciding, request the current property details and a written explanation of what is included. Lot size, site work, utilities, completion status, and costs outside the purchase price need to be checked for this address.</p>
+          <HomeInquiryDialog homeName={`${listing.address}, ${listing.city}`} label="Request details or a visit" showArrow={false} className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-brand-700 px-5 py-3 font-semibold text-white hover:bg-brand-800" />
+        </div>
+        <div>
+          <h2 className="font-display text-2xl font-semibold text-stone-ink">Five questions worth asking</h2>
+          <ul className="mt-3 list-disc space-y-3 pl-5 leading-relaxed text-stone-muted">
+            <li>What is included with the home and lot, and what remains to be completed?</li>
+            <li>What are the lot boundaries, access arrangements, and water, sewer or septic connections?</li>
+            <li>Are there property restrictions, association costs, or other ongoing expenses to review?</li>
+            <li>Which financing options can my lender evaluate for this property, and what cash may be needed at closing?</li>
+            <li>What must happen before closing and move-in, and which dates can be confirmed?</li>
+          </ul>
+          <p className="mt-4 text-sm leading-relaxed text-stone-muted">Financing and assistance depend on the program, property, available funds, and buyer eligibility. An inquiry is a request for information, not a loan application or approval.</p>
+          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-3 text-sm font-semibold text-brand-700">
+            <Link href="/buyer-resources" className="underline underline-offset-4">Buyer resources</Link>
+            <Link href="/down-payment-assistance" className="underline underline-offset-4">Assistance information</Link>
+            <Link href="/warranty" className="underline underline-offset-4">Warranty details</Link>
+          </div>
+        </div>
+      </div>
+    </section>
+    <LivePackageNavigation listings={listings} currentSlug={slug} />
   </>;
 }

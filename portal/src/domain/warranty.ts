@@ -84,13 +84,20 @@ export interface WarrantyRequestRow {
 
 export interface WarrantyRequestSummary extends WarrantyRequestRow {
   serial_number: string | null;
+  monday_item_name: string | null;
+  home_site_address: string | null;
+  home_site_city: string | null;
+  home_site_state: string | null;
+  home_site_postal_code: string | null;
   ticket_number: string | null;
   reviewed_by_name: string | null;
   photo_count: number;
 }
 
 const SUMMARY_SELECT = `
-  SELECT w.*, h.serial_number, r.ticket_number, e.display_name AS reviewed_by_name,
+  SELECT w.*, h.serial_number, h.monday_item_name, h.site_address AS home_site_address,
+         h.site_city AS home_site_city, h.site_state AS home_site_state, h.site_postal_code AS home_site_postal_code,
+         r.ticket_number, e.display_name AS reviewed_by_name,
          (SELECT count(*) FROM documents d WHERE d.warranty_request_id = w.id AND d.upload_status = 'stored') AS photo_count
     FROM warranty_requests w
     LEFT JOIN homes h ON h.id = w.home_id

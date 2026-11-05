@@ -11,6 +11,7 @@ import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
 import { site } from "@/lib/site";
 import { asset } from "@/lib/asset";
 import { CheckIcon, PhoneIcon, ArrowIcon, PinIcon } from "@/components/icons";
+import { contactContextHref } from "@/lib/contact-context";
 
 export function generateStaticParams() {
   return locations.map((l) => ({ slug: l.slug }));
@@ -89,6 +90,14 @@ export default async function LocationPage({
             {loc.intro}
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
+            {loc.slug === "myrtle-beach" && (
+              <Link
+                href="/land-packages"
+                className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-base font-semibold text-white ring-1 ring-white/20 transition hover:bg-white/15"
+              >
+                Browse current land-home packages <ArrowIcon className="size-4" />
+              </Link>
+            )}
             <Link
               href="/homes"
               className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-6 py-3 text-base font-semibold text-white transition hover:bg-accent-600"
@@ -126,11 +135,13 @@ export default async function LocationPage({
             Placing homes in {loc.name}
           </h2>
           <p className="mt-3 text-sm text-stone-muted">
-            Tell us about your lot — or use ours. We handle permits, delivery,
-            foundation, and utilities, and hand you the keys.
+            Tell us about your lot or ask about current packages. We can discuss
+            the home, agreed setup scope, and what still needs review. Prefer a
+            lot without an HOA? Ask us to confirm the chosen parcel&apos;s
+            association status and recorded restrictions.
           </p>
           <Link
-            href={`/contact?home=${encodeURIComponent(loc.name + " area")}`}
+            href={contactContextHref(loc.name + " area")}
             className="mt-5 inline-flex items-center gap-2 rounded-full bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800"
           >
             Start in {loc.name} <ArrowIcon className="size-4" />
@@ -154,16 +165,16 @@ export default async function LocationPage({
                 { t: "Utilities", d: county.utilitiesText },
                 {
                   t: "Financing",
-                  d: `FHA, VA, and conventional land-home loans — and ${county.usdaText}.`,
+                  d: `Conventional, FHA, VA, or USDA options may be available; lender and property requirements apply. ${county.usdaText}.`,
                 },
                 { t: "Permitting", d: county.permittingText },
                 {
                   t: "What's included",
-                  d: "The home, a quarter-acre lot, delivery, a permanent foundation, and utility hookups — one package, one closing, no HOA.",
+                  d: "Model package estimates include full setup and assume a quarter-acre lot. The actual land, utilities, site work, options, allowances, and closing arrangement must be confirmed in the listing or written scope for your property.",
                 },
                 {
                   t: "Timeline",
-                  d: "Usually a few months from choosing your home to move-in, depending on land readiness and permits.",
+                  d: "A completed listing and an ordered-home project have different schedules. Ask what remains for the actual home: availability, site readiness, permits, installation, utilities, inspections, and closing can affect move-in.",
                 },
               ].map((f) => (
                 <div key={f.t}>

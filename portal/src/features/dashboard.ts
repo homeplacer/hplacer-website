@@ -3,12 +3,15 @@ import { can } from "../auth/authz.ts";
 import { fleetServiceDue, describeServiceDue } from "../domain/assets.ts";
 import { openDefectCounts } from "../domain/defects.ts";
 import { listParts } from "../domain/inventory.ts";
-import { inbox, markRead, unreadCount } from "../domain/notifications.ts";
+import { homeDisplayName } from "../domain/homes.ts";
+import { inbox, markAllRead, markRead, unreadCount } from "../domain/notifications.ts";
+import { deviceLabel, listDevices } from "../domain/push.ts";
+import { loadWebPushConfig } from "../integrations/web-push.ts";
 import { billingQueue, listRepairs } from "../domain/repairs.ts";
 import { listTasks } from "../domain/tasks.ts";
 import { warrantyReviewCount } from "../domain/warranty.ts";
-import { badge, empty, formatDate, page, statGrid } from "../ui/layout.ts";
-import { html } from "../ui/html.ts";
+import { badge, empty, formatDate, page, statGrid, tabs } from "../ui/layout.ts";
+import { html, type SafeHtml } from "../ui/html.ts";
 import type { RequestContext } from "../api/context.ts";
 import { flashFrom, redirect } from "../api/responses.ts";
 import type { Router } from "../api/router.ts";
@@ -18,7 +21,20 @@ export function registerDashboard(router: Router): void {
   router.get("/notifications", async (ctx) => renderNotifications(ctx));
   router.post("/api/notifications/:id/read", async (ctx) => {
     await markRead(ctx.db, ctx.actor.employeeId, ctx.params.id);
-    return redirect("/notifications");
+    return redirect("/notifications?ok=notification_read");
+  });
+  router.post("/api/notifications/:id/open", async (ctx) => {
+    const item = await ctx.db
+      .prepare("SELECT related_type, related_id FROM notifications WHERE id = ? AND employee_id = ?")
+      .bind(ctx.params.id, ctx.actor.employeeId)
+      .first<{ related_type: string | null; related_id: string | null }>();
+    if (!item) return redirect("/notifications");
+    await markRead(ctx.db, ctx.actor.employeeId, ctx.params.id);
+    return redirect(item.related_type && item.related_id ? linkFor(item.related_type, item.related_id) : "/notifications");
+  });
+  router.post("/api/notifications/read-all", async (ctx) => {
+    await markAllRead(ctx.db, ctx.actor.employeeId);
+    return redirect("/notifications?ok=notifications_cleared");
   });
 }
 
@@ -100,7 +116,7 @@ async function renderDashboard(ctx: RequestContext): Promise<Response> {
           ${queue.map(
             (ticket) => html`<a class="card" href="/repairs/${ticket.id}">
               <div class="row"><h3>${ticket.ticket_number} — ${ticket.title}</h3>${badge(ticket.bill_back_status, ticket.bill_back_status === "ready_to_bill" ? "warn" : "")}</div>
-              <div class="meta">${ticket.serial_number ?? ticket.asset_tag ?? ""} · ${ticket.responsible_party ?? "responsible party not set"}</div>
+              <div class="meta">${ticket.home_id ? homeDisplayName(ticket) : ticket.serial_number ?? ticket.asset_tag ?? ""} · ${ticket.responsible_party ?? "responsible party not set"}</div>
             </a>`,
           )}`
       : ""}
@@ -125,29 +141,74 @@ function describeRoles(ctx: RequestContext): string {
 }
 
 async function renderNotifications(ctx: RequestContext): Promise<Response> {
-  const items = await inbox(ctx.db, ctx.actor.employeeId);
+  const showAll = ctx.url.searchParams.get("view") === "all";
+  const unread = await unreadCount(ctx.db, ctx.actor.employeeId);
+  const items = await inbox(ctx.db, ctx.actor.employeeId, 50, !showAll);
+  const pushKeys = await loadWebPushConfig(ctx.env);
   const body = html`
     <h1>Notifications</h1>
+    <p class="lede">${unread === 0 ? "You’re all caught up." : `${unread} unread notification${unread === 1 ? "" : "s"}.`}</p>
+    ${await phoneAlertsPanel(ctx, pushKeys?.publicKey ?? null)}
+    ${tabs([
+      { href: "/notifications", label: `Unread (${unread})`, current: !showAll },
+      { href: "/notifications?view=all", label: "All", current: showAll },
+    ])}
+    ${unread > 0 ? html`<form method="post" action="/api/notifications/read-all" class="btn-row"><button class="secondary" type="submit">Mark all read</button></form>` : ""}
     ${items.length === 0
-      ? empty("Nothing here yet.")
+      ? empty(showAll ? "No notifications yet." : "No unread notifications.")
       : items.map(
           (item) => html`<div class="card">
             <div class="row">
               <h3>${item.title}</h3>
-              ${badge(item.severity, item.severity === "urgent" ? "bad" : item.severity === "warning" ? "warn" : "")}
+              <div>${item.read_at ? badge("read") : badge("new", "ok")} ${badge(item.severity, item.severity === "urgent" ? "bad" : item.severity === "warning" ? "warn" : "")}</div>
             </div>
             <p class="meta">${formatDate(item.created_at)} · ${item.category.replace(/_/g, " ")}</p>
             <p>${item.body}</p>
             <div class="btn-row">
-              ${item.related_type && item.related_id ? html`<a class="btn secondary" href="${linkFor(item.related_type, item.related_id)}">Open</a>` : ""}
+              ${item.related_type && item.related_id ? html`<form method="post" action="/api/notifications/${item.id}/open"><button class="secondary" type="submit">${item.read_at ? "Open" : "Open and mark read"}</button></form>` : ""}
               ${item.read_at
                 ? ""
-                : html`<form method="post" action="/api/notifications/${item.id}/read"><button class="secondary" type="submit">Mark read</button></form>`}
+                : item.related_type && item.related_id ? "" : html`<form method="post" action="/api/notifications/${item.id}/read"><button class="secondary" type="submit">Mark read</button></form>`}
             </div>
           </div>`,
         )}
   `;
-  return page(body, { title: "Notifications", actor: ctx.actor, section: "/notifications", back: { href: "/", label: "Today" } });
+  return page(body, { title: "Notifications", actor: ctx.actor, section: "/notifications", unread, back: { href: "/", label: "Today" }, flash: flashFrom(ctx.url), pushClient: Boolean(pushKeys) });
+}
+
+/** Opt-in controls for task alerts on this phone; driven by /push-client.js. */
+async function phoneAlertsPanel(ctx: RequestContext, publicKey: string | null): Promise<SafeHtml> {
+  if (!publicKey) {
+    return html`<section class="card"><h2>Phone alerts</h2><p class="meta">Phone alerts for new tasks are not turned on for the portal yet.</p></section>`;
+  }
+  const devices = await listDevices(ctx.db, ctx.actor.employeeId);
+  return html`<section class="card" id="push-panel" data-public-key="${publicKey}">
+    <h2>Phone alerts</h2>
+    <p class="meta">Get an alert on your phone when a task is assigned to you. The alert only says you have a new task; open it to see the details in the portal.</p>
+    <p data-push-status role="status">Checking this device…</p>
+    <noscript><p class="meta">Phone alerts need JavaScript turned on.</p></noscript>
+    <div class="btn-row">
+      <button type="button" data-push-on hidden>Turn on phone alerts</button>
+      <button type="button" data-push-claim hidden>Get my alerts on this device</button>
+      <button type="button" class="secondary" data-push-test hidden>Send test alert</button>
+      <button type="button" class="secondary" data-push-off hidden>Turn off on this device</button>
+    </div>
+    <details>
+      <summary>iPhone setup</summary>
+      <ol>
+        <li>Open portal.hplacer.com in Safari (iOS 16.4 or later).</li>
+        <li>Tap Share, then Add to Home Screen.</li>
+        <li>Open the portal from the new Home Screen icon and sign in.</li>
+        <li>Come back to Notifications, tap Turn on phone alerts, and allow notifications.</li>
+      </ol>
+    </details>
+    ${devices.length
+      ? html`<h3>Your devices</h3>${devices.map((device) => html`<div class="row">
+          <p class="meta">${deviceLabel(device.service)} · added ${formatDate(device.created_at)}${device.last_success_at ? ` · last alert ${formatDate(device.last_success_at)}` : ""}</p>
+          <form method="post" action="/api/push/devices/${device.id}/delete"><button class="secondary" type="submit">Remove</button></form>
+        </div>`)}`
+      : ""}
+  </section>`;
 }
 
 function linkFor(type: string, id: string): string {

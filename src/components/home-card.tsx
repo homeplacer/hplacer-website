@@ -18,17 +18,9 @@ import {
   PhoneIcon,
 } from "@/components/icons";
 import { FallbackImage } from "@/components/fallback-image";
+import { modelCardSrcSet } from "@/lib/model-gallery-images";
 import { site } from "@/lib/site";
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
-
-// Locally hosted catalog covers get a compact WebP srcset. The originals remain
-// the fallback and source of record; these derivatives only avoid downloading a
-// 1,200px JPEG into a roughly 350–450px card on a phone.
-function cardImageSrcSet(src: string | undefined): string | undefined {
-  if (!src || !/^\/models\/[^/]+\/01\.jpg$/.test(src)) return undefined;
-  const stem = src.slice(0, -4);
-  return `${stem}-480.webp 480w, ${stem}-640.webp 640w`;
-}
 
 export function HomeCard({ home }: { home: Home }) {
   const price = displayPrice(home);
@@ -55,7 +47,7 @@ export function HomeCard({ home }: { home: Home }) {
               height={600}
               loading="lazy"
               decoding="async"
-              srcSet={cardImageSrcSet(photo)}
+              srcSet={modelCardSrcSet(photo)}
               responsiveWidths={[320, 480, 640, 800]}
               sizes="(max-width: 639px) calc(100vw - 2.5rem), (max-width: 1023px) 50vw, 33vw"
               className="size-full object-cover transition duration-300 group-hover:scale-[1.03]"
@@ -102,15 +94,22 @@ export function HomeCard({ home }: { home: Home }) {
             </div>
             {price != null && (
               <span className="shrink-0 rounded-lg bg-brand-50 px-2.5 py-2 text-right leading-none">
+                <span className="mb-1 block text-[10px] text-stone-muted">Starting at</span>
                 <span className="block font-display text-lg font-semibold text-brand-800">
                   {formatPrice(price)}
                 </span>
                 <span className="mt-1 block text-[10px] font-semibold uppercase tracking-wider text-stone-muted">
-                  {home.setupPrice ? "full setup" : "starting"}
+                  {home.setupPrice ? "est. land + home" : "home only"}
                 </span>
               </span>
             )}
           </div>
+
+          {home.setupPrice && home.price && (
+            <p className="mt-3 text-sm text-stone-muted">
+              Home-only estimate from <span className="font-semibold text-stone-ink">{formatPrice(home.price)}</span>
+            </p>
+          )}
 
           <div className="mt-5 flex items-center gap-x-4 gap-y-2 border-t border-stone-line pt-3.5 text-sm text-stone-ink/80">
             <span className="inline-flex items-center gap-1.5">

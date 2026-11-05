@@ -4,7 +4,8 @@ import { guides } from "@/lib/guides";
 import type { MetadataRoute } from "next";
 import { site } from "@/lib/site";
 
-export const dynamic = "force-dynamic";
+// Share the validated active snapshot and keep the last good sitemap on outages.
+export const revalidate = 300;
 import { getAllHomes } from "@/lib/homes";
 import { getAllPosts } from "@/lib/blog";
 import { locations } from "@/lib/locations";
@@ -60,6 +61,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/gallery",
     "/recently-placed",
     "/financing",
+    "/down-payment-assistance",
     "/process",
     "/warranty",
     "/faq",
@@ -80,7 +82,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPaths.map((p) => ({
-    url: `${base}${p}`,
+    url: `${base}${p || "/"}`,
     lastModified: siteUpdated,
     changeFrequency: "weekly",
     priority: p === "" ? 1 : 0.7,

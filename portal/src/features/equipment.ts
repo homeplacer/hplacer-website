@@ -3,6 +3,7 @@ import { assertCan, can } from "../auth/authz.ts";
 import {
   ASSET_TYPES,
   ASSET_TYPE_LABELS,
+  assetDisplayName,
   assetSourceMetadata,
   assetCanonicalKey,
   createAsset,
@@ -16,6 +17,7 @@ import {
   serviceSchedulesFor,
   setAssetStatus,
   type AssetType,
+  type AssetVerificationStatus,
 } from "../domain/assets.ts";
 import { listDefects } from "../domain/defects.ts";
 import { listDocuments } from "../domain/documents.ts";
@@ -48,6 +50,15 @@ import type { Router } from "../api/router.ts";
 import { html, query, raw } from "../ui/html.ts";
 import { badge, empty, formatDate, kv, money, page, tabs } from "../ui/layout.ts";
 import { documentList, uploadForm, workflowDocumentArea } from "./documents.ts";
+
+const VERIFICATION_LABELS: Record<AssetVerificationStatus, string> = {
+  verified: "Details checked",
+  needs_serial: "Serial number missing",
+  needs_model: "Confirm make / model",
+  needs_owner: "Confirm owning company",
+  needs_vin: "Confirm VIN",
+  unassigned: "Confirm home base / company",
+};
 
 export function registerEquipment(router: Router): void {
   router.get("/equipment", renderList);
@@ -95,26 +106,29 @@ async function renderList(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "asset.read");
   const type = ctx.url.searchParams.get("type") ?? undefined;
   const search = ctx.url.searchParams.get("q") ?? undefined;
-  const scope = ctx.url.searchParams.get("scope") === "review" ? "review" : "main";
+  const requestedScope = ctx.url.searchParams.get("scope");
+  const scope = requestedScope === "all" ? "all" : requestedScope === "review" ? "review" : "main";
   const assets = await listAssets(ctx.db, { type, search, verification: scope });
 
   const body = html`
-    <h1>Equipment</h1>
-    <p class="lede">${scope === "main" ? "Verified fleet and staff-entered assets." : "Imported records held out of the main fleet until their source details are verified."}</p>
+    <h1>Equipment (${assets.length})</h1>
+    ${can(ctx.actor, "asset.write") ? html`<div class="btn-row"><a class="btn secondary" href="/equipment-gps">View GPS locations</a></div>` : ""}
+    <p class="lede">${scope === "all" ? "Complete inventory, including records that still need verification." : scope === "main" ? "Verified fleet and staff-entered assets." : "Imported records held out of the main fleet until their source details are verified."}</p>
 
     <form method="get" action="/equipment">
       <label for="q">Search by tag, serial, VIN, or model</label>
       <input id="q" name="q" value="${search ?? ""}" inputmode="search" autocomplete="off">
       ${type ? html`<input type="hidden" name="type" value="${type}">` : ""}
-      ${scope === "review" ? html`<input type="hidden" name="scope" value="review">` : ""}
+      ${scope !== "main" ? html`<input type="hidden" name="scope" value="${scope}">` : ""}
       <div class="btn-row"><button type="submit">Search</button></div>
     </form>
 
     ${tabs([
+      { href: "/equipment?scope=all", label: "All equipment", current: scope === "all" && !type },
       { href: "/equipment", label: "Verified fleet", current: scope === "main" && !type },
-      { href: "/equipment?scope=review", label: "Source review", current: scope === "review" && !type },
+      { href: "/equipment?scope=review", label: "Details to check", current: scope === "review" && !type },
       ...ASSET_TYPES.map((value) => ({
-        href: `/equipment${query({ type: value, q: search, scope: scope === "review" ? "review" : undefined })}`,
+        href: `/equipment${query({ type: value, q: search, scope: scope !== "main" ? scope : undefined })}`,
         label: ASSET_TYPE_LABELS[value],
         current: type === value,
       })),
@@ -126,10 +140,11 @@ async function renderList(ctx: RequestContext): Promise<Response> {
           (asset) => html`<a class="card" href="/equipment/${asset.asset_tag}">
             <div class="row" style="align-items:flex-start">
               ${asset.primary_photo_id
-                ? html`<img src="/api/documents/${asset.primary_photo_id}/content" alt="${asset.asset_tag}" width="88" height="66" style="object-fit:cover;border-radius:8px">`
+                ? html`<img src="/api/documents/${asset.primary_photo_id}/content" alt="${assetDisplayName(asset)}" width="88" height="66" style="object-fit:cover;border-radius:8px">`
                 : html`<span class="empty" style="width:88px;height:66px;display:grid;place-items:center;margin:0">No photo</span>`}
               <div style="flex:1">
-              <h3>${asset.asset_tag} · ${asset.manufacturer ?? ""} ${asset.model ?? ""}</h3>
+              <h3>${assetDisplayName(asset)}</h3>
+              <p class="meta">Fleet ID: ${asset.asset_tag}</p>
               ${badge(asset.status, asset.status === "out_of_service" ? "bad" : asset.status === "available" ? "ok" : "")}
               </div>
             </div>
@@ -140,7 +155,7 @@ async function renderList(ctx: RequestContext): Promise<Response> {
               ${asset.open_defect_count > 0 ? ` · ${asset.open_defect_count} open defect${asset.open_defect_count === 1 ? "" : "s"}` : ""}
               · last checked ${formatDate(asset.last_inspected_at)}
             </div>
-            ${asset.verification_status && asset.verification_status !== "verified" ? html`<p>${badge("needs source verification", "warn")}</p>` : ""}
+            ${asset.verification_status && asset.verification_status !== "verified" ? html`<p>${badge(VERIFICATION_LABELS[asset.verification_status], "warn")}</p>${asset.source_notes ? html`<p class="meta">What to check: ${asset.source_notes}</p>` : ""}` : ""}
           </a>`,
         )}
 
@@ -237,10 +252,10 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
       : ""}
 
     ${sourceMetadata
-      ? html`<h2>Fleet record verification</h2>
+      ? html`<h2>Equipment details to check</h2>
           <div class="card">
             <div class="row"><h3>Imported from ${sourceMetadata.source_file}</h3>
-              ${badge(sourceMetadata.verification_status, sourceMetadata.verification_status === "verified" ? "ok" : "warn")}</div>
+              ${badge(VERIFICATION_LABELS[sourceMetadata.verification_status], sourceMetadata.verification_status === "verified" ? "ok" : "warn")}</div>
             <p class="meta">Source row: ${sourceMetadata.source_reference} · imported ${formatDate(sourceMetadata.imported_at)}</p>
             ${sourceMetadata.source_notes ? html`<p>${sourceMetadata.source_notes}</p>` : ""}
             ${sourceMetadata.verification_status === "verified"
@@ -400,6 +415,8 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
       </form>
     </details>
 
+    <h2>Parts library</h2>
+    <a class="btn secondary" href="/equipment/${asset.id}/parts">Find or save parts for this machine</a>
     <h2>Photos and documents</h2>
     ${documentList(documents)}
     ${uploadForm(ctx.actor, { assetId: asset.id }, `/equipment/${asset.asset_tag}`)}
