@@ -61,9 +61,23 @@ describe("manager GPS phone view", () => {
     assert.match(body, /Reported within 24 hours/);
     assert.match(body, /Jan 1, 2020, 7:00 AM EST/);
     assert.match(body, /Last successful API check:/);
-    assert.match(body, /does not mean every tracker has sent a new location/);
+    assert.match(body, /does not mean every tracker sent a new location/);
     assert.match(body, /href="\/equipment\/EX-01"/);
     assert.match(body, /Tracker label: Test tracker/);
+  });
+
+  it("separates API return status from stale tracker reports", async () => {
+    await add("returned", "2020-01-01T12:00:00Z");
+    await add("omitted", "2020-01-01T12:00:00Z");
+    await h.db.prepare("UPDATE gps_devices SET last_returned_at='2026-11-03T14:00:00Z', returned_in_last_poll=1 WHERE device_id='returned'").run();
+    await h.db.prepare("UPDATE gps_devices SET last_returned_at='2026-10-30T17:00:00Z', returned_in_last_poll=0 WHERE device_id='omitted'").run();
+    await h.db.prepare("INSERT INTO gps_sync_state (id,last_success_at,device_count) VALUES ('landairsea','2026-11-03T14:00:00Z',1)").run();
+    const body = await (await h.request("/equipment-gps", { as: "brandon@hplacer.com" })).text();
+    assert.match(body, /1 trackers returned/);
+    assert.match(body, /Returned by last successful API check/);
+    assert.match(body, /Not returned by last successful API check/);
+    assert.match(body, /Last returned by API:/);
+    assert.match(body, /Older than 24 hours/);
   });
 });
 

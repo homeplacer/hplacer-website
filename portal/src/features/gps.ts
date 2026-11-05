@@ -13,6 +13,8 @@ interface GpsDisplayRow {
   latitude: number | null;
   longitude: number | null;
   reported_at: string | null;
+  last_returned_at: string | null;
+  returned_in_last_poll: number | null;
   asset_tag: string | null;
   manufacturer: string | null;
   model: string | null;
@@ -52,20 +54,25 @@ export function registerGps(router: Router): void {
     assertCan(ctx.actor, "asset.write");
     const devices = await ctx.db.prepare(`SELECT g.*, a.asset_tag, a.manufacturer, a.model
       FROM gps_devices g LEFT JOIN assets a ON a.id=g.asset_id ORDER BY g.provider_name, g.device_id`).all<GpsDisplayRow>();
-    const sync = await ctx.db.prepare("SELECT last_success_at FROM gps_sync_state WHERE id='landairsea'").first<{ last_success_at: string }>();
+    const sync = await ctx.db.prepare("SELECT last_success_at, device_count FROM gps_sync_state WHERE id='landairsea'").first<{ last_success_at: string; device_count: number }>();
     const now = Date.now();
+    const lastSuccessMs = timeValue(sync?.last_success_at ?? null);
     return page(html`
       <h1>Equipment GPS</h1>
       ${ctx.url.searchParams.get("check") === "saved" ? html`<p role="status">GPS check completed. Saved readings are shown below.</p>` : ctx.url.searchParams.get("check") === "failed" ? html`<p role="status">GPS check failed. Previous readings are unchanged.</p>` : ctx.url.searchParams.get("check") === "disabled" ? html`<p role="status">GPS checking is disabled.</p>` : ""}
       <form method="post" action="/api/equipment-gps/refresh"><button type="submit">Check trackers now</button></form>
       <p class="lede">Last reported tracker locations. These do not change a machine's assigned job site or availability.</p>
-      <p>Last successful API check: <strong>${sync ? localTime(sync.last_success_at) : "Not checked yet"}</strong></p>
-      <p class="meta">Times shown in Eastern time. A successful check does not mean every tracker has sent a new location.</p>
+      <p>Last successful API check: <strong>${sync ? localTime(sync.last_success_at) : "Not checked yet"}</strong>${sync ? html` · ${sync.device_count} trackers returned` : ""}</p>
+      <p class="meta">Times shown in Eastern time. “Last reported” is the tracker’s GPS fix; “Last returned” is when the API included that tracker. A successful API check does not mean every tracker sent a new location.</p>
       <div class="btn-row"><a class="btn secondary" href="/equipment-gps">Refresh saved readings</a></div>
       ${devices.results.length === 0 ? empty("No tracker readings have been saved yet.") : devices.results.map(device => {
         const ms = timeValue(device.reported_at);
-        const status = ms === null ? "Report time unknown" : ms > now ? "Report time is in the future — check needed"
+        const reportStatus = ms === null ? "Report time unknown" : ms > now ? "Report time is in the future — check needed"
           : now - ms > 24 * 60 * 60 * 1000 ? "Older than 24 hours" : "Reported within 24 hours";
+        const returnedStatus = lastSuccessMs === null || device.returned_in_last_poll === null
+          ? "API return status unknown"
+          : device.returned_in_last_poll === 1 ? "Returned by last successful API check"
+            : "Not returned by last successful API check";
         const linkedName = [device.manufacturer, device.model].filter(Boolean).join(" ").trim() || device.asset_tag;
         const link = mapUrl(device);
         return html`<section class="card" style="overflow-wrap:anywhere">
@@ -73,8 +80,10 @@ export function registerGps(router: Router): void {
           ${device.asset_tag ? html`<p><a href="/equipment/${encodeURIComponent(device.asset_tag)}">Open equipment · ${device.asset_tag}</a></p>` : html`<p class="meta">Not linked to a portal machine</p>`}
           ${device.asset_tag && device.provider_name ? html`<p class="meta">Tracker label: ${device.provider_name}</p>` : ""}
           <p class="meta">Tracker: ${device.device_id}</p>
-          ${badge(status, ms === null || ms > now || now - ms > 24 * 60 * 60 * 1000 ? "warn" : "")}
+          ${badge(returnedStatus, device.returned_in_last_poll === 0 ? "warn" : "")}
+          ${badge(reportStatus, ms === null || ms > now || now - ms > 24 * 60 * 60 * 1000 ? "warn" : "")}
           <p>Last reported: <strong>${localTime(device.reported_at)}</strong></p>
+          <p>Last returned by API: <strong>${localTime(device.last_returned_at)}</strong></p>
           ${link ? html`<p>${externalLink(link, "Open last reported location in Maps")}</p>` : html`<p>Location unavailable</p>`}
         </section>`;
       })}
