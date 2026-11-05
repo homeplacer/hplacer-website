@@ -5,6 +5,39 @@ import { runConfiguredGpsSync } from "../src/integrations/landairsea-sync.ts";
 const position = { DeviceId: "tracker-test", name: "  Test\u0000 excavator  ", Latitude: 33, Longitude: -79, LastLocationTimestamp: "2026-09-17T12:00:00Z" };
 const response = (device = position) => Response.json({ message: { result: true }, DeviceDetails: [device] });
 describe("GPS snapshots", () => {
+  it("ignores an older poll batch saved after a newer successful poll", async (t) => {
+    const h = await createHarness();
+    Object.assign(h.env, { GPS_SYNC_ENABLED: "true", LANDAIRSEA_CLIENT_TOKEN: "test", LANDAIRSEA_USERNAME: "test", LANDAIRSEA_PASSWORD: "test" });
+    t.mock.timers.enable({ apis: ["Date"], now: Date.parse("2026-11-05T12:00:00Z") });
+    const batch = h.db.batch.bind(h.db);
+    try {
+      await runConfiguredGpsSync(h.env, async () => response());
+      await h.db.prepare("UPDATE gps_devices SET asset_id='ast_ex1' WHERE device_id='tracker-test'").run();
+      t.mock.timers.tick(1000);
+      h.db.batch = async (statements) => {
+        h.db.batch = batch;
+        t.mock.timers.tick(1000);
+        await runConfiguredGpsSync(h.env, async () => response({ ...position, DeviceId: "newer-tracker" }));
+        return batch(statements);
+      };
+      await runConfiguredGpsSync(h.env, async () => Response.json({ message: { result: true }, DeviceDetails: [
+        { ...position, Latitude: 35 },
+        { ...position, DeviceId: "older-only-tracker" },
+      ] }));
+      const existing = await h.db.prepare("SELECT * FROM gps_devices WHERE device_id='tracker-test'").first();
+      assert.equal(existing?.returned_in_last_poll, 0);
+      assert.equal(existing?.last_returned_at, "2026-11-05T12:00:00.000Z");
+      assert.equal(existing?.latitude, 33);
+      assert.equal(existing?.asset_id, "ast_ex1");
+      assert.equal(await h.db.prepare("SELECT * FROM gps_devices WHERE device_id='older-only-tracker'").first(), null);
+      const newer = await h.db.prepare("SELECT * FROM gps_devices WHERE device_id='newer-tracker'").first();
+      assert.equal(newer?.returned_in_last_poll, 1);
+      assert.equal(newer?.last_returned_at, "2026-11-05T12:00:02.000Z");
+      const state = await h.db.prepare("SELECT * FROM gps_sync_state WHERE id='landairsea'").first();
+      assert.equal(state?.last_success_at, "2026-11-05T12:00:02.000Z");
+      assert.equal(state?.device_count, 1);
+    } finally { h.db.batch = batch; h.close(); }
+  });
   it("stays off by default", async () => {
     const h = await createHarness();
     try { assert.deepEqual(await runConfiguredGpsSync(h.env, async () => { assert.fail("must not fetch"); }), { enabled: false, devices: 0 }); } finally { h.close(); }
