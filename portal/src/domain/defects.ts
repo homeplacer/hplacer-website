@@ -33,11 +33,17 @@ export interface DefectSummary extends DefectRow {
   reported_by_name: string;
   asset_tag: string | null;
   serial_number: string | null;
+  monday_item_name: string | null;
+  site_address: string | null;
+  site_city: string | null;
+  site_state: string | null;
+  site_postal_code: string | null;
   ticket_number: string | null;
 }
 
 const DEFECT_SELECT = `
-  SELECT d.*, e.display_name AS reported_by_name, a.asset_tag, h.serial_number, r.ticket_number
+  SELECT d.*, e.display_name AS reported_by_name, a.asset_tag, h.serial_number, h.monday_item_name,
+         h.site_address, h.site_city, h.site_state, h.site_postal_code, r.ticket_number
     FROM defects d
     JOIN employees e ON e.id = d.reported_by
     LEFT JOIN assets a ON a.id = d.asset_id

@@ -23,6 +23,11 @@ export default function BrandsPage() {
       </PageHero>
 
       <div className="container-x divide-y divide-stone-line">
+        <p className="py-6 text-sm text-stone-muted">
+          Package estimates include full setup and assume a quarter-acre lot.
+          Land, lot size, site work, and utility costs vary. Call, text, or email
+          us for a written estimate.
+        </p>
         {BRANDS.map((b) => {
           const homes = getHomesByBrand(b.brand);
           return (

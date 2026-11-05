@@ -32,17 +32,22 @@ import { registerAdmin } from "./features/admin.ts";
 import { registerCareersReview } from "./features/careers.ts";
 import { registerDashboard } from "./features/dashboard.ts";
 import { registerDocuments } from "./features/documents.ts";
+import { registerGps } from "./features/gps.ts";
 import { registerEquipment } from "./features/equipment.ts";
+import { registerEquipmentLocations } from "./features/equipment-locations.ts";
 import { registerHomes } from "./features/homes.ts";
 import { registerHealth } from "./features/health.ts";
 import { registerInventory } from "./features/inventory.ts";
 import { registerPortableJohn } from "./features/portable-john.ts";
+import { registerPush } from "./features/push.ts";
 import { handlePublicJobApplicationIntake, handlePublicWarrantyIntake, isPublicIntakeRequest, PUBLIC_JOB_APPLICATION_PATH } from "./features/public-intake.ts";
 import { registerSubdivisions } from "./features/subdivisions.ts";
 import { registerRepairs } from "./features/repairs.ts";
 import { registerTasks } from "./features/tasks.ts";
 import { registerWarranty } from "./features/warranty.ts";
 import { errorPage } from "./ui/error-page.ts";
+
+import { registerEquipmentParts } from "./features/equipment-parts.ts";
 
 export function buildRouter(): Router {
   const router = new Router();
@@ -51,6 +56,9 @@ export function buildRouter(): Router {
   registerHomes(router);
   registerHealth(router);
   registerEquipment(router);
+  registerGps(router);
+  registerEquipmentLocations(router);
+  registerEquipmentParts(router);
   registerTasks(router);
   registerRepairs(router);
   registerWarranty(router);
@@ -59,6 +67,7 @@ export function buildRouter(): Router {
   registerDocuments(router);
   registerAdmin(router);
   registerCareersReview(router);
+  registerPush(router);
   return router;
 }
 
@@ -69,6 +78,8 @@ export interface HandleOptions {
   access?: AccessConfig;
   identity?: AccessIdentity;
   monday?: MondaySyncPort;
+  /** The Worker's `ctx.waitUntil`, for best-effort work after the response. */
+  waitUntil?: (promise: Promise<unknown>) => void;
 }
 
 export async function handleRequest(request: Request, env: PortalEnv, options: HandleOptions = {}): Promise<Response> {
@@ -136,6 +147,7 @@ export async function handleRequest(request: Request, env: PortalEnv, options: H
     params: match.params,
     monday: options.monday ?? new QueuedMondaySyncPort(env.PORTAL_DB),
     requestId,
+    waitUntil: options.waitUntil,
   };
 
   const mutating = request.method !== "GET" && request.method !== "HEAD";

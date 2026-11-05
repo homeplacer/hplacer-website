@@ -8,6 +8,7 @@ import { PlacementsMap, type Placement } from "@/components/placements-map";
 import { PlacedHomes } from "@/components/placed-homes";
 import { HomeInquiryDialog } from "@/components/home-inquiry-dialog";
 import { getAllPlacedHomes } from "@/lib/placed-homes";
+import { toPlacedHomeCard } from "@/lib/placed-home-card";
 import { getNewClosedHomePlacerSales } from "@/lib/forturro-closed-feed";
 import { JsonLd, placedHomesGalleryLd } from "@/lib/jsonld";
 import placementsData from "../../../data/placements.json";
@@ -70,7 +71,7 @@ export default async function RecentlyPlacedPage() {
             { n: String(placementsData.length), t: "homes placed" },
             { n: `${fmtK(data.priceMin)}–${fmtK(data.priceMax)}`, t: "sale price range" },
             { n: "6", t: "areas across SC" },
-            { n: "¼-acre", t: "land with every home" },
+            { n: "Real lots", t: "size varies by property" },
           ].map((s) => (
             <div key={s.t} className="p-6 text-center">
               <p className="font-display text-2xl font-semibold text-brand-700 sm:text-3xl">{s.n}</p>
@@ -105,7 +106,7 @@ export default async function RecentlyPlacedPage() {
           .
         </p>
 
-        <PlacedHomes homes={homes} />
+        <PlacedHomes homes={homes.map(toPlacedHomeCard)} />
 
         {newClosings.length > 0 && (
           <section className="mt-12 border-t border-stone-line pt-12">
@@ -151,7 +152,8 @@ export default async function RecentlyPlacedPage() {
           </h2>
           <p className="mx-auto max-w-xl text-stone-muted">
             Bring your land or use ours — we&apos;ll place a brand-new Clayton, Cavco, or Champion home and
-            handle the whole thing: one package, one closing.
+            coordinate your package. Included setup work and closing arrangements
+            are confirmed in the written agreement for your property.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <HomeInquiryDialog

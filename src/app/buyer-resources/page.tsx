@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { pageMetadata } from "@/lib/metadata";
+import { buyerLearningLinks } from "@/lib/resource-navigation";
 
 export const metadata = pageMetadata({
   title: "Official county and home-buying resources",
@@ -49,6 +50,26 @@ export default function BuyerResourcesPage() {
         <li>What property, foundation, title, and borrower documents will you review?</li>
         <li>What does the written estimate include, and what costs remain outside it?</li>
       </ul>
+    </section>
+    <section className="container-x border-t border-stone-line py-12" id="learn">
+      <h2 className="font-display text-3xl font-semibold">Understand your home options</h2>
+      <p className="mt-3 max-w-3xl text-stone-muted">Find a useful guide or a plain-language explanation before choosing your home and lot.</p>
+      <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {buyerLearningLinks.map((resource) => (
+          <li key={resource.href}>
+            <Link href={resource.href} className="block h-full rounded-card border border-stone-line bg-stone-surface p-5 transition hover:border-brand-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+              <h3 className="font-display text-lg font-semibold text-brand-800">{resource.label} <span aria-hidden="true">→</span></h3>
+              <p className="mt-2 text-sm leading-relaxed text-stone-muted">{resource.description}</p>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-6 max-w-3xl text-sm leading-relaxed text-stone-muted">
+        Planning for single-level living near the coast? Our{" "}
+        <Link href="/blog/affordable-retirement-homes-grand-strand-no-hoa" className="font-semibold text-brand-700 underline underline-offset-4">Grand Strand retirement-home guide</Link>{" "}
+        is a starting point for comparing homes and lots. Confirm HOA or deed restrictions,
+        access needs, and ongoing costs for the specific property before deciding.
+      </p>
     </section>
     <section className="container-x border-t border-stone-line py-12">
       <h2 className="font-display text-2xl font-semibold">Bring your home and lot together</h2>

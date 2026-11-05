@@ -11,20 +11,21 @@
     "start": "next start",
     "lint": "eslint",
     "preview": "node scripts/build-manifests.mjs && opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "node scripts/validate-public-data.mjs && node scripts/build-manifests.mjs && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "deploy": "node scripts/validate-public-data.mjs && node scripts/build-manifests.mjs && opennextjs-cloudflare build && npm run verify:build-cache && opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "portal:dev": "node portal/dev/server.ts",
     "portal:migrate": "node portal/dev/migrate.ts",
     "portal:typecheck": "tsc -p portal/tsconfig.json",
     "portal:test": "node --test portal/tests/*.test.ts",
     "portal:check": "npm run portal:typecheck && npm run portal:test && eslint portal",
-    "validate:public": "node scripts/validate-public-data.mjs"
+    "validate:public": "node scripts/validate-public-data.mjs",
+    "verify:build-cache": "node scripts/verify-build-cache.mjs"
   },
   "dependencies": {
-    "@opennextjs/cloudflare": "^1.19.11",
+    "@opennextjs/cloudflare": "^1.20.8",
     "leaflet": "1.9.4",
     "marked": "^18.0.5",
-    "next": "16.3.3",
+    "next": "16.3.8",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
@@ -35,9 +36,9 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.3",
+    "eslint-config-next": "16.3.8",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "wrangler": "^4.127.1"
+    "wrangler": "^4.147.0"
   }
 }

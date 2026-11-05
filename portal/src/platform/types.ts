@@ -72,6 +72,11 @@ export interface ObjectStore {
  * see portal/README.md for what a real deployment has to provision.
  */
 export interface PortalEnv {
+  /** Read-only GPS polling. Credentials are Worker secrets, never public vars. */
+  GPS_SYNC_ENABLED?: string;
+  LANDAIRSEA_CLIENT_TOKEN?: string;
+  LANDAIRSEA_USERNAME?: string;
+  LANDAIRSEA_PASSWORD?: string;
   PORTAL_DB: Db;
   PORTAL_PHOTOS?: ObjectStore;
 
@@ -109,4 +114,34 @@ export interface PortalEnv {
   MONDAY_API_TOKEN?: string;
   /** JSON board/column map; validated against the code-level field allowlist. */
   MONDAY_SYNC_MAPPINGS?: string;
+  /** Read-only import of eligible homes from the Homes Roster board. */
+  MONDAY_HOMES_IMPORT_ENABLED?: string;
+  MONDAY_HOMES_BOARD_ID?: string;
+
+  /** Explicit opt-in. Gmail ingestion remains inert until all secrets exist. */
+  GMAIL_INGEST_ENABLED?: string;
+  /** Google OAuth client secrets and refresh token; provision with wrangler secret put. */
+  GMAIL_CLIENT_ID?: string;
+  GMAIL_CLIENT_SECRET?: string;
+  GMAIL_REFRESH_TOKEN?: string;
+  /** Must exactly equal the one mailbox this integration is allowed to read. */
+  GMAIL_ALLOWED_MAILBOX?: string;
+
+  /** Explicit opt-in for email delivery of new task-assignment alerts. */
+  TASK_EMAIL_NOTIFICATIONS_ENABLED?: string;
+  /** Sender identity verified with the transactional email provider. */
+  TASK_NOTIFICATION_FROM?: string;
+  /** Alerts older than this timestamp are never backfilled to email. */
+  TASK_EMAIL_START_AFTER?: string;
+  /** Resend API key; configure as a Worker secret, never a checked-in var. */
+  RESEND_API_KEY?: string;
+
+  /** Web Push task alerts for the installed app. Off unless exactly "true". */
+  WEB_PUSH_ENABLED?: string;
+  /** VAPID public key (base64url, 65-byte uncompressed P-256). Not secret; handed to browsers. */
+  WEB_PUSH_VAPID_PUBLIC_KEY?: string;
+  /** VAPID private key (base64url 32-byte scalar). Worker secret only, never a var. */
+  WEB_PUSH_VAPID_PRIVATE_KEY?: string;
+  /** VAPID contact, `mailto:` or `https:`; push services use it to reach the operator. */
+  WEB_PUSH_SUBJECT?: string;
 }

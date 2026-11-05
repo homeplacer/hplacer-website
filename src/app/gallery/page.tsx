@@ -2,7 +2,9 @@ import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
-import { galleryByCategory } from "@/lib/gallery";
+import { galleryByCategory, type GalleryItem } from "@/lib/gallery";
+import { galleryMasonryImageSizes } from "@/lib/curated-gallery-images";
+import { CuratedGalleryImage } from "@/components/curated-gallery-image";
 import { site } from "@/lib/site";
 import { CheckIcon, ArrowIcon, PhoneIcon } from "@/components/icons";
 
@@ -16,22 +18,14 @@ export const metadata: Metadata = pageMetadata({
 function Masonry({
   items,
 }: {
-  items: { src: string; webpSrc: string; alt: string; width: number; height: number }[];
+  items: GalleryItem[];
 }) {
   return (
     <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 [&>*]:mb-4">
       {items.map((img) => (
-        <picture key={img.src} className="block">
-          <source type="image/webp" srcSet={img.webpSrc} />
-          <img
-            src={img.src}
-            alt={img.alt}
-            width={img.width}
-            height={img.height}
-            loading="lazy"
-            className="w-full rounded-card border border-stone-line object-cover shadow-sm"
-          />
-        </picture>
+        <CuratedGalleryImage key={img.src} image={img} sizes={galleryMasonryImageSizes}
+          pictureClassName="block"
+          className="w-full rounded-card border border-stone-line object-cover shadow-sm" />
       ))}
     </div>
   );

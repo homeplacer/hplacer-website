@@ -9,7 +9,7 @@ export const glossary: Term[] = [
   { term: "Modular home", def: "A factory-built home constructed to the same state/local building codes as a site-built house, then assembled on a permanent foundation. Different code path than a manufactured home." },
   { term: "Single-wide", def: "A manufactured home built and transported as one section. Efficient and affordable, typically 14–18 feet wide." },
   { term: "Double-wide", def: "A manufactured home built in two sections and joined on site, giving a wider, more open floor plan — commonly 24–32 feet wide." },
-  { term: "Land-home package", def: "Buying a new home and the land it sits on together as a single purchase, with one price and one closing. Home Placer's core offering." },
+  { term: "Land-home package", def: "A project combining a home with the land it sits on. Included work, costs, financing, and closing arrangements depend on the property and written agreement. Home Placer's core offering." },
   { term: "Chattel loan", def: "A personal-property loan used for a home without the land (such as one in a rented community). Shorter terms and higher rates than a real-property mortgage — not what you use for a land-home package." },
   { term: "Real property", def: "A home permanently affixed to land you own, financed and taxed like a traditional house. Land-home packages are titled as real property." },
   { term: "FHA loan", def: "A government-backed mortgage with flexible credit guidelines and low down payments (often 3.5%), popular with first-time and budget-minded buyers." },

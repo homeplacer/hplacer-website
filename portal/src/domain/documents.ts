@@ -377,12 +377,14 @@ export async function assertCanReadDocument(db: Db, actor: Actor, document: Docu
 
   if (document.workTaskId) {
     const task = await db
-      .prepare("SELECT assigned_to, created_by FROM work_tasks WHERE id = ?")
-      .bind(document.workTaskId)
-      .first<{ assigned_to: string | null; created_by: string }>();
+      .prepare(`SELECT t.assigned_to, t.created_by,
+                       EXISTS (SELECT 1 FROM work_task_assignees ta WHERE ta.task_id = t.id AND ta.employee_id = ?) AS assigned_to_actor
+                  FROM work_tasks t WHERE t.id = ?`)
+      .bind(actor.employeeId, document.workTaskId)
+      .first<{ assigned_to: string | null; created_by: string; assigned_to_actor: number }>();
     if (!task) throw notFound("Document not found");
     if (can(actor, "task.read.all")) return;
-    if (task.assigned_to === actor.employeeId || task.created_by === actor.employeeId) return;
+    if (task.assigned_to === actor.employeeId || task.assigned_to_actor === 1 || task.created_by === actor.employeeId) return;
     throw forbidden();
   }
 

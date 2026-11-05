@@ -1,9 +1,11 @@
 import { asset } from "./asset";
 import manifest from "../../data/gallery-manifest.json";
+import { curatedGallerySrcSet } from "./curated-gallery-images";
 
 export interface GalleryItem {
   src: string;
   webpSrc: string;
+  webpSrcSet?: string;
   category: "homes" | "development";
   alt: string;
   width: number;
@@ -45,6 +47,7 @@ export function getGallery(): GalleryItem[] {
     return {
       src: asset(`/gallery/${f}`),
       webpSrc: asset(`/gallery/${f.replace(/\.jpe?g$/i, ".webp")}`),
+      webpSrcSet: curatedGallerySrcSet(`/gallery/${f}`),
       category: isHome ? "homes" : "development",
       width,
       height,

@@ -1,4 +1,6 @@
 import { ProjectEvidence } from "@/components/project-evidence";
+import { HistoricalProjectCard } from "@/components/historical-project-card";
+import { relatedProjectImageSizes } from "@/lib/historical-project-images";
 import { pageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -18,6 +20,7 @@ import {
   placedHomeResidenceLd,
 } from "@/lib/jsonld";
 import { asset } from "@/lib/asset";
+import { placedHomeMetadata } from "@/lib/placed-home-metadata";
 import { site } from "@/lib/site";
 import {
   BedIcon,
@@ -43,9 +46,8 @@ export async function generateMetadata({
   if (!h) return { title: "Home not found" };
   const lot = h.lotAcres ? `${h.lotAcres} acres` : "its own land";
   return pageMetadata({
-    title: `${h.address}, ${h.town}, SC — ${h.beds} bd / ${h.baths} ba manufactured home`,
+    ...placedHomeMetadata(h),
     description: `A ${h.beds}-bed ${h.baths}-bath ${h.style.toLowerCase()} manufactured home Home Placer placed and sold on ${lot} at ${h.address}, ${h.town}, SC.${h.modelName ? ` This is the ${h.modelName} — see every photo and the floor plan.` : " See every photo."}`,
-    alternates: { canonical: `/recently-placed/${h.slug}` },
     openGraph: { images: [asset(h.photo)] },
   });
 }
@@ -223,7 +225,7 @@ export default async function PlacedHomeDetail({
 
           <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-stone-muted">
             {[
-              "Land + home, one closing",
+              "Recorded home + land project",
               "New, warrantied home",
               "We deliver, set & connect",
             ].map((t) => (
@@ -338,14 +340,14 @@ export default async function PlacedHomeDetail({
             </h2>
             <p className="mt-3 text-stone-muted">
               We can place {model ? `the ${model.name}` : "a home like this"} on
-              your land — or on a ¼-acre lot we provide. Tell us a little and
-              we&apos;ll get you a real price.
+              your land — or help you find a suitable lot. Tell us a little and
+              we&apos;ll prepare an estimate for your model, lot, and setup scope.
             </p>
             <ul className="mt-5 space-y-2 text-sm text-stone-ink">
               {[
-                "Land + home in one package, one closing",
+                "Land + home with a written project scope",
                 "Brand-new, warrantied home",
-                "We handle delivery, setup & utilities",
+                "Delivery, setup & utility scope confirmed for your lot",
               ].map((t) => (
                 <li key={t} className="inline-flex items-center gap-2">
                   <CheckIcon className="size-4 text-brand-600" /> {t}
@@ -362,41 +364,17 @@ export default async function PlacedHomeDetail({
         </div>
       </section>
 
-      {/* More placed homes nearby */}
+      {/* A compact path to other recorded projects */}
       {related.length > 0 && (
         <section className="container-x py-12">
           <h2 className="font-display text-2xl font-semibold text-stone-ink">
-            More homes we&apos;ve placed in {h.town}
+            More homes we&apos;ve placed
+            {related.every((home) => home.town === h.town) && ` in ${h.town}`}
           </h2>
           <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((r) => (
-              <li
-                key={r.slug}
-                className="overflow-hidden rounded-card border border-stone-line bg-stone-surface"
-              >
-                <Link
-                  href={`/recently-placed/${r.slug}`}
-                  className="group block"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={asset(r.photo)}
-                    alt={`A Home Placer home placed at ${r.address}, ${r.town}, SC`}
-                    loading="lazy"
-                    width={800}
-                    height={600}
-                    className="aspect-[4/3] w-full bg-stone-bg object-cover transition group-hover:opacity-95"
-                  />
-                  <div className="p-4">
-                    <p className="font-semibold text-stone-ink">{r.address}</p>
-                    <p className="mt-1 text-sm text-stone-muted">
-                      {r.beds} bd · {r.baths} ba · {r.style}
-                    </p>
-                    <p className="mt-2 font-display text-lg font-semibold text-brand-700">
-                      {formatPrice(r.price)}
-                    </p>
-                  </div>
-                </Link>
+              <li key={r.slug}>
+                <HistoricalProjectCard home={r} sizes={relatedProjectImageSizes} />
               </li>
             ))}
           </ul>

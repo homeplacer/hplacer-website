@@ -1,14 +1,56 @@
 import type { Brand, Home, FloorPlan, WallFinish } from "./home-types";
 import { asset } from "./asset";
+import { getAvailableModelTourUrl } from "./model-tour-availability";
 import rawModels from "../../data/models.json";
 import setupPricingJson from "../../data/setup-pricing.json";
 import homePricingJson from "../../data/home-pricing.json";
+
+// Kept in the source catalog for historical traceability, but intentionally
+// withheld from the current buyer-facing model lineup at the dealer's request.
+const retiredModelSlugs = new Set([
+  "dutch-2963-ashley",
+  "garner-3975",
+  "greenwood",
+  "lake-manor-2856h32p01",
+  "shenandoah",
+]);
+
+export function isRetiredHome(slug: string): boolean {
+  return retiredModelSlugs.has(slug);
+}
+
+// The Oct. 4, 2026 audit and a direct source check confirmed these two exact
+// manufacturer images return 404. Quarantine them only in the buyer-facing
+// catalog projection: preserve the source records, every other authentic photo,
+// and all tours. Query changes (for example another requested width) cannot
+// make the same missing source image reappear in a gallery or schema.
+const unavailableModelImages = new Map<string, ReadonlySet<string>>([
+  ["glimpse", new Set([
+    "https://api.claytonhomes.com/images/mfg/int/b57253ac-2692-4d47-9d46-202c1185b5c5.jpg",
+  ])],
+  ["rhythm-nation", new Set([
+    "https://api.claytonhomes.com/images/mfg/int/4fc082a6-a88a-4a54-89e4-0cfb1a3cdaa6.jpg",
+  ])],
+]);
+
+function isUnavailableModelImage(slug: string, source: string): boolean {
+  const unavailable = unavailableModelImages.get(slug);
+  if (!unavailable) return false;
+  try {
+    const url = new URL(source);
+    return unavailable.has(`${url.origin}${url.pathname}`);
+  } catch {
+    // Local paths and unrecognized references keep their existing behavior;
+    // this is not a blanket remote-media validator or an ingestion change.
+    return false;
+  }
+}
 
 // The manufacturer-model inventory (data/models.json, built by
 // scripts/build-models.mjs from the extraction workflow) is statically imported
 // so it bundles into the server build — the Cloudflare Workers runtime has no
 // filesystem at request time. Pricing is merged from two override files keyed by
-// model slug (empty {} until finalized — homes show "Call for pricing").
+// model slug; unpriced models show "Call for pricing".
 //
 // Types + pure helpers live in ./home-types so client components can use them
 // without bundling this module. Re-exported here for convenience.
@@ -108,7 +150,7 @@ function firstSentence(s: string): string {
 
 let cache: Home[] | null = null;
 
-export function getAllHomes(): Home[] {
+function getCatalogHomes(): Home[] {
   if (cache) return cache;
 
   const models = rawModels as unknown as RawModel[];
@@ -128,13 +170,15 @@ export function getAllHomes(): Home[] {
     description: m.description,
     excerpt: firstSentence(m.description),
     decorOptions: m.decorOptions ?? [],
-    imageUrls: (m.imageUrls ?? []).map(asset),
+    imageUrls: (m.imageUrls ?? [])
+      .filter((source) => !isUnavailableModelImage(m.slug, source))
+      .map(asset),
     aka: m.aka ?? [],
     wallFinish: m.wallFinish,
     bestSeller: m.bestSeller ?? false,
     bestSellerRank: m.bestSellerRank ?? 999,
     widthOptions: m.widthOptions,
-    tourUrl: m.tourUrl,
+    tourUrl: getAvailableModelTourUrl(m.slug, m.tourUrl),
     floorPlans: (m.floorPlans ?? []).map((f) => ({ ...f, url: asset(f.url) })),
     price: homePricing[m.slug],
     setupPrice: setupPricing[m.slug],
@@ -148,8 +192,12 @@ export function getAllHomes(): Home[] {
   return homes;
 }
 
+export function getAllHomes(): Home[] {
+  return getCatalogHomes().filter((home) => !isRetiredHome(home.slug));
+}
+
 export function getHome(slug: string): Home | undefined {
-  return getAllHomes().find((h) => h.slug === slug);
+  return getCatalogHomes().find((h) => h.slug === slug);
 }
 
 export function getHomesByBrand(brand: Brand): Home[] {

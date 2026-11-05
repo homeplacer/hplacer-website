@@ -99,6 +99,10 @@ input, select, textarea {
 }
 textarea { min-height: 5rem; }
 input[type=checkbox], input[type=radio] { width: auto; min-height: auto; }
+.equipment-location-choice { display: flex; align-items: flex-start; gap: .65rem; padding: .55rem 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+.equipment-location-choice:last-child { border-bottom: 0; }
+.equipment-location-choice input { flex: 0 0 auto; margin-top: .2rem; }
+.equipment-location-choice span { min-width: 0; }
 button, .btn {
   display: inline-flex; align-items: center; justify-content: center;
   min-height: var(--tap); padding: .5rem 1rem; gap: .4rem;
@@ -150,6 +154,8 @@ nav.bottom a {
 nav.bottom a[aria-current=page] { color: var(--brand); font-weight: 700; }
 nav.bottom .ico { font-size: 1.1rem; line-height: 1; }
 .empty { color: var(--ink-soft); font-size: .9rem; padding: 1.5rem 0; text-align: center; }
+/* Author display rules (e.g. on buttons) must not un-hide [hidden] controls. */
+[hidden] { display: none !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 footer.foot { color: var(--ink-soft); font-size: .75rem; padding: 1.5rem 1rem 0; text-align: center; }
 `;

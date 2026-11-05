@@ -1,4 +1,4 @@
-/** Manufactured homes: the serial-number record and its three reports. */
+/** Manufactured homes and their three reports. */
 import { assertCan, can } from "../auth/authz.ts";
 import { listDocuments } from "../domain/documents.ts";
 import { listDefects } from "../domain/defects.ts";
@@ -7,10 +7,10 @@ import {
   assignHomeToLot,
   createHome,
   formatSiteAddress,
+  homeDisplayName,
   homeRepairHistory,
   homeReportTemplateKey,
   homeReports,
-  homeIdentityLabel,
   listHomes,
   missingHomeIdentity,
   requireHome,
@@ -29,6 +29,7 @@ import type { Router } from "../api/router.ts";
 import { html, query, raw, type SafeHtml } from "../ui/html.ts";
 import { badge, empty, externalLink, formatDate, kv, money, page, tabs } from "../ui/layout.ts";
 import { documentList, homeComplianceUploadForm, uploadForm, workflowDocumentArea } from "./documents.ts";
+import { renderEquipmentLocationSection } from "./equipment-locations.ts";
 import { wantsJson } from "./equipment.ts";
 
 const REPORT_FIELDS: Record<string, { key: string; label: string }[]> = {
@@ -68,6 +69,7 @@ export function registerHomes(router: Router): void {
     assertCan(ctx.actor, "home.read");
     const homes = await listHomes(ctx.db, {
       status: ctx.url.searchParams.get("status") ?? undefined,
+      jobId: ctx.url.searchParams.get("job_id") ?? undefined,
       search: ctx.url.searchParams.get("q") ?? undefined,
     });
     return json({ homes });
@@ -78,22 +80,37 @@ async function renderList(ctx: RequestContext): Promise<Response> {
   assertCan(ctx.actor, "home.read");
   const status = ctx.url.searchParams.get("status") ?? undefined;
   const search = ctx.url.searchParams.get("q") ?? undefined;
-  const homes = await listHomes(ctx.db, { status, search });
+  const requestedJobId = ctx.url.searchParams.get("job_id") ?? undefined;
+  const allJobs = await listJobs(ctx.db);
+  const subdivisions = allJobs.filter((job) => job.home_count > 0);
+  const selectedJob = subdivisions.find((job) => job.id === requestedJobId);
+  const jobId = selectedJob?.id;
+  const homes = await listHomes(ctx.db, { status, jobId, search });
 
   const body = html`
     <h1>Homes</h1>
-    <p class="lede">Every home is filed under its serial number.</p>
+    <p class="lede">${selectedJob ? `Homes in ${selectedJob.title}.` : "Find homes by address or subdivision."}</p>
 
     <form method="get" action="/homes">
-      <label for="q">Search serial, model, or make</label>
+      ${status ? html`<input type="hidden" name="status" value="${status}">` : ""}
+      ${jobId ? html`<input type="hidden" name="job_id" value="${jobId}">` : ""}
+      <label for="q">Search address, model, or make</label>
       <input id="q" name="q" value="${search ?? ""}" inputmode="search" autocapitalize="characters" autocomplete="off">
-      <div class="btn-row"><button type="submit">Search</button></div>
+      <div class="btn-row"><button type="submit">Search homes</button></div>
     </form>
 
+    <details class="card">
+      <summary><strong>Subdivision:</strong> ${selectedJob ? `${selectedJob.title} (${selectedJob.home_count})` : "All subdivisions"}</summary>
+      <div class="stack" style="margin-top:0.75rem">
+        <a class="btn secondary" href="/homes${query({ status, q: search })}">All subdivisions</a>
+        ${subdivisions.map((job) => html`<a class="btn secondary" href="/homes${query({ status, q: search, job_id: job.id })}">${job.title} (${job.home_count})</a>`)}
+      </div>
+    </details>
+
     ${tabs([
-      { href: "/homes", label: "All", current: !status },
+      { href: `/homes${query({ q: search, job_id: jobId })}`, label: "All", current: !status },
       ...HOME_STATUSES.map((value) => ({
-        href: `/homes${query({ status: value, q: search })}`,
+        href: `/homes${query({ status: value, q: search, job_id: jobId })}`,
         label: value.replace(/_/g, " "),
         current: status === value,
       })),
@@ -103,12 +120,11 @@ async function renderList(ctx: RequestContext): Promise<Response> {
       ? empty("No homes match that.")
       : homes.map(
           (home) => html`<a class="card" href="/homes/${home.id}">
-            <div class="row"><h3>${homeIdentityLabel(home)}</h3>${home.identity_incomplete === 1 ? badge("identity incomplete", "warn") : badge(home.status, home.status === "complete" ? "ok" : "")}</div>
+            <div class="row"><h3>${homeDisplayName(home)}</h3>${home.monday_stage ? badge(`Monday: ${home.monday_stage}`) : ""}${home.identity_incomplete === 1 ? badge("identity incomplete", "warn") : badge(home.status, home.status === "complete" ? "ok" : "")}</div>
             <div class="meta">${home.manufacturer ?? ""} ${home.model ?? ""}
               ${home.job_number ? ` · ${home.job_number}` : ""}${home.lot_number ? ` lot ${home.lot_number}` : ""}
               ${home.open_repair_count > 0 ? ` · ${home.open_repair_count} open repair(s)` : ""}</div>
             ${home.identity_incomplete === 1 ? html`<div class="notice bad">Missing: ${missingHomeIdentity(home).join(", ")}</div>` : ""}
-            ${formatSiteAddress(home) ? html`<div class="meta">${formatSiteAddress(home)}</div>` : ""}
           </a>`,
         )}
 
@@ -131,13 +147,14 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
   const link = await getLink(ctx.db, "home", home.id);
   const warranty = await listWarrantyRequests(ctx.db, { homeId: home.id, limit: 20 });
   const workflow = await homeWorkflow(ctx.db, home.id);
+  const equipment = await renderEquipmentLocationSection(ctx.actor, ctx.db, { homeId: home.id }, `/api/homes/${home.id}/equipment`);
 
   const billedTotal = repairs
     .filter((repair) => repair.bill_back_status === "billed")
     .reduce((sum, repair) => sum + (repair.bill_back_amount_cents ?? 0), 0);
 
   const body = html`
-    <h1>${homeIdentityLabel(home)}</h1>
+    <h1>${homeDisplayName(home)}</h1>
     <p class="lede">${home.manufacturer ?? ""} ${home.model ?? ""} ${home.model_year ?? ""}</p>
 
     <div class="card">
@@ -158,7 +175,10 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
       ])}
     </div>
 
+    ${equipment}
+
     ${home.identity_incomplete === 1 ? html`<div class="notice bad"><strong>Identity incomplete.</strong> Missing: ${missingHomeIdentity(home).join(", ")}.</div>` : ""}
+    ${renderMondaySource(ctx, home)}
     ${can(ctx.actor, "home.write") ? html`<details class="card" ${raw(home.identity_incomplete === 1 ? "open" : "")}>
       <summary><strong>Edit home identity</strong></summary>
       <form method="post" action="/api/homes/${home.id}/identity">
@@ -320,12 +340,36 @@ async function renderDetail(ctx: RequestContext): Promise<Response> {
   `;
 
   return page(body, {
-    title: homeIdentityLabel(home),
+    title: homeDisplayName(home),
     actor: ctx.actor,
     section: "/homes",
     back: { href: "/homes", label: "Homes" },
     flash: flashFrom(ctx.url),
   });
+}
+
+function renderMondaySource(ctx: RequestContext, home: Awaited<ReturnType<typeof requireHome>>): SafeHtml | "" {
+  if (!home.monday_item_id || !home.monday_source_json || !can(ctx.actor, "monday.manage")) return "";
+  let source: { updatedAt?: string | null; group?: { title?: string } | null; columns?: { title: string; text: string | null; value: unknown }[] };
+  try {
+    source = JSON.parse(home.monday_source_json) as typeof source;
+  } catch {
+    return html`<div class="notice warn">Monday source details could not be read. The home record remains available.</div>`;
+  }
+  const valueText = (column: { text: string | null; value: unknown }) => {
+    if (column.text?.trim()) return column.text;
+    if (column.value === null || column.value === undefined || column.value === "") return "—";
+    return typeof column.value === "string" ? column.value : JSON.stringify(column.value);
+  };
+  return html`<details class="card">
+    <summary><strong>Monday source details</strong> · ${home.monday_stage ?? home.monday_source_group ?? "status unknown"}</summary>
+    <p class="meta">Read from the Homes Roster${source.updatedAt ? ` · source updated ${source.updatedAt}` : ""}. Monday stays the source of truth for these fields.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Monday column</th><th>Value</th></tr></thead>
+      <tbody>${(source.columns ?? []).map((column) => html`<tr><th scope="row">${column.title}</th><td>${valueText(column)}</td></tr>`)}</tbody>
+    </table></div>
+    <p class="meta">Last checked ${home.monday_source_synced_at ?? "not yet"}${home.monday_source_missing ? " · item is no longer on the active Monday board; it was kept here for history" : ""}</p>
+  </details>`;
 }
 
 async function saveDeliveryDateRoute(ctx: RequestContext): Promise<Response> {
@@ -402,7 +446,7 @@ async function renderReportForm(ctx: RequestContext): Promise<Response> {
 
   const body = html`
     <h1>${template.name}</h1>
-    <p class="lede">${home.serial_number} · ${home.manufacturer ?? ""} ${home.model ?? ""}</p>
+    <p class="lede">${homeDisplayName(home)} · ${home.manufacturer ?? ""} ${home.model ?? ""}</p>
 
     <form method="post" action="/api/inspections">
       <input type="hidden" name="template_key" value="${template.template_key}">
@@ -446,7 +490,7 @@ async function renderReportForm(ctx: RequestContext): Promise<Response> {
     title: template.name,
     actor: ctx.actor,
     section: "/homes",
-    back: { href: `/homes/${home.id}`, label: home.serial_number },
+    back: { href: `/homes/${home.id}`, label: homeDisplayName(home) },
   });
 }
 

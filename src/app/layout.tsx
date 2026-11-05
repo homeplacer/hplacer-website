@@ -6,6 +6,8 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { GoogleAnalytics } from "@/components/analytics";
 import { AnalyticsEvents } from "@/components/analytics-events";
+import { ContactBar } from "@/components/contact-bar";
+import { BottomNavigation } from "@/components/bottom-navigation";
 import { JsonLd, localBusinessLd } from "@/lib/jsonld";
 import { site } from "@/lib/site";
 
@@ -71,8 +73,10 @@ export default function RootLayout({
         <AnalyticsEvents />
         <JsonLd data={localBusinessLd()} />
         <SiteHeader />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-44 md:pb-20">{children}</main>
         <SiteFooter />
+        <ContactBar />
+        <BottomNavigation />
       </body>
     </html>
   );

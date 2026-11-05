@@ -1,3 +1,4 @@
+import { gpsFailureStage } from "./integrations/landairsea.ts";
 /**
  * Cloudflare Worker entry point for portal.hplacer.com.
  *
@@ -5,17 +6,22 @@
  * separate bindings, separate route. Nothing in the marketing app imports this
  * module, and nothing here imports the marketing app.
  */
+import { runConfiguredGpsSync } from "./integrations/landairsea-sync.ts";
 import { handleRequest } from "./app.ts";
 import { sweepLowStock } from "./domain/inventory.ts";
 import { notifyServiceDue } from "./domain/assets.ts";
 import { sendDailyDigest } from "./domain/daily-digest.ts";
 import { notifyInsuranceExpirations } from "./domain/insurance.ts";
 import { runConfiguredMondaySync } from "./integrations/monday-sync-processor.ts";
+import { runConfiguredMondayHomesImport } from "./integrations/monday-homes-import.ts";
+import { runConfiguredGmailImport } from "./integrations/gmail-import.ts";
+import { runTaskAssignmentEmail } from "./integrations/task-assignment-email.ts";
+import { runWebPush } from "./domain/push.ts";
 import type { PortalEnv } from "./platform/types.ts";
 
 const portal = {
-  async fetch(request: Request, env: PortalEnv): Promise<Response> {
-    return handleRequest(request, env);
+  async fetch(request: Request, env: PortalEnv, ctx?: { waitUntil(promise: Promise<unknown>): void }): Promise<Response> {
+    return handleRequest(request, env, ctx ? { waitUntil: (promise) => ctx.waitUntil(promise) } : {});
   },
 
   /**
@@ -24,8 +30,69 @@ const portal = {
    * so a manual/retried cron invocation cannot flood inboxes.
    * Configure with a cron trigger on the portal Worker.
    */
-  async scheduled(_event: { cron: string }, env: PortalEnv): Promise<void> {
+  async scheduled(event: { cron: string }, env: PortalEnv): Promise<void> {
     if (!env.PORTAL_DB) return;
+    if (event.cron === "*/5 * * * *") {
+      if (env.TASK_EMAIL_NOTIFICATIONS_ENABLED === "true") {
+        try {
+          const email = await runTaskAssignmentEmail(env);
+          if (email.enabled) {
+            console.log(JSON.stringify({ message: "task-assignment email delivery complete", ...email }));
+          } else {
+            console.error("task-assignment email delivery is enabled but configuration is incomplete");
+          }
+        } catch {
+          console.error("task-assignment email delivery failed; check provider configuration and retry");
+        }
+      }
+      if (env.WEB_PUSH_ENABLED === "true") {
+        try {
+          const push = await runWebPush(env);
+          if (push.enabled) {
+            // Counts only: never endpoints, keys, tokens, or task details.
+            console.log(JSON.stringify({ message: "task-assignment push delivery complete", ...push }));
+          } else {
+            console.error("web push is enabled but VAPID configuration is missing or invalid");
+          }
+        } catch {
+          console.error("task-assignment push delivery failed; queued alerts will be retried");
+        }
+      }
+      return;
+    }
+    if (event.cron === "*/15 * * * *") {
+      try {
+        const gps = await runConfiguredGpsSync(env);
+        if (gps.enabled) console.log(JSON.stringify({ message: "GPS poll complete", devices: gps.devices }));
+      } catch (error) {
+        console.error(JSON.stringify({ message: "GPS poll failed; last successful observations retained", stage: gpsFailureStage(error) }));
+      }
+      try {
+        const gmail = await runConfiguredGmailImport(env);
+        if (gmail.enabled) {
+          console.log(JSON.stringify({
+            message: "vendor email poll complete",
+            found: gmail.found,
+            staged: gmail.staged,
+            failed: gmail.failed,
+            skipped: gmail.skipped,
+          }));
+        }
+      } catch {
+        // Do not log remote response bodies, OAuth data, headers, or email content.
+        console.error("vendor email poll failed; check Gmail configuration and retry; no mailbox contents are logged");
+      }
+      try {
+        const homes = await runConfiguredMondayHomesImport(env);
+        if (homes.enabled) {
+          console.log(JSON.stringify({ message: "Monday home roster import complete", ...homes }));
+        }
+      } catch {
+        // The GraphQL client redacts credentials; keep board data out of logs.
+        console.error("Monday home roster import failed; check the read-only board connection");
+      }
+      return;
+    }
     const lowStock = await sweepLowStock(env.PORTAL_DB);
     const serviceDue = await notifyServiceDue(env.PORTAL_DB);
     const insuranceExpiring = await notifyInsuranceExpirations(env.PORTAL_DB);
