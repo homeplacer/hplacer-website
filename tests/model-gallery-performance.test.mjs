@@ -128,13 +128,16 @@ test("all source photos remain byte-for-byte unchanged from the task base", () =
   }
 });
 
-test("catalog preserves the task base except the verified exact-plan Tradition 68 tour repair", () => {
+test("catalog preserves the task base except verified exact-plan tour repairs", () => {
   const original = JSON.parse(execFileSync("git", ["show", "5030cdf:data/models.json"], {
     encoding: "utf8",
   }));
   const tradition = original.find((model) => model.slug === "tradition-68");
   assert.equal(tradition.tourUrl, "https://my.matterport.com/show/?m=aa2GGU46jcX");
   tradition.tourUrl = "https://my.matterport.com/show/?m=sFnvNkUWzgV";
+  const sprucePine = original.find((model) => model.slug === "dutch-elite-2852-02-spruce-pine");
+  assert.equal(sprucePine.tourUrl, "https://my.matterport.com/show/?m=nRjcDY2jtQ4");
+  sprucePine.tourUrl = "https://my.matterport.com/show/?m=6P7pmK1YCw4";
   assert.deepEqual(models, original);
 });
 

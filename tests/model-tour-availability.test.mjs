@@ -146,6 +146,16 @@ const { default: ModelPage } = load("src/app/homes/[slug]/page.tsx", {
   "@/components/model-package-journey": { ModelPackageJourney: nil },
 });
 
+test("Spruce Pine uses the current manufacturer-provided tour rather than the retired 404 ID", async () => {
+  const slug = "dutch-elite-2852-02-spruce-pine";
+  const expected = "https://my.matterport.com/show/?m=6P7pmK1YCw4";
+  assert.equal(models.find((model) => model.slug === slug).tourUrl, expected);
+  assert.equal(homes.getHome(slug).tourUrl, expected);
+  const html = renderToStaticMarkup(await ModelPage({ params: Promise.resolve({ slug }) }));
+  assert.ok(html.includes(expected), "the model-page projection should offer the verified tour");
+  assert.ok(!html.includes("nRjcDY2jtQ4"), "the retired tour must not appear in the model page");
+});
+
 test("real model-page rendering omits unavailable sections/controls but preserves authentic photos, existing floor plans and estimated prices", async () => {
   for (const slug of [...Object.keys(deadTours), "tradition-68", "eclipse"]) {
     const home = homes.getHome(slug);
