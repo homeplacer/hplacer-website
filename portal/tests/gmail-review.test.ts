@@ -61,6 +61,26 @@ describe("vendor email review", () => {
       const requestPage = await harness.request('/inventory/requests', { as: 'dale@hplacer.com' });
       assert.match(await requestPage.text(), new RegExp(`/api/documents/${document?.id}/content`));
       assert.equal((await harness.request(`/api/documents/${document?.id}/content`, { as: 'dale@hplacer.com' })).status, 200);
+
+      // Personal email identities can still use ordinary inventory, but Gmail
+      // order details and receipt files are hidden from their request view and
+      // the file endpoint enforces the same restriction.
+      await harness.db.prepare(`INSERT INTO employees (id, access_subject, email, display_name, role)
+        VALUES ('emp_personal', 'dev|employee@gmail.com', 'employee@gmail.com', 'Personal Email User', 'employee')`).run();
+      await harness.db.prepare(`INSERT INTO documents (id, document_type, storage_provider, storage_key, file_name,
+        content_type, upload_status, caption, material_request_id, uploaded_by)
+        VALUES ('doc_regular', 'receipt', 'r2', 'regular/receipt.pdf', 'receipt.pdf', 'application/pdf',
+          'stored', 'Shop receipt', 'mrq_mail1', 'emp_admin')`).run();
+      await harness.store.put('regular/receipt.pdf', new TextEncoder().encode('%PDF regular receipt'));
+      const personalPage = await harness.request('/inventory/requests', { as: 'employee@gmail.com' });
+      assert.equal(personalPage.status, 200);
+      const personalHtml = await personalPage.text();
+      assert.ok(!personalHtml.includes('PO-48392'));
+      assert.ok(!personalHtml.includes('1Z999AA10123456784'));
+      assert.ok(!personalHtml.includes(`/api/documents/${document?.id}/content`));
+      assert.match(personalHtml, /Shop receipt/);
+      assert.equal((await harness.request(`/api/documents/${document?.id}/content`, { as: 'employee@gmail.com' })).status, 403);
+      assert.equal((await harness.request('/api/documents/doc_regular/content', { as: 'employee@gmail.com' })).status, 200);
       assert.equal((await harness.request(attachmentUrl)).status, 404);
       const event = await harness.db.prepare("SELECT status, reviewed_by FROM vendor_email_events WHERE id = 'vem_mail1'").first<{ status: string; reviewed_by: string }>();
       assert.deepEqual(event && { ...event }, { status: "linked", reviewed_by: "emp_admin" });

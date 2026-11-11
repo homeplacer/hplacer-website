@@ -272,7 +272,12 @@ export function sanitizeFileName(name: string): string {
   return cleaned.replace(/^[.-]+/, "") || "upload";
 }
 
-export async function listDocuments(db: Db, target: DocumentTarget, limit = 100): Promise<DocumentListRow[]> {
+export async function listDocuments(
+  db: Db,
+  target: DocumentTarget,
+  limit = 100,
+  options: { includeVendorEmailDocuments?: boolean } = {},
+): Promise<DocumentListRow[]> {
   const columns = targetColumns(target);
   const rows = await db
     .prepare(
@@ -285,6 +290,7 @@ export async function listDocuments(db: Db, target: DocumentTarget, limit = 100)
           AND (?5 IS NULL OR d.inspection_id = ?5) AND (?6 IS NULL OR d.repair_ticket_id = ?6)
           AND (?7 IS NULL OR d.work_task_id = ?7) AND (?8 IS NULL OR d.material_request_id = ?8)
           AND (?9 IS NULL OR d.defect_id = ?9) AND (?10 IS NULL OR d.warranty_request_id = ?10)
+          AND (?12 = 1 OR NOT EXISTS (SELECT 1 FROM vendor_email_attachments vea WHERE vea.document_id = d.id))
         ORDER BY d.created_at DESC LIMIT ?11`,
     )
     .bind(
@@ -299,6 +305,7 @@ export async function listDocuments(db: Db, target: DocumentTarget, limit = 100)
       columns.defect_id,
       columns.warranty_request_id,
       limit,
+      options.includeVendorEmailDocuments === false ? 0 : 1,
     )
     .all<DocumentListRow>();
   return rows.results;
@@ -356,6 +363,13 @@ export async function readDocumentContent(
 }
 
 export async function assertCanReadDocument(db: Db, actor: Actor, document: DocumentRow): Promise<void> {
+  const isVendorEmailDocument = await db.prepare(
+    "SELECT 1 AS found FROM vendor_email_attachments WHERE document_id = ? LIMIT 1",
+  ).bind(document.id).first<{ found: number }>();
+  if (isVendorEmailDocument && !can(actor, "vendor_mail.linked.read")) {
+    throw forbidden("Only Home Placer accounts with inventory access can open vendor email receipts");
+  }
+
   if (document.uploaded_by && document.uploaded_by === actor.employeeId) return;
 
   if (document.warrantyRequestId && !document.repairTicketId) {
