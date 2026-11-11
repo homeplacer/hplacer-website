@@ -142,12 +142,13 @@ export async function reviewVendorEmailEvent(
          (id, employee_id, category, severity, title, body, related_type, related_id, dedupe_key, created_at)
        SELECT ?, ?, 'parts_tracking', 'info', ?, ?, 'material_request', ?, ?, ?
         WHERE EXISTS (SELECT 1 FROM vendor_email_events WHERE id = ? AND status = 'processing' AND match_reason = ?)
+          AND EXISTS (SELECT 1 FROM employees WHERE id = ? AND lower(email) LIKE '%@hplacer.com')
           AND NOT EXISTS (SELECT 1 FROM notifications WHERE dedupe_key = ?)`,
     ).bind(newId("ntf"), employeeId,
       trackingUrl ? "Tracking added to a material request" : "Vendor email linked to a material request",
       trackingUrl ? `${request.description} now has a ${carrier} tracking link.` : `${request.description} was updated from a vendor email.`,
       request.id, `parts_tracking:${event.id}:${employeeId}`, timestamp,
-      event.id, `review-claim:${claim}`, `parts_tracking:${event.id}:${employeeId}`));
+      event.id, `review-claim:${claim}`, employeeId, `parts_tracking:${event.id}:${employeeId}`));
   }
   statements.push(db.prepare(
     `UPDATE vendor_email_events

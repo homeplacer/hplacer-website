@@ -181,7 +181,9 @@ async function renderRequests(ctx: RequestContext): Promise<Response> {
   const status = ctx.url.searchParams.get("status") ?? undefined;
   const requests = await listMaterialRequests(ctx.db, { status });
   const requestDocuments = new Map(await Promise.all(requests.map(async (request) =>
-    [request.id, await listDocuments(ctx.db, { materialRequestId: request.id })] as const)));
+    [request.id, await listDocuments(ctx.db, { materialRequestId: request.id }, 100, {
+      includeVendorEmailDocuments: can(ctx.actor, "vendor_mail.linked.read"),
+    })] as const)));
   const parts = await listParts(ctx.db);
   const presetPart = ctx.url.searchParams.get("partId") ?? "";
   const statuses: (typeof REQUEST_STATUSES)[number][] = ["requested", "approved", "ordered", "received", "cancelled"];
@@ -204,8 +206,8 @@ async function renderRequests(ctx: RequestContext): Promise<Response> {
             ${request.supplier_name || request.supplier_url
               ? html`<p class="meta">${request.supplier_name ?? ""} ${externalLink(request.supplier_url, "Vendor page")}</p>`
               : ""}
-            ${request.vendor_order_number ? html`<p class="meta">Order ${request.vendor_order_number}</p>` : ""}
-            ${request.tracking_number ? html`<p class="meta">${request.carrier_name ?? "Tracking"}: ${externalLink(request.tracking_url, request.tracking_number)}</p>` : ""}
+            ${can(ctx.actor, "vendor_mail.linked.read") && request.vendor_order_number ? html`<p class="meta">Order ${request.vendor_order_number}</p>` : ""}
+            ${can(ctx.actor, "vendor_mail.linked.read") && request.tracking_number ? html`<p class="meta">${request.carrier_name ?? "Tracking"}: ${externalLink(request.tracking_url, request.tracking_number)}</p>` : ""}
             ${(requestDocuments.get(request.id)?.length ?? 0) > 0 ? html`<h4>Receipts and documents</h4>${documentList(requestDocuments.get(request.id)! )}` : ""}
             ${can(ctx.actor, "material_request.approve") && request.status !== "received" && request.status !== "cancelled"
               ? html`<form method="post" action="/api/inventory/requests/${request.id}/status">

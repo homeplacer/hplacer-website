@@ -48,6 +48,7 @@ export type Permission =
   | "inventory.adjust"
   | "inventory.manage"
   | "vendor_mail.review"
+  | "vendor_mail.linked.read"
   | "material_request.create"
   | "material_request.approve"
   | "document.upload"
@@ -143,6 +144,13 @@ export interface Actor {
 }
 
 export function can(actor: Actor, permission: Permission): boolean {
+  // Gmail-derived order details and receipt files are for authenticated
+  // Home Placer accounts. A role grant alone must not expose them to personal
+  // email logins that happen to have inventory access.
+  if (permission === "vendor_mail.linked.read") {
+    return actor.email.trim().toLowerCase().endsWith("@hplacer.com") &&
+      actor.roles.some((role) => ROLE_PERMISSIONS[role].has("inventory.read"));
+  }
   return actor.roles.some((role) => ROLE_PERMISSIONS[role].has(permission));
 }
 
