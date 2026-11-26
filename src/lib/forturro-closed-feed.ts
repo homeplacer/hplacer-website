@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import type { PlacedHome } from "@/lib/placed-homes";
+import { forturroFeedHeaders } from "./forturro-fetch";
 
 type ClosedFeedItem = {
   listingKey: string;
@@ -49,6 +50,7 @@ export async function getNewClosedHomePlacerSales(
 const getClosedSnapshot = unstable_cache(async (): Promise<ClosedFeedItem[]> => {
   const response = await fetch("https://forturro.com/api/hplacer/closed", {
     cache: "no-store",
+    headers: forturroFeedHeaders(),
     signal: AbortSignal.timeout(15_000),
   });
   if (!response.ok) throw new Error(`Closed MLS feed failed (${response.status})`);

@@ -16,8 +16,24 @@ function load(path, modules = {}) {
   });
   return compiled.exports;
 }
+function loadForturroFetch() {
+  const compiled = { exports: {} };
+  runInNewContext(ts.transpileModule(readFileSync('src/lib/forturro-fetch.ts', 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText, {
+    module: compiled, exports: compiled.exports, Headers, process,
+    require: (name) => {
+      assert.equal(name, '@opennextjs/cloudflare');
+      return { getCloudflareContext() { throw new Error('outside a Worker request'); } };
+    },
+  });
+  return compiled.exports;
+}
 const helper = load('src/lib/mls-photo.ts');
-const { mlsPhotoResponse } = load('src/lib/mls-photo-response.ts', { './mls-photo': helper });
+const { mlsPhotoResponse } = load('src/lib/mls-photo-response.ts', {
+  './mls-photo': helper,
+  './forturro-fetch': loadForturroFetch(),
+});
 const key = '1234567890';
 const listing = { listingKey: key, photoUrl: `https://forturro.com/api/img/${key}/1` };
 const request = (width = '480', suffix = '', method = 'GET') => new Request(`https://hplacer.com/api/mls-photo/${key}/${width}${suffix}`, { method });
@@ -79,6 +95,8 @@ test('transcodes without crop/upscale, verifies actual width, and reuses a short
   assert.equal(calls.fetch[0].url, listing.photoUrl);
   assert.equal(calls.fetch[0].options.redirect, 'manual');
   assert.equal(calls.fetch[0].options.cache, 'no-store');
+  assert.equal(calls.fetch[0].options.headers.get('user-agent'), 'hplacer-app/1.0 (+https://hplacer.com)');
+  assert.equal(calls.fetch[0].options.headers.has('x-hplacer-feed'), Boolean(process.env.FORTURRO_FEED_TOKEN));
   assert.ok(calls.fetch[0].options.signal instanceof AbortSignal);
   assert.deepEqual(calls.puts, [`https://hplacer.com/__mls-photo-cache/v1/${key}/480`]);
   const hit = await mlsPhotoResponse(request(), key, '480', dependencies);

@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { forturroFeedHeaders } from "./forturro-fetch";
 import { mlsPhotoSource } from "./mls-photo";
 
 type ForturroSearchItem = {
@@ -37,6 +38,7 @@ export async function getLivePackageBySlug(slug: string) {
 const getCachedLivePackageListings = unstable_cache(async (): Promise<LivePackageListing[]> => {
   const response = await fetch("https://forturro.com/api/hplacer/active", {
     cache: "no-store",
+    headers: forturroFeedHeaders(),
     signal: AbortSignal.timeout(15_000),
   });
   if (!response.ok) throw new Error(`Active MLS feed failed (${response.status})`);

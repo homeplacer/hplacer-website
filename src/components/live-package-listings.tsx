@@ -23,7 +23,7 @@ export function LivePackageListings({
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {rows.map((listing) => (
+      {rows.map((listing, index) => (
         <article
           key={listing.listingKey}
           className="overflow-hidden rounded-card border border-stone-line bg-stone-bg shadow-sm"
@@ -35,7 +35,7 @@ export function LivePackageListings({
               alt={`${listing.address}, ${listing.city}`}
               className="aspect-[3/2] w-full object-cover"
               sizes="(min-width: 1216px) 366px, (min-width: 1024px) calc((100vw - 118px) / 3), (min-width: 768px) calc((100vw - 92px) / 2), calc(100vw - 42px)"
-              loading="lazy"
+              loading={index === 0 ? "eager" : "lazy"}
             />
           )}
           <div className="p-5">

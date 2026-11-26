@@ -29,6 +29,7 @@ const { MlsPackagePhoto } = load(read("src/components/mls-package-photo.tsx"), {
 const feed = load(read("src/lib/forturro-package-feed.ts"), {
   "next/cache": { unstable_cache: (fn) => fn },
   "./mls-photo": photoHelpers,
+  "./forturro-fetch": { forturroFeedHeaders: (init) => new Headers(init) },
 });
 const Link = ({ children, ...props }) => React.createElement("a", props, children);
 const navigationSource = read("src/components/live-package-navigation.tsx");
