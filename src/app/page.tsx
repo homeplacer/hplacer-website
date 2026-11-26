@@ -25,7 +25,7 @@ import {
 } from "@/components/icons";
 
 export const metadata = pageMetadata({
-  title: "Manufactured Homes on Land in Horry County, SC",
+  title: { absolute: "Home Placer | Manufactured Homes on Land, Horry County SC" },
   description:
     "New Clayton, Cavco, and Champion manufactured homes with land in Horry County and the Grand Strand. See current land-home packages and request a complete price from Home Placer.",
   alternates: { canonical: "/" },

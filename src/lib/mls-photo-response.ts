@@ -1,3 +1,4 @@
+import { forturroFeedHeaders } from "./forturro-fetch";
 import { isMlsListingKey, isMlsPhotoSource, MLS_PHOTO_CACHE_SECONDS, MLS_PHOTO_WIDTHS } from "./mls-photo";
 
 // Structural binding types keep this helper usable in offline, intercepted tests.
@@ -104,6 +105,7 @@ export async function mlsPhotoResponse(request: Request, listingKey: string, wid
     }
     const upstream = await (dependencies.fetch ?? fetch)(listing.photoUrl, {
       cache: "no-store", redirect: "manual", signal: AbortSignal.timeout(7_000),
+      headers: forturroFeedHeaders(),
     });
     if (upstream.status !== 200 || !RASTER_TYPES.has(upstream.headers.get("Content-Type")?.split(";")[0].trim().toLowerCase() ?? "")) return failure(502);
     const source = await boundedBytes(upstream, MAX_SOURCE_BYTES);

@@ -38,7 +38,19 @@ you were in the Forturro account, re-log into Home Placer first.
 ## Deploy an update
 
 `npm run deploy` builds from the **working tree, not git HEAD** — so sync `main`
-and keep the tree clean before deploying:
+and keep the tree clean before deploying.
+
+The homepage is prerendered in Node during that build, and the prerender fetches
+`https://forturro.com/api/hplacer/active`. Forturro returns **403** unless the
+request carries the feed identity headers. The build reads the token from
+`FORTURRO_FEED_TOKEN` in the local environment. The Worker secret is not visible
+to that Node process, so a secret that exists only on `hplacer-app` does not
+satisfy the prerender. Set `FORTURRO_FEED_TOKEN` to the **same value already
+stored** as the Worker secret before deploying — for example in gitignored
+`.env.local`, or exported in the shell from the `wrangler secret` value you
+already have. Do not commit it, and do not run `wrangler secret put` again when
+production already has it. If the variable is missing, prerender fails and
+`npm run deploy` stops before upload.
 
 ```bash
 cd hplacer
@@ -126,3 +138,8 @@ optional `LEAD_FAILURE_WEBHOOK_URL` (posts a minimal alert to a team webhook if 
 can't be delivered at all — unset = alert off, the failure is still logged).
 Manage with `wrangler secret put <NAME>`. Blank secrets make leads log instead of
 deliver. Don't change secrets as part of a normal code deploy.
+
+`FORTURRO_FEED_TOKEN` is already a Worker secret on `hplacer-app`. Leave that
+production secret in place. The deploy build still needs the same value in the
+local environment, as described under **Deploy an update**, because homepage
+prerender runs in Node.

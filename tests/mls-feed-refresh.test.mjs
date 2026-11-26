@@ -5,12 +5,30 @@ import { runInNewContext } from 'node:vm';
 import { execFileSync } from 'node:child_process';
 import ts from 'typescript';
 
+let forturroFetchModule;
+function forturroFetch() {
+  if (forturroFetchModule) return forturroFetchModule;
+  const compiled = { exports: {} };
+  runInNewContext(ts.transpileModule(readFileSync('src/lib/forturro-fetch.ts', 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText, {
+    module: compiled, exports: compiled.exports, Headers, process,
+    require: (name) => {
+      assert.equal(name, '@opennextjs/cloudflare');
+      return { getCloudflareContext() { throw new Error('outside a Worker request'); } };
+    },
+  });
+  forturroFetchModule = compiled.exports;
+  return forturroFetchModule;
+}
+
 function feed(path, fetch, cachedSnapshot) {
   const { outputText } = ts.transpileModule(readFileSync(path, 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   });
   const compiled = { exports: {} };
   runInNewContext(outputText, { module: compiled, exports: compiled.exports, fetch, AbortSignal, require: (name) => {
+    if (name === "./forturro-fetch") return forturroFetch();
     if (name === "./mls-photo") {
       const helper = { exports: {} };
       runInNewContext(ts.transpileModule(readFileSync('src/lib/mls-photo.ts', 'utf8'), {
@@ -38,6 +56,8 @@ test('an authoritative empty active snapshot cannot resurrect registry listings'
     calls++;
     assert.equal(url, 'https://forturro.com/api/hplacer/active');
     assert.equal(options.cache, "no-store");
+    assert.equal(options.headers.get('user-agent'), 'hplacer-app/1.0 (+https://hplacer.com)');
+    assert.equal(options.headers.has('x-hplacer-feed'), Boolean(process.env.FORTURRO_FEED_TOKEN));
     return Response.json({ items: [] });
   });
   assert.equal((await api.getLivePackageListings()).length, 0);
@@ -82,6 +102,8 @@ test('new closings remain additive to the permanent archive and deduplicate by M
   const before = JSON.stringify(archive);
   const api = feed(closedPath, async (_url, options) => {
     assert.equal(options.cache, "no-store");
+    assert.equal(options.headers.get('user-agent'), 'hplacer-app/1.0 (+https://hplacer.com)');
+    assert.equal(options.headers.has('x-hplacer-feed'), Boolean(process.env.FORTURRO_FEED_TOKEN));
     return Response.json({ items: [
       closed, { ...closed },
       { ...closed, mlsId: 'alias', address: '1 Example Road.' },
@@ -137,10 +159,12 @@ test('prior cached optional photo URLs are normalized safely on every read witho
   assert.equal(JSON.stringify(cached), before);
 });
 
-test('the private cache callback and literal key remain identical to the task base', () => {
+test('the private cache callback and literal key remain identical to the task base aside from feed identity headers', () => {
   const original = execFileSync('git', ['show', '7b3f403:src/lib/forturro-package-feed.ts'], { encoding: 'utf8' });
   const current = readFileSync(activePath, 'utf8');
   const callback = source => source.slice(source.indexOf('unstable_cache(async'), source.indexOf('\n\nfunction isActiveListing')).split('\n\n/** Validate optional media')[0];
-  assert.equal(callback(current), callback(original));
+  const withoutFeedHeaders = source => source.replace(/\n    headers: forturroFeedHeaders\(\),/g, '');
+  assert.equal(withoutFeedHeaders(callback(current)), callback(original));
+  assert.match(current, /from "\.\/forturro-fetch"/);
   // This is source preservation, not a claim of compiled-function or cross-build warmth.
 });
